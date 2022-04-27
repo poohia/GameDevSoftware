@@ -1,10 +1,19 @@
 .ui.menu.tabular {
   height: 2vh;
   .item {
-    padding: 13px;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    width: 200px;
     &:hover {
       color: black;
     }
+  }
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: auto;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 .tab {

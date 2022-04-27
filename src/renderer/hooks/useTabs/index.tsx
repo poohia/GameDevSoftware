@@ -13,7 +13,7 @@ const useTabs = () => {
   >([
     {
       id: 0,
-      menuItem: { key: 'home', icon: 'users', content: i18n.t('home') },
+      menuItem: { key: 'home', content: i18n.t('home') },
       render: () => (
         <Tab.Pane className="game-dev-software-body-tab-content">
           <HomePage appendTab={appendTab} id={0} />
@@ -31,8 +31,17 @@ const useTabs = () => {
   });
 
   const removeTab = useCallback((id: number) => {
-    setTabs((t) => Array.from(t?.filter((tab) => tab.id !== id)));
-    setTabActive({ index: 0, id: 0 });
+    setTabs((_tabs) => {
+      setTabActive((_tabActive) => {
+        if (id !== _tabActive.id) {
+          return _tabActive;
+        }
+        const index = _tabs.map((tab) => tab.id).indexOf(id) - 1;
+        const { id: idTab } = _tabs[index];
+        return { index: index, id: idTab };
+      });
+      return Array.from(_tabs.filter((tab) => tab.id !== id));
+    });
   }, []);
 
   const appendTab = useCallback(
@@ -65,7 +74,7 @@ const useTabs = () => {
         );
       });
     },
-    []
+    [removeTab]
   );
 
   const listenerChangeTab = useCallback(
