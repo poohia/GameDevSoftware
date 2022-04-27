@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import HomePage from 'renderer/pages/HomePage';
 import { Icon, Menu, Tab } from 'semantic-ui-react';
+import i18n from '../../../translations/i18n';
 
 const useTabs = () => {
   const [tabs, setTabs] = useState<
@@ -12,7 +13,7 @@ const useTabs = () => {
   >([
     {
       id: 0,
-      menuItem: { key: 'home', icon: 'users', content: 'Home' },
+      menuItem: { key: 'home', icon: 'users', content: i18n.t('home') },
       render: () => (
         <Tab.Pane className="game-dev-software-body-tab-content">
           <HomePage appendTab={appendTab} id={0} />
