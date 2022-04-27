@@ -1,12 +1,12 @@
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
+import TranslationPage from '../TranslationPage';
 
-const HomePage = () => {
-  const navigate = useNavigate();
+const HomePage = ({ appendTab, id }: any) => {
   return (
     <div>
       Hello world
-      <Button onClick={() => navigate('/module/translate')}>
+      <Button onClick={() => appendTab('Translation Module', TranslationPage)}>
         Module translate
       </Button>
     </div>

@@ -1,0 +1,12 @@
+.ui.menu.tabular {
+  height: 2vh;
+  .item {
+    padding: 13px;
+    &:hover {
+      color: black;
+    }
+  }
+}
+.tab {
+  height: 98vh;
+}
