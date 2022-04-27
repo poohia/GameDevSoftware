@@ -14,7 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { FolderPlugin } from './plugins';
+import { FolderPlugin, TranslationPlugin } from './plugins';
 
 export default class AppUpdater {
   constructor() {
@@ -100,7 +100,9 @@ const createWindow = async () => {
   });
 
   const folderPlugin = new FolderPlugin(mainWindow);
+  const translationPlugin = new TranslationPlugin();
   folderPlugin.init();
+  translationPlugin.init();
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();

@@ -6,19 +6,29 @@ export default class FolderPlugin {
   constructor(private mainWindow: BrowserWindow) {}
   static srcDirectory = '/src';
   static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
+  static gameDevSoftwareDirectory = '/GameDevSoftware';
+  static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
 
   static validePath(path: string) {
     let isValid = true;
     if (!fs.existsSync(`${path}${FolderPlugin.translationDirectory}`)) {
       isValid = false;
+    } else if (!fs.existsSync(`${path}${FolderPlugin.translationDirectory}`)) {
+      isValid = false;
     }
+
     return isValid;
+  }
+
+  static saveGlobalPath(path: string) {
+    global.path = path;
   }
 
   loadLastOpenDirectory = (event: ElectronIpcMainEvent, ...args: any[]) => {
     const path = args[0];
     if (FolderPlugin.validePath(path)) {
       event.reply('path-is-correct', path);
+      FolderPlugin.saveGlobalPath(path);
     } else {
       event.reply('path-is-correct', null);
     }
@@ -34,6 +44,7 @@ export default class FolderPlugin {
         if (FolderPlugin.validePath(path)) {
           event.reply('set-path', path);
           event.reply('path-is-correct', path);
+          FolderPlugin.saveGlobalPath(path);
         } else {
           event.reply('set-path', null);
         }

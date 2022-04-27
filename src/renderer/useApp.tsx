@@ -7,6 +7,7 @@ const useApp = () => {
 
   useEffect(() => {
     on('path-is-correct', (args: string) => {
+      console.log(args);
       setPath(args);
     });
   }, []);
@@ -19,6 +20,12 @@ const useApp = () => {
       setPath(null);
     }
   }, []);
+
+  useEffect(() => {
+    if (path) {
+      localStorage.setItem('last-path', path);
+    }
+  }, [path]);
 
   return {
     path,

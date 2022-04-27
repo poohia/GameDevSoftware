@@ -7,7 +7,7 @@ const useEvents = () => {
   }, []);
 
   const on = useCallback((events: Chanels, callback: EventCallback) => {
-    window.electron.ipcRenderer.on(events, callback);
+    return window.electron.ipcRenderer.on(events, callback);
   }, []);
 
   const once = useCallback((events: Chanels, callback: EventCallback) => {

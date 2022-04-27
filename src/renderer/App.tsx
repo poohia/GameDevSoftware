@@ -1,6 +1,7 @@
 import { useTabs } from 'renderer/hooks';
 import { Tab } from 'semantic-ui-react';
 import useApp from 'renderer/useApp';
+import { DefaultPage } from './pages';
 
 export default function App() {
   const { path } = useApp();
@@ -8,6 +9,10 @@ export default function App() {
 
   if (path === undefined) {
     return <div>Loading....</div>;
+  }
+
+  if (path === null) {
+    return <DefaultPage />;
   }
 
   return (

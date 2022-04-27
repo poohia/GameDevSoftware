@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
-import TranslationPage from '../TranslationPage';
+import { PageProps } from 'types';
+import TranslationPage from 'renderer/pages/TranslationPage';
 
-const HomePage = ({ appendTab, id }: any) => {
+const HomePage: React.FC<Required<PageProps>> = ({ appendTab }) => {
   return (
     <div>
-      Hello world
       <Button onClick={() => appendTab('Translation Module', TranslationPage)}>
         Module translate
       </Button>

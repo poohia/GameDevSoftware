@@ -6,15 +6,14 @@ export type Chanels =
   | 'select-path'
   | 'last-path'
   | 'ipc-example'
-  | 'path-is-correct';
+  | 'path-is-correct'
+  | 'languages-authorized'
+  | 'load-translations'
+  | 'save-translations';
 export type EventCallback = (...args: any) => void;
-export type ModuleComponentProps = {
-  id: number;
-  indexActive: number;
-  appendTab: (
+export type PageProps = {
+  appendTab?: (
     menuItem: string,
-    Component: React.FunctionComponent<ModuleComponentProps>
+    Component: React.FunctionComponent<PageProps>
   ) => void;
-  removeTab: (id: number) => void;
-  removeCurrentTab: () => void;
 };

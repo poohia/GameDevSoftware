@@ -5,10 +5,7 @@ declare global {
     electron: {
       ipcRenderer: {
         sendMessage: (chanel: Chanels, args?: any) => void;
-        on(
-          channel: Chanels,
-          func: (...args: any) => void
-        ): (() => void) | undefined;
+        on(channel: Chanels, func: (...args: any) => void): () => void;
         once(channel: Chanels, func: (...args: any) => void): void;
       };
     };
