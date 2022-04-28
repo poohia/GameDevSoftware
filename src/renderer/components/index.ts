@@ -1,1 +1,1 @@
-export { default as ModuleComponent } from './ModuleComponent';
+export { default as DropdownLanguagesComponent } from './DropdownLanguagesComponent';

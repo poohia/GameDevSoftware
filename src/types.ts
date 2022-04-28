@@ -9,11 +9,19 @@ export type Chanels =
   | 'path-is-correct'
   | 'languages-authorized'
   | 'load-translations'
-  | 'save-translations';
+  | 'save-translations'
+  | 'set-languages'
+  | 'remove-language';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
   appendTab?: (
     menuItem: string,
     Component: React.FunctionComponent<PageProps>
   ) => void;
+};
+export type Translation = {
+  [key: string]: string;
+};
+export type TranslationObject = {
+  [key: string]: Translation;
 };

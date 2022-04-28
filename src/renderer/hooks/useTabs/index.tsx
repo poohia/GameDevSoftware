@@ -66,7 +66,7 @@ const useTabs = () => {
         const index = _tabs.map((tab) => tab.id).indexOf(id) + -1;
         if (_tabs[index] === undefined) {
           const lastTab = _tabs[_tabs.length - 1];
-          return { index: _tabs.length, id: lastTab.id };
+          return { index: _tabs.length - 1, id: lastTab.id };
         }
         const { id: idTab } = _tabs[index];
         return { index: index, id: idTab };
@@ -115,14 +115,14 @@ const useTabs = () => {
 
   const listenerChangeTab = useCallback(
     (e: KeyboardEvent) => {
-      e.preventDefault();
       const { metaKey, ctrlKey, code, shiftKey } = e;
       const { id } = tabActive;
       if ((metaKey || ctrlKey) && code === 'KeyZ' && id !== 0) {
+        e.preventDefault();
         removeTab(id);
         return;
       }
-      if (shiftKey && code === 'Tab') {
+      if (ctrlKey && shiftKey && code === 'Tab') {
         prevTab(id);
         return;
       }

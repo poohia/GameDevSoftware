@@ -1,3 +1,11 @@
 {
-  "home": "Home"
+  "home": "Home",
+  "moduletranslation": "Translation Module",
+  "dropdown_languages_placeholder_default": "Select Country",
+  "dropdown_languages_placeholder_append_country": "Append language",
+  "module_translation_header_button_append_translation": "Append translation",
+  "module_translation_form_title_new": "Create translation",
+  "module_translation_form_title_update": "Udapte translation",
+  "module_translation_form_field_key_label": "Key",
+  "module_translation_form_field_submit": "Save"
 }

@@ -1,36 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import { useEvents } from 'renderer/hooks';
-import { Button } from 'semantic-ui-react';
+import { Container, Grid, Header } from 'semantic-ui-react';
+import i18n from 'translations/i18n';
+import {
+  TranslationTableComponent,
+  TranslationHeaderComponent,
+  TranslationFormComponent,
+} from './components';
+import useTranslationPage from './useTranslationPage';
 
 const TranslationPage = () => {
-  const { once, sendMessage } = useEvents();
-  const [languages, setLanguages] = useState<{ code: string }[]>([]);
-  const [tranductions, setTraductions] = useState<any>();
-
-  useEffect(() => {
-    sendMessage('load-translations');
-    once('languages-authorized', (args: string[]) => {
-      setLanguages(args);
-    });
-    once('load-translations', (args) => {
-      setTraductions(args);
-    });
-  }, []);
-  if (tranductions) {
-    console.log(tranductions);
-    console.log(languages[0]);
-    console.log(tranductions[languages[0].code]);
-  }
+  const {
+    currentTranslations,
+    locale,
+    languages,
+    translationForm,
+    appendLocale,
+    setLocale,
+    deleteTranslation,
+    removeLocale,
+    createTranslationKey,
+    updateTranslationKey,
+    appendTranslation,
+  } = useTranslationPage();
   return (
-    <div>
-      <Button
-        onClick={() => {
-          sendMessage('save-translations');
-        }}
-      >
-        Save
-      </Button>
-    </div>
+    <Container fluid>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column width={10} divided="true">
+            <Grid.Row>
+              <Header as="h1">{i18n.t('moduletranslation')}</Header>
+            </Grid.Row>
+            <Grid.Row>
+              <TranslationHeaderComponent
+                locale={locale}
+                languages={languages}
+                onChangeLocale={(locale) => setLocale(locale)}
+                onAppendLocale={appendLocale}
+                onRemoveLocale={removeLocale}
+                onAppendTranslation={createTranslationKey}
+              />
+            </Grid.Row>
+            <Grid.Row>
+              <TranslationTableComponent
+                translations={currentTranslations}
+                locale={locale}
+                onClickRow={updateTranslationKey}
+                onDelete={deleteTranslation}
+              />
+            </Grid.Row>
+          </Grid.Column>
+          {translationForm && (
+            <Grid.Column width={6}>
+              <TranslationFormComponent
+                {...translationForm}
+                onSubmit={appendTranslation}
+              />
+            </Grid.Column>
+          )}
+        </Grid.Row>
+      </Grid>
+    </Container>
   );
 };
 
