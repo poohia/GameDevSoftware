@@ -267,6 +267,7 @@ const DropdownLanguagesComponent = (props: DropdownLanguagesComponentProps) => {
         (country) => !languagesFilters.includes(country.value)
       )}
       onChange={onChange}
+      {...props}
     />
   );
 };

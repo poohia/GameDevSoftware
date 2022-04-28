@@ -39,7 +39,6 @@ const useTranslationPage = () => {
 
   const removeLocale = useCallback(
     (language: string) => {
-      console.log(language);
       setLanguages((_languages) => {
         _languages = JSON.parse(
           JSON.stringify(_languages.filter((l) => l !== language))
@@ -63,12 +62,6 @@ const useTranslationPage = () => {
     dispatch({ type: 'hide-form' });
   }, []);
 
-  const getLanguages = useCallback(() => {
-    once('languages-authorized', (args: { code: string }[]) => {
-      setLanguages(args.map((arg) => arg.code));
-    });
-  }, []);
-
   const createTranslationKey = useCallback(() => {
     dispatch({ type: 'show-create-form', data: { languages } });
   }, [languages]);
@@ -77,6 +70,7 @@ const useTranslationPage = () => {
     (key: string) => {
       const formatValues = () => {
         const values: { code: string; value: string }[] = [];
+
         Object.keys(translations).forEach((arrKey) => {
           values.push({ code: arrKey, value: translations[arrKey][key] });
         });
@@ -109,18 +103,24 @@ const useTranslationPage = () => {
     []
   );
 
-  useEffect(() => {
+  const init = useCallback(() => {
+    once('languages-authorized', (args: { code: string }[]) => {
+      setLanguages(args.map((arg) => arg.code));
+    });
     sendMessage('load-translations');
-    getLanguages();
     once('load-translations', (args) => {
       setTranslations(args);
     });
   }, []);
 
   useEffect(() => {
+    init();
+  }, []);
+
+  useEffect(() => {
     if (translations) {
       sendMessage('save-translations', translations);
-      getLanguages();
+      init();
     }
   }, [translations]);
 

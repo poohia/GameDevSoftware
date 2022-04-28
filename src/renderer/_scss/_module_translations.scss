@@ -1,6 +1,8 @@
 .game-dev-software-module-translation-table-values {
-  &.ui.table {
-    margin-top: 30px;
+  margin-top: 30px;
+
+  .ui.table {
+    margin-top: 10px;
     tr {
       cursor: pointer;
     }
