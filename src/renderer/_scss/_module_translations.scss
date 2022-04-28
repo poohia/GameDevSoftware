@@ -1,10 +1,26 @@
+.game-dev-software-module-translation-form-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 80vh;
+  padding: 20px;
+}
 .game-dev-software-module-translation-table-values {
   margin-top: 30px;
+  .game-dev-software-module-translation-table-values-search {
+    > div {
+      width: 100%;
+    }
+  }
 
-  .ui.table {
+  table.ui.table {
     margin-top: 10px;
-    tr {
-      cursor: pointer;
+    tbody {
+      overflow: auto;
+      display: block;
+      max-height: 60vh;
+      tr {
+        cursor: pointer;
+      }
     }
   }
 }

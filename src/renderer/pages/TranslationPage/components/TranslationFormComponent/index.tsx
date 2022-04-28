@@ -63,7 +63,10 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
   }, [values, keyValue]);
 
   return (
-    <Container fluid>
+    <Container
+      fluid
+      className="game-dev-software-module-translation-form-container"
+    >
       <Grid>
         <Grid.Row>
           <Grid.Column>

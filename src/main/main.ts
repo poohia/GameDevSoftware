@@ -28,7 +28,6 @@ let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
@@ -132,10 +131,6 @@ const createWindow = async () => {
 /**
  * Add event listeners...
  */
-console.log(
-  '🚀 ~ file: main.ts ~ line 134 ~ process.platform',
-  process.platform
-);
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed

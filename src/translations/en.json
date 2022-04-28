@@ -7,5 +7,6 @@
   "module_translation_form_title_new": "Create translation",
   "module_translation_form_title_update": "Udapte translation",
   "module_translation_form_field_key_label": "Key",
-  "module_translation_form_field_submit": "Save"
+  "module_translation_form_field_submit": "Save",
+  "module_translation_table_count_translations": "Count translations"
 }

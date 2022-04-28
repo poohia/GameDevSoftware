@@ -29,7 +29,6 @@ contextBridge.exposeInMainWorld('electron', {
 });
 
 process.once('loaded', () => {
-  console.log('loaded');
   window.addEventListener('message', (evt) => {
     if (evt.data.type === 'select-dirs') {
       ipcRenderer.send('select-dirs');
