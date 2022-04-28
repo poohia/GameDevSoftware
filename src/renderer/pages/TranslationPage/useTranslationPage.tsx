@@ -18,7 +18,7 @@ const useTranslationPage = () => {
     if (translations === undefined || Object.keys(translations).length === 0) {
       return {};
     }
-    return translations[locale];
+    return translations[locale] || translations[Object.keys(translations)[0]];
   }, [translations, locale]);
   /** */
 

@@ -12,7 +12,7 @@ export default function App() {
   }
 
   if (path === null) {
-    return <DefaultPage />;
+    return <div />;
   }
 
   return (

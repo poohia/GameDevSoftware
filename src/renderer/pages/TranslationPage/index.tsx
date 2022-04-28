@@ -21,6 +21,7 @@ const TranslationPage = () => {
     updateTranslationKey,
     appendTranslation,
   } = useTranslationPage();
+
   return (
     <Container fluid>
       <Grid>

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Dropdown, DropdownProps } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 
@@ -255,17 +256,26 @@ const DropdownLanguagesComponent = (props: DropdownLanguagesComponentProps) => {
   const {
     languagesFilters,
     placeholder = i18n.t('dropdown_languages_placeholder_default'),
+    options,
     onChange,
   } = props;
+  const countries = useMemo(() => {
+    if (options) {
+      return options.filter(
+        (country) => !languagesFilters.includes(country.value as string)
+      );
+    }
+    return countryOptions.filter(
+      (country) => !languagesFilters.includes(country.value)
+    );
+  }, [options, languagesFilters]);
   return (
     <Dropdown
       placeholder={placeholder}
       fluid
       selection
       search
-      options={countryOptions.filter(
-        (country) => !languagesFilters.includes(country.value)
-      )}
+      options={countries}
       onChange={onChange}
       {...props}
     />

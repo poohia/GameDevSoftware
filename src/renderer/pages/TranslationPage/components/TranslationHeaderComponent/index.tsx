@@ -28,7 +28,7 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
           <Grid>
             <Grid.Row columns={2}>
               <Grid.Column width={13}>
-                <Dropdown
+                <DropdownLanguagesComponent
                   placeholder="Select Country"
                   fluid
                   selection
@@ -41,6 +41,7 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
                     text: language,
                   }))}
                   onChange={(_, { value }) => onChangeLocale(value as string)}
+                  languagesFilters={[]}
                 />
               </Grid.Column>
               <Grid.Column width={3}>

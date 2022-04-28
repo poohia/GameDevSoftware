@@ -3,7 +3,7 @@ import i18n from 'i18n-js';
 import en from './en.json';
 import fr from './fr.json';
 
-const localeEnable = ['en', 'fr'];
+export const localeEnable = ['en', 'fr'];
 
 const fortmatLocale = () => {
   const localeFromStorage = window.localStorage.getItem('locale');
