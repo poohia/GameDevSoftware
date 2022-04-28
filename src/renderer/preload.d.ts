@@ -1,12 +1,12 @@
-import { Chanels } from 'types';
+import { Channels } from 'types';
 
 declare global {
   interface Window {
     electron: {
       ipcRenderer: {
-        sendMessage: (chanel: Chanels, args?: any) => void;
-        on(channel: Chanels, func: (...args: any) => void): () => void;
-        once(channel: Chanels, func: (...args: any) => void): void;
+        sendMessage: (chanel: Channels, args?: any) => void;
+        on(channel: Channels, func: (...args: any) => void): () => void;
+        once(channel: Channels, func: (...args: any) => void): void;
       };
     };
   }

@@ -1,7 +1,7 @@
 export interface ElectronIpcMainEvent extends Electron.IpcMainEvent {
-  reply: (chanel: Chanels, args?: any) => void;
+  reply: (chanel: Channels, args?: any) => void;
 }
-export type Chanels =
+export type Channels =
   | 'set-path'
   | 'select-path'
   | 'last-path'
@@ -11,7 +11,8 @@ export type Chanels =
   | 'load-translations'
   | 'save-translations'
   | 'set-languages'
-  | 'remove-language';
+  | 'remove-language'
+  | 'load-constants';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
   appendTab?: (
@@ -25,3 +26,4 @@ export type Translation = {
 export type TranslationObject = {
   [key: string]: Translation;
 };
+export type ConstantObject = {};

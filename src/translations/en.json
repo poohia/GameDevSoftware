@@ -1,6 +1,7 @@
 {
   "home": "Home",
-  "moduletranslation": "Translation Module",
+  "module_translation": "Translation Module",
+  "module_constant": "Constant Module",
   "dropdown_languages_placeholder_default": "Select Country",
   "dropdown_languages_placeholder_append_country": "Append language",
   "module_translation_header_button_append_translation": "Append translation",

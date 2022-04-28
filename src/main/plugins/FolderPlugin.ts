@@ -8,6 +8,7 @@ export default class FolderPlugin {
   static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
   static gameDevSoftwareDirectory = '/GameDevSoftware';
   static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
+  static constantFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/constants.json`;
 
   static validePath(path: string) {
     let isValid = true;
@@ -15,12 +16,15 @@ export default class FolderPlugin {
       isValid = false;
     } else if (!fs.existsSync(`${path}${FolderPlugin.translationDirectory}`)) {
       isValid = false;
+    } else if (!fs.existsSync(`${path}${FolderPlugin.constantFile}`)) {
+      isValid = false;
     }
 
     return isValid;
   }
 
   static saveGlobalPath(path: string) {
+    // @ts-ignore
     global.path = path;
   }
 
