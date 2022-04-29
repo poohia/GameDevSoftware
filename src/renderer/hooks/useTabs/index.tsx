@@ -81,14 +81,16 @@ const useTabs = () => {
         const id = _tabs[_tabs.length - 1].id + 1;
         const key = `${menuItem.toLocaleLowerCase().replace(' ', '-')}`;
         const tabFind = _tabs.find((tab) => tab.menuItem.key === key);
+        const index = _tabs.length;
         if (tabFind) {
           setTabActive({ index: tabFind.index, id: tabFind.id });
           return _tabs;
         }
+        setTabActive({ index, id });
         return Array.from(
           _tabs.concat({
             id,
-            index: _tabs.length,
+            index,
             menuItem: (
               <Menu.Item key={key}>
                 {menuItem}

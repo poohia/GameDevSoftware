@@ -26,9 +26,9 @@ const TranslationPage = () => {
     <Container fluid>
       <Grid>
         <Grid.Row>
-          <Grid.Column width={10} divided="true">
+          <Grid.Column width={10}>
             <Grid.Row>
-              <Header as="h1">{i18n.t('moduletranslation')}</Header>
+              <Header as="h1">{i18n.t('module_translation')}</Header>
             </Grid.Row>
             <Grid.Row>
               <TranslationHeaderComponent

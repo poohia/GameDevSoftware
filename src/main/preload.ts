@@ -1,12 +1,12 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { Chanels } from '../types';
+import { Channels } from '../types';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
-    sendMessage(chanel: Chanels, args?: any[]) {
+    sendMessage(chanel: Channels, args?: any[]) {
       ipcRenderer.send(chanel, args);
     },
-    on(channel: Chanels, func: (...args: unknown[]) => void) {
+    on(channel: Channels, func: (...args: unknown[]) => void) {
       // const validChannels = ['ipc-example', 'directory'];
       // if (validChannels.includes(channel)) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
@@ -18,7 +18,7 @@ contextBridge.exposeInMainWorld('electron', {
 
       // return undefined;
     },
-    once(channel: Chanels, func: (...args: unknown[]) => void) {
+    once(channel: Channels, func: (...args: unknown[]) => void) {
       // const validChannels = ['ipc-example', 'directory'];
       // if (validChannels.includes(channel)) {
       // Deliberately strip event as it includes `sender`

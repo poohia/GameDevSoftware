@@ -1,32 +1,37 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button, Grid, Header, Icon, Input, Table } from 'semantic-ui-react';
-import i18n from 'translations/i18n';
-import { Translation } from 'types';
+import { ConstantObject } from 'types';
 
-type TranslationTableComponentProps = {
-  translations: Translation;
-  locale: string;
+type ConstantTableComponentProps = {
+  constants: ConstantObject;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
-const TranslationTableComponent = (props: TranslationTableComponentProps) => {
-  const { translations, onClickRow, onDelete } = props;
+const ConstantTableComponent = (props: ConstantTableComponentProps) => {
+  const { constants, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
+
   const formatData = useCallback(() => {
     if (filter !== '') {
-      return Object.keys(translations).filter(
-        (key) => key.includes(filter) || translations[key].includes(filter)
-      );
+      return Object.keys(constants).filter((key) => key.includes(filter));
     }
-    return Object.keys(translations);
-  }, [filter, translations]);
-  const lengthTranslations = useMemo(
-    () => Object.keys(translations).length,
-    [translations]
+    return Object.keys(constants);
+  }, [filter, constants]);
+  const formatString = useCallback(
+    (value: number | number[] | string | string[]) => {
+      if (Array.isArray(value)) {
+        return typeof value[0] === 'number'
+          ? `[${value.join(', ')}]`
+          : `[${value.map((v) => `'${v}'`).join(', ')}]`;
+      } else return typeof value === 'number' ? value : `'${value}'`;
+    },
+    []
   );
+
   useEffect(() => {
     setFilter(filter.toLocaleLowerCase().replace(' ', '_'));
   }, [filter]);
+
   return (
     <div className="game-dev-software-table-component">
       <Grid.Row className="game-dev-software-table-component-search">
@@ -38,7 +43,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
         />
       </Grid.Row>
       <Grid.Row>
-        <Grid.Column width={6}>
+        <Grid.Column>
           <Table celled striped selectable>
             <Table.Header>
               <Table.Row>
@@ -51,7 +56,9 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">
                       {key}
-                      <Header.Subheader>{translations[key]}</Header.Subheader>
+                      <Header.Subheader>
+                        {formatString(constants[key])}
+                      </Header.Subheader>
                     </Header>
                   </Table.Cell>
                   <Table.Cell textAlign="right">
@@ -70,14 +77,6 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
                 </Table.Row>
               ))}
             </Table.Body>
-            <Table.Footer>
-              <Table.Row>
-                <Table.HeaderCell>
-                  {i18n.t('module_translation_table_count_translations')}:&nbsp;
-                  <b>{lengthTranslations}</b>
-                </Table.HeaderCell>
-              </Table.Row>
-            </Table.Footer>
           </Table>
         </Grid.Column>
       </Grid.Row>
@@ -85,4 +84,4 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
   );
 };
 
-export default TranslationTableComponent;
+export default ConstantTableComponent;

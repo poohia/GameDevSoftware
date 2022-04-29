@@ -4,6 +4,7 @@ import TranslationPage from 'renderer/pages/TranslationPage';
 import i18n, { localeEnable } from 'translations/i18n';
 import { DropdownLanguagesComponent } from 'renderer/components';
 import { useCallback } from 'react';
+import ConstantPage from '../ConstantPage';
 
 const HomePage: React.FC<Required<PageProps>> = ({ appendTab }) => {
   const onChangeLocale = useCallback((locale: string) => {
@@ -28,8 +29,15 @@ const HomePage: React.FC<Required<PageProps>> = ({ appendTab }) => {
         languagesFilters={[]}
       />
       <br />
-      <Button onClick={() => appendTab('Translation Module', TranslationPage)}>
-        {i18n.t('moduletranslation')}
+      <Button
+        onClick={() => appendTab(i18n.t('module_translation'), TranslationPage)}
+      >
+        {i18n.t('module_translation')}
+      </Button>
+      <Button
+        onClick={() => appendTab(i18n.t('module_constant'), ConstantPage)}
+      >
+        {i18n.t('module_constant')}
       </Button>
     </div>
   );

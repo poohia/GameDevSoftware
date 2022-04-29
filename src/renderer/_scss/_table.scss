@@ -1,0 +1,19 @@
+.game-dev-software-table-component {
+  margin-top: 30px;
+  table.ui.table {
+    margin-top: 10px;
+    tbody {
+      overflow: auto;
+      display: block;
+      max-height: 60vh;
+      tr {
+        cursor: pointer;
+      }
+    }
+  }
+  .game-dev-software-table-component-search {
+    > div {
+      width: 100%;
+    }
+  }
+}

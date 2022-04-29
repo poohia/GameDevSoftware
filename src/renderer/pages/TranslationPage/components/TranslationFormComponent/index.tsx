@@ -90,6 +90,7 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
                   }}
                   type={'text'}
                   focus
+                  required
                 />
               </Form.Field>
               {values.map((value) => (
