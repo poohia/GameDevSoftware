@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
-import { ElectronIpcMainEvent } from 'types';
+import { ConstantObject, ElectronIpcMainEvent } from 'types';
 import FolderPlugin from './FolderPlugin';
 
 export default class ConstantPlugin {
@@ -14,9 +14,23 @@ export default class ConstantPlugin {
     event.reply('load-constants', JSON.parse(data));
   };
 
+  saveConstants = (event: ElectronIpcMainEvent, args: ConstantObject) => {
+    // @ts-ignore
+    const { path } = global;
+    console.log(path);
+    fs.writeFileSync(
+      `${path}${FolderPlugin.constantFile}`,
+      JSON.stringify(args)
+    );
+    this.loadConstants(event);
+  };
+
   init = () => {
     ipcMain.on('load-constants', (event: Electron.IpcMainEvent) =>
       this.loadConstants(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('save-constants', (event: Electron.IpcMainEvent, args) =>
+      this.saveConstants(event as ElectronIpcMainEvent, args)
     );
   };
 }

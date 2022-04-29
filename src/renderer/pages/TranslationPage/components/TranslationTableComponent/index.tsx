@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Grid, Header, Icon, Input, Table } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import { Translation } from 'types';
@@ -24,9 +24,12 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
     () => Object.keys(translations).length,
     [translations]
   );
+  useEffect(() => {
+    setFilter(filter.toLocaleLowerCase().replace(' ', '_'));
+  }, [filter]);
   return (
-    <div className="game-dev-software-module-translation-table-values">
-      <Grid.Row className="game-dev-software-module-translation-table-values-search">
+    <div className="game-dev-software-table-component">
+      <Grid.Row className="game-dev-software-table-component-search">
         <Input
           icon="search"
           placeholder="Search..."

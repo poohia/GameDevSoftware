@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
-import { ElectronIpcMainEvent } from 'types';
+import { ElectronIpcMainEvent, TranslationObject } from 'types';
 import FolderPlugin from './FolderPlugin';
 
 export default class TranslationPlugin {
@@ -32,7 +32,7 @@ export default class TranslationPlugin {
     });
   };
 
-  saveTranslations = (event: ElectronIpcMainEvent, args: any) => {
+  saveTranslations = (event: ElectronIpcMainEvent, args: TranslationObject) => {
     // @ts-ignore
     const { path } = global;
     Promise.all(

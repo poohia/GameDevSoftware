@@ -1,12 +1,22 @@
-import { useCallback } from 'react';
-import { Grid, Header, Table } from 'semantic-ui-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Button, Grid, Header, Icon, Input, Table } from 'semantic-ui-react';
 import { ConstantObject } from 'types';
 
 type ConstantTableComponentProps = {
   constants: ConstantObject;
+  onClickRow: (key: string) => void;
+  onDelete: (key: string) => void;
 };
 const ConstantTableComponent = (props: ConstantTableComponentProps) => {
-  const { constants } = props;
+  const { constants, onClickRow, onDelete } = props;
+  const [filter, setFilter] = useState<string>('');
+
+  const formatData = useCallback(() => {
+    if (filter !== '') {
+      return Object.keys(constants).filter((key) => key.includes(filter));
+    }
+    return Object.keys(constants);
+  }, [filter, constants]);
   const formatString = useCallback(
     (value: number | number[] | string | string[]) => {
       if (Array.isArray(value)) {
@@ -17,35 +27,59 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
     },
     []
   );
+
+  useEffect(() => {
+    setFilter(filter.toLocaleLowerCase().replace(' ', '_'));
+  }, [filter]);
+
   return (
-    <div>
-      <Grid>
-        <Grid.Row>
-          <Grid.Column>
-            <Table celled striped selectable>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell colSpan="2">Value</Table.HeaderCell>
+    <div className="game-dev-software-table-component">
+      <Grid.Row className="game-dev-software-table-component-search">
+        <Input
+          icon="search"
+          placeholder="Search..."
+          value={filter}
+          onChange={(_, { value }) => setFilter(value as string)}
+        />
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column>
+          <Table celled striped selectable>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell colSpan="2">Value</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {formatData().map((key) => (
+                <Table.Row key={key} onClick={() => onClickRow(key)}>
+                  <Table.Cell width={16}>
+                    <Header as="h3" textAlign="left">
+                      {key}
+                      <Header.Subheader>
+                        {formatString(constants[key])}
+                      </Header.Subheader>
+                    </Header>
+                  </Table.Cell>
+                  <Table.Cell textAlign="right">
+                    <Button
+                      basic
+                      icon
+                      color="red"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onDelete(key);
+                      }}
+                    >
+                      <Icon name="trash" />
+                    </Button>
+                  </Table.Cell>
                 </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {Object.keys(constants).map((key) => (
-                  <Table.Row key={key}>
-                    <Table.Cell width={16}>
-                      <Header as="h3" textAlign="left">
-                        {key}
-                        <Header.Subheader>
-                          {formatString(constants[key])}
-                        </Header.Subheader>
-                      </Header>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
+              ))}
+            </Table.Body>
+          </Table>
+        </Grid.Column>
+      </Grid.Row>
     </div>
   );
 };

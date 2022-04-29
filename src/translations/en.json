@@ -9,5 +9,10 @@
   "module_translation_form_title_update": "Udapte translation",
   "module_translation_form_field_key_label": "Key",
   "module_translation_form_field_submit": "Save",
-  "module_translation_table_count_translations": "Count translations"
+  "module_translation_table_count_translations": "Count translations",
+  "module_constant_header_append_constant": "Append constant",
+  "module_constant_form_title_new": "Create constant",
+  "module_constant_form_title_update": "Update constant",
+  "module_constant_form_field_type_of_constant": "Type of constant",
+  "module_constant_form_field_type_of_value": "Value"
 }

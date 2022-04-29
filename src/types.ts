@@ -12,7 +12,8 @@ export type Channels =
   | 'save-translations'
   | 'set-languages'
   | 'remove-language'
-  | 'load-constants';
+  | 'load-constants'
+  | 'save-constants';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
   appendTab?: (
@@ -26,4 +27,8 @@ export type Translation = {
 export type TranslationObject = {
   [key: string]: Translation;
 };
-export type ConstantObject = {};
+export type ConstantValue = string | number | string[] | number[];
+export type ConstantType = 'string' | 'number' | 'string[]' | 'number[]';
+export type ConstantObject = {
+  [key: string]: ConstantValue;
+};
