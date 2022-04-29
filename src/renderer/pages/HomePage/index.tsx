@@ -1,11 +1,10 @@
 import { Button } from 'semantic-ui-react';
 import { PageProps } from 'types';
-import TranslationPage from 'renderer/pages/TranslationPage';
 import i18n, { localeEnable } from 'translations/i18n';
-import { DropdownLanguagesComponent } from 'renderer/components';
 import { useCallback } from 'react';
-import ConstantPage from '../ConstantPage';
-
+import ConstantPage from 'renderer/pages/ConstantPage';
+import TranslationPage from 'renderer/pages/TranslationPage';
+import { DropdownLanguagesComponent } from 'renderer/components';
 const HomePage: React.FC<Required<PageProps>> = ({ appendTab }) => {
   const onChangeLocale = useCallback((locale: string) => {
     localStorage.setItem('locale', locale);

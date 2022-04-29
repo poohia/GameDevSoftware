@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Grid, Header, Icon, Input, Table } from 'semantic-ui-react';
+import i18n from 'translations/i18n';
 import { ConstantObject } from 'types';
 
 type ConstantTableComponentProps = {
@@ -11,6 +12,10 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
   const { constants, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
 
+  const lengthConstants = useMemo(
+    () => Object.keys(constants).length,
+    [constants]
+  );
   const formatData = useCallback(() => {
     if (filter !== '') {
       return Object.keys(constants).filter((key) => key.includes(filter));
@@ -77,6 +82,14 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
                 </Table.Row>
               ))}
             </Table.Body>
+            <Table.Footer>
+              <Table.Row>
+                <Table.HeaderCell>
+                  {i18n.t('module_table_count_')}:&nbsp;
+                  <b>{lengthConstants}</b>
+                </Table.HeaderCell>
+              </Table.Row>
+            </Table.Footer>
           </Table>
         </Grid.Column>
       </Grid.Row>

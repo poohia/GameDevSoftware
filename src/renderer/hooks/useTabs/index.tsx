@@ -1,13 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import HomePage from 'renderer/pages/HomePage';
 import { Icon, Menu, Tab } from 'semantic-ui-react';
 import i18n from '../../../translations/i18n';
+
+import { HomePage, TranslationPage, ConstantPage } from 'renderer/pages';
+
+const modules: any = [];
+modules['HomePage'] = HomePage;
+modules['TranslationPage'] = TranslationPage;
+modules['ConstantPage'] = ConstantPage;
 
 const useTabs = () => {
   const [tabs, setTabs] = useState<
     {
       id: number;
       index: number;
+      menuItemKey: string;
       menuItem: any;
       render?: () => React.ReactNode;
     }[]
@@ -15,6 +22,7 @@ const useTabs = () => {
     {
       id: 0,
       index: 0,
+      menuItemKey: 'home',
       menuItem: { key: 'home', content: i18n.t('home') },
       render: () => (
         <Tab.Pane className="game-dev-software-body-tab-content">
@@ -42,6 +50,8 @@ const useTabs = () => {
         const { id: idTab } = _tabs[index];
         return { index: index, id: idTab };
       });
+      const tab = _tabs.find((tab) => tab.id === id);
+      tab && removeDatabaseTabs(tab.menuItemKey);
       return Array.from(_tabs.filter((tab) => tab.id !== id));
     });
   }, []);
@@ -75,8 +85,39 @@ const useTabs = () => {
     });
   }, []);
 
+  const saveDatabaseTabs = (menuItem: string, component: string) => {
+    let tabsLocalStorage: any = localStorage.getItem('tabs');
+    if (!tabsLocalStorage) {
+      tabsLocalStorage = [];
+    } else {
+      tabsLocalStorage = JSON.parse(tabsLocalStorage);
+    }
+    localStorage.setItem(
+      'tabs',
+      JSON.stringify(tabsLocalStorage.concat({ menuItem, component }))
+    );
+  };
+
+  const removeDatabaseTabs = (menuItem: string) => {
+    let tabsLocalStorage: any = localStorage.getItem('tabs');
+    if (!tabsLocalStorage) {
+      return;
+    }
+    tabsLocalStorage = JSON.parse(tabsLocalStorage);
+    localStorage.setItem(
+      'tabs',
+      JSON.stringify(
+        tabsLocalStorage.filter((tab: any) => tab.menuItem !== menuItem)
+      )
+    );
+  };
+
   const appendTab = useCallback(
-    (menuItem: string, Component: React.FunctionComponent<any>) => {
+    (
+      menuItem: string,
+      Component: React.FunctionComponent<any>,
+      _saveTabs = true
+    ) => {
       setTabs((_tabs) => {
         const id = _tabs[_tabs.length - 1].id + 1;
         const key = `${menuItem.toLocaleLowerCase().replace(' ', '-')}`;
@@ -87,10 +128,13 @@ const useTabs = () => {
           return _tabs;
         }
         setTabActive({ index, id });
+        _saveTabs && saveDatabaseTabs(menuItem, Component.name);
+
         return Array.from(
           _tabs.concat({
             id,
             index,
+            menuItemKey: menuItem,
             menuItem: (
               <Menu.Item key={key}>
                 {menuItem}
@@ -140,6 +184,18 @@ const useTabs = () => {
     document.removeEventListener('keydown', listenerChangeTab);
     setTabActive({ index, id });
   };
+
+  useEffect(() => {
+    const tabsLocalStorage = localStorage.getItem('tabs');
+
+    if (tabsLocalStorage) {
+      JSON.parse(tabsLocalStorage).forEach((tab: any) => {
+        const { menuItem, component } = tab;
+
+        appendTab(menuItem, modules[component], false);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     window.addEventListener('keydown', listenerChangeTab);

@@ -17,7 +17,6 @@ export default class ConstantPlugin {
   saveConstants = (event: ElectronIpcMainEvent, args: ConstantObject) => {
     // @ts-ignore
     const { path } = global;
-    console.log(path);
     fs.writeFileSync(
       `${path}${FolderPlugin.constantFile}`,
       JSON.stringify(args)

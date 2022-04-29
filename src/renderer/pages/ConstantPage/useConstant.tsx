@@ -45,7 +45,6 @@ const useConstant = () => {
   const deleteConstant = useCallback(
     (key: string) => {
       setConstants((_constants) => {
-        console.log(_constants[key]);
         delete _constants[key];
         sendMessage('save-constants', _constants);
         return JSON.parse(JSON.stringify(_constants));
