@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Icon, Menu, Tab } from 'semantic-ui-react';
-import i18n from '../../../translations/i18n';
+import i18n from 'translations/i18n';
 
 import { HomePage, TranslationPage, ConstantPage } from 'renderer/pages';
+import useDatabase from 'renderer/hooks/useDatabase';
+import { TabActiveType, TabDatabaseType, TabType } from 'types';
 
 const modules: any = [];
 modules['HomePage'] = HomePage;
@@ -10,15 +12,9 @@ modules['TranslationPage'] = TranslationPage;
 modules['ConstantPage'] = ConstantPage;
 
 const useTabs = () => {
-  const [tabs, setTabs] = useState<
-    {
-      id: number;
-      index: number;
-      menuItemKey: string;
-      menuItem: any;
-      render?: () => React.ReactNode;
-    }[]
-  >([
+  const { setItem, getItem } = useDatabase();
+
+  const [tabs, setTabs] = useState<TabType[]>([
     {
       id: 0,
       index: 0,
@@ -32,10 +28,7 @@ const useTabs = () => {
     },
   ]);
 
-  const [tabActive, setTabActive] = useState<{
-    index: number;
-    id: number;
-  }>({
+  const [tabActive, setTabActive] = useState<TabActiveType>({
     index: 0,
     id: 0,
   });
@@ -61,10 +54,14 @@ const useTabs = () => {
       setTabActive((_tabActive) => {
         const index = _tabs.map((tab) => tab.id).indexOf(id) + 1;
         if (_tabs[index] === undefined) {
-          return { index: 0, id: 0 };
+          _tabActive = { index: 0, id: 0 };
+          saveDatabaseTabActive(_tabActive);
+          return _tabActive;
         }
         const { id: idTab } = _tabs[index];
-        return { index: index, id: idTab };
+        _tabActive = { index: index, id: idTab };
+        saveDatabaseTabActive(_tabActive);
+        return _tabActive;
       });
       return _tabs;
     });
@@ -76,39 +73,39 @@ const useTabs = () => {
         const index = _tabs.map((tab) => tab.id).indexOf(id) + -1;
         if (_tabs[index] === undefined) {
           const lastTab = _tabs[_tabs.length - 1];
-          return { index: _tabs.length - 1, id: lastTab.id };
+          _tabActive = { index: _tabs.length - 1, id: lastTab.id };
+          saveDatabaseTabActive(_tabActive);
+          return _tabActive;
         }
         const { id: idTab } = _tabs[index];
-        return { index: index, id: idTab };
+        _tabActive = { index: index, id: idTab };
+        saveDatabaseTabActive(_tabActive);
+        return _tabActive;
       });
       return _tabs;
     });
   }, []);
 
   const saveDatabaseTabs = (menuItem: string, component: string) => {
-    let tabsLocalStorage: any = localStorage.getItem('tabs');
+    let tabsLocalStorage = getItem<TabDatabaseType[]>('tabs');
     if (!tabsLocalStorage) {
       tabsLocalStorage = [];
-    } else {
-      tabsLocalStorage = JSON.parse(tabsLocalStorage);
     }
-    localStorage.setItem(
-      'tabs',
-      JSON.stringify(tabsLocalStorage.concat({ menuItem, component }))
-    );
+    setItem('tabs', tabsLocalStorage.concat({ menuItem, component }));
+  };
+
+  const saveDatabaseTabActive = (tabActive: { index: number; id: number }) => {
+    setItem<TabActiveType>('tab-active', tabActive);
   };
 
   const removeDatabaseTabs = (menuItem: string) => {
-    let tabsLocalStorage: any = localStorage.getItem('tabs');
+    let tabsLocalStorage = getItem<TabDatabaseType[]>('tabs');
     if (!tabsLocalStorage) {
       return;
     }
-    tabsLocalStorage = JSON.parse(tabsLocalStorage);
-    localStorage.setItem(
+    setItem(
       'tabs',
-      JSON.stringify(
-        tabsLocalStorage.filter((tab: any) => tab.menuItem !== menuItem)
-      )
+      tabsLocalStorage.filter((tab) => tab.menuItem !== menuItem)
     );
   };
 
@@ -127,8 +124,10 @@ const useTabs = () => {
           setTabActive({ index: tabFind.index, id: tabFind.id });
           return _tabs;
         }
-        setTabActive({ index, id });
-        _saveTabs && saveDatabaseTabs(menuItem, Component.name);
+        if (_saveTabs) {
+          setTabActive({ index, id });
+          saveDatabaseTabs(menuItem, Component.name);
+        }
 
         return Array.from(
           _tabs.concat({
@@ -182,18 +181,25 @@ const useTabs = () => {
 
   const onTabChange = (index: number, id: number) => {
     document.removeEventListener('keydown', listenerChangeTab);
-    setTabActive({ index, id });
+    const _tabActive = { index, id };
+    saveDatabaseTabActive(_tabActive);
+    setTabActive(_tabActive);
   };
 
   useEffect(() => {
-    const tabsLocalStorage = localStorage.getItem('tabs');
+    const tabsLocalStorage = getItem<TabDatabaseType[]>('tabs');
 
     if (tabsLocalStorage) {
-      JSON.parse(tabsLocalStorage).forEach((tab: any) => {
+      tabsLocalStorage.forEach((tab) => {
         const { menuItem, component } = tab;
 
         appendTab(menuItem, modules[component], false);
       });
+    }
+
+    const tabActiveLocalStorage = getItem<TabActiveType>('tab-active');
+    if (tabActiveLocalStorage) {
+      setTabActive(tabActiveLocalStorage);
     }
   }, []);
 

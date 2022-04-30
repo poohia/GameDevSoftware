@@ -41,7 +41,6 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
                     text: language,
                   }))}
                   onChange={(_, { value }) => onChangeLocale(value as string)}
-                  languagesFilters={[]}
                 />
               </Grid.Column>
               <Grid.Column width={3}>
@@ -62,7 +61,7 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
             <Grid.Row columns={2}>
               <Grid.Column width={13}>
                 <DropdownLanguagesComponent
-                  languagesFilters={languages}
+                  languagesFilters={languages || []}
                   onChange={(_, { value }) => setValue(value as string)}
                   placeholder={i18n.t(
                     'dropdown_languages_placeholder_append_country'

@@ -14,6 +14,7 @@ export type Channels =
   | 'remove-language'
   | 'load-constants'
   | 'save-constants';
+export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
   appendTab?: (
@@ -31,4 +32,19 @@ export type ConstantValue = string | number | string[] | number[];
 export type ConstantType = 'string' | 'number' | 'string[]' | 'number[]';
 export type ConstantObject = {
   [key: string]: ConstantValue;
+};
+export type TabType = {
+  id: number;
+  index: number;
+  menuItemKey: string;
+  menuItem: any;
+  render?: () => React.ReactNode;
+};
+export type TabActiveType = {
+  index: number;
+  id: number;
+};
+export type TabDatabaseType = {
+  menuItem: string;
+  component: string;
 };

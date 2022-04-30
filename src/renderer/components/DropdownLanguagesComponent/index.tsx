@@ -250,15 +250,17 @@ const countryOptions = [
   { text: 'Zimbabwe', flag: 'zw', value: 'zw', key: 'zw' },
 ];
 type DropdownLanguagesComponentProps = DropdownProps & {
-  languagesFilters: string[];
+  languagesFilters?: string[];
 };
 const DropdownLanguagesComponent = (props: DropdownLanguagesComponentProps) => {
   const {
-    languagesFilters,
+    languagesFilters = [],
     placeholder = i18n.t('dropdown_languages_placeholder_default'),
     options,
     onChange,
+    ...rest
   } = props;
+
   const countries = useMemo(() => {
     if (options) {
       return options.filter(
@@ -269,6 +271,7 @@ const DropdownLanguagesComponent = (props: DropdownLanguagesComponentProps) => {
       (country) => !languagesFilters.includes(country.value)
     );
   }, [options, languagesFilters]);
+
   return (
     <Dropdown
       placeholder={placeholder}
@@ -277,7 +280,7 @@ const DropdownLanguagesComponent = (props: DropdownLanguagesComponentProps) => {
       search
       options={countries}
       onChange={onChange}
-      {...props}
+      {...rest}
     />
   );
 };

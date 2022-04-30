@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useEvents } from 'renderer/hooks';
+import { useEvents, useDatabase } from 'renderer/hooks';
 import i18n from 'translations/i18n';
 
 const useApp = () => {
   const [path, setPath] = useState<string | null | undefined>();
   const { on, sendMessage } = useEvents();
+  const { setItem, getItem } = useDatabase();
 
   useEffect(() => {
     on('path-is-correct', (args: string) => {
@@ -18,15 +19,15 @@ const useApp = () => {
         setPath(args);
       }
     });
-    const localeDataStorage = localStorage.getItem('locale');
+    const localeDataStorage = getItem<string>('locale');
     if (localeDataStorage === null) {
-      localStorage.setItem('locale', i18n.locale);
+      setItem('locale', i18n.locale);
     }
   }, []);
 
   useEffect(() => {
-    const lastDirectory = localStorage.getItem('last-path');
-    if (lastDirectory && lastDirectory !== 'undefined') {
+    const lastDirectory = getItem<string>('last-path');
+    if (lastDirectory !== null) {
       sendMessage('last-path', lastDirectory);
     } else {
       setPath(null);
@@ -35,7 +36,7 @@ const useApp = () => {
 
   useEffect(() => {
     if (path) {
-      localStorage.setItem('last-path', path);
+      setItem('last-path', path);
     } else if (path === null) {
       sendMessage('select-path');
     }

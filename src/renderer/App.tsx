@@ -20,6 +20,7 @@ export default function App() {
       <Tab
         panes={tabs}
         onTabChange={(_, data) => {
+          console.log(data);
           const { activeIndex, panes } = data;
 
           onTabChange(

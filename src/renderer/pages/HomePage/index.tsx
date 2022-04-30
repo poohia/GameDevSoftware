@@ -5,9 +5,12 @@ import { useCallback } from 'react';
 import ConstantPage from 'renderer/pages/ConstantPage';
 import TranslationPage from 'renderer/pages/TranslationPage';
 import { DropdownLanguagesComponent } from 'renderer/components';
+import { useDatabase } from 'renderer/hooks';
+
 const HomePage: React.FC<Required<PageProps>> = ({ appendTab }) => {
+  const { setItem } = useDatabase();
   const onChangeLocale = useCallback((locale: string) => {
-    localStorage.setItem('locale', locale);
+    setItem('locale', locale);
     location.reload();
   }, []);
   return (
@@ -25,7 +28,6 @@ const HomePage: React.FC<Required<PageProps>> = ({ appendTab }) => {
           text: language,
         }))}
         onChange={(_, { value }) => onChangeLocale(value as string)}
-        languagesFilters={[]}
       />
       <br />
       <Button
