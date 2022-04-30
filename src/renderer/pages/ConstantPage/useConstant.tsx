@@ -6,7 +6,7 @@ import ConstantFormReducer, { defaultState } from './ConstantFormReducer';
 const useConstant = () => {
   const [constants, setConstants] = useState<ConstantObject>({});
   const [stateForm, dispatch] = useReducer(ConstantFormReducer, defaultState);
-  const { on, sendMessage } = useEvents();
+  const { requestMessage, sendMessage } = useEvents();
 
   const createConstant = useCallback(() => {
     dispatch({
@@ -57,8 +57,7 @@ const useConstant = () => {
   );
 
   useEffect(() => {
-    sendMessage('load-constants');
-    on('load-constants', (args) => {
+    requestMessage('load-constants', (args) => {
       setConstants(args);
     });
   }, []);

@@ -1,54 +1,39 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Button, Grid, Header, Icon, Input, Table } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
-import { ConstantObject } from 'types';
+import { AssetType } from 'types';
 
-type ConstantTableComponentProps = {
-  constants: ConstantObject;
-  onClickRow: (key: string) => void;
-  onDelete: (key: string) => void;
+type AssetTableComponentProps = {
+  assets: AssetType[];
+  onClickRow: (name: string) => void;
+  onDelete: (name: string) => void;
 };
-const ConstantTableComponent = (props: ConstantTableComponentProps) => {
-  const { constants, onClickRow, onDelete } = props;
+const AssetTableComponent = (props: AssetTableComponentProps) => {
+  const { assets, onClickRow, onDelete } = props;
+  console.log(assets);
   const [filter, setFilter] = useState<string>('');
-
-  const lengthConstants = useMemo(
-    () => Object.keys(constants).length,
-    [constants]
-  );
   const formatData = useCallback(() => {
-    if (filter !== '') {
-      return Object.keys(constants).filter((key) => key.includes(filter));
-    }
-    return Object.keys(constants);
-  }, [filter, constants]);
-  const formatString = useCallback(
-    (value: number | number[] | string | string[]) => {
-      if (Array.isArray(value)) {
-        return typeof value[0] === 'number'
-          ? `[${value.join(', ')}]`
-          : `[${value.map((v) => `'${v}'`).join(', ')}]`;
-      } else return typeof value === 'number' ? value : `'${value}'`;
-    },
-    []
-  );
-
-  useEffect(() => {
-    setFilter(filter.toLocaleLowerCase().replace(' ', '_'));
-  }, [filter]);
-
+    // if (filter !== '') {
+    //   return Object.keys(translations).filter(
+    //     (key) => key.includes(filter) || translations[key].includes(filter)
+    //   );
+    // }
+    // return Object.keys(translations);
+    return assets;
+  }, [filter, assets]);
+  const lengthAssets = useMemo(() => assets.length, [assets]);
   return (
     <div className="game-dev-software-table-component">
       <Grid.Row className="game-dev-software-table-component-search">
         <Input
           icon="search"
           placeholder="Search..."
-          value={filter}
-          onChange={(_, { value }) => setFilter(value as string)}
+          //   value={filter}
+          //   onChange={(_, { value }) => setFilter(value as string)}
         />
       </Grid.Row>
       <Grid.Row>
-        <Grid.Column>
+        <Grid.Column width={6}>
           <Table celled striped selectable>
             <Table.Header>
               <Table.Row>
@@ -56,14 +41,12 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData().map((key) => (
-                <Table.Row key={key} onClick={() => onClickRow(key)}>
+              {formatData().map(({ name, type }) => (
+                <Table.Row key={name} onClick={() => onClickRow(name)}>
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">
-                      {key}
-                      <Header.Subheader>
-                        {formatString(constants[key])}
-                      </Header.Subheader>
+                      {name}
+                      <Header.Subheader>{type}</Header.Subheader>
                     </Header>
                   </Table.Cell>
                   <Table.Cell textAlign="right">
@@ -73,7 +56,7 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
                       color="red"
                       onClick={(event) => {
                         event.stopPropagation();
-                        onDelete(key);
+                        onDelete(name);
                       }}
                     >
                       <Icon name="trash" />
@@ -86,7 +69,7 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
               <Table.Row>
                 <Table.HeaderCell>
                   {i18n.t('module_table_count')}:&nbsp;
-                  <b>{lengthConstants}</b>
+                  <b>{lengthAssets}</b>
                 </Table.HeaderCell>
               </Table.Row>
             </Table.Footer>
@@ -97,4 +80,4 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
   );
 };
 
-export default ConstantTableComponent;
+export default AssetTableComponent;

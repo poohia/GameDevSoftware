@@ -73,7 +73,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
             <Table.Footer>
               <Table.Row>
                 <Table.HeaderCell>
-                  {i18n.t('module_table_count_')}:&nbsp;
+                  {i18n.t('module_table_count')}:&nbsp;
                   <b>{lengthTranslations}</b>
                 </Table.HeaderCell>
               </Table.Row>

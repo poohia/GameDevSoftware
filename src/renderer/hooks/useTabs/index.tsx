@@ -2,7 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Icon, Menu, Tab } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 
-import { HomePage, TranslationPage, ConstantPage } from 'renderer/pages';
+import {
+  HomePage,
+  TranslationPage,
+  ConstantPage,
+  AssetPage,
+} from 'renderer/pages';
 import useDatabase from 'renderer/hooks/useDatabase';
 import { TabActiveType, TabDatabaseType, TabType } from 'types';
 
@@ -10,6 +15,7 @@ const modules: any = [];
 modules['HomePage'] = HomePage;
 modules['TranslationPage'] = TranslationPage;
 modules['ConstantPage'] = ConstantPage;
+modules['AssetPage'] = AssetPage;
 
 const useTabs = () => {
   const { setItem, getItem } = useDatabase();

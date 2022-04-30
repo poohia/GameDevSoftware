@@ -11,7 +11,7 @@ const useTranslationPage = () => {
   const [translations, setTranslations] = useState<TranslationObject>({});
   const [locale, setLocale] = useState<string>(i18n.locale);
   /**  */
-  const { once, sendMessage } = useEvents();
+  const { once, sendMessage, requestMessage } = useEvents();
   const [state, dispatch] = useReducer(TranslationFromReducer, defaultState);
   const { translationForm } = state;
   const currentTranslations = useMemo(() => {
@@ -107,8 +107,7 @@ const useTranslationPage = () => {
     once('languages-authorized', (args: { code: string }[]) => {
       setLanguages(args.map((arg) => arg.code));
     });
-    sendMessage('load-translations');
-    once('load-translations', (args) => {
+    requestMessage('load-translations', (args) => {
       setTranslations(args);
     });
   }, []);

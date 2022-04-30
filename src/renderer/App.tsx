@@ -1,7 +1,6 @@
 import { useTabs } from 'renderer/hooks';
 import { Tab } from 'semantic-ui-react';
 import useApp from 'renderer/useApp';
-import { DefaultPage } from './pages';
 
 export default function App() {
   const { path } = useApp();
@@ -20,7 +19,6 @@ export default function App() {
       <Tab
         panes={tabs}
         onTabChange={(_, data) => {
-          console.log(data);
           const { activeIndex, panes } = data;
 
           onTabChange(

@@ -13,7 +13,8 @@ export type Channels =
   | 'set-languages'
   | 'remove-language'
   | 'load-constants'
-  | 'save-constants';
+  | 'save-constants'
+  | 'load-assets';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -47,4 +48,9 @@ export type TabActiveType = {
 export type TabDatabaseType = {
   menuItem: string;
   component: string;
+};
+export type AssertAcceptedType = 'image' | 'sound';
+export type AssetType = {
+  type: AssertAcceptedType;
+  name: string;
 };
