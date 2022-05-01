@@ -1,5 +1,6 @@
 import { Container, Grid, Header } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
+import { ConstantValue } from 'types';
 import {
   ConstantFormComponent,
   ConstantHeaderComponent,
@@ -25,7 +26,7 @@ const ConstantPage = () => {
               <Header as="h1">{i18n.t('module_constant')}</Header>
             </Grid.Row>
             <Grid.Row>
-              <ConstantHeaderComponent onAppendConstant={createConstant} />
+              <ConstantHeaderComponent onClickAdd={createConstant} />
             </Grid.Row>
             <Grid.Row>
               <ConstantTableComponent
@@ -39,7 +40,7 @@ const ConstantPage = () => {
             <Grid.Column width={6}>
               <ConstantFormComponent
                 defaultKey={stateForm.key}
-                defaultValue={stateForm.value}
+                defaultValue={stateForm.value as ConstantValue}
                 onSubmit={sendCreateConstant}
               />
             </Grid.Column>

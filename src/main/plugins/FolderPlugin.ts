@@ -10,6 +10,13 @@ export default class FolderPlugin {
   static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
   static constantFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/constants.json`;
   static assetFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/assets.json`;
+  /** directories */
+  static publicDirectory = '/public';
+  static assetsDirectory = `${FolderPlugin.publicDirectory}/assets`;
+  static directoryImages = `${FolderPlugin.assetsDirectory}/images`;
+  static directoryVideos = `${FolderPlugin.assetsDirectory}/videos`;
+  static directorySounds = `${FolderPlugin.assetsDirectory}/sounds`;
+  static directoryJson = `${FolderPlugin.assetsDirectory}/json`;
 
   static validePath(path: string) {
     let isValid = true;

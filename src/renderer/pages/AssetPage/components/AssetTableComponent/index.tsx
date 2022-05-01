@@ -10,7 +10,6 @@ type AssetTableComponentProps = {
 };
 const AssetTableComponent = (props: AssetTableComponentProps) => {
   const { assets, onClickRow, onDelete } = props;
-  console.log(assets);
   const [filter, setFilter] = useState<string>('');
   const formatData = useCallback(() => {
     // if (filter !== '') {

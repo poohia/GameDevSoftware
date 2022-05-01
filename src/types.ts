@@ -14,7 +14,9 @@ export type Channels =
   | 'remove-language'
   | 'load-constants'
   | 'save-constants'
-  | 'load-assets';
+  | 'load-assets'
+  | 'upload-file'
+  | 'delete-file';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -49,8 +51,16 @@ export type TabDatabaseType = {
   menuItem: string;
   component: string;
 };
-export type AssertAcceptedType = 'image' | 'sound';
+export type AssertAcceptedType = 'image' | 'sound' | 'video' | 'json';
+export type AssertFileValueType = {
+  fileName: string;
+  fileType: AssertAcceptedType;
+  content: any | string;
+};
 export type AssetType = {
   type: AssertAcceptedType;
   name: string;
+};
+export type AssetHeaderComponentProps = {
+  onClickAdd: () => void;
 };
