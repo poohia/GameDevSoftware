@@ -1,17 +1,20 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
 import { ConstantObject, ConstantValue } from 'types';
-import ConstantFormReducer, { defaultState } from './ConstantFormReducer';
+import { FormReducer, defaultStateFormReducer } from 'renderer/reducers';
 
 const useConstant = () => {
   const [constants, setConstants] = useState<ConstantObject>({});
-  const [stateForm, dispatch] = useReducer(ConstantFormReducer, defaultState);
-  const { on, sendMessage } = useEvents();
+  const [stateForm, dispatch] = useReducer(
+    FormReducer,
+    defaultStateFormReducer
+  );
+  const { requestMessage, sendMessage } = useEvents();
 
   const createConstant = useCallback(() => {
     dispatch({
       type: 'show-create-form',
-      data: defaultState,
+      data: defaultStateFormReducer,
     });
   }, []);
 
@@ -57,10 +60,12 @@ const useConstant = () => {
   );
 
   useEffect(() => {
-    sendMessage('load-constants');
-    on('load-constants', (args) => {
+    const unSub = requestMessage('load-constants', (args) => {
       setConstants(args);
     });
+    return () => {
+      unSub();
+    };
   }, []);
 
   return {

@@ -2,16 +2,17 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Icon, Menu, Tab } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 
-import { HomePage, TranslationPage, ConstantPage } from 'renderer/pages';
+import { HomePage } from 'renderer/pages';
 import useDatabase from 'renderer/hooks/useDatabase';
-import { TabActiveType, TabDatabaseType, TabType } from 'types';
+import { TabActiveType, TabDatabaseType, Tables, TabType } from 'types';
 
-const modules: any = [];
-modules['HomePage'] = HomePage;
-modules['TranslationPage'] = TranslationPage;
-modules['ConstantPage'] = ConstantPage;
+export type UseTabsProps = {
+  modules: any[];
+  tableTabs: Tables;
+  tableActiveTab: Tables;
+};
 
-const useTabs = () => {
+const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
   const { setItem, getItem } = useDatabase();
 
   const [tabs, setTabs] = useState<TabType[]>([
@@ -87,24 +88,24 @@ const useTabs = () => {
   }, []);
 
   const saveDatabaseTabs = (menuItem: string, component: string) => {
-    let tabsLocalStorage = getItem<TabDatabaseType[]>('tabs');
+    let tabsLocalStorage = getItem<TabDatabaseType[]>(tableTabs);
     if (!tabsLocalStorage) {
       tabsLocalStorage = [];
     }
-    setItem('tabs', tabsLocalStorage.concat({ menuItem, component }));
+    setItem(tableTabs, tabsLocalStorage.concat({ menuItem, component }));
   };
 
   const saveDatabaseTabActive = (tabActive: { index: number; id: number }) => {
-    setItem<TabActiveType>('tab-active', tabActive);
+    setItem<TabActiveType>(tableActiveTab, tabActive);
   };
 
   const removeDatabaseTabs = (menuItem: string) => {
-    let tabsLocalStorage = getItem<TabDatabaseType[]>('tabs');
+    let tabsLocalStorage = getItem<TabDatabaseType[]>(tableTabs);
     if (!tabsLocalStorage) {
       return;
     }
     setItem(
-      'tabs',
+      tableTabs,
       tabsLocalStorage.filter((tab) => tab.menuItem !== menuItem)
     );
   };
@@ -187,7 +188,7 @@ const useTabs = () => {
   };
 
   useEffect(() => {
-    const tabsLocalStorage = getItem<TabDatabaseType[]>('tabs');
+    const tabsLocalStorage = getItem<TabDatabaseType[]>(tableTabs);
 
     if (tabsLocalStorage) {
       tabsLocalStorage.forEach((tab) => {
@@ -197,7 +198,7 @@ const useTabs = () => {
       });
     }
 
-    const tabActiveLocalStorage = getItem<TabActiveType>('tab-active');
+    const tabActiveLocalStorage = getItem<TabActiveType>(tableActiveTab);
     if (tabActiveLocalStorage) {
       setTabActive(tabActiveLocalStorage);
     }

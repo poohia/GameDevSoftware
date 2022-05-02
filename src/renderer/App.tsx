@@ -1,11 +1,30 @@
 import { useTabs } from 'renderer/hooks';
 import { Tab } from 'semantic-ui-react';
 import useApp from 'renderer/useApp';
-import { DefaultPage } from './pages';
+import { useMemo } from 'react';
+import {
+  AssetPage,
+  ConstantPage,
+  HomePage,
+  TranslationPage,
+} from 'renderer/pages';
+import { UseTabsProps } from 'renderer/hooks/useTabs';
 
 export default function App() {
   const { path } = useApp();
-  const { tabs, tabActive, onTabChange } = useTabs();
+  const tabOptions: UseTabsProps = useMemo(() => {
+    const modules: any = [];
+    modules['HomePage'] = HomePage;
+    modules['TranslationPage'] = TranslationPage;
+    modules['ConstantPage'] = ConstantPage;
+    modules['AssetPage'] = AssetPage;
+    return {
+      modules,
+      tableTabs: 'tabs',
+      tableActiveTab: 'tab-active',
+    };
+  }, []);
+  const { tabs, tabActive, onTabChange } = useTabs(tabOptions);
 
   if (path === undefined) {
     return <div>Loading....</div>;
@@ -20,7 +39,6 @@ export default function App() {
       <Tab
         panes={tabs}
         onTabChange={(_, data) => {
-          console.log(data);
           const { activeIndex, panes } = data;
 
           onTabChange(
@@ -29,6 +47,7 @@ export default function App() {
             panes?.find((_, i) => i === activeIndex)?.id || 0
           );
         }}
+        renderActiveOnly={false}
         activeIndex={tabActive.index}
       />
     </main>

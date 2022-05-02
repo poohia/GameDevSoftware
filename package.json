@@ -240,6 +240,7 @@
     "i18n-js": "^3.9.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-dropzone": "^13.0.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.1.2"
   },

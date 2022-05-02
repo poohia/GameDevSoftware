@@ -2,7 +2,7 @@ import { Button, Grid, Icon } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import { AssetHeaderComponentProps } from 'types';
 
-const ConstantHeaderComponent = (props: AssetHeaderComponentProps) => {
+const AssetHeaderComponent = (props: AssetHeaderComponentProps) => {
   const { onClickAdd } = props;
   return (
     <Grid.Column width={16}>
@@ -18,4 +18,4 @@ const ConstantHeaderComponent = (props: AssetHeaderComponentProps) => {
   );
 };
 
-export default ConstantHeaderComponent;
+export default AssetHeaderComponent;

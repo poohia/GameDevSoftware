@@ -3,27 +3,24 @@ import { Channels } from '../types';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
-    sendMessage(chanel: Channels, args?: any[]) {
-      ipcRenderer.send(chanel, args);
+    sendMessage(channel: Channels, args?: any[]) {
+      ipcRenderer.send(channel, args);
     },
     on(channel: Channels, func: (...args: unknown[]) => void) {
-      // const validChannels = ['ipc-example', 'directory'];
-      // if (validChannels.includes(channel)) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
         func(...args);
-      // Deliberately strip event as it includes `sender`
       ipcRenderer.on(channel, subscription);
       return () => ipcRenderer.removeListener(channel, subscription);
-      // }
-
-      // return undefined;
     },
     once(channel: Channels, func: (...args: unknown[]) => void) {
-      // const validChannels = ['ipc-example', 'directory'];
-      // if (validChannels.includes(channel)) {
-      // Deliberately strip event as it includes `sender`
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
-      // }
+    },
+    requestMessage(channel: Channels, func: (...args: unknown[]) => void) {
+      ipcRenderer.send(channel);
+      const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
+        func(...args);
+      ipcRenderer.on(channel, subscription);
+      return () => ipcRenderer.removeListener(channel, subscription);
     },
   },
 });

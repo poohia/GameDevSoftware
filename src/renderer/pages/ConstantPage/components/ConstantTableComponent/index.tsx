@@ -85,7 +85,7 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
             <Table.Footer>
               <Table.Row>
                 <Table.HeaderCell>
-                  {i18n.t('module_table_count_')}:&nbsp;
+                  {i18n.t('module_table_count')}:&nbsp;
                   <b>{lengthConstants}</b>
                 </Table.HeaderCell>
               </Table.Row>

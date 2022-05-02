@@ -1,21 +1,21 @@
 import { ConstantValue } from 'types';
 
-type State = {
+type State<T = any> = {
   show: boolean;
   key: string;
-  value?: ConstantValue;
+  value?: T;
 };
 type Action = {
   type: 'hide-form' | 'show-create-form' | 'show-update-form';
   data?: Omit<State, 'show'>;
 };
 
-export const defaultState: State = {
+export const defaultState: State<ConstantValue> = {
   show: false,
   key: '',
 };
 
-export default (state: State, action: Action): State => {
+const formReducer = <T = string>(state: State<T>, action: Action): State<T> => {
   const { type, data } = action;
   switch (type) {
     case 'hide-form':
@@ -40,3 +40,5 @@ export default (state: State, action: Action): State => {
       return state;
   }
 };
+
+export default formReducer;

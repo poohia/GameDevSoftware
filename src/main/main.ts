@@ -14,7 +14,12 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { FolderPlugin, TranslationPlugin, ConstantPlugin } from './plugins';
+import {
+  FolderPlugin,
+  TranslationPlugin,
+  ConstantPlugin,
+  AssetPlugin,
+} from './plugins';
 
 export default class AppUpdater {
   constructor() {
@@ -101,9 +106,12 @@ const createWindow = async () => {
   const folderPlugin = new FolderPlugin(mainWindow);
   const translationPlugin = new TranslationPlugin();
   const constantPlugin = new ConstantPlugin();
+  const assetPlugin = new AssetPlugin();
+
   folderPlugin.init();
   translationPlugin.init();
   constantPlugin.init();
+  assetPlugin.init();
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();

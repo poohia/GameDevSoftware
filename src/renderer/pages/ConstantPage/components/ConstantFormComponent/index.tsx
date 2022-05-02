@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Button,
   Container,
@@ -112,7 +112,6 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
             <Form>
               <Form.Field>
                 <Form.Input
-                  defaultValue={defaultKey}
                   disabled={!!defaultValue}
                   label={i18n.t('module_translation_form_field_key_label')}
                   value={key}

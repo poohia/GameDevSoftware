@@ -2,8 +2,11 @@ import { Button } from 'semantic-ui-react';
 import { PageProps } from 'types';
 import i18n, { localeEnable } from 'translations/i18n';
 import { useCallback } from 'react';
+/** Pages */
 import ConstantPage from 'renderer/pages/ConstantPage';
 import TranslationPage from 'renderer/pages/TranslationPage';
+import AssetPage from 'renderer/pages/AssetPage';
+/**  */
 import { DropdownLanguagesComponent } from 'renderer/components';
 import { useDatabase } from 'renderer/hooks';
 
@@ -39,6 +42,9 @@ const HomePage: React.FC<Required<PageProps>> = ({ appendTab }) => {
         onClick={() => appendTab(i18n.t('module_constant'), ConstantPage)}
       >
         {i18n.t('module_constant')}
+      </Button>
+      <Button onClick={() => appendTab(i18n.t('module_asset'), AssetPage)}>
+        {i18n.t('module_asset')}
       </Button>
     </div>
   );
