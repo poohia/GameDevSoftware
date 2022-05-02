@@ -107,9 +107,12 @@ const useTranslationPage = () => {
     once('languages-authorized', (args: { code: string }[]) => {
       setLanguages(args.map((arg) => arg.code));
     });
-    requestMessage('load-translations', (args) => {
+    const unSub = requestMessage('load-translations', (args) => {
       setTranslations(args);
     });
+    return () => {
+      unSub();
+    };
   }, []);
 
   useEffect(() => {

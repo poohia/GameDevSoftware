@@ -1,8 +1,11 @@
 import { Container, Grid, Header } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
-import { AssetTableComponent } from './components';
-import AssetFormComponent from './components/AssetFormComponent';
-import AssetHeaderComponent from './components/AssetHeaderComponent';
+import {
+  AssetTableComponent,
+  AssetFormComponent,
+  AssetHeaderComponent,
+  AssetPreviewComponent,
+} from './components';
 import useAssetPage from './useAssetPage';
 
 const AssetPage = () => {
@@ -21,12 +24,29 @@ const AssetPage = () => {
               />
             </Grid.Row>
             <Grid.Row>
-              <AssetTableComponent assets={assets} onDelete={deleteFile} />
+              <AssetTableComponent
+                assets={assets}
+                onClickRow={(asset) => {
+                  dispatch({
+                    type: 'show-update-form',
+                    data: {
+                      key: asset.name,
+                      value: asset,
+                    },
+                  });
+                }}
+                onDelete={deleteFile}
+              />
             </Grid.Row>
           </Grid.Column>
-          {stateForm.show && (
+          {stateForm.show && !stateForm.isEdit && (
             <Grid.Column width={6}>
               <AssetFormComponent onSubmit={saveFile} />
+            </Grid.Column>
+          )}
+          {stateForm.show && stateForm.isEdit && (
+            <Grid.Column width={6}>
+              <AssetPreviewComponent asset={stateForm.value} />
             </Grid.Column>
           )}
         </Grid.Row>

@@ -60,9 +60,12 @@ const useConstant = () => {
   );
 
   useEffect(() => {
-    requestMessage('load-constants', (args) => {
+    const unSub = requestMessage('load-constants', (args) => {
       setConstants(args);
     });
+    return () => {
+      unSub();
+    };
   }, []);
 
   return {

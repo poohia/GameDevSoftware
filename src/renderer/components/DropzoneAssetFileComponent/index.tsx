@@ -106,6 +106,8 @@ const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
     }
   }, [value]);
 
+  console.log(isDragAccept, isDragReject);
+
   return (
     <Container fluid>
       <div {...getRootProps({ style })}>
@@ -118,40 +120,42 @@ const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
         <aside>
           <h4>File</h4>
           <p>{file.name}</p>
-          {file.type.includes('image') && (
-            <img
-              src={file.preview}
-              // Revoke data uri after image is loaded
-              onLoad={() => {
-                URL.revokeObjectURL(file.preview);
-              }}
-            />
-          )}
-          {file.type.includes('video') && (
-            <video
-              width="320"
-              height="240"
-              controls
-              src={file.preview}
-              // Revoke data uri after image is loaded
-              onLoad={() => {
-                URL.revokeObjectURL(file.preview);
-              }}
-            />
-          )}
-          {file.type.includes('audio') && (
-            <audio
-              controls
-              src={file.preview}
-              // Revoke data uri after image is loaded
-              onLoad={() => {
-                URL.revokeObjectURL(file.preview);
-              }}
-            />
-          )}
-          {file.type === 'application/json' &&
-            value &&
-            value.fileType === 'json' && <code>{value.content}</code>}
+          <div className="game-dev-software-file-preview-content">
+            {file.type.includes('image') && (
+              <img
+                src={file.preview}
+                // Revoke data uri after image is loaded
+                onLoad={() => {
+                  URL.revokeObjectURL(file.preview);
+                }}
+              />
+            )}
+            {file.type.includes('video') && (
+              <video
+                width="320"
+                height="240"
+                controls
+                src={file.preview}
+                // Revoke data uri after image is loaded
+                onLoad={() => {
+                  URL.revokeObjectURL(file.preview);
+                }}
+              />
+            )}
+            {file.type.includes('audio') && (
+              <audio
+                controls
+                src={file.preview}
+                // Revoke data uri after image is loaded
+                onLoad={() => {
+                  URL.revokeObjectURL(file.preview);
+                }}
+              />
+            )}
+            {file.type === 'application/json' &&
+              value &&
+              value.fileType === 'json' && <code>{value.content}</code>}
+          </div>
         </aside>
       )}
     </Container>

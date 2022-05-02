@@ -1,15 +1,17 @@
 export type State<T = any> = {
   show: boolean;
+  isEdit: boolean;
   key: string;
   value?: T;
 };
 export type Action<T = any> = {
   type: 'hide-form' | 'show-create-form' | 'show-update-form';
-  data?: Omit<State<T>, 'show'>;
+  data?: Pick<State<T>, 'key' | 'value'>;
 };
 
 export const defaultState: State = {
   show: false,
+  isEdit: false,
   key: '',
 };
 
@@ -18,12 +20,14 @@ const FormReducer = <T = string>(state: State<T>, action: Action): State<T> => {
   const hideForm = () => {
     return {
       show: false,
+      isEdit: false,
       key: '',
     };
   };
-  const showForm = () => {
+  const showForm = (isEdit = false) => {
     return {
       show: true,
+      isEdit,
       key: data ? data.key : '',
       value: data ? data.value : '',
     };
@@ -35,7 +39,7 @@ const FormReducer = <T = string>(state: State<T>, action: Action): State<T> => {
       if (state.value && state.key === data?.key) {
         return hideForm();
       }
-      return showForm();
+      return showForm(true);
     case 'show-create-form':
       if (state.show && !state.value) {
         return hideForm();

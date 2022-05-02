@@ -23,9 +23,12 @@ const useAssetPage = () => {
     sendMessage('delete-file', fileName);
   };
   useEffect(() => {
-    requestMessage('load-assets', (args) => {
+    const unSub = requestMessage('load-assets', (args) => {
       setAssets(args);
     });
+    return () => {
+      unSub();
+    };
   }, []);
   return { assets, stateForm, dispatch, saveFile, deleteFile };
 };

@@ -47,6 +47,7 @@ export default function App() {
             panes?.find((_, i) => i === activeIndex)?.id || 0
           );
         }}
+        renderActiveOnly={false}
         activeIndex={tabActive.index}
       />
     </main>

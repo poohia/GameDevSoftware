@@ -16,7 +16,8 @@ export type Channels =
   | 'save-constants'
   | 'load-assets'
   | 'upload-file'
-  | 'delete-file';
+  | 'delete-file'
+  | 'get-asset-information';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {

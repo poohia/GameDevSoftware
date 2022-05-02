@@ -12,17 +12,7 @@ type DropdownAssetTypesComponentProps = Omit<DropdownProps, 'options'> & {};
 const DropdownAssetTypesComponent = (
   props: DropdownAssetTypesComponentProps
 ) => {
-  const { defaultValue = 'image', ...rest } = props;
-  return (
-    <Dropdown
-      fluid
-      selection
-      search
-      options={typesOptions}
-      defaultValue={defaultValue}
-      {...rest}
-    />
-  );
+  return <Dropdown fluid selection search options={typesOptions} {...props} />;
 };
 
 export default DropdownAssetTypesComponent;

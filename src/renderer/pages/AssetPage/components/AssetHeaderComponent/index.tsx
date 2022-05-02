@@ -8,7 +8,7 @@ const AssetHeaderComponent = (props: AssetHeaderComponentProps) => {
     <Grid.Column width={16}>
       <Grid.Row>
         <Grid.Column>
-          <Button icon color="green" onClick={onClickAdd}>
+          <Button icon color="green" labelPosition="right" onClick={onClickAdd}>
             {i18n.t('module_constant_header_append_constant')}
             <Icon name="add" />
           </Button>

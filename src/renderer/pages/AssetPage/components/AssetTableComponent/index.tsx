@@ -1,38 +1,55 @@
 import { useCallback, useMemo, useState } from 'react';
+import { DropdownAssetTypesComponent } from 'renderer/components';
 import { Button, Grid, Header, Icon, Input, Table } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
-import { AssetType } from 'types';
+import { AssertAcceptedType, AssetType } from 'types';
 
 type AssetTableComponentProps = {
   assets: AssetType[];
-  onClickRow: (name: string) => void;
+  onClickRow: (name: AssetType) => void;
   onDelete: (name: string) => void;
 };
 const AssetTableComponent = (props: AssetTableComponentProps) => {
   const { assets, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
+  const [filterType, setFilterType] = useState<AssertAcceptedType | string>('');
   const formatData = useCallback(() => {
-    // if (filter !== '') {
-    //   return Object.keys(translations).filter(
-    //     (key) => key.includes(filter) || translations[key].includes(filter)
-    //   );
-    // }
-    // return Object.keys(translations);
-    return assets;
-  }, [filter, assets]);
-  const lengthAssets = useMemo(() => assets.length, [assets]);
+    let _assets = assets;
+    if (filter !== '') {
+      _assets = _assets.filter((asset) => asset.name.includes(filter));
+    }
+    if (filterType !== '') {
+      _assets = _assets.filter((asset) => asset.type === filterType);
+    }
+    return _assets;
+  }, [filter, , filterType, assets]);
+  const assetsToShow = useMemo(() => formatData(), [formatData]);
+  const lengthAssets = useMemo(() => assetsToShow.length, [assetsToShow]);
   return (
-    <div className="game-dev-software-table-component">
-      <Grid.Row className="game-dev-software-table-component-search">
-        <Input
-          icon="search"
-          placeholder="Search..."
-          //   value={filter}
-          //   onChange={(_, { value }) => setFilter(value as string)}
-        />
+    <Grid className="game-dev-software-table-component">
+      <Grid.Row
+        className="game-dev-software-table-component-search"
+        columns={2}
+      >
+        <Grid.Column>
+          <Input
+            icon="search"
+            placeholder="Search..."
+            value={filter}
+            fluid
+            onChange={(_, { value }) => setFilter(value as string)}
+          />
+        </Grid.Column>
+        <Grid.Column width={6}>
+          <DropdownAssetTypesComponent
+            placeholder="File type"
+            onChange={(_: any, data: any) => setFilterType(data.value)}
+            clearable
+          />
+        </Grid.Column>
       </Grid.Row>
       <Grid.Row>
-        <Grid.Column width={6}>
+        <Grid.Column width={16}>
           <Table celled striped selectable>
             <Table.Header>
               <Table.Row>
@@ -40,8 +57,11 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData().map(({ name, type }) => (
-                <Table.Row key={name} onClick={() => onClickRow(name)}>
+              {assetsToShow.map(({ name, type }) => (
+                <Table.Row
+                  key={name}
+                  onClick={() => onClickRow({ name, type })}
+                >
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">
                       {name}
@@ -75,7 +95,7 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
           </Table>
         </Grid.Column>
       </Grid.Row>
-    </div>
+    </Grid>
   );
 };
 

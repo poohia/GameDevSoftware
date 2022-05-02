@@ -4,7 +4,6 @@ import {
   AssertAcceptedType,
   AssertFileValueType,
   AssetType,
-  ConstantObject,
   ElectronIpcMainEvent,
 } from 'types';
 import FolderPlugin from './FolderPlugin';
@@ -57,9 +56,10 @@ export default class AssetPlugin {
     const { fileName, fileType, content } = arg;
     const assets = this.readAssetFile();
     // @ts-ignore
-    const assetsJSON: AssetType[] = JSON.parse(assets);
     this.writeAssetFile(
-      assetsJSON.concat({ type: fileType, name: fileName }),
+      assets
+        .filter((asset) => asset.name !== fileName)
+        .concat({ type: fileType, name: fileName }),
       () => {
         const destinationPath = `${this.directoryFromFileType(
           fileType
@@ -106,6 +106,26 @@ export default class AssetPlugin {
     );
   };
 
+  getAssetInformation = (event: ElectronIpcMainEvent, arg: AssetType) => {
+    const { name, type } = arg;
+    const pathDirectory = this.directoryFromFileType(type);
+    fs.readFile(`${pathDirectory}${name}`, (err, data) => {
+      if (err) return;
+      if (type === 'json') {
+        event.reply(
+          'get-asset-information',
+          // @ts-ignore
+          JSON.stringify(JSON.parse(data))
+        );
+      } else {
+        event.reply(
+          'get-asset-information',
+          Buffer.from(data).toString('base64')
+        );
+      }
+    });
+  };
+
   init = () => {
     ipcMain.on('load-assets', (event: Electron.IpcMainEvent) =>
       this.loadAssets(event as ElectronIpcMainEvent)
@@ -115,6 +135,9 @@ export default class AssetPlugin {
     });
     ipcMain.on('delete-file', (event, args) => {
       this.deleteAsset(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('get-asset-information', (event, args) => {
+      this.getAssetInformation(event as ElectronIpcMainEvent, args);
     });
   };
 }
