@@ -4,18 +4,19 @@
   "module_constant": "Constant Module",
   "dropdown_languages_placeholder_default": "Select Country",
   "dropdown_languages_placeholder_append_country": "Append language",
-  "module_translation_header_button_append_translation": "Append translation",
+  "module_translation_header_button_append_translation": "Create translation",
   "module_translation_form_title_new": "Create translation",
   "module_translation_form_title_update": "Udapte translation",
   "module_translation_form_field_key_label": "Key",
   "module_translation_form_field_submit": "Save",
   "module_table_count": "Count",
-  "module_constant_header_append_constant": "Append constant",
+  "module_constant_header_append_constant": "Create constant",
   "module_constant_form_title_new": "Create constant",
   "module_constant_form_title_update": "Update constant",
   "module_constant_form_field_type_of_constant": "Type of constant",
   "module_constant_form_field_type_of_value": "Value",
   "module_asset": "Asset module",
   "form_title_new": "Create",
-  "form_title_update": "Update"
+  "form_title_update": "Update",
+  "module_constant_header_append_asset": "Create asset"
 }

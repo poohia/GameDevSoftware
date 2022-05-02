@@ -26,7 +26,7 @@ const TranslationPage = () => {
     <Container fluid>
       <Grid>
         <Grid.Row>
-          <Grid.Column width={10}>
+          <Grid.Column width={8}>
             <Grid.Row>
               <Header as="h1">{i18n.t('module_translation')}</Header>
             </Grid.Row>
@@ -50,7 +50,7 @@ const TranslationPage = () => {
             </Grid.Row>
           </Grid.Column>
           {translationForm && (
-            <Grid.Column width={6}>
+            <Grid.Column width={8}>
               <TranslationFormComponent
                 {...translationForm}
                 onSubmit={appendTranslation}

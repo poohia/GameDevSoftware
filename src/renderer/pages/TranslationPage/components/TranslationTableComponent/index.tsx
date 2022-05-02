@@ -28,17 +28,20 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
     setFilter(filter.toLocaleLowerCase().replace(' ', '_'));
   }, [filter]);
   return (
-    <div className="game-dev-software-table-component">
+    <Grid className="game-dev-software-table-component">
       <Grid.Row className="game-dev-software-table-component-search">
-        <Input
-          icon="search"
-          placeholder="Search..."
-          value={filter}
-          onChange={(_, { value }) => setFilter(value as string)}
-        />
+        <Grid.Column>
+          <Input
+            icon="search"
+            placeholder="Search..."
+            value={filter}
+            fluid
+            onChange={(_, { value }) => setFilter(value as string)}
+          />
+        </Grid.Column>
       </Grid.Row>
       <Grid.Row>
-        <Grid.Column width={6}>
+        <Grid.Column width={16}>
           <Table celled striped selectable>
             <Table.Header>
               <Table.Row>
@@ -81,7 +84,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
           </Table>
         </Grid.Column>
       </Grid.Row>
-    </div>
+    </Grid>
   );
 };
 

@@ -21,7 +21,7 @@ const ConstantPage = () => {
     <Container fluid>
       <Grid>
         <Grid.Row>
-          <Grid.Column width={10}>
+          <Grid.Column width={8}>
             <Grid.Row>
               <Header as="h1">{i18n.t('module_constant')}</Header>
             </Grid.Row>
@@ -37,7 +37,7 @@ const ConstantPage = () => {
             </Grid.Row>
           </Grid.Column>
           {stateForm.show && (
-            <Grid.Column width={6}>
+            <Grid.Column width={8}>
               <ConstantFormComponent
                 defaultKey={stateForm.key}
                 defaultValue={stateForm.value as ConstantValue}

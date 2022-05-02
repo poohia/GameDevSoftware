@@ -33,17 +33,13 @@ const HomePage: React.FC<Required<PageProps>> = ({ appendTab }) => {
         onChange={(_, { value }) => onChangeLocale(value as string)}
       />
       <br />
-      <Button
-        onClick={() => appendTab(i18n.t('module_translation'), TranslationPage)}
-      >
+      <Button onClick={() => appendTab('module_translation', TranslationPage)}>
         {i18n.t('module_translation')}
       </Button>
-      <Button
-        onClick={() => appendTab(i18n.t('module_constant'), ConstantPage)}
-      >
+      <Button onClick={() => appendTab('module_constant', ConstantPage)}>
         {i18n.t('module_constant')}
       </Button>
-      <Button onClick={() => appendTab(i18n.t('module_asset'), AssetPage)}>
+      <Button onClick={() => appendTab('module_asset', AssetPage)}>
         {i18n.t('module_asset')}
       </Button>
     </div>

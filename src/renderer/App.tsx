@@ -40,7 +40,6 @@ export default function App() {
         panes={tabs}
         onTabChange={(_, data) => {
           const { activeIndex, panes } = data;
-
           onTabChange(
             activeIndex as number,
             // @ts-ignore

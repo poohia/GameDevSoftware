@@ -38,14 +38,17 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
   }, [filter]);
 
   return (
-    <div className="game-dev-software-table-component">
+    <Grid className="game-dev-software-table-component">
       <Grid.Row className="game-dev-software-table-component-search">
-        <Input
-          icon="search"
-          placeholder="Search..."
-          value={filter}
-          onChange={(_, { value }) => setFilter(value as string)}
-        />
+        <Grid.Column width={16}>
+          <Input
+            icon="search"
+            placeholder="Search..."
+            value={filter}
+            fluid
+            onChange={(_, { value }) => setFilter(value as string)}
+          />
+        </Grid.Column>
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>
@@ -93,7 +96,7 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
           </Table>
         </Grid.Column>
       </Grid.Row>
-    </div>
+    </Grid>
   );
 };
 

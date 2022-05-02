@@ -4,7 +4,7 @@ import i18n from 'translations/i18n';
 
 import { HomePage } from 'renderer/pages';
 import useDatabase from 'renderer/hooks/useDatabase';
-import { TabActiveType, TabDatabaseType, Tables, TabType } from 'types';
+import { TabActiveType, TabDatabaseType, Tables } from 'types';
 
 export type UseTabsProps = {
   modules: any[];
@@ -15,20 +15,6 @@ export type UseTabsProps = {
 const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
   const { setItem, getItem } = useDatabase();
 
-  const [tabs, setTabs] = useState<TabType[]>([
-    {
-      id: 0,
-      index: 0,
-      menuItemKey: 'home',
-      menuItem: { key: 'home', content: i18n.t('home') },
-      render: () => (
-        <Tab.Pane className="game-dev-software-body-tab-content">
-          <HomePage appendTab={appendTab} />
-        </Tab.Pane>
-      ),
-    },
-  ]);
-
   const [tabActive, setTabActive] = useState<TabActiveType>({
     index: 0,
     id: 0,
@@ -38,11 +24,14 @@ const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
     setTabs((_tabs) => {
       setTabActive((_tabActive) => {
         if (id !== _tabActive.id) {
+          saveDatabaseTabActive(_tabActive);
           return _tabActive;
         }
         const index = _tabs.map((tab) => tab.id).indexOf(id) - 1;
         const { id: idTab } = _tabs[index];
-        return { index: index, id: idTab };
+        _tabActive = { index: index, id: idTab };
+        saveDatabaseTabActive(_tabActive);
+        return _tabActive;
       });
       const tab = _tabs.find((tab) => tab.id === id);
       tab && removeDatabaseTabs(tab.menuItemKey);
@@ -118,7 +107,8 @@ const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
     ) => {
       setTabs((_tabs) => {
         const id = _tabs[_tabs.length - 1].id + 1;
-        const key = `${menuItem.toLocaleLowerCase().replace(' ', '-')}`;
+        const menuItemTranslate = i18n.t(menuItem);
+        const key = menuItem;
         const tabFind = _tabs.find((tab) => tab.menuItem.key === key);
         const index = _tabs.length;
         if (tabFind) {
@@ -137,7 +127,7 @@ const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
             menuItemKey: menuItem,
             menuItem: (
               <Menu.Item key={key}>
-                {menuItem}
+                {menuItemTranslate}
                 <Icon
                   name="close"
                   onClick={(event: Event) => {
@@ -147,8 +137,8 @@ const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
                 />
               </Menu.Item>
             ),
-            render: () => (
-              <Tab.Pane>
+            pane: (
+              <Tab.Pane key={key}>
                 <Component appendTab={appendTab} id={tabActive.id} />
               </Tab.Pane>
             ),
@@ -210,6 +200,20 @@ const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
       window.removeEventListener('keydown', listenerChangeTab);
     };
   }, [listenerChangeTab]);
+
+  const [tabs, setTabs] = useState<any[]>([
+    {
+      id: 0,
+      index: 0,
+      menuItemKey: 'home',
+      menuItem: i18n.t('home'),
+      pane: (
+        <Tab.Pane key="home" className="game-dev-software-body-tab-content">
+          <HomePage appendTab={appendTab} />
+        </Tab.Pane>
+      ),
+    },
+  ]);
 
   return {
     tabs,

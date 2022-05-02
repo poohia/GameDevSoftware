@@ -9,7 +9,7 @@ const AssetHeaderComponent = (props: AssetHeaderComponentProps) => {
       <Grid.Row>
         <Grid.Column>
           <Button icon color="green" labelPosition="right" onClick={onClickAdd}>
-            {i18n.t('module_constant_header_append_constant')}
+            {i18n.t('module_constant_header_append_asset')}
             <Icon name="add" />
           </Button>
         </Grid.Column>

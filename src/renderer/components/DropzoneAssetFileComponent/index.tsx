@@ -50,11 +50,12 @@ const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
     isFocused,
   } = useDropzone({
     accept: {
-      'image/*': ['.jpeg', '.png'],
+      'image/*': ['.jpeg', '.jpg', '.png'],
       'video/*': ['.mp4', '.mkv'],
       'audio/*': ['.mp3'],
       'application/json': ['.json'],
     },
+    maxFiles: 1,
     onDrop: (acceptedFiles) => {
       const file = acceptedFiles[0];
       setFile((_: any) => {
@@ -67,9 +68,10 @@ const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
   const style: any = useMemo(
     () => ({
       ...baseStyle,
-      ...(isFocused ? focusedStyle : {}),
-      ...(isDragAccept ? acceptStyle : {}),
-      ...(isDragReject ? rejectStyle : {}),
+      ...focusedStyle,
+      // ...(isFocused ? focusedStyle : {}),
+      // ...(isDragAccept ? acceptStyle : {}),
+      // ...(isDragReject ? rejectStyle : {}),
     }),
     [isFocused, isDragAccept, isDragReject]
   );
@@ -112,9 +114,10 @@ const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
     <Container fluid>
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
-        {isDragAccept && <p>All files will be accepted</p>}
-        {isDragReject && <p>Some files will be rejected</p>}
-        {!isDragActive && <p>Drop some files here ...</p>}
+        {/* {isDragAccept && <p>File will be accepted</p>}
+        {isDragReject && <p>File will be rejected</p>} */}
+        {/* {!isDragActive && <p>Drop file here ...</p>} */}
+        <p>Drop file here ...</p>
       </div>
       {file && (
         <aside>
