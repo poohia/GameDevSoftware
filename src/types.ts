@@ -69,10 +69,10 @@ export type AssetHeaderComponentProps = {
 };
 export type ApplicationParams1 = {
   package: string;
+  version: string;
+  buildVersion: string;
   name: string;
   description?: string;
   authorEmail: string;
   authorName: string;
-  version: string;
-  buildVersion: string;
 };
