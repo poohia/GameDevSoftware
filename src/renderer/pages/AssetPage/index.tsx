@@ -9,7 +9,14 @@ import {
 import useAssetPage from './useAssetPage';
 
 const AssetPage = () => {
-  const { assets, stateForm, dispatch, saveFile, deleteFile } = useAssetPage();
+  const {
+    assets,
+    stateForm,
+    dispatch,
+    saveFile,
+    deleteFile,
+    sendMultipleUploads,
+  } = useAssetPage();
   return (
     <Container fluid>
       <Grid>
@@ -21,6 +28,7 @@ const AssetPage = () => {
             <Grid.Row>
               <AssetHeaderComponent
                 onClickAdd={() => dispatch({ type: 'show-create-form' })}
+                onClickMultipleAdd={sendMultipleUploads}
               />
             </Grid.Row>
             <Grid.Row>

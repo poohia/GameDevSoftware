@@ -10,6 +10,7 @@ export default class FolderPlugin {
   static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
   static constantFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/constants.json`;
   static assetFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/assets.json`;
+  static configFile = `/config.xml`;
   /** directories */
   static publicDirectory = '/public';
   static assetsDirectory = `${FolderPlugin.publicDirectory}/assets`;
@@ -20,7 +21,9 @@ export default class FolderPlugin {
 
   static validePath(path: string) {
     let isValid = true;
-    if (!fs.existsSync(`${path}${FolderPlugin.translationDirectory}`)) {
+    if (!fs.existsSync(`${path}${FolderPlugin.configFile}`)) {
+      isValid = false;
+    } else if (!fs.existsSync(`${path}${FolderPlugin.translationDirectory}`)) {
       isValid = false;
     } else if (!fs.existsSync(`${path}${FolderPlugin.translationDirectory}`)) {
       isValid = false;

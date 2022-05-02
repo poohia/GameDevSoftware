@@ -1,15 +1,33 @@
-import { ipcMain } from 'electron';
+import { ipcMain, dialog, BrowserWindow } from 'electron';
 import fs from 'fs';
+import each from 'async/each';
 import {
   AssertAcceptedType,
   AssertFileValueType,
   AssetType,
   ElectronIpcMainEvent,
 } from 'types';
+import path from 'path';
 import FolderPlugin from './FolderPlugin';
 
 export default class AssetPlugin {
-  constructor() {}
+  constructor(private mainWindow: BrowserWindow) {}
+
+  private typeFromExtension = (ext: string): AssertAcceptedType => {
+    if (ext === '.png' || ext === '.jpg' || ext === '.jpeg') {
+      return 'image';
+    }
+    if (ext === '.mp3') {
+      return 'sound';
+    }
+    if (ext === 'mp4' || ext === 'mkv') {
+      return 'video';
+    }
+    if (ext === 'json') {
+      return 'json';
+    }
+    throw new Error('extension error');
+  };
 
   private directoryFromFileType = (fileType: AssertAcceptedType) => {
     // @ts-ignore
@@ -126,6 +144,61 @@ export default class AssetPlugin {
     });
   };
 
+  selectMultipleFiles = (event: ElectronIpcMainEvent) => {
+    dialog
+      .showOpenDialog(this.mainWindow, {
+        properties: ['openFile', 'multiSelections'],
+        filters: [
+          { extensions: ['.jpg', '.jpeg', '.png'], name: 'Image' },
+          { extensions: ['.mp3'], name: 'Sound' },
+          { extensions: ['.mp4', '.mkv'], name: 'Video' },
+          { extensions: ['json'], name: 'Json' },
+          {
+            extensions: [
+              '.jpg',
+              '.jpeg',
+              '.png',
+              '.mp3',
+              '.mp4',
+              '.mkv',
+              'json',
+            ],
+            name: 'All',
+          },
+        ],
+      })
+      .then((result) => {
+        const assets = this.readAssetFile();
+        console.log(
+          '🚀 ~ file: AssetPlugin.ts ~ line 171 ~ AssetPlugin ~ .then ~ assets',
+          assets
+        );
+        each(
+          result.filePaths,
+          (filePath: string, callback: (err?: any) => void) => {
+            const type = this.typeFromExtension(path.extname(filePath));
+            const name = path.basename(filePath);
+            assets.push({ type, name });
+            const destinationPath = `${this.directoryFromFileType(
+              type
+            )}${name}`;
+            fs.copyFile(filePath, destinationPath, (err) => {
+              if (err) {
+                callback(err);
+                return;
+              }
+              callback();
+            });
+          },
+          () => {
+            this.writeAssetFile(assets, () => {
+              this.loadAssets(event);
+            });
+          }
+        );
+      });
+  };
+
   init = () => {
     ipcMain.on('load-assets', (event: Electron.IpcMainEvent) =>
       this.loadAssets(event as ElectronIpcMainEvent)
@@ -138,6 +211,9 @@ export default class AssetPlugin {
     });
     ipcMain.on('get-asset-information', (event, args) => {
       this.getAssetInformation(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('select-multiple-files', (event) => {
+      this.selectMultipleFiles(event as ElectronIpcMainEvent);
     });
   };
 }

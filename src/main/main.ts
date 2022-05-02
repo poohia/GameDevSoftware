@@ -20,6 +20,7 @@ import {
   ConstantPlugin,
   AssetPlugin,
 } from './plugins';
+import ApplicationPlugin from './plugins/ApplicationPlugin';
 
 export default class AppUpdater {
   constructor() {
@@ -104,11 +105,13 @@ const createWindow = async () => {
   });
 
   const folderPlugin = new FolderPlugin(mainWindow);
+  const applicationPlugin = new ApplicationPlugin();
   const translationPlugin = new TranslationPlugin();
   const constantPlugin = new ConstantPlugin();
-  const assetPlugin = new AssetPlugin();
+  const assetPlugin = new AssetPlugin(mainWindow);
 
   folderPlugin.init();
+  applicationPlugin.init();
   translationPlugin.init();
   constantPlugin.init();
   assetPlugin.init();
@@ -125,17 +128,6 @@ const createWindow = async () => {
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
-
-  // ipcMain.on('select-dirs', async (event, arg) => {
-  //   const result = await dialog.showOpenDialog(mainWindow, {
-  //     properties: ['openDirectory'],
-  //   });
-  //   event.sender.send('directory', result.filePaths);
-  //   console.log(
-  //     '🚀 ~ file: main.ts ~ line 119 ~ ipcMain.on ~ result.filePaths',
-  //     result.filePaths
-  //   );
-  // });
 };
 
 /**

@@ -17,7 +17,9 @@ export type Channels =
   | 'load-assets'
   | 'upload-file'
   | 'delete-file'
-  | 'get-asset-information';
+  | 'select-multiple-files'
+  | 'get-asset-information'
+  | 'load-params-1';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -64,4 +66,13 @@ export type AssetType = {
 };
 export type AssetHeaderComponentProps = {
   onClickAdd: () => void;
+};
+export type ApplicationParams1 = {
+  package: string;
+  name: string;
+  description?: string;
+  authorEmail: string;
+  authorName: string;
+  version: string;
+  buildVersion: string;
 };

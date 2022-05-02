@@ -22,6 +22,9 @@ const useAssetPage = () => {
     });
     sendMessage('delete-file', fileName);
   };
+  const sendMultipleUploads = () => {
+    sendMessage('select-multiple-files');
+  };
   useEffect(() => {
     const unSub = requestMessage('load-assets', (args) => {
       setAssets(args);
@@ -30,7 +33,14 @@ const useAssetPage = () => {
       unSub();
     };
   }, []);
-  return { assets, stateForm, dispatch, saveFile, deleteFile };
+  return {
+    assets,
+    stateForm,
+    dispatch,
+    saveFile,
+    deleteFile,
+    sendMultipleUploads,
+  };
 };
 
 export default useAssetPage;

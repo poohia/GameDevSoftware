@@ -1,5 +1,6 @@
 {
   "home": "Home",
+  "module_application": "Application Module",
   "module_translation": "Translation Module",
   "module_constant": "Constant Module",
   "dropdown_languages_placeholder_default": "Select Country",
@@ -18,5 +19,6 @@
   "module_asset": "Asset module",
   "form_title_new": "Create",
   "form_title_update": "Update",
-  "module_constant_header_append_asset": "Create asset"
+  "module_constant_header_append_asset": "Create asset",
+  "module_constant_header_append_multiple_asset": "Create mulitple assets"
 }

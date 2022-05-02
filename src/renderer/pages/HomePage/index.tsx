@@ -3,9 +3,12 @@ import { PageProps } from 'types';
 import i18n, { localeEnable } from 'translations/i18n';
 import { useCallback } from 'react';
 /** Pages */
-import ConstantPage from 'renderer/pages/ConstantPage';
-import TranslationPage from 'renderer/pages/TranslationPage';
-import AssetPage from 'renderer/pages/AssetPage';
+import {
+  ApplicationPage,
+  ConstantPage,
+  TranslationPage,
+  AssetPage,
+} from 'renderer/pages';
 /**  */
 import { DropdownLanguagesComponent } from 'renderer/components';
 import { useDatabase } from 'renderer/hooks';
@@ -33,6 +36,9 @@ const HomePage: React.FC<Required<PageProps>> = ({ appendTab }) => {
         onChange={(_, { value }) => onChangeLocale(value as string)}
       />
       <br />
+      <Button onClick={() => appendTab('module_application', ApplicationPage)}>
+        {i18n.t('module_application')}
+      </Button>
       <Button onClick={() => appendTab('module_translation', TranslationPage)}>
         {i18n.t('module_translation')}
       </Button>

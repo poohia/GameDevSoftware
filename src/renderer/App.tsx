@@ -3,6 +3,7 @@ import { Tab } from 'semantic-ui-react';
 import useApp from 'renderer/useApp';
 import { useMemo } from 'react';
 import {
+  ApplicationPage,
   AssetPage,
   ConstantPage,
   HomePage,
@@ -15,6 +16,7 @@ export default function App() {
   const tabOptions: UseTabsProps = useMemo(() => {
     const modules: any = [];
     modules['HomePage'] = HomePage;
+    modules['ApplicationPage'] = ApplicationPage;
     modules['TranslationPage'] = TranslationPage;
     modules['ConstantPage'] = ConstantPage;
     modules['AssetPage'] = AssetPage;
