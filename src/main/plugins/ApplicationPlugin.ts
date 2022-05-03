@@ -1,18 +1,126 @@
-import { ipcMain } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 import fs from 'fs';
-import { ElectronIpcMainEvent } from 'types';
+import { XMLParser, XMLBuilder } from 'fast-xml-parser';
+import { ApplicationIdentityParams, ElectronIpcMainEvent } from 'types';
 import FolderPlugin from './FolderPlugin';
+import {
+  ApplicationImagesPlugin,
+  ApplicationPlatformsPlugin,
+} from './subPlugins';
+
+const options = { ignoreAttributes: false, format: true };
+const parser = new XMLParser(options);
+const builder = new XMLBuilder(options);
 
 export default class ApplicationPlugin {
-  constructor() {}
+  private _imagePlugin;
+  private _platformsPlugin;
+  constructor(private mainWindow: BrowserWindow) {
+    this._imagePlugin = new ApplicationImagesPlugin(mainWindow);
+    this._platformsPlugin = new ApplicationPlatformsPlugin();
+  }
 
-  loadParams1 = (event: ElectronIpcMainEvent) => {
-    event.reply('load-params-1', 'pong');
+  private writeOnIndexHtml = (
+    args: Pick<ApplicationIdentityParams, 'name' | 'description'>
+  ) => {
+    // @ts-ignore
+    const { path } = global;
+    const xmlString = fs.readFileSync(
+      `${path}${FolderPlugin.indexHtml}`,
+      'utf8'
+    );
+    const xml = parser.parse(xmlString);
+    const { head } = xml.html;
+    const { meta } = head;
+    head.title = args.name;
+    meta.forEach((m: any) => {
+      if (m['@_name'] === 'description') {
+        m['@_content'] = args.description;
+      }
+    });
+    fs.writeFile(
+      `${path}${FolderPlugin.indexHtml}`,
+      builder.build(xml),
+      () => {}
+    );
+  };
+
+  private openConfigFile = () => {
+    // @ts-ignore
+    const { path } = global;
+    const xmlString = fs.readFileSync(
+      `${path}${FolderPlugin.configFile}`,
+      'utf8'
+    );
+    return parser.parse(xmlString);
+  };
+
+  private writeConfigFile = (xml: any) => {
+    // @ts-ignore
+    const { path } = global;
+    fs.writeFileSync(`${path}${FolderPlugin.configFile}`, builder.build(xml));
+  };
+
+  loadParamsIdentity = (event: ElectronIpcMainEvent) => {
+    const xml = this.openConfigFile();
+    const { widget } = xml;
+    const { author } = widget;
+    const data: ApplicationIdentityParams = {
+      package: widget['@_id'],
+      version: widget['@_version'],
+      buildVersion: widget['@_android-versionCode'],
+      name: widget.name,
+      description: widget.description,
+      authorEmail: author['@_email'],
+      authorName: author['#text'],
+      authorWebSite: author['@_href'],
+    };
+
+    event.reply('load-params-identity', data);
+  };
+
+  setParamsIdentity = (
+    event: ElectronIpcMainEvent,
+    args: ApplicationIdentityParams
+  ) => {
+    const xml = this.openConfigFile();
+    const { widget } = xml;
+    const { author } = widget;
+    (widget['@_id'] = args.package),
+      (widget['@_version'] = args.version),
+      (widget['@_android-versionCode'] = args.buildVersion),
+      (widget['@_ios-CFBundleVersion'] = args.buildVersion),
+      (widget.name = args.name),
+      (widget.description = args.description || ''),
+      (author['@_email'] = args.authorEmail),
+      (author['#text'] = args.authorName),
+      (author['@_href'] = args.authorWebSite);
+    this.writeConfigFile(xml);
+    this.loadParamsIdentity(event);
+    this.writeOnIndexHtml({ name: args.name, description: args.description });
   };
 
   init = () => {
-    ipcMain.on('load-params-1', (event: Electron.IpcMainEvent) =>
-      this.loadParams1(event as ElectronIpcMainEvent)
+    ipcMain.on('load-params-identity', (event: Electron.IpcMainEvent) =>
+      this.loadParamsIdentity(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('set-params-identity', (event: Electron.IpcMainEvent, args) =>
+      this.setParamsIdentity(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('load-params-image', (event: Electron.IpcMainEvent) =>
+      this._imagePlugin.loadParamsImage(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('replace-params-image', (event: Electron.IpcMainEvent, args) =>
+      this._imagePlugin.replaceParamsImage(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('load-platforms', (event: Electron.IpcMainEvent) =>
+      this._platformsPlugin.loadPlatforms(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('remove-platform', (event: Electron.IpcMainEvent, args) =>
+      this._platformsPlugin.removePlatform(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('add-platform', (event: Electron.IpcMainEvent, args) =>
+      this._platformsPlugin.addPlatform(event as ElectronIpcMainEvent, args)
     );
   };
 }

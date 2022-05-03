@@ -6,11 +6,12 @@ import { Translation } from 'types';
 type TranslationTableComponentProps = {
   translations: Translation;
   locale: string;
+  keySelected?: string;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
 const TranslationTableComponent = (props: TranslationTableComponentProps) => {
-  const { translations, onClickRow, onDelete } = props;
+  const { translations, keySelected, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
   const formatData = useCallback(() => {
     if (filter !== '') {
@@ -27,6 +28,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
   useEffect(() => {
     setFilter(filter.toLocaleLowerCase().replace(' ', '_'));
   }, [filter]);
+
   return (
     <Grid className="game-dev-software-table-component">
       <Grid.Row className="game-dev-software-table-component-search">
@@ -42,7 +44,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
       </Grid.Row>
       <Grid.Row>
         <Grid.Column width={16}>
-          <Table celled striped selectable>
+          <Table celled selectable>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell colSpan="2">Value</Table.HeaderCell>
@@ -50,7 +52,11 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
             </Table.Header>
             <Table.Body>
               {formatData().map((key) => (
-                <Table.Row key={key} onClick={() => onClickRow(key)}>
+                <Table.Row
+                  key={key}
+                  active={keySelected === key}
+                  onClick={() => onClickRow(key)}
+                >
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">
                       {key}

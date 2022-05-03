@@ -5,11 +5,12 @@ import { ConstantObject } from 'types';
 
 type ConstantTableComponentProps = {
   constants: ConstantObject;
+  keySelected?: string;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
 const ConstantTableComponent = (props: ConstantTableComponentProps) => {
-  const { constants, onClickRow, onDelete } = props;
+  const { constants, keySelected, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
 
   const lengthConstants = useMemo(
@@ -52,7 +53,7 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>
-          <Table celled striped selectable>
+          <Table celled selectable>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell colSpan="2">Value</Table.HeaderCell>
@@ -60,7 +61,11 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
             </Table.Header>
             <Table.Body>
               {formatData().map((key) => (
-                <Table.Row key={key} onClick={() => onClickRow(key)}>
+                <Table.Row
+                  key={key}
+                  active={keySelected === key}
+                  onClick={() => onClickRow(key)}
+                >
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">
                       {key}

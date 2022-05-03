@@ -6,11 +6,12 @@ import { AssertAcceptedType, AssetType } from 'types';
 
 type AssetTableComponentProps = {
   assets: AssetType[];
+  keySelected?: string;
   onClickRow: (name: AssetType) => void;
   onDelete: (name: string) => void;
 };
 const AssetTableComponent = (props: AssetTableComponentProps) => {
-  const { assets, onClickRow, onDelete } = props;
+  const { assets, keySelected, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
   const [filterType, setFilterType] = useState<AssertAcceptedType | string>('');
   const formatData = useCallback(() => {
@@ -50,7 +51,7 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
       </Grid.Row>
       <Grid.Row>
         <Grid.Column width={16}>
-          <Table celled striped selectable>
+          <Table celled selectable>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell colSpan="2">Value</Table.HeaderCell>
@@ -61,6 +62,7 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
                 <Table.Row
                   key={name}
                   onClick={() => onClickRow({ name, type })}
+                  active={keySelected === name}
                 >
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">

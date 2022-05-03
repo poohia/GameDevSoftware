@@ -17,9 +17,10 @@ const AssetPage = () => {
     deleteFile,
     sendMultipleUploads,
   } = useAssetPage();
+
   return (
     <Container fluid>
-      <Grid>
+      <Grid columns={2} divided>
         <Grid.Row>
           <Grid.Column width={8}>
             <Grid.Row>
@@ -34,6 +35,7 @@ const AssetPage = () => {
             <Grid.Row>
               <AssetTableComponent
                 assets={assets}
+                keySelected={stateForm.key}
                 onClickRow={(asset) => {
                   dispatch({
                     type: 'show-update-form',

@@ -105,7 +105,7 @@ const createWindow = async () => {
   });
 
   const folderPlugin = new FolderPlugin(mainWindow);
-  const applicationPlugin = new ApplicationPlugin();
+  const applicationPlugin = new ApplicationPlugin(mainWindow);
   const translationPlugin = new TranslationPlugin();
   const constantPlugin = new ConstantPlugin();
   const assetPlugin = new AssetPlugin(mainWindow);
