@@ -36,7 +36,7 @@ const PlatformsComponent = () => {
               <Grid.Row>
                 <Grid.Column>
                   <Header as="h3">
-                    <Icon name="ios" />
+                    <Icon name="apple" />
                     <Header.Content>ios</Header.Content>
                   </Header>
                 </Grid.Column>
