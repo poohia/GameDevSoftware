@@ -8,6 +8,7 @@ export default class FolderPlugin {
   static publicDirectory = '/public';
   static gameDevSoftwareDirectory = '/GameDevSoftware';
   static resourcesDirectory = '/resources';
+  static platformsDirectory = '/platforms';
 
   static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
   static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
@@ -26,6 +27,12 @@ export default class FolderPlugin {
     `${FolderPlugin.publicDirectory}/favicon.png`,
     `${FolderPlugin.resourcesDirectory}/icon.png`,
     `${FolderPlugin.resourcesDirectory}/splash.png`,
+  ];
+  static appPlatforms = [
+    `${FolderPlugin.platformsDirectory}/android`,
+    `${FolderPlugin.platformsDirectory}/ios`,
+    `${FolderPlugin.platformsDirectory}/electron`,
+    `${FolderPlugin.platformsDirectory}/browser`,
   ];
 
   static validePath(path: string) {

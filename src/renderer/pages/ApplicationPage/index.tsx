@@ -1,6 +1,11 @@
 import { Container, Grid } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
-import { IdentityParamsComponent, ImagesParamsComponent } from './components';
+import {
+  IdentityParamsComponent,
+  ImagesParamsComponent,
+  PlatformsComponent,
+} from './components';
+import useApplicationPage from './useApplicationPage';
 
 const ApplicationPage = () => {
   return (
@@ -19,6 +24,11 @@ const ApplicationPage = () => {
         <Grid.Row>
           <Grid.Column width={16}>
             <ImagesParamsComponent />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <PlatformsComponent />
           </Grid.Column>
         </Grid.Row>
       </Grid>

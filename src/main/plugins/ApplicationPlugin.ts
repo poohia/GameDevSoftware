@@ -3,7 +3,10 @@ import fs from 'fs';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import { ApplicationIdentityParams, ElectronIpcMainEvent } from 'types';
 import FolderPlugin from './FolderPlugin';
-import ApplicationImagesPlugin from './subPlugins/ApplicationImagesPlugin';
+import {
+  ApplicationImagesPlugin,
+  ApplicationPlatformsPlugin,
+} from './subPlugins';
 
 const options = { ignoreAttributes: false, format: true };
 const parser = new XMLParser(options);
@@ -11,8 +14,10 @@ const builder = new XMLBuilder(options);
 
 export default class ApplicationPlugin {
   private _imagePlugin;
+  private _platformsPlugin;
   constructor(private mainWindow: BrowserWindow) {
     this._imagePlugin = new ApplicationImagesPlugin(mainWindow);
+    this._platformsPlugin = new ApplicationPlatformsPlugin();
   }
 
   private writeOnIndexHtml = (
@@ -107,6 +112,15 @@ export default class ApplicationPlugin {
     );
     ipcMain.on('replace-params-image', (event: Electron.IpcMainEvent, args) =>
       this._imagePlugin.replaceParamsImage(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('load-platforms', (event: Electron.IpcMainEvent) =>
+      this._platformsPlugin.loadPlatforms(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('remove-platform', (event: Electron.IpcMainEvent, args) =>
+      this._platformsPlugin.removePlatform(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('add-platform', (event: Electron.IpcMainEvent, args) =>
+      this._platformsPlugin.addPlatform(event as ElectronIpcMainEvent, args)
     );
   };
 }

@@ -22,7 +22,10 @@ export type Channels =
   | 'load-params-identity'
   | 'set-params-identity'
   | 'load-params-image'
-  | 'replace-params-image';
+  | 'replace-params-image'
+  | 'load-platforms'
+  | 'remove-platform'
+  | 'add-platform';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -84,4 +87,10 @@ export type ApplicationImageParams = {
   favicon: string;
   icon: string;
   splashscreen: string;
+};
+export type PlatformsParams = {
+  android: boolean;
+  ios: boolean;
+  electron: boolean;
+  browser: boolean;
 };

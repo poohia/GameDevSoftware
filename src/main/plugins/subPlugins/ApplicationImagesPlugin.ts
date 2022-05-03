@@ -1,4 +1,4 @@
-import { ipcMain, dialog, BrowserWindow } from 'electron';
+import { dialog, BrowserWindow } from 'electron';
 import { ApplicationImageParams, ElectronIpcMainEvent } from 'types';
 import each from 'async/each';
 import fs from 'fs';

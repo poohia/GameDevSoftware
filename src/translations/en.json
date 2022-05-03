@@ -22,5 +22,8 @@
   "module_constant_header_append_asset": "Create asset",
   "module_constant_header_append_multiple_asset": "Create mulitple assets",
   "module_application_params_identity_title": "Identity",
-  "module_application_params_images_title": "Images"
+  "module_application_params_images_title": "Images",
+  "module_application_params_platforms_title": "Platforms",
+  "module_application_params_platforms_append": "Append platform",
+  "module_application_params_platforms_remove": "Remove platform"
 }
