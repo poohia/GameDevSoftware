@@ -20,7 +20,9 @@ export type Channels =
   | 'select-multiple-files'
   | 'get-asset-information'
   | 'load-params-identity'
-  | 'set-params-identity';
+  | 'set-params-identity'
+  | 'load-params-image'
+  | 'replace-params-image';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -77,4 +79,9 @@ export type ApplicationIdentityParams = {
   authorEmail: string;
   authorName: string;
   authorWebSite: string;
+};
+export type ApplicationImageParams = {
+  favicon: string;
+  icon: string;
+  splashscreen: string;
 };

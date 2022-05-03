@@ -15,3 +15,27 @@
     }
   }
 }
+.game-dev-software-module-application-params-images-container {
+  text-align: center;
+  img {
+    cursor: pointer;
+  }
+  div {
+    &:nth-child(1) {
+      img {
+        width: 64px;
+      }
+    }
+    &:nth-child(2) {
+      img {
+        width: 200px;
+      }
+    }
+    &:nth-child(3) {
+      img {
+        width: 300px;
+        height: 350px;
+      }
+    }
+  }
+}

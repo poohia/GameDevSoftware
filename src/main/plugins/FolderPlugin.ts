@@ -7,6 +7,7 @@ export default class FolderPlugin {
   static srcDirectory = '/src';
   static publicDirectory = '/public';
   static gameDevSoftwareDirectory = '/GameDevSoftware';
+  static resourcesDirectory = '/resources';
 
   static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
   static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
@@ -20,6 +21,12 @@ export default class FolderPlugin {
   static directoryVideos = `${FolderPlugin.assetsDirectory}/videos`;
   static directorySounds = `${FolderPlugin.assetsDirectory}/sounds`;
   static directoryJson = `${FolderPlugin.assetsDirectory}/json`;
+  /** */
+  static appImages = [
+    `${FolderPlugin.publicDirectory}/favicon.png`,
+    `${FolderPlugin.resourcesDirectory}/icon.png`,
+    `${FolderPlugin.resourcesDirectory}/splash.png`,
+  ];
 
   static validePath(path: string) {
     let isValid = true;

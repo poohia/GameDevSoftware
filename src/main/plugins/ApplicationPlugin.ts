@@ -1,15 +1,19 @@
-import { ipcMain } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 import fs from 'fs';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import { ApplicationIdentityParams, ElectronIpcMainEvent } from 'types';
 import FolderPlugin from './FolderPlugin';
+import ApplicationImagesPlugin from './subPlugins/ApplicationImagesPlugin';
 
 const options = { ignoreAttributes: false, format: true };
 const parser = new XMLParser(options);
 const builder = new XMLBuilder(options);
 
 export default class ApplicationPlugin {
-  constructor() {}
+  private _imagePlugin;
+  constructor(private mainWindow: BrowserWindow) {
+    this._imagePlugin = new ApplicationImagesPlugin(mainWindow);
+  }
 
   private writeOnIndexHtml = (
     args: Pick<ApplicationIdentityParams, 'name' | 'description'>
@@ -97,6 +101,12 @@ export default class ApplicationPlugin {
     );
     ipcMain.on('set-params-identity', (event: Electron.IpcMainEvent, args) =>
       this.setParamsIdentity(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('load-params-image', (event: Electron.IpcMainEvent) =>
+      this._imagePlugin.loadParamsImage(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('replace-params-image', (event: Electron.IpcMainEvent, args) =>
+      this._imagePlugin.replaceParamsImage(event as ElectronIpcMainEvent, args)
     );
   };
 }
