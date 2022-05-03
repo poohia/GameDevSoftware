@@ -1,0 +1,17 @@
+.game-dev-software-module-application-params-identity-segment {
+  padding: 30px 25px 30px 25px !important;
+  position: relative;
+  span.game-dev-software-module-application-params-identity-segment-title {
+    font-size: 1.4rem;
+    position: absolute;
+    top: -11px;
+    left: 9px;
+    background-color: white;
+    z-index: 1;
+  }
+  form {
+    button[type='submit'] {
+      display: none;
+    }
+  }
+}

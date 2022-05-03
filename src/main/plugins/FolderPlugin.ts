@@ -5,14 +5,16 @@ import { ElectronIpcMainEvent } from 'types';
 export default class FolderPlugin {
   constructor(private mainWindow: BrowserWindow) {}
   static srcDirectory = '/src';
-  static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
+  static publicDirectory = '/public';
   static gameDevSoftwareDirectory = '/GameDevSoftware';
+
+  static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
   static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
   static constantFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/constants.json`;
   static assetFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/assets.json`;
   static configFile = `/config.xml`;
+  static indexHtml = `${FolderPlugin.publicDirectory}/index.html`;
   /** directories */
-  static publicDirectory = '/public';
   static assetsDirectory = `${FolderPlugin.publicDirectory}/assets`;
   static directoryImages = `${FolderPlugin.assetsDirectory}/images`;
   static directoryVideos = `${FolderPlugin.assetsDirectory}/videos`;

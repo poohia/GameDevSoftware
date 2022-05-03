@@ -8,6 +8,8 @@ import {
   ElectronIpcMainEvent,
 } from 'types';
 import path from 'path';
+import { FileService } from '../services';
+
 import FolderPlugin from './FolderPlugin';
 
 export default class AssetPlugin {
@@ -92,15 +94,9 @@ export default class AssetPlugin {
             }
           );
         } else {
-          // const binaryData = Buffer.from(arg.content, 'base64');
-          const binaryData = Buffer.from(
-            content.replace(/^data:([A-Za-z-+/]+);base64,/, ''),
-            'base64'
+          FileService.saveFileFromBase64(content, destinationPath, () =>
+            this.loadAssets(event)
           );
-          fs.writeFile(destinationPath, binaryData, (err) => {
-            if (err) return;
-            this.loadAssets(event);
-          });
         }
       }
     );
@@ -127,21 +123,24 @@ export default class AssetPlugin {
   getAssetInformation = (event: ElectronIpcMainEvent, arg: AssetType) => {
     const { name, type } = arg;
     const pathDirectory = this.directoryFromFileType(type);
-    fs.readFile(`${pathDirectory}${name}`, (err, data) => {
-      if (err) return;
-      if (type === 'json') {
+    const path = `${pathDirectory}${name}`;
+    if (type === 'json') {
+      fs.readFile(path, (err, data) => {
+        if (err) {
+          console.log(err);
+          throw new Error(err.message);
+        }
         event.reply(
           'get-asset-information',
           // @ts-ignore
           JSON.stringify(JSON.parse(data))
         );
-      } else {
-        event.reply(
-          'get-asset-information',
-          Buffer.from(data).toString('base64')
-        );
-      }
-    });
+      });
+    } else {
+      FileService.getFileBase64(path, (base64) => {
+        event.reply('get-asset-information', base64);
+      });
+    }
   };
 
   selectMultipleFiles = (event: ElectronIpcMainEvent) => {
@@ -169,10 +168,6 @@ export default class AssetPlugin {
       })
       .then((result) => {
         const assets = this.readAssetFile();
-        console.log(
-          '🚀 ~ file: AssetPlugin.ts ~ line 171 ~ AssetPlugin ~ .then ~ assets',
-          assets
-        );
         each(
           result.filePaths,
           (filePath: string, callback: (err?: any) => void) => {

@@ -20,7 +20,7 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
   });
   return (
     <Container fluid>
-      <Grid>
+      <Grid className="game-dev-software-form-container">
         <Grid.Row>
           <Grid.Column>
             <Header as="h1">

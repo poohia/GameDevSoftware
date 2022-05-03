@@ -19,7 +19,8 @@ export type Channels =
   | 'delete-file'
   | 'select-multiple-files'
   | 'get-asset-information'
-  | 'load-params-1';
+  | 'load-params-identity'
+  | 'set-params-identity';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -67,7 +68,7 @@ export type AssetType = {
 export type AssetHeaderComponentProps = {
   onClickAdd: () => void;
 };
-export type ApplicationParams1 = {
+export type ApplicationIdentityParams = {
   package: string;
   version: string;
   buildVersion: string;
@@ -75,4 +76,5 @@ export type ApplicationParams1 = {
   description?: string;
   authorEmail: string;
   authorName: string;
+  authorWebSite: string;
 };

@@ -20,5 +20,7 @@
   "form_title_new": "Create",
   "form_title_update": "Update",
   "module_constant_header_append_asset": "Create asset",
-  "module_constant_header_append_multiple_asset": "Create mulitple assets"
+  "module_constant_header_append_multiple_asset": "Create mulitple assets",
+  "module_application_params_identity_title": "Identity",
+  "module_application_params_images_title": "Images"
 }
