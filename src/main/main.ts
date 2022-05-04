@@ -104,6 +104,9 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
+  // @ts-ignore
+  global.mainWindow = mainWindow;
+
   const folderPlugin = new FolderPlugin(mainWindow);
   const applicationPlugin = new ApplicationPlugin(mainWindow);
   const translationPlugin = new TranslationPlugin();

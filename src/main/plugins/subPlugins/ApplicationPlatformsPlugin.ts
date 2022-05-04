@@ -5,6 +5,7 @@ import FolderPlugin from '../FolderPlugin';
 import { CordovaService } from '../../services';
 
 export default class ApplicationPlatformsPlugin {
+  private _cordovaService = new CordovaService();
   loadPlatforms = (event: ElectronIpcMainEvent) => {
     // @ts-ignore
     const path = global.path;
@@ -62,5 +63,9 @@ export default class ApplicationPlatformsPlugin {
       }
       this.loadPlatforms(event);
     });
+  };
+
+  toggleProject = (event: ElectronIpcMainEvent) => {
+    this._cordovaService.toggleProcess();
   };
 }

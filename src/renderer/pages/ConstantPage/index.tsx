@@ -17,7 +17,7 @@ const ConstantPage = () => {
     updateConstant,
     deleteConstant,
   } = useConstant();
-  console.log(stateForm.key);
+
   return (
     <Container fluid>
       <Grid divided columns={2}>

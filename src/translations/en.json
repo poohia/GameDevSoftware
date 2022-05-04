@@ -25,5 +25,8 @@
   "module_application_params_images_title": "Images",
   "module_application_params_platforms_title": "Platforms",
   "module_application_params_platforms_append": "Append platform",
-  "module_application_params_platforms_remove": "Remove platform"
+  "module_application_params_platforms_remove": "Remove platform",
+  "module_application_home_project_title": "Project",
+  "module_application_home_project_start": "Start project",
+  "module_application_home_project_stop": "Stop"
 }

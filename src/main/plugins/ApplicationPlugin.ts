@@ -1,12 +1,18 @@
 import { BrowserWindow, ipcMain } from 'electron';
 import fs from 'fs';
+import async from 'async';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
-import { ApplicationIdentityParams, ElectronIpcMainEvent } from 'types';
+import {
+  ApplicationIdentityParams,
+  ElectronIpcMainEvent,
+  SoftwaresInfo,
+} from 'types';
 import FolderPlugin from './FolderPlugin';
 import {
   ApplicationImagesPlugin,
   ApplicationPlatformsPlugin,
 } from './subPlugins';
+import { VersionSoftwareService } from '../services';
 
 const options = { ignoreAttributes: false, format: true };
 const parser = new XMLParser(options);
@@ -15,6 +21,13 @@ const builder = new XMLBuilder(options);
 export default class ApplicationPlugin {
   private _imagePlugin;
   private _platformsPlugin;
+  private _softwaresToCheck: Array<keyof SoftwaresInfo> = [
+    'git',
+    'node',
+    'npm',
+    'cordova',
+    'cordova-res',
+  ];
   constructor(private mainWindow: BrowserWindow) {
     this._imagePlugin = new ApplicationImagesPlugin(mainWindow);
     this._platformsPlugin = new ApplicationPlatformsPlugin();
@@ -100,6 +113,28 @@ export default class ApplicationPlugin {
     this.writeOnIndexHtml({ name: args.name, description: args.description });
   };
 
+  getSoftwaresInfo = (event: ElectronIpcMainEvent) => {
+    const softwaresInfo: SoftwaresInfo = {
+      git: null,
+      node: null,
+      npm: null,
+      cordova: null,
+      'cordova-res': null,
+    };
+    async.each(
+      this._softwaresToCheck,
+      (software: keyof SoftwaresInfo, callback) => {
+        VersionSoftwareService.getVersion(software).then((value) => {
+          softwaresInfo[software] = value;
+          callback();
+        });
+      },
+      () => {
+        event.reply('get-softwares-info', softwaresInfo);
+      }
+    );
+  };
+
   init = () => {
     ipcMain.on('load-params-identity', (event: Electron.IpcMainEvent) =>
       this.loadParamsIdentity(event as ElectronIpcMainEvent)
@@ -121,6 +156,12 @@ export default class ApplicationPlugin {
     );
     ipcMain.on('add-platform', (event: Electron.IpcMainEvent, args) =>
       this._platformsPlugin.addPlatform(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('toggle-project', (event: Electron.IpcMainEvent) =>
+      this._platformsPlugin.toggleProject(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('get-softwares-info', (event: Electron.IpcMainEvent) =>
+      this.getSoftwaresInfo(event as ElectronIpcMainEvent)
     );
   };
 }

@@ -15,7 +15,7 @@ const PlatformsComponent = () => {
         </span>
 
         <Grid>
-          <Grid.Row columns={2}>
+          <Grid.Row columns={3}>
             <Grid.Column>
               <Grid.Row>
                 <Grid.Column>
@@ -45,6 +45,24 @@ const PlatformsComponent = () => {
                 <PlatformsMobileComponentRow platform="ios" active={ios} />
               </Grid.Row>
             </Grid.Column>
+            <Grid.Column>
+              <Grid.Row>
+                <Grid.Column>
+                  <Header as="h3">
+                    <Icon name="chrome" />
+                    <Header.Content>Browser</Header.Content>
+                  </Header>
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <PlatformsMobileComponentRow
+                  platform="browser"
+                  active={browser}
+                />
+              </Grid.Row>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
             <Grid.Column width={16}>
               <Grid.Row>
                 <Grid.Column>
@@ -58,22 +76,6 @@ const PlatformsComponent = () => {
                 <PlatformsMobileComponentRow
                   platform="electron"
                   active={electron}
-                />
-              </Grid.Row>
-            </Grid.Column>
-            <Grid.Column width={16}>
-              <Grid.Row>
-                <Grid.Column>
-                  <Header as="h3">
-                    <Icon name="chrome" />
-                    <Header.Content>Browser</Header.Content>
-                  </Header>
-                </Grid.Column>
-              </Grid.Row>
-              <Grid.Row>
-                <PlatformsMobileComponentRow
-                  platform="browser"
-                  active={browser}
                 />
               </Grid.Row>
             </Grid.Column>

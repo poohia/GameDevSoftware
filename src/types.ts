@@ -25,7 +25,10 @@ export type Channels =
   | 'replace-params-image'
   | 'load-platforms'
   | 'remove-platform'
-  | 'add-platform';
+  | 'add-platform'
+  | 'toggle-project'
+  | 'projected-started'
+  | 'get-softwares-info';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -93,4 +96,11 @@ export type PlatformsParams = {
   ios: boolean;
   electron: boolean;
   browser: boolean;
+};
+export type SoftwaresInfo = {
+  git: string | null;
+  node: string | null;
+  npm: string | null;
+  cordova: string | null;
+  ['cordova-res']: string | null;
 };
