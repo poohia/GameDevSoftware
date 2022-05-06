@@ -21,7 +21,7 @@ export default class FolderPlugin {
   static directoryImages = `${FolderPlugin.assetsDirectory}/images`;
   static directoryVideos = `${FolderPlugin.assetsDirectory}/videos`;
   static directorySounds = `${FolderPlugin.assetsDirectory}/sounds`;
-  static directoryJson = `${FolderPlugin.assetsDirectory}/json`;
+  static directoryJson = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/configurationsFiles`;
   /** */
   static appImages = [
     `${FolderPlugin.publicDirectory}/favicon.png`,

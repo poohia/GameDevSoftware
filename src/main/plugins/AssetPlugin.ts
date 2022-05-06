@@ -22,10 +22,10 @@ export default class AssetPlugin {
     if (ext === '.mp3') {
       return 'sound';
     }
-    if (ext === 'mp4' || ext === 'mkv') {
+    if (ext === '.mp4' || ext === '.mkv') {
       return 'video';
     }
-    if (ext === 'json') {
+    if (ext === '.json') {
       return 'json';
     }
     throw new Error('extension error');
@@ -151,7 +151,7 @@ export default class AssetPlugin {
           { extensions: ['.jpg', '.jpeg', '.png'], name: 'Image' },
           { extensions: ['.mp3'], name: 'Sound' },
           { extensions: ['.mp4', '.mkv'], name: 'Video' },
-          { extensions: ['json'], name: 'Json' },
+          { extensions: ['.json'], name: 'Json' },
           {
             extensions: [
               '.jpg',
@@ -160,7 +160,7 @@ export default class AssetPlugin {
               '.mp3',
               '.mp4',
               '.mkv',
-              'json',
+              '.json',
             ],
             name: 'All',
           },
