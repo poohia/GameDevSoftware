@@ -2,10 +2,9 @@ import { ElectronIpcMainEvent, PlatformsParams } from 'types';
 import async from 'async';
 import fs from 'fs';
 import FolderPlugin from '../FolderPlugin';
-import { CordovaService } from '../../services';
+import CordovaService from '../../services/CordovaService';
 
 export default class ApplicationPlatformsPlugin {
-  private _cordovaService = new CordovaService();
   loadPlatforms = (event: ElectronIpcMainEvent) => {
     // @ts-ignore
     const path = global.path;
@@ -56,6 +55,9 @@ export default class ApplicationPlatformsPlugin {
     event: ElectronIpcMainEvent,
     platform: keyof PlatformsParams
   ) => {
+    if (process.platform !== 'darwin' && platform === 'ios') {
+      return;
+    }
     CordovaService.addPlatform(platform, (err) => {
       if (err) {
         console.error(err);
@@ -66,6 +68,9 @@ export default class ApplicationPlatformsPlugin {
   };
 
   toggleProject = (event: ElectronIpcMainEvent) => {
-    this._cordovaService.toggleProcess();
+    const _cordovaService: CordovaService =
+      // @ts-ignore
+      global.serviceContainer.get('cordova');
+    _cordovaService.toggleProcess();
   };
 }

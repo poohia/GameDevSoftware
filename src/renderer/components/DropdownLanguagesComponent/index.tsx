@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { Dropdown, DropdownProps } from 'semantic-ui-react';
+import { Dropdown, DropdownItemProps, DropdownProps } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 
-const countryOptions = [
+const countryOptions: DropdownItemProps[] = [
   { text: 'Afghanistan', flag: 'af', value: 'af', key: 'af' },
   { text: 'Aland Islands', flag: 'ax', value: 'ax', key: 'ax' },
   { text: 'Albania', flag: 'al', value: 'al', key: 'al' },
@@ -268,7 +268,7 @@ const DropdownLanguagesComponent = (props: DropdownLanguagesComponentProps) => {
       );
     }
     return countryOptions.filter(
-      (country) => !languagesFilters.includes(country.value)
+      (country) => !languagesFilters.includes(country.value as string)
     );
   }, [options, languagesFilters]);
 

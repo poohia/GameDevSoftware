@@ -4,7 +4,7 @@ import each from 'async/each';
 import fs from 'fs';
 
 import FolderPlugin from '../FolderPlugin';
-import { FileService } from '../../services';
+import FileService from '../../services/FileService';
 import { formatBase64 } from '../../../utils';
 
 export default class ApplicationImagesPlugin {

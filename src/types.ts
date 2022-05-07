@@ -28,7 +28,9 @@ export type Channels =
   | 'add-platform'
   | 'toggle-project'
   | 'projected-started'
-  | 'get-softwares-info';
+  | 'get-softwares-info'
+  | 'build-platform'
+  | 'emulate-platform';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -96,6 +98,7 @@ export type PlatformsParams = {
   ios: boolean;
   electron: boolean;
   browser: boolean;
+  ['cordova-electron']?: boolean;
 };
 export type SoftwaresInfo = {
   git: string | null;

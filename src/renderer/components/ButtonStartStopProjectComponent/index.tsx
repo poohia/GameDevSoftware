@@ -3,7 +3,7 @@ import { useEvents } from 'renderer/hooks';
 import { Button, Icon } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 
-const ButtonStartStopProject = () => {
+const ButtonStartStopProjectComponent = () => {
   const [projectStarted, setProjectStarted] = useState<boolean>(false);
   const { sendMessage, on } = useEvents();
 
@@ -47,4 +47,4 @@ const ButtonStartStopProject = () => {
   );
 };
 
-export default ButtonStartStopProject;
+export default ButtonStartStopProjectComponent;

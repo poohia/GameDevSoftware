@@ -21,6 +21,7 @@ import {
   AssetPlugin,
 } from './plugins';
 import ApplicationPlugin from './plugins/ApplicationPlugin';
+import ServiceContainer from './services';
 
 export default class AppUpdater {
   constructor() {
@@ -118,6 +119,10 @@ const createWindow = async () => {
   translationPlugin.init();
   constantPlugin.init();
   assetPlugin.init();
+
+  const serviceContainer = new ServiceContainer();
+  // @ts-ignore
+  global.serviceContainer = serviceContainer;
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();

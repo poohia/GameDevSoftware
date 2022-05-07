@@ -28,5 +28,7 @@
   "module_application_params_platforms_remove": "Remove platform",
   "module_application_home_project_title": "Project",
   "module_application_home_project_start": "Start project",
-  "module_application_home_project_stop": "Stop"
+  "module_application_home_project_stop": "Stop",
+  "module_application_home_project_open_new_project": "Open project",
+  "module_application_home_project_build": "Build"
 }

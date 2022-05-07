@@ -11,8 +11,9 @@ import FolderPlugin from './FolderPlugin';
 import {
   ApplicationImagesPlugin,
   ApplicationPlatformsPlugin,
+  ApplicationBuildPlugin,
 } from './subPlugins';
-import { VersionSoftwareService } from '../services';
+import VersionSoftwareService from '../services/VersionSoftwareService';
 
 const options = { ignoreAttributes: false, format: true };
 const parser = new XMLParser(options);
@@ -21,6 +22,7 @@ const builder = new XMLBuilder(options);
 export default class ApplicationPlugin {
   private _imagePlugin;
   private _platformsPlugin;
+  private _buildPlugin;
   private _softwaresToCheck: Array<keyof SoftwaresInfo> = [
     'git',
     'node',
@@ -31,6 +33,7 @@ export default class ApplicationPlugin {
   constructor(private mainWindow: BrowserWindow) {
     this._imagePlugin = new ApplicationImagesPlugin(mainWindow);
     this._platformsPlugin = new ApplicationPlatformsPlugin();
+    this._buildPlugin = new ApplicationBuildPlugin();
   }
 
   private writeOnIndexHtml = (
@@ -162,6 +165,12 @@ export default class ApplicationPlugin {
     );
     ipcMain.on('get-softwares-info', (event: Electron.IpcMainEvent) =>
       this.getSoftwaresInfo(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('build-platform', (event: Electron.IpcMainEvent, args) =>
+      this._buildPlugin.buildPlatform(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('emulate-platform', (event: Electron.IpcMainEvent, args) =>
+      this._buildPlugin.emulatePlatform(event as ElectronIpcMainEvent, args)
     );
   };
 }

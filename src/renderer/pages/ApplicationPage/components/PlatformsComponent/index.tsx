@@ -1,7 +1,7 @@
 import { Container, Grid, Header, Icon, Segment } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import PlatformsMobileComponentRow from '../PlatformsMobileComponentRow';
-import usePlatformsComponent from './usePlatformsComponent';
+import usePlatformsComponent from '../../../../components/DropdownPlatformsComponent/usePlatformsComponent';
 
 const PlatformsComponent = () => {
   const { platforms } = usePlatformsComponent();

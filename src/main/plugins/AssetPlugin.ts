@@ -8,7 +8,7 @@ import {
   ElectronIpcMainEvent,
 } from 'types';
 import path from 'path';
-import { FileService } from '../services';
+import FileService from '../services/FileService';
 
 import FolderPlugin from './FolderPlugin';
 
