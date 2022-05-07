@@ -25,7 +25,7 @@ const HomeProjectComponent = () => {
   }, []);
 
   return (
-    <Container>
+    <Container className="game-dev-software-module-home-project-segment">
       <Segment className="game-dev-software-module-application-params-identity-segment">
         <span className="game-dev-software-module-application-params-identity-segment-title">
           {i18n.t('module_application_home_project_title')}
