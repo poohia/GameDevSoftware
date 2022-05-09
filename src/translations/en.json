@@ -1,5 +1,6 @@
 {
   "home": "Home",
+  "module_application": "Application Module",
   "module_translation": "Translation Module",
   "module_constant": "Constant Module",
   "dropdown_languages_placeholder_default": "Select Country",
@@ -18,5 +19,16 @@
   "module_asset": "Asset module",
   "form_title_new": "Create",
   "form_title_update": "Update",
-  "module_constant_header_append_asset": "Create asset"
+  "module_constant_header_append_asset": "Create asset",
+  "module_constant_header_append_multiple_asset": "Create mulitple assets",
+  "module_application_params_identity_title": "Identity",
+  "module_application_params_images_title": "Images",
+  "module_application_params_platforms_title": "Platforms",
+  "module_application_params_platforms_append": "Append platform",
+  "module_application_params_platforms_remove": "Remove platform",
+  "module_application_home_project_title": "Project",
+  "module_application_home_project_start": "Start project",
+  "module_application_home_project_stop": "Stop",
+  "module_application_home_project_open_new_project": "Open project",
+  "module_application_home_project_build": "Build"
 }

@@ -9,10 +9,18 @@ import {
 import useAssetPage from './useAssetPage';
 
 const AssetPage = () => {
-  const { assets, stateForm, dispatch, saveFile, deleteFile } = useAssetPage();
+  const {
+    assets,
+    stateForm,
+    dispatch,
+    saveFile,
+    deleteFile,
+    sendMultipleUploads,
+  } = useAssetPage();
+
   return (
     <Container fluid>
-      <Grid>
+      <Grid columns={2} divided>
         <Grid.Row>
           <Grid.Column width={8}>
             <Grid.Row>
@@ -21,11 +29,13 @@ const AssetPage = () => {
             <Grid.Row>
               <AssetHeaderComponent
                 onClickAdd={() => dispatch({ type: 'show-create-form' })}
+                onClickMultipleAdd={sendMultipleUploads}
               />
             </Grid.Row>
             <Grid.Row>
               <AssetTableComponent
                 assets={assets}
+                keySelected={stateForm.key}
                 onClickRow={(asset) => {
                   dispatch({
                     type: 'show-update-form',

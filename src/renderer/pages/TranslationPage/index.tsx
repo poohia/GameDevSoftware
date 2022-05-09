@@ -21,10 +21,9 @@ const TranslationPage = () => {
     updateTranslationKey,
     appendTranslation,
   } = useTranslationPage();
-
   return (
     <Container fluid>
-      <Grid>
+      <Grid divided columns={2}>
         <Grid.Row>
           <Grid.Column width={8}>
             <Grid.Row>
@@ -44,6 +43,7 @@ const TranslationPage = () => {
               <TranslationTableComponent
                 translations={currentTranslations}
                 locale={locale}
+                keySelected={translationForm?.keyTranslation}
                 onClickRow={updateTranslationKey}
                 onDelete={deleteTranslation}
               />

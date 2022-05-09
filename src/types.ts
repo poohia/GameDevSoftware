@@ -17,7 +17,20 @@ export type Channels =
   | 'load-assets'
   | 'upload-file'
   | 'delete-file'
-  | 'get-asset-information';
+  | 'select-multiple-files'
+  | 'get-asset-information'
+  | 'load-params-identity'
+  | 'set-params-identity'
+  | 'load-params-image'
+  | 'replace-params-image'
+  | 'load-platforms'
+  | 'remove-platform'
+  | 'add-platform'
+  | 'toggle-project'
+  | 'projected-started'
+  | 'get-softwares-info'
+  | 'build-platform'
+  | 'emulate-platform';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -64,4 +77,33 @@ export type AssetType = {
 };
 export type AssetHeaderComponentProps = {
   onClickAdd: () => void;
+};
+export type ApplicationIdentityParams = {
+  package: string;
+  version: string;
+  buildVersion: string;
+  name: string;
+  description?: string;
+  authorEmail: string;
+  authorName: string;
+  authorWebSite: string;
+};
+export type ApplicationImageParams = {
+  favicon: string;
+  icon: string;
+  splashscreen: string;
+};
+export type PlatformsParams = {
+  android: boolean;
+  ios: boolean;
+  electron: boolean;
+  browser: boolean;
+  ['cordova-electron']?: boolean;
+};
+export type SoftwaresInfo = {
+  git: string | null;
+  node: string | null;
+  npm: string | null;
+  cordova: string | null;
+  ['cordova-res']: string | null;
 };

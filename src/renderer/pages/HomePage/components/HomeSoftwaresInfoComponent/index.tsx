@@ -1,0 +1,31 @@
+import { useEffect, useState } from 'react';
+import { useEvents } from 'renderer/hooks';
+import { Segment } from 'semantic-ui-react';
+import { SoftwaresInfo } from 'types';
+
+const HomeSoftwaresInfoComponent = () => {
+  const [softwaresInfo, setSoftwareInfo] = useState<SoftwaresInfo>({
+    git: null,
+    node: null,
+    npm: null,
+    cordova: null,
+    'cordova-res': null,
+  });
+  const { requestMessage } = useEvents();
+  useEffect(() => {
+    requestMessage('get-softwares-info', (arg) => {
+      setSoftwareInfo(arg);
+    });
+  }, []);
+  return (
+    <Segment>
+      {Object.keys(softwaresInfo).map((key) => (
+        <p>
+          {key}: <b>{softwaresInfo[key] || 'not installed'}</b>
+        </p>
+      ))}
+    </Segment>
+  );
+};
+
+export default HomeSoftwaresInfoComponent;

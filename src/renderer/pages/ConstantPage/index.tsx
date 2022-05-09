@@ -17,9 +17,10 @@ const ConstantPage = () => {
     updateConstant,
     deleteConstant,
   } = useConstant();
+
   return (
     <Container fluid>
-      <Grid>
+      <Grid divided columns={2}>
         <Grid.Row>
           <Grid.Column width={8}>
             <Grid.Row>
@@ -31,6 +32,7 @@ const ConstantPage = () => {
             <Grid.Row>
               <ConstantTableComponent
                 constants={constants}
+                keySelected={stateForm.key}
                 onClickRow={updateConstant}
                 onDelete={deleteConstant}
               />

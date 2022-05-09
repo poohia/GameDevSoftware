@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
 import { Container, Grid, Header } from 'semantic-ui-react';
-import { AssertAcceptedType, AssetType } from 'types';
+import { AssetType } from 'types';
+import { formatBase64 } from 'utils';
 
 type AssetPreviewComponentProps = {
   asset: AssetType;
@@ -14,33 +15,16 @@ const AssetPreviewComponent = (props: AssetPreviewComponentProps) => {
   const { once, sendMessage } = useEvents();
   const [base64, setBase64] = useState<string | undefined>();
 
-  const formatBase64 = useCallback(
-    (type: AssertAcceptedType, base64: string) => {
-      switch (type) {
-        case 'image':
-          return `data:image/png;base64,${base64}`;
-        case 'sound':
-          return `data:audio/mpeg;base64,${base64}`;
-        case 'video':
-          return `data:video/mp4;base64,${base64}`;
-        case 'json':
-          return base64;
-      }
-    },
-    []
-  );
-
   useEffect(() => {
     sendMessage('get-asset-information', { name, type });
     once('get-asset-information', (arg: string) => {
-      // setBase64(`data:image/png;base64,${arg}`);
       setBase64(formatBase64(type, arg));
     });
   }, [asset]);
 
   return (
     <Container fluid>
-      <Grid>
+      <Grid className="game-dev-software-form-container">
         <Grid.Row>
           <Grid.Column>
             <Header as="h1">{name}</Header>

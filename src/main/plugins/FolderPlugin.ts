@@ -5,22 +5,41 @@ import { ElectronIpcMainEvent } from 'types';
 export default class FolderPlugin {
   constructor(private mainWindow: BrowserWindow) {}
   static srcDirectory = '/src';
-  static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
+  static publicDirectory = '/public';
   static gameDevSoftwareDirectory = '/GameDevSoftware';
+  static resourcesDirectory = '/resources';
+  static platformsDirectory = '/platforms';
+
+  static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
   static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
   static constantFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/constants.json`;
   static assetFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/assets.json`;
+  static configFile = `/config.xml`;
+  static indexHtml = `${FolderPlugin.publicDirectory}/index.html`;
   /** directories */
-  static publicDirectory = '/public';
   static assetsDirectory = `${FolderPlugin.publicDirectory}/assets`;
   static directoryImages = `${FolderPlugin.assetsDirectory}/images`;
   static directoryVideos = `${FolderPlugin.assetsDirectory}/videos`;
   static directorySounds = `${FolderPlugin.assetsDirectory}/sounds`;
-  static directoryJson = `${FolderPlugin.assetsDirectory}/json`;
+  static directoryJson = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/configurationsFiles`;
+  /** */
+  static appImages = [
+    `${FolderPlugin.publicDirectory}/favicon.png`,
+    `${FolderPlugin.resourcesDirectory}/icon.png`,
+    `${FolderPlugin.resourcesDirectory}/splash.png`,
+  ];
+  static appPlatforms = [
+    `${FolderPlugin.platformsDirectory}/android`,
+    `${FolderPlugin.platformsDirectory}/ios`,
+    `${FolderPlugin.platformsDirectory}/electron`,
+    `${FolderPlugin.platformsDirectory}/browser`,
+  ];
 
   static validePath(path: string) {
     let isValid = true;
-    if (!fs.existsSync(`${path}${FolderPlugin.translationDirectory}`)) {
+    if (!fs.existsSync(`${path}${FolderPlugin.configFile}`)) {
+      isValid = false;
+    } else if (!fs.existsSync(`${path}${FolderPlugin.translationDirectory}`)) {
       isValid = false;
     } else if (!fs.existsSync(`${path}${FolderPlugin.translationDirectory}`)) {
       isValid = false;
