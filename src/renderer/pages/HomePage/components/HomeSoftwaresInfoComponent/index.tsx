@@ -20,7 +20,7 @@ const HomeSoftwaresInfoComponent = () => {
   return (
     <Segment>
       {Object.keys(softwaresInfo).map((key) => (
-        <p>
+        <p key={key}>
           {key}: <b>{softwaresInfo[key] || 'not installed'}</b>
         </p>
       ))}

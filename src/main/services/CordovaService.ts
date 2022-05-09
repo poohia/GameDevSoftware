@@ -58,8 +58,9 @@ export default class CordovaService {
         exec(`open -a /Applications/Android\\ Studio.app ${androidPath}`);
         break;
       case 'win32':
-        exec(`
-        \"C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe\" ${androidPath}`);
+        exec(
+          `"C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe\" ${androidPath}`
+        );
         break;
       default:
         exec(`/opt/android-studio/bin/studio.sh ${androidPath}`);
