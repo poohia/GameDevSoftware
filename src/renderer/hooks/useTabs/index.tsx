@@ -4,15 +4,24 @@ import i18n from 'translations/i18n';
 
 import { HomePage } from 'renderer/pages';
 import useDatabase from 'renderer/hooks/useDatabase';
-import { TabActiveType, TabDatabaseType, Tables } from 'types';
+import { PageProps, TabActiveType, TabDatabaseType, Tables } from 'types';
+import TransComponent from 'renderer/components/TransComponent';
 
 export type UseTabsProps = {
   modules: any[];
   tableTabs: Tables;
   tableActiveTab: Tables;
+  HomeComponent?: React.FunctionComponent<any>;
+  activeKeyboardControl?: boolean;
 };
 
-const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
+const useTabs = ({
+  modules,
+  tableTabs,
+  tableActiveTab,
+  HomeComponent = HomePage,
+  activeKeyboardControl,
+}: UseTabsProps) => {
   const { setItem, getItem } = useDatabase();
 
   const [tabActive, setTabActive] = useState<TabActiveType>({
@@ -102,12 +111,11 @@ const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
   const appendTab = useCallback(
     (
       menuItem: string,
-      Component: React.FunctionComponent<any>,
+      Component: React.FunctionComponent<PageProps>,
       _saveTabs = true
     ) => {
       setTabs((_tabs) => {
         const id = _tabs[_tabs.length - 1].id + 1;
-        const menuItemTranslate = i18n.t(menuItem);
         const key = menuItem;
         const tabFind = _tabs.find((tab) => tab.menuItem.key === key);
         const index = _tabs.length;
@@ -127,7 +135,7 @@ const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
             menuItemKey: menuItem,
             menuItem: (
               <Menu.Item key={key}>
-                {menuItemTranslate}
+                <TransComponent id={menuItem} defaultValue={menuItem} />
                 <Icon
                   name="close"
                   onClick={(event: Event) => {
@@ -139,7 +147,11 @@ const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
             ),
             pane: (
               <Tab.Pane key={key}>
-                <Component appendTab={appendTab} id={tabActive.id} />
+                <Component
+                  appendTab={appendTab}
+                  id={tabActive.id}
+                  title={menuItem}
+                />
               </Tab.Pane>
             ),
           })
@@ -195,11 +207,12 @@ const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
   }, []);
 
   useEffect(() => {
+    if (!activeKeyboardControl) return;
     window.addEventListener('keydown', listenerChangeTab);
     return () => {
       window.removeEventListener('keydown', listenerChangeTab);
     };
-  }, [listenerChangeTab]);
+  }, [listenerChangeTab, activeKeyboardControl]);
 
   const [tabs, setTabs] = useState<any[]>([
     {
@@ -209,7 +222,7 @@ const useTabs = ({ modules, tableTabs, tableActiveTab }: UseTabsProps) => {
       menuItem: i18n.t('home'),
       pane: (
         <Tab.Pane key="home" className="game-dev-software-body-tab-content">
-          <HomePage appendTab={appendTab} />
+          <HomeComponent appendTab={appendTab} id={0} title="home" />
         </Tab.Pane>
       ),
     },

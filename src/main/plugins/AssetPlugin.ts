@@ -6,6 +6,7 @@ import {
   AssertFileValueType,
   AssetType,
   ElectronIpcMainEvent,
+  ModuleArgs,
 } from 'types';
 import path from 'path';
 import FileService from '../services/FileService';
@@ -46,11 +47,41 @@ export default class AssetPlugin {
     }
   };
 
+  private directoryFromFileTypeModule = (
+    fileType: AssertAcceptedType,
+    module: string
+  ) => {
+    // @ts-ignore
+    const { path } = global;
+    switch (fileType) {
+      case 'image':
+        return `${path}${FolderPlugin.assetsDirectory}/${module}/images/`;
+      case 'video':
+        return `${path}${FolderPlugin.assetsDirectory}/${module}/videos/`;
+      case 'sound':
+        return `${path}${FolderPlugin.assetsDirectory}/${module}/sounds/`;
+      case 'json':
+        return `${path}${FolderPlugin.srcDirectory}/${FolderPlugin.gameDevSoftwareDirectory}/modules/${module}/configurationsFiles/`;
+    }
+  };
+
   private readAssetFile = (): AssetType[] => {
     // @ts-ignore
     const { path } = global;
     // @ts-ignore
     return JSON.parse(fs.readFileSync(`${path}${FolderPlugin.assetFile}`));
+  };
+
+  private readAssetFileModule = (module: string): AssetType[] => {
+    // @ts-ignore
+    const { path } = global;
+
+    return JSON.parse(
+      // @ts-ignore
+      fs.readFileSync(
+        `${path}${FolderPlugin.modulesDirectory}/${module}/assets.json`
+      )
+    );
   };
 
   private writeAssetFile = (data: AssetType[], callback: () => void) => {
@@ -70,6 +101,12 @@ export default class AssetPlugin {
     const data = this.readAssetFile();
     // @ts-ignore
     event.reply('load-assets', data);
+  };
+
+  loadAssetsModule = (event: ElectronIpcMainEvent, module: string) => {
+    const data = this.readAssetFileModule(module);
+    // @ts-ignore
+    event.reply(`load-assets-module-${module}`, data);
   };
 
   saveAsset = (event: ElectronIpcMainEvent, arg: AssertFileValueType) => {
@@ -123,6 +160,35 @@ export default class AssetPlugin {
   getAssetInformation = (event: ElectronIpcMainEvent, arg: AssetType) => {
     const { name, type } = arg;
     const pathDirectory = this.directoryFromFileType(type);
+    const path = `${pathDirectory}${name}`;
+    if (type === 'json') {
+      fs.readFile(path, (err, data) => {
+        if (err) {
+          console.log(err);
+          throw new Error(err.message);
+        }
+        event.reply(
+          'get-asset-information',
+          // @ts-ignore
+          JSON.stringify(JSON.parse(data))
+        );
+      });
+    } else {
+      FileService.getFileBase64(path, (base64) => {
+        event.reply('get-asset-information', base64);
+      });
+    }
+  };
+
+  getAssetInformationModule = (
+    event: ElectronIpcMainEvent,
+    arg: ModuleArgs<AssetType>
+  ) => {
+    const {
+      data: { name, type },
+      module,
+    } = arg;
+    const pathDirectory = this.directoryFromFileTypeModule(type, module);
     const path = `${pathDirectory}${name}`;
     if (type === 'json') {
       fs.readFile(path, (err, data) => {
@@ -210,5 +276,13 @@ export default class AssetPlugin {
     ipcMain.on('select-multiple-files', (event) => {
       this.selectMultipleFiles(event as ElectronIpcMainEvent);
     });
+    ipcMain.on('load-assets-module', (event: Electron.IpcMainEvent, arg) =>
+      this.loadAssetsModule(event as ElectronIpcMainEvent, arg)
+    );
+    ipcMain.on(
+      'get-asset-information-module',
+      (event: Electron.IpcMainEvent, arg) =>
+        this.getAssetInformationModule(event as ElectronIpcMainEvent, arg)
+    );
   };
 }

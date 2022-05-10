@@ -12,6 +12,7 @@ const ConstantPage = () => {
   const {
     constants,
     stateForm,
+    isModuleView,
     createConstant,
     sendCreateConstant,
     updateConstant,
@@ -26,13 +27,16 @@ const ConstantPage = () => {
             <Grid.Row>
               <Header as="h1">{i18n.t('module_constant')}</Header>
             </Grid.Row>
-            <Grid.Row>
-              <ConstantHeaderComponent onClickAdd={createConstant} />
-            </Grid.Row>
+            {!isModuleView && (
+              <Grid.Row>
+                <ConstantHeaderComponent onClickAdd={createConstant} />
+              </Grid.Row>
+            )}
             <Grid.Row>
               <ConstantTableComponent
                 constants={constants}
                 keySelected={stateForm.key}
+                canDelete={!isModuleView}
                 onClickRow={updateConstant}
                 onDelete={deleteConstant}
               />

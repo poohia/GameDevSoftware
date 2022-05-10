@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button, Grid, Header, Icon, Input, Table } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import { Translation } from 'types';
@@ -7,27 +7,27 @@ type TranslationTableComponentProps = {
   translations: Translation;
   locale: string;
   keySelected?: string;
+  canDelete: boolean;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
 const TranslationTableComponent = (props: TranslationTableComponentProps) => {
-  const { translations, keySelected, onClickRow, onDelete } = props;
+  const { translations, keySelected, canDelete, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
-  const formatData = useCallback(() => {
+  const formatData = useMemo(() => {
     if (filter !== '') {
       return Object.keys(translations).filter(
-        (key) => key.includes(filter) || translations[key].includes(filter)
+        (key) =>
+          key.toLowerCase().includes(filter.toLowerCase()) ||
+          translations[key].toLowerCase().includes(filter.toLowerCase())
       );
     }
     return Object.keys(translations);
   }, [filter, translations]);
   const lengthTranslations = useMemo(
-    () => Object.keys(translations).length,
-    [translations]
+    () => Object.keys(formatData).length,
+    [formatData]
   );
-  useEffect(() => {
-    setFilter(filter.toLocaleLowerCase().replace(' ', '_'));
-  }, [filter]);
 
   return (
     <Grid className="game-dev-software-table-component">
@@ -51,7 +51,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData().map((key) => (
+              {formatData.map((key) => (
                 <Table.Row
                   key={key}
                   active={keySelected === key}
@@ -70,8 +70,9 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
                       color="red"
                       onClick={(event) => {
                         event.stopPropagation();
-                        onDelete(key);
+                        if (canDelete) onDelete(key);
                       }}
+                      disabled={!canDelete}
                     >
                       <Icon name="trash" />
                     </Button>

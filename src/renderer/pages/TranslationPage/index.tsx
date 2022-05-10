@@ -13,6 +13,7 @@ const TranslationPage = () => {
     locale,
     languages,
     translationForm,
+    isModuleView,
     appendLocale,
     setLocale,
     deleteTranslation,
@@ -29,21 +30,24 @@ const TranslationPage = () => {
             <Grid.Row>
               <Header as="h1">{i18n.t('module_translation')}</Header>
             </Grid.Row>
-            <Grid.Row>
-              <TranslationHeaderComponent
-                locale={locale}
-                languages={languages}
-                onChangeLocale={(locale) => setLocale(locale)}
-                onAppendLocale={appendLocale}
-                onRemoveLocale={removeLocale}
-                onAppendTranslation={createTranslationKey}
-              />
-            </Grid.Row>
+            {!isModuleView && (
+              <Grid.Row>
+                <TranslationHeaderComponent
+                  locale={locale}
+                  languages={languages}
+                  onChangeLocale={(locale) => setLocale(locale)}
+                  onAppendLocale={appendLocale}
+                  onRemoveLocale={removeLocale}
+                  onAppendTranslation={createTranslationKey}
+                />
+              </Grid.Row>
+            )}
             <Grid.Row>
               <TranslationTableComponent
                 translations={currentTranslations}
                 locale={locale}
                 keySelected={translationForm?.keyTranslation}
+                canDelete={!isModuleView}
                 onClickRow={updateTranslationKey}
                 onDelete={deleteTranslation}
               />

@@ -13,8 +13,8 @@ import { ConstantType, ConstantValue } from 'types';
 
 type ConstantFormComponentProps = {
   defaultKey: string;
-  defaultValue?: ConstantValue;
-  onSubmit: (key: string, value: ConstantValue) => void;
+  defaultValue?: { value: ConstantValue; description: string };
+  onSubmit: (key: string, value: ConstantValue, description?: string) => void;
 };
 const options: DropdownProps['options'] = [
   {
@@ -30,46 +30,51 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
   const { defaultKey, defaultValue, onSubmit } = props;
   const [key, setKey] = useState<string>(defaultKey);
   const [type, setType] = useState<ConstantType>('string');
-  const [value, setValue] = useState<ConstantValue>(defaultValue || '');
+  const [value, setValue] = useState<ConstantValue>(defaultValue?.value || '');
+  const [description, setDescription] = useState<string>(
+    defaultValue?.description || ''
+  );
 
   const handleSubmit = useCallback(() => {
     if (type === 'number[]' && Array.isArray(value)) {
       onSubmit(
         key,
-        value.map((v) => Number(v))
+        value.map((v) => Number(v)),
+        description
       );
       return;
     } else if (type === 'number') {
-      onSubmit(key, Number(value));
+      onSubmit(key, Number(value), description);
     } else {
-      onSubmit(key, value);
+      onSubmit(key, value, description);
     }
-  }, [key, value]);
+  }, [key, value, description]);
 
   useEffect(() => {
     setKey(defaultKey);
   }, [defaultKey]);
 
   useEffect(() => {
-    if (Array.isArray(defaultValue) && typeof defaultValue[0] === 'number') {
+    if (!defaultValue) {
+      setValue('');
+      setType('string');
+      return;
+    }
+    const { value } = defaultValue;
+    if (Array.isArray(value) && typeof value[0] === 'number') {
       setType('number[]');
-    } else if (Array.isArray(defaultValue)) {
+    } else if (Array.isArray(value)) {
       setType('string[]');
-    } else if (typeof defaultValue === 'number') {
+    } else if (typeof value === 'number') {
       setType('number');
     } else {
       setType('string');
     }
-
-    if (!defaultValue) {
-      setValue('');
-      return;
-    }
     setTimeout(() => {
-      if (Array.isArray(defaultValue) && typeof defaultValue[0] === 'number') {
-        setValue(defaultValue.map((v) => String(v)));
+      if (Array.isArray(value) && typeof value[0] === 'number') {
+        setValue(value.map((v) => String(v)));
       } else {
-        setValue(defaultValue);
+        setValue(value);
       }
     }, 100);
   }, [defaultValue]);
@@ -166,6 +171,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                     selection
                     onAddItem={(_, data) => {
                       if (type === 'number[]' && isNaN(Number(data.value))) {
+                        setValue(JSON.parse(JSON.stringify(value)));
                         return;
                       }
                       setValue(Array.from(value.concat(data.value)));
@@ -175,6 +181,17 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                     }}
                   />
                 )}
+              </Form.Field>
+              <Form.Field>
+                <Form.Input
+                  label={i18n.t(
+                    'module_translation_form_field_description_label'
+                  )}
+                  value={description}
+                  onChange={(_: any, data: { value: string }) =>
+                    setDescription(data.value)
+                  }
+                />
               </Form.Field>
               <Button
                 type="submit"

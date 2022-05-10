@@ -4,3 +4,4 @@ export { default as DropzoneAssetFileComponent } from './DropzoneAssetFileCompon
 export { default as TransComponent } from './TransComponent';
 export { default as ButtonStartStopProjectComponent } from './ButtonStartStopProjectComponent';
 export { default as DropdownPlatformsComponent } from './DropdownPlatformsComponent';
+export { default as DropdownConstantTypesComponent } from './DropdownConstantTypesComponent';

@@ -1,11 +1,21 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react';
 import i18n from 'translations/i18n';
 
 import { useEvents } from 'renderer/hooks';
 import { TranslationObject } from 'types';
 import TranslationFromReducer, { defaultState } from './TranslationFromReducer';
+import { GameModuleContext } from '../GameModulePage';
 
 const useTranslationPage = () => {
+  const { module } = useContext(GameModuleContext);
+  const isModuleView = useMemo(() => !!module, [module]);
   /**  */
   const [languages, setLanguages] = useState<string[]>([]);
   const [translations, setTranslations] = useState<TranslationObject>({});
@@ -122,7 +132,6 @@ const useTranslationPage = () => {
   useEffect(() => {
     if (translations) {
       sendMessage('save-translations', translations);
-      init();
     }
   }, [translations]);
 
@@ -135,6 +144,7 @@ const useTranslationPage = () => {
     currentTranslations,
     languages,
     translationForm,
+    isModuleView,
     setLocale,
     appendLocale,
     deleteTranslation,

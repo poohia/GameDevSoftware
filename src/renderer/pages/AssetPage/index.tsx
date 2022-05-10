@@ -12,6 +12,7 @@ const AssetPage = () => {
   const {
     assets,
     stateForm,
+    isModuleView,
     dispatch,
     saveFile,
     deleteFile,
@@ -26,12 +27,14 @@ const AssetPage = () => {
             <Grid.Row>
               <Header as="h1">{i18n.t('module_asset')}</Header>
             </Grid.Row>
-            <Grid.Row>
-              <AssetHeaderComponent
-                onClickAdd={() => dispatch({ type: 'show-create-form' })}
-                onClickMultipleAdd={sendMultipleUploads}
-              />
-            </Grid.Row>
+            {!isModuleView && (
+              <Grid.Row>
+                <AssetHeaderComponent
+                  onClickAdd={() => dispatch({ type: 'show-create-form' })}
+                  onClickMultipleAdd={sendMultipleUploads}
+                />
+              </Grid.Row>
+            )}
             <Grid.Row>
               <AssetTableComponent
                 assets={assets}
@@ -46,6 +49,7 @@ const AssetPage = () => {
                   });
                 }}
                 onDelete={deleteFile}
+                canDelete={!isModuleView}
               />
             </Grid.Row>
           </Grid.Column>

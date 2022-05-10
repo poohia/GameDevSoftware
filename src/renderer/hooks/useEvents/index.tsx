@@ -1,24 +1,41 @@
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
+import { GameModuleContext } from 'renderer/pages/GameModulePage';
 import { Channels, EventCallback } from 'types';
 
 const useEvents = () => {
+  const { module } = useContext(GameModuleContext);
+
   const requestMessage = useCallback(
-    (events: Channels, callback: EventCallback) => {
-      return window.electron.ipcRenderer.requestMessage(events, callback);
+    (chanel: Channels, callback: EventCallback) => {
+      if (module) {
+        console.log(`${chanel}-module`);
+        window.electron.ipcRenderer.sendMessage(`${chanel}-module`, module);
+        return on(`${chanel}-module-${module}`, callback);
+      }
+      sendMessage(chanel);
+      return on(chanel, callback);
     },
     []
   );
 
-  const sendMessage = useCallback((chanels: Channels, args?: any) => {
-    window.electron.ipcRenderer.sendMessage(chanels, args);
+  const sendMessage = useCallback((chanel: Channels, args?: any) => {
+    if (module) {
+      console.log(`${chanel}-module`);
+      window.electron.ipcRenderer.sendMessage(`${chanel}-module`, {
+        data: args,
+        module,
+      });
+      return;
+    }
+    window.electron.ipcRenderer.sendMessage(chanel, args);
   }, []);
 
-  const on = useCallback((events: Channels, callback: EventCallback) => {
-    return window.electron.ipcRenderer.on(events, callback);
+  const on = useCallback((chanel: Channels, callback: EventCallback) => {
+    return window.electron.ipcRenderer.on(chanel, callback);
   }, []);
 
-  const once = useCallback((events: Channels, callback: EventCallback) => {
-    window.electron.ipcRenderer.once(events, callback);
+  const once = useCallback((chanel: Channels, callback: EventCallback) => {
+    window.electron.ipcRenderer.once(chanel, callback);
   }, []);
 
   return {
