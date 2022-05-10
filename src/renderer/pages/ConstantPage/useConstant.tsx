@@ -1,9 +1,20 @@
-import { useCallback, useEffect, useReducer, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react';
 import { useEvents } from 'renderer/hooks';
 import { ConstantObject, ConstantValue } from 'types';
 import { FormReducer, defaultStateFormReducer } from 'renderer/reducers';
+import { GameModuleContext } from '../GameModulePage';
 
 const useConstant = () => {
+  const { module } = useContext(GameModuleContext);
+  const isModuleView = useMemo(() => !!module, [module]);
+  /** */
   const [constants, setConstants] = useState<ConstantObject>([]);
   const [stateForm, dispatch] = useReducer(
     FormReducer,
@@ -81,6 +92,7 @@ const useConstant = () => {
   return {
     constants,
     stateForm,
+    isModuleView,
     createConstant,
     sendCreateConstant,
     updateConstant,

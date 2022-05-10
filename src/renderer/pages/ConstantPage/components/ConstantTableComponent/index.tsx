@@ -1,28 +1,54 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { DropdownConstantTypesComponent } from 'renderer/components';
 import { Button, Grid, Header, Icon, Input, Table } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
-import { ConstantObject } from 'types';
+import { ConstantObject, ConstantType } from 'types';
 
 type ConstantTableComponentProps = {
   constants: ConstantObject;
   keySelected?: string;
+  canDelete: boolean;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
 const ConstantTableComponent = (props: ConstantTableComponentProps) => {
-  const { constants, keySelected, onClickRow, onDelete } = props;
+  const { constants, keySelected, canDelete, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
+  const [filterType, setFilterType] = useState<ConstantType | string>('');
 
-  const lengthConstants = useMemo(
-    () => Object.keys(constants).length,
-    [constants]
-  );
-  const formatData = useCallback(() => {
+  const formatData = useMemo(() => {
+    let _constants = constants;
     if (filter !== '') {
-      return constants.filter((c) => c.key.includes(filter));
+      _constants = _constants.filter((c) => c.key.includes(filter));
     }
-    return constants;
-  }, [filter, constants]);
+    if (filterType !== '') {
+      _constants = _constants.filter((c) => {
+        const { value } = c;
+        if (
+          filterType === 'number[]' &&
+          Array.isArray(value) &&
+          typeof value[0] === 'number'
+        ) {
+          return true;
+        }
+        if (
+          filterType === 'string[]' &&
+          Array.isArray(value) &&
+          typeof value[0] === 'string'
+        ) {
+          return true;
+        }
+        if (filterType === 'number' && typeof value === 'number') {
+          return true;
+        }
+        if (filterType === 'string' && typeof value === 'string') {
+          return true;
+        }
+        return false;
+      });
+    }
+    return _constants;
+  }, [filter, filterType, constants]);
   const formatString = useCallback(
     (value: number | number[] | string | string[]) => {
       if (Array.isArray(value)) {
@@ -34,6 +60,11 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
     []
   );
 
+  const lengthConstants = useMemo(
+    () => Object.keys(formatData).length,
+    [formatData]
+  );
+
   useEffect(() => {
     setFilter(filter.toLocaleLowerCase().replace(' ', '_'));
   }, [filter]);
@@ -41,13 +72,20 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
   return (
     <Grid className="game-dev-software-table-component">
       <Grid.Row className="game-dev-software-table-component-search">
-        <Grid.Column width={16}>
+        <Grid.Column width={12}>
           <Input
             icon="search"
             placeholder="Search..."
             value={filter}
             fluid
             onChange={(_, { value }) => setFilter(value as string)}
+          />
+        </Grid.Column>
+        <Grid.Column width={4}>
+          <DropdownConstantTypesComponent
+            placeholder="Constant type"
+            onChange={(_: any, data: any) => setFilterType(data.value)}
+            clearable
           />
         </Grid.Column>
       </Grid.Row>
@@ -60,7 +98,7 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData().map(({ key, value, description }) => (
+              {formatData.map(({ key, value, description }) => (
                 <Table.Row
                   key={key}
                   active={keySelected === key}
@@ -68,8 +106,8 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
                 >
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">
-                      {formatString(value)}
-                      <Header.Subheader>{key}</Header.Subheader>
+                      {key}
+                      <Header.Subheader>{formatString(value)}</Header.Subheader>
                     </Header>
                     {description && (
                       <p>
@@ -84,8 +122,9 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
                       color="red"
                       onClick={(event) => {
                         event.stopPropagation();
-                        onDelete(key);
+                        canDelete && onDelete(key);
                       }}
+                      disabled={!canDelete}
                     >
                       <Icon name="trash" />
                     </Button>

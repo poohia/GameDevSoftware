@@ -7,11 +7,12 @@ import { AssertAcceptedType, AssetType } from 'types';
 type AssetTableComponentProps = {
   assets: AssetType[];
   keySelected?: string;
+  canDelete: boolean;
   onClickRow: (name: AssetType) => void;
   onDelete: (name: string) => void;
 };
 const AssetTableComponent = (props: AssetTableComponentProps) => {
-  const { assets, keySelected, onClickRow, onDelete } = props;
+  const { assets, keySelected, canDelete, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
   const [filterType, setFilterType] = useState<AssertAcceptedType | string>('');
   const formatData = useCallback(() => {
@@ -77,8 +78,9 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
                       color="red"
                       onClick={(event) => {
                         event.stopPropagation();
-                        onDelete(name);
+                        canDelete && onDelete(name);
                       }}
+                      disabled={!canDelete}
                     >
                       <Icon name="trash" />
                     </Button>

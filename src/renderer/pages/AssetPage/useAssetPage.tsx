@@ -1,9 +1,12 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
 import { defaultStateFormReducer, FormReducer } from 'renderer/reducers';
 import { AssertFileValueType, AssetType } from 'types';
+import { GameModuleContext } from '../GameModulePage';
 
 const useAssetPage = () => {
+  const { module } = useContext(GameModuleContext);
+  const isModuleView = useMemo(() => !!module, [module]);
   const { requestMessage, sendMessage } = useEvents();
   const [stateForm, dispatch] = useReducer(
     FormReducer,
@@ -36,6 +39,7 @@ const useAssetPage = () => {
   return {
     assets,
     stateForm,
+    isModuleView,
     dispatch,
     saveFile,
     deleteFile,

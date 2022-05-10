@@ -2,6 +2,7 @@ export interface ElectronIpcMainEvent extends Electron.IpcMainEvent {
   reply: (chanel: Channels, args?: any) => void;
 }
 export type Channels =
+  | string
   | 'set-path'
   | 'select-path'
   | 'last-path'
@@ -31,7 +32,10 @@ export type Channels =
   | 'get-softwares-info'
   | 'build-platform'
   | 'emulate-platform'
-  | 'load-game-modules';
+  | 'load-game-modules'
+  | 'load-constants-module'
+  | 'load-translations-module'
+  | 'load-assets-module';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -112,4 +116,8 @@ export type SoftwaresInfo = {
   npm: string | null;
   cordova: string | null;
   ['cordova-res']: string | null;
+};
+export type ModuleArgs<T = any> = {
+  data: T;
+  module: string;
 };

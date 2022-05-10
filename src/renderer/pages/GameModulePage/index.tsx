@@ -5,7 +5,12 @@ import { Container, Tab } from 'semantic-ui-react';
 import { PageProps } from 'types';
 import { GameModuleHomePage } from './components';
 
-export const GameModuleContext = createContext({ module: '' });
+type GameModuleContextType = {
+  module: string | null;
+};
+export const GameModuleContext = createContext<GameModuleContextType>({
+  module: null,
+});
 
 const GameModulePage = (props: PageProps) => {
   const { title } = props;

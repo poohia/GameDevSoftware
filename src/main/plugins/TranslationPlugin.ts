@@ -1,6 +1,11 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
-import { ElectronIpcMainEvent, TranslationObject } from 'types';
+import {
+  Channels,
+  ElectronIpcMainEvent,
+  ModuleArgs,
+  TranslationObject,
+} from 'types';
 import FolderPlugin from './FolderPlugin';
 
 export default class TranslationPlugin {
@@ -32,6 +37,32 @@ export default class TranslationPlugin {
     });
   };
 
+  loadTranslationsModule = (event: ElectronIpcMainEvent, module: string) => {
+    const translations: any = {};
+    // @ts-ignore
+    const { path } = global;
+    const data = fs.readFileSync(`${path}${FolderPlugin.languageFile}`);
+    // @ts-ignore
+    const languages: { code: string }[] = JSON.parse(data);
+    event.reply('languages-authorized', languages);
+    Promise.all(
+      languages.map(
+        (l) =>
+          new Promise((resolve) => {
+            const { code } = l;
+            const dataTranslation = fs.readFileSync(
+              `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${code}.json`
+            );
+            // @ts-ignore
+            translations[code] = JSON.parse(dataTranslation);
+            resolve(true);
+          })
+      )
+    ).then(() => {
+      event.reply(`load-translations-module-${module}`, translations);
+    });
+  };
+
   saveTranslations = (event: ElectronIpcMainEvent, args: TranslationObject) => {
     // @ts-ignore
     const { path } = global;
@@ -41,6 +72,30 @@ export default class TranslationPlugin {
           fs.writeFile(
             `${path}${FolderPlugin.translationDirectory}/${code}.json`,
             JSON.stringify(args[code]),
+            () => {
+              resolve(true);
+            }
+          );
+        });
+      })
+    ).then(() => {
+      this.loadTranslations(event);
+    });
+  };
+
+  saveTranslationsModule = (
+    event: ElectronIpcMainEvent,
+    args: ModuleArgs<TranslationObject>
+  ) => {
+    // @ts-ignore
+    const { path } = global;
+    const { data, module } = args;
+    Promise.all(
+      Object.keys(args).map((code) => {
+        new Promise((resolve) => {
+          fs.writeFile(
+            `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${code}.json`,
+            JSON.stringify(data[code]),
             () => {
               resolve(true);
             }
@@ -88,5 +143,11 @@ export default class TranslationPlugin {
     ipcMain.on('remove-language', (event: Electron.IpcMainEvent, args) => {
       this.removeLanguage(event as ElectronIpcMainEvent, args);
     });
+    ipcMain.on(
+      'load-translations-module',
+      (event: Electron.IpcMainEvent, args) => {
+        this.loadTranslationsModule(event as ElectronIpcMainEvent, args);
+      }
+    );
   };
 }

@@ -55,25 +55,26 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
   }, [defaultKey]);
 
   useEffect(() => {
-    if (Array.isArray(defaultValue) && typeof defaultValue[0] === 'number') {
+    if (!defaultValue) {
+      setValue('');
+      setType('string');
+      return;
+    }
+    const { value } = defaultValue;
+    if (Array.isArray(value) && typeof value[0] === 'number') {
       setType('number[]');
-    } else if (Array.isArray(defaultValue)) {
+    } else if (Array.isArray(value)) {
       setType('string[]');
-    } else if (typeof defaultValue === 'number') {
+    } else if (typeof value === 'number') {
       setType('number');
     } else {
       setType('string');
     }
-
-    if (!defaultValue) {
-      setValue('');
-      return;
-    }
     setTimeout(() => {
-      if (Array.isArray(defaultValue) && typeof defaultValue[0] === 'number') {
-        setValue(defaultValue.map((v) => String(v)));
+      if (Array.isArray(value) && typeof value[0] === 'number') {
+        setValue(value.map((v) => String(v)));
       } else {
-        setValue(defaultValue.value);
+        setValue(value);
       }
     }, 100);
   }, [defaultValue]);
@@ -170,6 +171,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                     selection
                     onAddItem={(_, data) => {
                       if (type === 'number[]' && isNaN(Number(data.value))) {
+                        setValue(JSON.parse(JSON.stringify(value)));
                         return;
                       }
                       setValue(Array.from(value.concat(data.value)));
