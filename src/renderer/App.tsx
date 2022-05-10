@@ -8,22 +8,26 @@ import {
   ConstantPage,
   HomePage,
   TranslationPage,
+  GameModulePage,
 } from 'renderer/pages';
 import { UseTabsProps } from 'renderer/hooks/useTabs';
+
+export const modulesComponent: any = [];
+modulesComponent['HomePage'] = HomePage;
+modulesComponent['ApplicationPage'] = ApplicationPage;
+modulesComponent['TranslationPage'] = TranslationPage;
+modulesComponent['ConstantPage'] = ConstantPage;
+modulesComponent['AssetPage'] = AssetPage;
+modulesComponent['GameModulePage'] = GameModulePage;
 
 export default function App() {
   const { path } = useApp();
   const tabOptions: UseTabsProps = useMemo(() => {
-    const modules: any = [];
-    modules['HomePage'] = HomePage;
-    modules['ApplicationPage'] = ApplicationPage;
-    modules['TranslationPage'] = TranslationPage;
-    modules['ConstantPage'] = ConstantPage;
-    modules['AssetPage'] = AssetPage;
     return {
-      modules,
+      modules: modulesComponent,
       tableTabs: 'tabs',
       tableActiveTab: 'tab-active',
+      activeKeyboardControl: true,
     };
   }, []);
   const { tabs, tabActive, onTabChange } = useTabs(tabOptions);

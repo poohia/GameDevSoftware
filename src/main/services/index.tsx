@@ -2,7 +2,7 @@ import CordovaService from './CordovaService';
 import FileService from './FileService';
 import VersionSoftwareService from './VersionSoftwareService';
 
-type Services = 'file' | 'cordova' | 'versionsoftware';
+type Services = 'fileService' | 'cordovaService' | 'versionSoftwareService';
 
 export default class ServiceContainer {
   private _fileService = new FileService();
@@ -10,13 +10,6 @@ export default class ServiceContainer {
   private _versionSoftwareService = new VersionSoftwareService();
 
   get = (service: Services) => {
-    switch (service) {
-      case 'file':
-        return this._fileService;
-      case 'cordova':
-        return this._cordovaService;
-      case 'versionsoftware':
-        return this._versionSoftwareService;
-    }
+    return this[`_${service}`];
   };
 }

@@ -19,9 +19,9 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
   );
   const formatData = useCallback(() => {
     if (filter !== '') {
-      return Object.keys(constants).filter((key) => key.includes(filter));
+      return constants.filter((c) => c.key.includes(filter));
     }
-    return Object.keys(constants);
+    return constants;
   }, [filter, constants]);
   const formatString = useCallback(
     (value: number | number[] | string | string[]) => {
@@ -60,7 +60,7 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData().map((key) => (
+              {formatData().map(({ key, value, description }) => (
                 <Table.Row
                   key={key}
                   active={keySelected === key}
@@ -68,11 +68,14 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
                 >
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">
-                      {key}
-                      <Header.Subheader>
-                        {formatString(constants[key])}
-                      </Header.Subheader>
+                      {formatString(value)}
+                      <Header.Subheader>{key}</Header.Subheader>
                     </Header>
+                    {description && (
+                      <p>
+                        <i>{description}</i>
+                      </p>
+                    )}
                   </Table.Cell>
                   <Table.Cell textAlign="right">
                     <Button

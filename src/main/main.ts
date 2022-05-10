@@ -14,12 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import {
-  FolderPlugin,
-  TranslationPlugin,
-  ConstantPlugin,
-  AssetPlugin,
-} from './plugins';
+import PluginsContainer from './plugins';
 import ApplicationPlugin from './plugins/ApplicationPlugin';
 import ServiceContainer from './services';
 
@@ -108,17 +103,10 @@ const createWindow = async () => {
   // @ts-ignore
   global.mainWindow = mainWindow;
 
-  const folderPlugin = new FolderPlugin(mainWindow);
-  const applicationPlugin = new ApplicationPlugin(mainWindow);
-  const translationPlugin = new TranslationPlugin();
-  const constantPlugin = new ConstantPlugin();
-  const assetPlugin = new AssetPlugin(mainWindow);
-
-  folderPlugin.init();
-  applicationPlugin.init();
-  translationPlugin.init();
-  constantPlugin.init();
-  assetPlugin.init();
+  const pluginContainer = new PluginsContainer(mainWindow);
+  pluginContainer.init();
+  // @ts-ignore
+  global.pluginContainer = pluginContainer;
 
   const serviceContainer = new ServiceContainer();
   // @ts-ignore

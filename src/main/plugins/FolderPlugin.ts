@@ -9,6 +9,7 @@ export default class FolderPlugin {
   static gameDevSoftwareDirectory = '/GameDevSoftware';
   static resourcesDirectory = '/resources';
   static platformsDirectory = '/platforms';
+  static modulesDirectory = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/modules`;
 
   static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
   static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;

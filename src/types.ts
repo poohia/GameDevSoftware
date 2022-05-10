@@ -30,11 +30,14 @@ export type Channels =
   | 'projected-started'
   | 'get-softwares-info'
   | 'build-platform'
-  | 'emulate-platform';
+  | 'emulate-platform'
+  | 'load-game-modules';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
-  appendTab?: (
+  id: number;
+  title: string;
+  appendTab: (
     menuItem: string,
     Component: React.FunctionComponent<PageProps>
   ) => void;
@@ -48,8 +51,10 @@ export type TranslationObject = {
 export type ConstantValue = string | number | string[] | number[];
 export type ConstantType = 'string' | 'number' | 'string[]' | 'number[]';
 export type ConstantObject = {
-  [key: string]: ConstantValue;
-};
+  key: string;
+  value: ConstantValue;
+  description?: string;
+}[];
 export type TabType = {
   id: number;
   index: number;
@@ -60,6 +65,7 @@ export type TabType = {
 export type TabActiveType = {
   index: number;
   id: number;
+  props?: any;
 };
 export type TabDatabaseType = {
   menuItem: string;

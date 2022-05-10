@@ -3,7 +3,7 @@ import childProcess from 'child_process';
 import pathModule from 'path';
 import fs from 'fs';
 
-import { FolderPlugin } from '../plugins';
+import FolderPlugin from '../plugins/FolderPlugin';
 
 const exec = childProcess.exec;
 const spawn = childProcess.spawn;
@@ -90,18 +90,34 @@ export default class CordovaService {
     }
     // @ts-ignore
     const path = global.path;
-    this._childProcessElectron = exec('cordova run electron --nobuild', {
-      cwd: path,
-    });
+    this._childProcessElectron = exec(
+      'cordova run electron --nobuild',
+      {
+        cwd: path,
+      },
+      (err, stdout, stderr) => {
+        console.log(err);
+        console.log(stdout);
+        console.log(stderr);
+      }
+    );
   };
 
   openBrowser = () => {
     this.closeBrowser();
     // @ts-ignore
     const path = global.path;
-    this._childProcessBrowser = exec('cordova emulate browser', {
-      cwd: path,
-    });
+    this._childProcessBrowser = exec(
+      'cordova emulate browser',
+      {
+        cwd: path,
+      },
+      (err, stdout, stderr) => {
+        console.log(err);
+        console.log(stdout);
+        console.log(stderr);
+      }
+    );
   };
 
   closeBrowser = () => {

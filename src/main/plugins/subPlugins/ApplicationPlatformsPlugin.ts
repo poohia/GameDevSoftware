@@ -67,10 +67,10 @@ export default class ApplicationPlatformsPlugin {
     });
   };
 
-  toggleProject = (event: ElectronIpcMainEvent) => {
+  toggleProject = (_event: ElectronIpcMainEvent) => {
     const _cordovaService: CordovaService =
       // @ts-ignore
-      global.serviceContainer.get('cordova');
+      global.serviceContainer.get('cordovaService');
     _cordovaService.toggleProcess();
   };
 }

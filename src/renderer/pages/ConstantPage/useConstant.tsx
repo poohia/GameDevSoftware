@@ -4,7 +4,7 @@ import { ConstantObject, ConstantValue } from 'types';
 import { FormReducer, defaultStateFormReducer } from 'renderer/reducers';
 
 const useConstant = () => {
-  const [constants, setConstants] = useState<ConstantObject>({});
+  const [constants, setConstants] = useState<ConstantObject>([]);
   const [stateForm, dispatch] = useReducer(
     FormReducer,
     defaultStateFormReducer
@@ -19,9 +19,15 @@ const useConstant = () => {
   }, []);
 
   const sendCreateConstant = useCallback(
-    (key: string, value: ConstantValue) => {
+    (key: string, value: ConstantValue, description?: string) => {
       setConstants((_constants) => {
-        _constants[key] = value;
+        const constant = _constants.find((c) => c.key === key);
+        if (constant) {
+          (constant.value = value), (constant.description = description);
+        } else {
+          _constants = _constants.concat({ key, value, description });
+        }
+
         sendMessage('save-constants', _constants);
         return JSON.parse(JSON.stringify(_constants));
       });
@@ -34,11 +40,15 @@ const useConstant = () => {
 
   const updateConstant = useCallback(
     (key: string) => {
+      const constant = constants.find((c) => c.key === key);
       dispatch({
         type: 'show-update-form',
         data: {
           key,
-          value: constants[key],
+          value: {
+            value: constant?.value || '',
+            description: constant?.description || '',
+          },
         },
       });
     },
@@ -48,7 +58,7 @@ const useConstant = () => {
   const deleteConstant = useCallback(
     (key: string) => {
       setConstants((_constants) => {
-        delete _constants[key];
+        _constants = _constants.filter((c) => c.key !== key);
         sendMessage('save-constants', _constants);
         return JSON.parse(JSON.stringify(_constants));
       });

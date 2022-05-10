@@ -28,4 +28,22 @@ export default class FileService {
       callback(Buffer.from(data).toString('base64'));
     });
   };
+
+  static readdir = (
+    path: string,
+    filter: 'file' | 'directory' | 'all',
+    callback: (names: string[]) => void
+  ) => {
+    fs.readdir(path, { withFileTypes: true }, (err, files) => {
+      if (err) {
+        console.log(err);
+        throw new Error(err.message);
+      }
+      if (filter === 'all') callback(files.map((f) => f.name));
+      if (filter === 'directory')
+        callback(files.filter((f) => f.isDirectory()).map((f) => f.name));
+      if (filter === 'file')
+        callback(files.filter((f) => !f.isDirectory()).map((f) => f.name));
+    });
+  };
 }

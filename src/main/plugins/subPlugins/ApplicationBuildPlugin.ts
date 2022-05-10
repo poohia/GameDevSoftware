@@ -18,7 +18,7 @@ export default class ApplicationBuildPlugin {
   ) => {
     const cordovaService: CordovaService =
       // @ts-ignore
-      global.serviceContainer.get('cordova');
+      global.serviceContainer.get('cordovaService');
     switch (arg) {
       case 'android':
         CordovaService.openAndroidStudio();
