@@ -1,12 +1,10 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
-import {
-  Channels,
-  ElectronIpcMainEvent,
-  ModuleArgs,
-  TranslationObject,
-} from 'types';
+import async from 'async';
+import { ElectronIpcMainEvent, ModuleArgs, TranslationObject } from 'types';
 import FolderPlugin from './FolderPlugin';
+import FileService from '../services/FileService';
+import GameModulesPlugin from './GameModulesPlugin';
 
 export default class TranslationPlugin {
   constructor() {}
@@ -130,6 +128,44 @@ export default class TranslationPlugin {
     this.setLanguages(event, languages);
   };
 
+  loadAllTranslations = (event: ElectronIpcMainEvent, language: string) => {
+    //@ts-ignore
+    const { path } = global;
+    async.parallel(
+      [
+        (callback) => {
+          FileService.readJsonFile(
+            `${path}${FolderPlugin.translationDirectory}/${language}.json`
+          ).then((data) => callback(null, [data]));
+        },
+        (callback) => {
+          const dataModules: any[] = [];
+          GameModulesPlugin.loadDynamicModulesName().then((modules) => {
+            async
+              .each(modules, (module, callbackModule) => {
+                FileService.readJsonFile(
+                  `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${language}.json`
+                ).then((data: Object) => {
+                  dataModules.push(data);
+                  callbackModule();
+                });
+              })
+              .then(() => callback(null, dataModules));
+          });
+        },
+      ],
+      (_err, results) => {
+        let finalData: any = {};
+        results?.forEach((r: any) => {
+          Object.keys(r).forEach((key) => {
+            finalData = { ...finalData, ...r[key] };
+          });
+        });
+        event.reply('load-all-translations', finalData);
+      }
+    );
+  };
+
   init = () => {
     ipcMain.on('load-translations', (event: Electron.IpcMainEvent) => {
       this.loadTranslations(event as ElectronIpcMainEvent);
@@ -149,5 +185,8 @@ export default class TranslationPlugin {
         this.loadTranslationsModule(event as ElectronIpcMainEvent, args);
       }
     );
+    ipcMain.on('load-all-translations', (event, args) => {
+      this.loadAllTranslations(event as ElectronIpcMainEvent, args);
+    });
   };
 }

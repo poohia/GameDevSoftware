@@ -36,8 +36,11 @@ export type Channels =
   | 'load-constants-module'
   | 'load-translations-module'
   | 'load-assets-module'
-  | 'load-game-object-types';
-export type Tables = 'locale' | 'tabs' | 'tab-active';
+  | 'load-game-object-types'
+  | 'load-game-objects'
+  | 'load-all-translations'
+  | 'remove-game-object';
+export type Tables = 'locale' | 'tabs' | 'tab-active' | 'last-path' | string;
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
   id: number;
@@ -123,4 +126,14 @@ export type SoftwaresInfo = {
 export type ModuleArgs<T = any> = {
   data: T;
   module: string;
+};
+export type ObjectGameTypeJSON = {
+  file: string;
+  type: string;
+};
+export type GameObject = {
+  [key: string]: string;
+  _id: number;
+  _type: string;
+  _title: string;
 };

@@ -11,7 +11,7 @@ import i18n from 'translations/i18n';
 import { useEvents } from 'renderer/hooks';
 import { TranslationObject } from 'types';
 import TranslationFromReducer, { defaultState } from './TranslationFromReducer';
-import { GameModuleContext } from '../GameModulePage';
+import { GameModuleContext } from 'renderer/contexts';
 
 const useTranslationPage = () => {
   const { module } = useContext(GameModuleContext);

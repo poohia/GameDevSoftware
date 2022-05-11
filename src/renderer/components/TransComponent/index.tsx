@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
+import TranslationsContext from 'renderer/contexts/TranslationsContext';
 import i18n from 'translations/i18n';
 
 type TransComponentProps = {
@@ -9,7 +10,14 @@ type TransComponentProps = {
 
 const TransComponent = (props: TransComponentProps) => {
   const { id, defaultValue, values = [] } = props;
+  const { translations } = useContext(TranslationsContext);
   const value = useMemo(() => {
+    if (id.includes('@t:')) {
+      return (
+        translations[id.replace('@t:', '')] ||
+        `Translation not found ${id.replace('@t:', '')}`
+      );
+    }
     const v = i18n.t(id, { defaultValue });
     values.forEach((_value) => v.replace(_value.key, _value.value));
     return v;

@@ -9,7 +9,7 @@ import {
 import { useEvents } from 'renderer/hooks';
 import { ConstantObject, ConstantValue } from 'types';
 import { FormReducer, defaultStateFormReducer } from 'renderer/reducers';
-import { GameModuleContext } from '../GameModulePage';
+import { GameModuleContext } from 'renderer/contexts';
 
 const useConstant = () => {
   const { module } = useContext(GameModuleContext);

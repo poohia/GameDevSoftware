@@ -1,11 +1,22 @@
-import { useEffect, useState } from 'react';
-import { useEvents, useDatabase } from 'renderer/hooks';
+import { useEffect, useMemo, useState } from 'react';
+import { useEvents, useDatabase, useTranslations } from 'renderer/hooks';
 import i18n from 'translations/i18n';
+import useTabs, { UseTabsProps } from './hooks/useTabs';
 
 const useApp = () => {
   const [path, setPath] = useState<string | null | undefined>();
   const { on, sendMessage } = useEvents();
   const { setItem, getItem } = useDatabase();
+  const translations = useTranslations(path);
+
+  const tabOptions: UseTabsProps = useMemo(() => {
+    return {
+      tableTabs: 'tabs',
+      tableActiveTab: 'tab-active',
+      activeKeyboardControl: true,
+    };
+  }, []);
+  const { tabs, tabActive, onTabChange } = useTabs(tabOptions);
 
   useEffect(() => {
     on('path-is-correct', (args: string) => {
@@ -44,6 +55,10 @@ const useApp = () => {
 
   return {
     path,
+    translations,
+    tabs,
+    tabActive,
+    onTabChange,
   };
 };
 
