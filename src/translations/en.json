@@ -3,6 +3,7 @@
   "module_application": "Application Module",
   "module_translation": "Translation Module",
   "module_constant": "Constant Module",
+  "module_gameobject": "Game Object Module",
   "dropdown_languages_placeholder_default": "Select Country",
   "dropdown_languages_placeholder_append_country": "Append language",
   "module_translation_header_button_append_translation": "Create translation",

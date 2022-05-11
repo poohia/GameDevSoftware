@@ -4,3 +4,4 @@ export { default as TranslationPage } from './TranslationPage';
 export { default as ConstantPage } from './ConstantPage';
 export { default as AssetPage } from './AssetPage';
 export { default as GameModulePage } from './GameModulePage';
+export { default as GameobjectPage } from './GameobjectPage';

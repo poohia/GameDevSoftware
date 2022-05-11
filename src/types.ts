@@ -35,7 +35,8 @@ export type Channels =
   | 'load-game-modules'
   | 'load-constants-module'
   | 'load-translations-module'
-  | 'load-assets-module';
+  | 'load-assets-module'
+  | 'load-game-object-types';
 export type Tables = 'locale' | 'tabs' | 'tab-active';
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -43,7 +44,9 @@ export type PageProps = {
   title: string;
   appendTab: (
     menuItem: string,
-    Component: React.FunctionComponent<PageProps>
+    Component: React.FunctionComponent<PageProps>,
+    _saveTabs?: boolean,
+    componentName?: string
   ) => void;
 };
 export type Translation = {

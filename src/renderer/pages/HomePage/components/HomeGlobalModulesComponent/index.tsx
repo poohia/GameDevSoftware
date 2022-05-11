@@ -14,7 +14,7 @@ type HomeGlobalModulesComponent = Required<Pick<PageProps, 'appendTab'>> & {
 
 const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
   const {
-    modules = ['application', 'translation', 'constant', 'asset'],
+    modules = ['application', 'translation', 'constant', 'asset', 'gameobject'],
     onChangeLocale,
     appendTab,
   } = props;
@@ -47,7 +47,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
           )}
           <Grid.Row>
             {modules.map((module) => (
-              <Grid.Column width={4}>
+              <Grid.Column width={4} key={module}>
                 <Button
                   onClick={() =>
                     appendTab(
