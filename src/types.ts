@@ -39,7 +39,8 @@ export type Channels =
   | 'load-game-object-types'
   | 'load-game-objects'
   | 'load-all-translations'
-  | 'remove-game-object';
+  | 'remove-game-object'
+  | 'get-formulaire-game-object';
 export type Tables = 'locale' | 'tabs' | 'tab-active' | 'last-path' | string;
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -132,8 +133,16 @@ export type ObjectGameTypeJSON = {
   type: string;
 };
 export type GameObject = {
-  [key: string]: string;
+  [key: string]: any;
   _id: number;
   _type: string;
   _title: string;
+};
+export type GameObjectForm = {
+  name: string;
+  type: string;
+  description: string;
+  core: {
+    [key: string]: any;
+  };
 };

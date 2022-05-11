@@ -9,7 +9,7 @@ type TransComponentProps = {
 };
 
 const TransComponent = (props: TransComponentProps) => {
-  const { id, defaultValue, values = [] } = props;
+  const { id, defaultValue = id, values = [] } = props;
   const { translations } = useContext(TranslationsContext);
   const value = useMemo(() => {
     if (id.includes('@t:')) {
