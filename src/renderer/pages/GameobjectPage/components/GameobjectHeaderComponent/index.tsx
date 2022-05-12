@@ -1,13 +1,17 @@
 import { TransComponent } from 'renderer/components';
 import { Button, Container, Grid, Header, Icon } from 'semantic-ui-react';
+import { AssetHeaderComponentProps } from 'types';
 
-type GameobjectHeaderComponentProps = {
+type GameobjectHeaderComponentProps = Pick<
+  AssetHeaderComponentProps,
+  'onClickAdd'
+> & {
   title: string;
   description?: string;
 };
 
 const GameobjectHeaderComponent = (props: GameobjectHeaderComponentProps) => {
-  const { title, description } = props;
+  const { title, description, onClickAdd } = props;
   return (
     <Container fluid>
       <Grid>
@@ -25,7 +29,7 @@ const GameobjectHeaderComponent = (props: GameobjectHeaderComponentProps) => {
               icon
               color="green"
               labelPosition="right"
-              //   onClick={() => value !== null && onAppendLocale(value)}
+              onClick={onClickAdd}
             >
               <TransComponent id="form_title_new" />
               <Icon name="add" />

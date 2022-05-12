@@ -127,7 +127,6 @@ const useTabs = (props: UseTabsProps) => {
         }
         if (_saveTabs) {
           setTabActive({ index, id });
-          console.log(componentName);
           saveDatabaseTabs(menuItem, componentName);
         }
 

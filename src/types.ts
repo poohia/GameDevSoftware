@@ -146,3 +146,13 @@ export type GameObjectForm = {
     [key: string]: any;
   };
 };
+export type FormFieldType = 'string' | 'number' | 'image' | 'color' | string;
+export type FormField = {
+  key: string;
+  core: FormFieldType | Array<FormFieldType> | FormField;
+  multiple?: boolean;
+  optional?: boolean;
+  label?: string;
+  description?: string;
+  parent?: string;
+};

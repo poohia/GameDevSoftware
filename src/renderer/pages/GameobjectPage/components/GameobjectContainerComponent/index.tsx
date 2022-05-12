@@ -1,58 +1,49 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useEvents } from 'renderer/hooks';
 import { Grid } from 'semantic-ui-react';
-import { GameObject, GameObjectForm, PageProps } from 'types';
+import { PageProps } from 'types';
+import { FormGenerator as GameobjectFormComponent } from 'renderer/components';
 import GameobjectHeaderComponent from '../GameobjectHeaderComponent';
 import GameobjectTableComponent from '../GameobjectTableComponent';
+import useGameobjectContainerComponent from './useGameobjectContainerComponent';
 
 const GameobjectContainerComponent = (props: PageProps) => {
-  const [gameObjects, setGameObjects] = useState<GameObject[]>([]);
-  const [gameObjectForm, setGameObjectForm] = useState<
-    GameObjectForm | undefined
-  >(undefined);
-
-  const { title: gameObjectType } = props;
-  const { sendMessage, on, once } = useEvents();
-
-  const removeGameObject = useCallback(
-    (id: string) => {
-      sendMessage('remove-game-object', { id, objectType: gameObjectType });
-    },
-    [gameObjectType]
-  );
-
-  useEffect(() => {
-    sendMessage('load-game-objects', gameObjectType);
-    sendMessage('get-formulaire-game-object', gameObjectType);
-    on(`load-game-objects-${gameObjectType}`, (args) => {
-      setGameObjects(args);
-    });
-    once(`get-formulaire-game-object-${gameObjectType}`, (args) => {
-      setGameObjectForm(args);
-    });
-  }, [gameObjectType]);
-
-  console.log(gameObjectForm);
+  const {
+    gameObjects,
+    gameObjectForm,
+    stateForm,
+    removeGameObject,
+    createGameobject,
+  } = useGameobjectContainerComponent(props);
 
   return (
     <Grid>
-      <Grid.Row>
-        <Grid.Column>
-          {gameObjectForm && (
-            <GameobjectHeaderComponent
-              title={gameObjectForm.name}
-              description={gameObjectForm.description}
-            />
-          )}
-        </Grid.Column>
-      </Grid.Row>
       <Grid.Row columns={2}>
-        <Grid.Column>
-          <GameobjectTableComponent
-            gameObjects={gameObjects}
-            onDelete={removeGameObject}
-          />
+        <Grid.Column width={8}>
+          <Grid.Row>
+            <Grid.Column>
+              {gameObjectForm && (
+                <GameobjectHeaderComponent
+                  title={gameObjectForm.name}
+                  description={gameObjectForm.description}
+                  onClickAdd={createGameobject}
+                />
+              )}
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <GameobjectTableComponent
+              gameObjects={gameObjects}
+              onDelete={removeGameObject}
+            />
+          </Grid.Row>
         </Grid.Column>
+        {stateForm.show && gameObjectForm && (
+          <Grid.Column width={8}>
+            <GameobjectFormComponent
+              type={gameObjectForm.type}
+              form={gameObjectForm.core}
+            />
+          </Grid.Column>
+        )}
       </Grid.Row>
     </Grid>
   );
