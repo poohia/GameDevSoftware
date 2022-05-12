@@ -37,5 +37,6 @@
   "module_application_home_project_stop": "Stop",
   "module_application_home_project_open_new_project": "Open project",
   "module_application_home_project_build": "Build",
-  "module_gameobject_home_title": "All Game Objects"
+  "module_gameobject_home_title": "All Game Objects",
+  "form_button_add": "Add"
 }

@@ -22,6 +22,7 @@ const FormReducer = <T = string>(state: State<T>, action: Action): State<T> => {
       show: false,
       isEdit: false,
       key: '',
+      value: undefined,
     };
   };
   const showForm = (isEdit = false) => {

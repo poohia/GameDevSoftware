@@ -12,6 +12,8 @@ const GameobjectContainerComponent = (props: PageProps) => {
     stateForm,
     removeGameObject,
     createGameobject,
+    updateGameobject,
+    sendCreateGameobject,
   } = useGameobjectContainerComponent(props);
 
   return (
@@ -32,6 +34,7 @@ const GameobjectContainerComponent = (props: PageProps) => {
           <Grid.Row>
             <GameobjectTableComponent
               gameObjects={gameObjects}
+              onClickRow={updateGameobject}
               onDelete={removeGameObject}
             />
           </Grid.Row>
@@ -41,6 +44,8 @@ const GameobjectContainerComponent = (props: PageProps) => {
             <GameobjectFormComponent
               type={gameObjectForm.type}
               form={gameObjectForm.core}
+              defaultValues={stateForm.value}
+              onSubmit={sendCreateGameobject}
             />
           </Grid.Column>
         )}

@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
 import { Tab } from 'semantic-ui-react';
-import { useTabs } from 'renderer/hooks';
 import useApp from 'renderer/useApp';
 import {
   ApplicationPage,
@@ -11,7 +9,6 @@ import {
   GameModulePage,
   GameobjectPage,
 } from 'renderer/pages';
-import { UseTabsProps } from 'renderer/hooks/useTabs';
 import { GameobjectContainerComponent } from './pages/GameobjectPage/components';
 import TranslationsContext from './contexts/TranslationsContext';
 

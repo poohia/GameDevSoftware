@@ -28,10 +28,32 @@ const useGameobjectContainerComponent = (props: PageProps) => {
     () =>
       dispatch({
         type: 'show-create-form',
-        data: defaultStateFormReducer,
+        data: { ...defaultStateFormReducer },
       }),
     []
   );
+
+  const updateGameobject = useCallback(
+    (id: number) => {
+      once(`get-game-object-value-${gameObjectType}`, (value) => {
+        dispatch({
+          type: 'show-update-form',
+          data: { key: id.toString(), value },
+        });
+      });
+      sendMessage('get-game-object-value', { id, gameObjectType });
+    },
+    [gameObjectType]
+  );
+
+  const sendCreateGameobject = useCallback((data: any) => {
+    console.log(
+      '🚀 ~ file: useGameobjectContainerComponent.tsx ~ line 50 ~ sendCreateGameobject ~ data',
+      data
+    );
+    dispatch({ type: 'hide-form' });
+    sendMessage('create-game-object', data);
+  }, []);
 
   useEffect(() => {
     sendMessage('load-game-objects', gameObjectType);
@@ -50,6 +72,8 @@ const useGameobjectContainerComponent = (props: PageProps) => {
     stateForm,
     removeGameObject,
     createGameobject,
+    updateGameobject,
+    sendCreateGameobject,
   };
 };
 

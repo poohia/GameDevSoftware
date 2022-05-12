@@ -12,6 +12,7 @@ const TransComponent = (props: TransComponentProps) => {
   const { id, defaultValue = id, values = [] } = props;
   const { translations } = useContext(TranslationsContext);
   const value = useMemo(() => {
+    if (!id) return 'Id not found';
     if (id.includes('@t:')) {
       return (
         translations[id.replace('@t:', '')] ||

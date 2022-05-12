@@ -1,8 +1,8 @@
 import { useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import { GameModuleContext } from 'renderer/contexts';
 import { useEvents } from 'renderer/hooks';
 import { defaultStateFormReducer, FormReducer } from 'renderer/reducers';
 import { AssertFileValueType, AssetType } from 'types';
-import { GameModuleContext } from '../GameModulePage';
 
 const useAssetPage = () => {
   const { module } = useContext(GameModuleContext);

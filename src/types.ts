@@ -40,7 +40,9 @@ export type Channels =
   | 'load-game-objects'
   | 'load-all-translations'
   | 'remove-game-object'
-  | 'get-formulaire-game-object';
+  | 'get-formulaire-game-object'
+  | 'create-game-object'
+  | 'get-game-object-value';
 export type Tables = 'locale' | 'tabs' | 'tab-active' | 'last-path' | string;
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
@@ -155,4 +157,5 @@ export type FormField = {
   label?: string;
   description?: string;
   parent?: string;
+  onChange?: (core: any, key: string, v: any, parent?: string) => void;
 };

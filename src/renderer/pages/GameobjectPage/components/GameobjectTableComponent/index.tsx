@@ -5,11 +5,13 @@ import { GameObject } from 'types';
 
 type GameobjectTableComponentProps = {
   gameObjects: GameObject[];
+  keySelected?: string;
+  onClickRow: (id: number) => void;
   onDelete: (id: string) => void;
 };
 
 const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
-  const { gameObjects, onDelete } = props;
+  const { gameObjects, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
   const formatData = useMemo(() => {
     if (filter !== '') {
@@ -50,7 +52,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
                 <Table.Row
                   key={_id}
                   //   active={keySelected === key}
-                  //   onClick={() => onClickRow(key)}
+                  onClick={() => onClickRow(_id)}
                 >
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">
