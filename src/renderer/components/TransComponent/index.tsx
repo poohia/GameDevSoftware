@@ -11,9 +11,10 @@ type TransComponentProps = {
 const TransComponent = (props: TransComponentProps) => {
   const { id, defaultValue = id, values = [] } = props;
   const { translations } = useContext(TranslationsContext);
+
   const value = useMemo(() => {
-    if (!id) return 'Id not found';
-    if (id.includes('@t:')) {
+    if (!id) return 'Translation id not found';
+    if (id.startsWith('@t:')) {
       return (
         translations[id.replace('@t:', '')] ||
         `Translation not found ${id.replace('@t:', '')}`

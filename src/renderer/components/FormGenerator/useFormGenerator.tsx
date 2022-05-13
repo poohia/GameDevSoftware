@@ -1,9 +1,14 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Dropdown, Form, Grid, Header, Input } from 'semantic-ui-react';
 import { FormField } from 'types';
 import TransComponent from '../TransComponent';
-import FieldComponent, { FieldComponentProps } from './FieldComponent';
-import FieldMultipleComponent from './FieldMultipleComponent';
+import {
+  FieldMultipleComponent,
+  FieldComponent,
+  TranslationInput,
+  ColorPicker,
+} from './components';
+import { FieldComponentProps } from './components/FieldComponent';
 
 export type FormGeneratorProps = {
   form: any;
@@ -13,11 +18,8 @@ export type FormGeneratorProps = {
 };
 
 const useFormGenerator = (props: FormGeneratorProps) => {
-  const { form, type: _type, defaultValues = {}, onSubmit } = props;
-  console.log(
-    '🚀 ~ file: useFormGenerator.tsx ~ line 17 ~ useFormGenerator ~ defaultValue',
-    defaultValues
-  );
+  const { form, type: _type, defaultValues, onSubmit } = props;
+
   const [value, setValue] = useState<any>({});
 
   const handleChangeMultiple = useCallback((data: any) => {
@@ -66,14 +68,14 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         description,
         required: !optional,
       };
-      // let defaultValue = undefined;
+      let defaultValue = undefined;
 
-      // if (defaultValues[key]) {
-      //   defaultValue = defaultValues[key];
-      // }
-      // if (parent && defaultValues[parent]) {
-      //   defaultValue = defaultValues[parent][key];
-      // }
+      if (defaultValues && defaultValues[key]) {
+        defaultValue = defaultValues[key];
+      }
+      if (parent && defaultValues && defaultValues[parent]) {
+        defaultValue = defaultValues[parent][key];
+      }
       if (core === 'string' || core === 'number') {
         return (
           <FieldComponent {...defaultProps}>
@@ -81,7 +83,28 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               id={key}
               type={core}
               onChange={(_, data) => onChange(core, key, data.value, parent)}
+              defaultValue={defaultValue}
               {...rest}
+            />
+          </FieldComponent>
+        );
+      }
+      if (core === 'color') {
+        return (
+          <FieldComponent {...defaultProps}>
+            <ColorPicker
+              defaultValue={defaultValue}
+              onChange={(data) => onChange(core, key, data, parent)}
+            />
+          </FieldComponent>
+        );
+      }
+      if (core === 'translation') {
+        return (
+          <FieldComponent {...defaultProps}>
+            <TranslationInput
+              defaultValue={defaultValue}
+              onChange={(data) => onChange(core, key, data, parent)}
             />
           </FieldComponent>
         );
@@ -101,6 +124,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                 key: v,
               }))}
               onChange={(_, data) => onChange(core, key, data.value, parent)}
+              defaultValue={defaultValue}
               {...rest}
             ></Dropdown>
           </FieldComponent>
@@ -142,6 +166,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               <FieldMultipleComponent
                 keyValue={key}
                 core={core.core}
+                defaultValue={defaultValue}
                 components={Object.keys(core.core).map((coreKey) => {
                   return (props: any) => (
                     <React.Fragment key={`${key}-${core.core[coreKey]}`}>
@@ -165,7 +190,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
 
       return <div />;
     },
-    [value]
+    [value, defaultValues]
   );
 
   const FormGeneratedComponent = useMemo(() => {
@@ -189,7 +214,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
           <Grid.Column>
             <Form
               onSubmit={() => {
-                onSubmit({ ...value, _type });
+                onSubmit({ ...defaultValues, ...value, _type });
               }}
             >
               {Object.keys(form).map((key) => (
@@ -203,7 +228,11 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         </Grid.Row>
       </Grid>
     );
-  }, [props]);
+  }, [value, defaultValues]);
+
+  useEffect(() => {
+    setValue({});
+  }, [defaultValues]);
 
   return FormGeneratedComponent;
 };

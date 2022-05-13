@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, FormField, Grid, Header, Icon } from 'semantic-ui-react';
-import TransComponent from '../TransComponent';
+import TransComponent from '../../TransComponent';
 
 type FieldMultipleComponentProps = {
   keyValue: string;
@@ -17,11 +17,11 @@ const FieldMultipleComponent: React.FunctionComponent<
   const [items, setItems] = useState<number[]>([]);
   const [values, setValues] = useState<{ id: Number; value: any }[]>([]);
   const handleChange = useCallback(
-    (item: number, _core: any, key: string, value: any) =>
+    (item: number, core: any, key: string, value: any) =>
       setValues((_values) => {
         const valueFind = _values.find((v) => v.id === item);
         if (valueFind) {
-          valueFind.value[key] = value;
+          valueFind.value[key] = core === 'number' ? Number(value) : value;
         } else {
           _values.push({
             id: item,

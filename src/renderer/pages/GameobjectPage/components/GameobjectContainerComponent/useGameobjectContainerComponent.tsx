@@ -19,6 +19,7 @@ const useGameobjectContainerComponent = (props: PageProps) => {
 
   const removeGameObject = useCallback(
     (id: string) => {
+      dispatch({ type: 'hide-form' });
       sendMessage('remove-game-object', { id, objectType: gameObjectType });
     },
     [gameObjectType]
@@ -47,10 +48,6 @@ const useGameobjectContainerComponent = (props: PageProps) => {
   );
 
   const sendCreateGameobject = useCallback((data: any) => {
-    console.log(
-      '🚀 ~ file: useGameobjectContainerComponent.tsx ~ line 50 ~ sendCreateGameobject ~ data',
-      data
-    );
     dispatch({ type: 'hide-form' });
     sendMessage('create-game-object', data);
   }, []);

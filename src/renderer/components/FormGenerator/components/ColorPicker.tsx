@@ -1,0 +1,46 @@
+import { useCallback, useEffect, useState } from 'react';
+import { PhotoshopPicker } from 'react-color';
+import { CustomInputProps } from 'types';
+
+const ColorPicker = (props: CustomInputProps) => {
+  const { defaultValue, onChange } = props;
+  const [showColorPick, setShowColorPicker] = useState<boolean>(false);
+  const [color, setColor] = useState<string>('');
+  const [value, setValue] = useState<string>('');
+
+  const handleSubmit = useCallback(() => {
+    setShowColorPicker(false);
+    setValue(color);
+    onChange(color);
+  }, [color]);
+
+  useEffect(() => {
+    if (defaultValue) {
+      setValue(defaultValue);
+      setColor(defaultValue);
+    }
+  }, [defaultValue]);
+
+  return (
+    <>
+      {!showColorPick && (
+        <div
+          className="ui selection dropdown fluid"
+          onClick={() => setShowColorPicker(true)}
+        >
+          <span>{value}</span>
+        </div>
+      )}
+      {showColorPick && (
+        <PhotoshopPicker
+          color={color}
+          onChange={(color) => setColor(color.hex)}
+          onAccept={handleSubmit}
+          onCancel={() => setShowColorPicker(false)}
+        />
+      )}
+    </>
+  );
+};
+
+export default ColorPicker;

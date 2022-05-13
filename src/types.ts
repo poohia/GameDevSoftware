@@ -148,7 +148,13 @@ export type GameObjectForm = {
     [key: string]: any;
   };
 };
-export type FormFieldType = 'string' | 'number' | 'image' | 'color' | string;
+export type FormFieldType =
+  | 'string'
+  | 'number'
+  | 'image'
+  | 'color'
+  | 'translation'
+  | string;
 export type FormField = {
   key: string;
   core: FormFieldType | Array<FormFieldType> | FormField;
@@ -158,4 +164,8 @@ export type FormField = {
   description?: string;
   parent?: string;
   onChange?: (core: any, key: string, v: any, parent?: string) => void;
+};
+export type CustomInputProps = {
+  defaultValue?: any;
+  onChange: (value: any) => void;
 };

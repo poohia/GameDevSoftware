@@ -138,20 +138,25 @@ export default class GameObjectPlugin {
     const { path } = global;
     GameObjectPlugin.readIndexFile().then((data) => {
       const ids = data.map((d) => Number(d.file.replace('.json', '')));
-      const id = args.id || ids[ids.length - 1] + 1;
-      data.push({ file: `${id}.json`, type: args._type });
+      let _id = 1;
+      if (args._id) {
+        _id = args._id;
+      } else if (ids.length > 0) {
+        _id = ids[ids.length - 1] + 1;
+      }
+      data.push({ file: `${_id}.json`, type: args._type });
       async.parallel(
         [
           (callback) =>
-            args.id
+            args._id
               ? callback(null)
               : GameObjectPlugin.writeIndexFile(data).then(() =>
                   callback(null)
                 ),
           (callback) =>
             FileService.writeJsonFile(
-              `${path}/${FolderPlugin.gameObjectDirectory}/${id}.json`,
-              { ...args, _id: args.id || id }
+              `${path}/${FolderPlugin.gameObjectDirectory}/${_id}.json`,
+              { ...args, _id }
             ).then(() => callback(null)),
         ],
         () => {
