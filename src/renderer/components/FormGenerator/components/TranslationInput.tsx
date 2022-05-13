@@ -5,9 +5,12 @@ import { Button, Modal, ModalProps } from 'semantic-ui-react';
 import { CustomInputProps } from 'types';
 
 const ModalTranslation = (
-  props: ModalProps & { onSubmit: (value: string) => void }
+  props: ModalProps & {
+    defaultValue?: string;
+    onSubmit: (value: string) => void;
+  }
 ) => {
-  const { open, onClose, onSubmit, ...rest } = props;
+  const { open, defaultValue, onClose, onSubmit, ...rest } = props;
   const { translations } = useContext(TranslationsContext);
   const [value, setValue] = useState<string>('');
   const handleClickRow = useCallback(
@@ -16,6 +19,12 @@ const ModalTranslation = (
     },
     [translations]
   );
+  useEffect(() => {
+    if (defaultValue) {
+      setValue(defaultValue.replace('@t:', ''));
+    }
+  }, [defaultValue]);
+
   return (
     <Modal
       open={open}
@@ -85,6 +94,7 @@ const TranslationInput = (props: CustomInputProps) => {
       </div>
       <ModalTranslation
         open={openModal}
+        defaultValue={defaultValue}
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}
       />

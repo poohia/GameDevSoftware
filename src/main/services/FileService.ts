@@ -48,11 +48,12 @@ export default class FileService {
     });
 
   static readJsonFile = <T = any>(path: string): Promise<T> =>
-    new Promise((resolve) => {
+    new Promise((resolve, reject) => {
       fs.readFile(path, (err, data) => {
         if (err) {
           console.error(err);
-          throw new Error(err.message);
+          reject(err.message);
+          return;
         }
         // @ts-ignore
         resolve(JSON.parse(data));

@@ -7,6 +7,7 @@ import FileService from '../services/FileService';
 import GameModulesPlugin from './GameModulesPlugin';
 
 export default class TranslationPlugin {
+  private _locale = 'en';
   constructor() {}
 
   loadTranslations = (event: ElectronIpcMainEvent) => {
@@ -48,12 +49,19 @@ export default class TranslationPlugin {
         (l) =>
           new Promise((resolve) => {
             const { code } = l;
-            const dataTranslation = fs.readFileSync(
-              `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${code}.json`
+            fs.readFile(
+              `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${code}.json`,
+              (err, dataTranslation) => {
+                console.log("i'm here");
+                if (err) {
+                  translations[code] = {};
+                } else {
+                  // @ts-ignore
+                  translations[code] = JSON.parse(dataTranslation);
+                }
+                resolve(true);
+              }
             );
-            // @ts-ignore
-            translations[code] = JSON.parse(dataTranslation);
-            resolve(true);
           })
       )
     ).then(() => {
@@ -128,15 +136,26 @@ export default class TranslationPlugin {
     this.setLanguages(event, languages);
   };
 
-  loadAllTranslations = (event: ElectronIpcMainEvent, language: string) => {
+  loadAllTranslations = (event: ElectronIpcMainEvent, language?: string) => {
+    if (language) {
+      this._locale = language;
+    }
     //@ts-ignore
     const { path } = global;
+    console.log("i'm here", this._locale);
     async.parallel(
       [
         (callback) => {
           FileService.readJsonFile(
-            `${path}${FolderPlugin.translationDirectory}/${language}.json`
-          ).then((data) => callback(null, [data]));
+            `${path}${FolderPlugin.translationDirectory}/${this._locale}.json`
+          )
+            .then((data) => callback(null, [data]))
+            .catch(() => {
+              console.log("i'm here1");
+              FileService.readJsonFile(
+                `${path}${FolderPlugin.translationDirectory}/en.json`
+              ).then((data) => callback(null, [data]));
+            });
         },
         (callback) => {
           const dataModules: any[] = [];
@@ -144,7 +163,7 @@ export default class TranslationPlugin {
             async
               .each(modules, (module, callbackModule) => {
                 FileService.readJsonFile(
-                  `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${language}.json`
+                  `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${this._locale}.json`
                 ).then((data: Object) => {
                   dataModules.push(data);
                   callbackModule();

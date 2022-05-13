@@ -23,7 +23,7 @@ modulesComponent['GameobjectPage'] = GameobjectPage;
 modulesComponent['GameobjectContainerComponent'] = GameobjectContainerComponent;
 
 export default function App() {
-  const { path, translations, tabs, tabActive, onTabChange } = useApp();
+  const { path, translationsHook, tabs, tabActive, onTabChange } = useApp();
 
   if (path === undefined) {
     return <div>Loading....</div>;
@@ -34,7 +34,7 @@ export default function App() {
   }
 
   return (
-    <TranslationsContext.Provider value={{ translations }}>
+    <TranslationsContext.Provider value={{ ...translationsHook }}>
       <main className="game-dev-software-body">
         <Tab
           panes={tabs}

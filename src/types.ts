@@ -43,7 +43,13 @@ export type Channels =
   | 'get-formulaire-game-object'
   | 'create-game-object'
   | 'get-game-object-value';
-export type Tables = 'locale' | 'tabs' | 'tab-active' | 'last-path' | string;
+export type Tables =
+  | 'locale'
+  | 'tabs'
+  | 'tab-active'
+  | 'last-path'
+  | 'game-locale'
+  | string;
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
   id: number;
