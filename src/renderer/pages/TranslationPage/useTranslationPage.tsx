@@ -10,7 +10,7 @@ import {
 import { useDatabase, useEvents } from 'renderer/hooks';
 import { TranslationObject } from 'types';
 import TranslationFromReducer, { defaultState } from './TranslationFromReducer';
-import { GameModuleContext } from 'renderer/contexts';
+import GameModuleContext from 'renderer/contexts/GameModuleContext';
 import TranslationsContext from 'renderer/contexts/TranslationsContext';
 
 const useTranslationPage = () => {

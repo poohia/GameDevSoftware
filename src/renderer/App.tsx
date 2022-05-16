@@ -10,7 +10,7 @@ import {
   GameobjectPage,
 } from 'renderer/pages';
 import { GameobjectContainerComponent } from './pages/GameobjectPage/components';
-import TranslationsContext from './contexts/TranslationsContext';
+import GameDevSoftwareProvider from './contexts';
 
 export const modulesComponent: any = [];
 modulesComponent['HomePage'] = HomePage;
@@ -23,7 +23,7 @@ modulesComponent['GameobjectPage'] = GameobjectPage;
 modulesComponent['GameobjectContainerComponent'] = GameobjectContainerComponent;
 
 export default function App() {
-  const { path, translationsHook, tabs, tabActive, onTabChange } = useApp();
+  const { path, tabs, tabActive, onTabChange } = useApp();
 
   if (path === undefined) {
     return <div>Loading....</div>;
@@ -34,7 +34,7 @@ export default function App() {
   }
 
   return (
-    <TranslationsContext.Provider value={{ ...translationsHook }}>
+    <GameDevSoftwareProvider>
       <main className="game-dev-software-body">
         <Tab
           panes={tabs}
@@ -50,6 +50,6 @@ export default function App() {
           activeIndex={tabActive.index}
         />
       </main>
-    </TranslationsContext.Provider>
+    </GameDevSoftwareProvider>
   );
 }

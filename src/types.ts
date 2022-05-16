@@ -42,7 +42,8 @@ export type Channels =
   | 'remove-game-object'
   | 'get-formulaire-game-object'
   | 'create-game-object'
-  | 'get-game-object-value';
+  | 'get-game-object-value'
+  | 'load-all-constants';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -73,7 +74,7 @@ export type ConstantObject = {
   key: string;
   value: ConstantValue;
   description?: string;
-}[];
+};
 export type TabType = {
   id: number;
   index: number;
@@ -173,5 +174,6 @@ export type FormField = {
 };
 export type CustomInputProps = {
   defaultValue?: any;
+  type?: string | number;
   onChange: (value: any) => void;
 };

@@ -38,5 +38,9 @@
   "module_application_home_project_open_new_project": "Open project",
   "module_application_home_project_build": "Build",
   "module_gameobject_home_title": "All Game Objects",
-  "form_button_add": "Add"
+  "form_button_add": "Add",
+  "modal_component_btn_close": "Cancel",
+  "modal_component_btn_accepted": "Confirm",
+  "form_input_modal_constants_title": "Constants",
+  "form_input_modal_translations_title": "Translations"
 }

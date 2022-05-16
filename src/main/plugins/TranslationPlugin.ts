@@ -52,7 +52,6 @@ export default class TranslationPlugin {
             fs.readFile(
               `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${code}.json`,
               (err, dataTranslation) => {
-                console.log("i'm here");
                 if (err) {
                   translations[code] = {};
                 } else {
@@ -142,7 +141,6 @@ export default class TranslationPlugin {
     }
     //@ts-ignore
     const { path } = global;
-    console.log("i'm here", this._locale);
     async.parallel(
       [
         (callback) => {
@@ -151,7 +149,6 @@ export default class TranslationPlugin {
           )
             .then((data) => callback(null, [data]))
             .catch(() => {
-              console.log("i'm here1");
               FileService.readJsonFile(
                 `${path}${FolderPlugin.translationDirectory}/en.json`
               ).then((data) => callback(null, [data]));

@@ -3,16 +3,15 @@ import { Translation } from 'types';
 import useDatabase from '../useDatabase';
 import useEvents from '../useEvents';
 
-const useTranslations = (path: string | null | undefined) => {
+const useTranslations = () => {
   const [gameLocale, setGameLocale] = useState<string>('en');
   const [translations, setTranslations] = useState<Translation>({});
   const { sendMessage, on } = useEvents();
   const { getItem } = useDatabase();
 
   useEffect(() => {
-    if (!path) return;
     sendMessage('load-all-translations', gameLocale);
-  }, [path, gameLocale]);
+  }, [gameLocale]);
 
   useEffect(() => {
     setGameLocale(getItem('game-locale') || 'en');

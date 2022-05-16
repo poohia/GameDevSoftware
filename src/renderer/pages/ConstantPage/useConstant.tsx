@@ -9,13 +9,13 @@ import {
 import { useEvents } from 'renderer/hooks';
 import { ConstantObject, ConstantValue } from 'types';
 import { FormReducer, defaultStateFormReducer } from 'renderer/reducers';
-import { GameModuleContext } from 'renderer/contexts';
+import GameModuleContext from 'renderer/contexts/GameModuleContext';
 
 const useConstant = () => {
   const { module } = useContext(GameModuleContext);
   const isModuleView = useMemo(() => !!module, [module]);
   /** */
-  const [constants, setConstants] = useState<ConstantObject>([]);
+  const [constants, setConstants] = useState<ConstantObject[]>([]);
   const [stateForm, dispatch] = useReducer(
     FormReducer,
     defaultStateFormReducer

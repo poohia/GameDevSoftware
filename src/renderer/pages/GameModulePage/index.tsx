@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { GameModuleContext } from 'renderer/contexts';
+import GameModuleContext from 'renderer/contexts/GameModuleContext';
 import useTabs, { UseTabsProps } from 'renderer/hooks/useTabs';
 import { Container, Tab } from 'semantic-ui-react';
 import { PageProps } from 'types';

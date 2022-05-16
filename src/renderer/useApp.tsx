@@ -7,7 +7,6 @@ const useApp = () => {
   const [path, setPath] = useState<string | null | undefined>();
   const { on, sendMessage } = useEvents();
   const { setItem, getItem } = useDatabase();
-  const translationsHook = useTranslations(path);
 
   const tabOptions: UseTabsProps = useMemo(() => {
     return {
@@ -55,7 +54,6 @@ const useApp = () => {
 
   return {
     path,
-    translationsHook,
     tabs,
     tabActive,
     onTabChange,

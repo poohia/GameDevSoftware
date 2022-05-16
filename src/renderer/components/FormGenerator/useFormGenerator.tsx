@@ -7,6 +7,7 @@ import {
   FieldComponent,
   TranslationInput,
   ColorPicker,
+  InputComponent,
 } from './components';
 import { FieldComponentProps } from './components/FieldComponent';
 
@@ -35,7 +36,13 @@ const useFormGenerator = (props: FormGeneratorProps) => {
       setValue((_value: any) => {
         const defKey = parent ? parent : key;
         if (typeof core === 'string') {
-          const _v = core === 'number' ? Number(v) : v;
+          let _v = v;
+          if (
+            core === 'number' &&
+            !(typeof v === 'string' && v.startsWith('@c:'))
+          ) {
+            _v = Number(v);
+          }
           _value[defKey] = parent ? { ..._value[defKey], [key]: _v } : _v;
         } else if (Array.isArray(core)) {
           _value[defKey] = parent ? { ..._value[defKey], [key]: v } : v;
@@ -79,10 +86,10 @@ const useFormGenerator = (props: FormGeneratorProps) => {
       if (core === 'string' || core === 'number') {
         return (
           <FieldComponent {...defaultProps}>
-            <Input
+            <InputComponent
               id={key}
               type={core}
-              onChange={(_, data) => onChange(core, key, data.value, parent)}
+              onChange={(data) => onChange(core, key, data, parent)}
               defaultValue={defaultValue}
               {...rest}
             />
