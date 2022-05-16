@@ -8,13 +8,23 @@ type AssetTableComponentProps = {
   assets: AssetType[];
   keySelected?: string;
   canDelete: boolean;
+  defaultFilterType?: AssertAcceptedType;
   onClickRow: (name: AssetType) => void;
   onDelete: (name: string) => void;
 };
 const AssetTableComponent = (props: AssetTableComponentProps) => {
-  const { assets, keySelected, canDelete, onClickRow, onDelete } = props;
+  const {
+    assets,
+    keySelected,
+    canDelete,
+    defaultFilterType,
+    onClickRow,
+    onDelete,
+  } = props;
   const [filter, setFilter] = useState<string>('');
-  const [filterType, setFilterType] = useState<AssertAcceptedType | string>('');
+  const [filterType, setFilterType] = useState<AssertAcceptedType | string>(
+    defaultFilterType || ''
+  );
   const formatData = useCallback(() => {
     let _assets = assets;
     if (filter !== '') {
@@ -24,7 +34,7 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
       _assets = _assets.filter((asset) => asset.type === filterType);
     }
     return _assets;
-  }, [filter, , filterType, assets]);
+  }, [filter, filterType, assets]);
   const assetsToShow = useMemo(() => formatData(), [formatData]);
   const lengthAssets = useMemo(() => assetsToShow.length, [assetsToShow]);
   return (
@@ -47,6 +57,8 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
             placeholder="File type"
             onChange={(_: any, data: any) => setFilterType(data.value)}
             clearable
+            disabled={!!defaultFilterType}
+            defaultValue={defaultFilterType}
           />
         </Grid.Column>
       </Grid.Row>

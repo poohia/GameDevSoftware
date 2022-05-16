@@ -1,6 +1,6 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron';
 import fs from 'fs';
-import each from 'async/each';
+import async from 'async';
 import {
   AssertAcceptedType,
   AssertFileValueType,
@@ -12,6 +12,7 @@ import path from 'path';
 import FileService from '../services/FileService';
 
 import FolderPlugin from './FolderPlugin';
+import GameModulesPlugin from './GameModulesPlugin';
 
 export default class AssetPlugin {
   constructor(private mainWindow: BrowserWindow) {}
@@ -234,9 +235,9 @@ export default class AssetPlugin {
       })
       .then((result) => {
         const assets = this.readAssetFile();
-        each(
+        async.each(
           result.filePaths,
-          (filePath: string, callback: (err?: any) => void) => {
+          (filePath, callback) => {
             const type = this.typeFromExtension(path.extname(filePath));
             const name = path.basename(filePath);
             assets.push({ type, name });
@@ -258,6 +259,30 @@ export default class AssetPlugin {
           }
         );
       });
+  };
+
+  loadAllAssets = (event: ElectronIpcMainEvent) => {
+    // @ts-ignore
+    const { path } = global;
+    let finalData: any = [];
+    GameModulesPlugin.loadDynamicModulesName().then((modules) => {
+      async
+        .each(modules, (module, callback) => {
+          FileService.readJsonFile(
+            `${path}${FolderPlugin.modulesDirectory}/${module}/assets.json`
+          ).then((data: any) => {
+            finalData = finalData.concat([...data]);
+            callback();
+          });
+        })
+        .then(() => {
+          FileService.readJsonFile(`${path}${FolderPlugin.assetFile}`).then(
+            (data) => {
+              event.reply('load-all-assets', finalData.concat([...data]));
+            }
+          );
+        });
+    });
   };
 
   init = () => {
@@ -283,6 +308,9 @@ export default class AssetPlugin {
       'get-asset-information-module',
       (event: Electron.IpcMainEvent, arg) =>
         this.getAssetInformationModule(event as ElectronIpcMainEvent, arg)
+    );
+    ipcMain.on('load-all-assets', (event) =>
+      this.loadAllAssets(event as ElectronIpcMainEvent)
     );
   };
 }

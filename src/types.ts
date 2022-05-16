@@ -43,7 +43,8 @@ export type Channels =
   | 'get-formulaire-game-object'
   | 'create-game-object'
   | 'get-game-object-value'
-  | 'load-all-constants';
+  | 'load-all-constants'
+  | 'load-all-assets';
 export type Tables =
   | 'locale'
   | 'tabs'

@@ -9,6 +9,7 @@ import {
   ColorPicker,
   InputComponent,
 } from './components';
+import AssetInput from './components/AssetInput';
 import { FieldComponentProps } from './components/FieldComponent';
 
 export type FormGeneratorProps = {
@@ -92,6 +93,22 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               onChange={(data) => onChange(core, key, data, parent)}
               defaultValue={defaultValue}
               {...rest}
+            />
+          </FieldComponent>
+        );
+      }
+      if (
+        core === 'image' ||
+        core === 'json' ||
+        core === 'video' ||
+        core === 'sound'
+      ) {
+        return (
+          <FieldComponent {...defaultProps}>
+            <AssetInput
+              type={core}
+              onChange={(data) => onChange(core, key, data, parent)}
+              defaultValue={defaultValue}
             />
           </FieldComponent>
         );

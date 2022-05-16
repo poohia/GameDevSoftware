@@ -1,26 +1,26 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import ModalComponent from 'renderer/components/ModalComponent';
 import TransComponent from 'renderer/components/TransComponent';
-import ConstantsContext from 'renderer/contexts/ConstantsContext';
-import { ConstantTableComponent } from 'renderer/pages/ConstantPage/components';
+import AssetsContext from 'renderer/contexts/AssetsContext';
+import { AssetTableComponent } from 'renderer/pages/AssetPage/components';
 import { ModalProps } from 'semantic-ui-react';
-import { ConstantType, CustomInputProps } from 'types';
+import { AssertAcceptedType, CustomInputProps } from 'types';
 
-const ModalConstant = (
+const ModalAsset = (
   props: ModalProps & {
-    type: ConstantType;
+    type: AssertAcceptedType;
     defaultValue?: string;
     onSubmit: (value: string) => void;
   }
 ) => {
   const { open, defaultValue, type, onClose, onSubmit, ...rest } = props;
-  const { constants } = useContext(ConstantsContext);
+  const { assets } = useContext(AssetsContext);
   const [value, setValue] = useState<string>('');
   const handleClickRow = useCallback(
     (key: string) => {
-      setValue(`@c:${key}`);
+      setValue(`@a:${key}`);
     },
-    [constants]
+    [assets]
   );
   useEffect(() => {
     if (defaultValue) {
@@ -33,26 +33,26 @@ const ModalConstant = (
       open={open}
       onClose={onClose}
       onAccepted={() => onSubmit(value)}
-      title={<TransComponent id="form_input_modal_constants_title" />}
+      title={<TransComponent id="form_input_modal_assets_title" />}
       closeOnDimmerClick
       dimmer={'inverted'}
       disableAccepted={value === ''}
       {...rest}
     >
-      <ConstantTableComponent
-        canDelete={false}
-        onClickRow={handleClickRow}
+      <AssetTableComponent
+        onClickRow={({ name }) => handleClickRow(name)}
         onDelete={() => {}}
-        constants={constants}
-        keySelected={value.replace('@c:', '')}
+        canDelete={false}
+        assets={assets}
+        keySelected={value.replace('@a:', '')}
         defaultFilterType={type}
       />
     </ModalComponent>
   );
 };
 
-const ConstantInput = (props: CustomInputProps) => {
-  const { defaultValue, type = 'string', onChange } = props;
+const AssetInput = (props: CustomInputProps) => {
+  const { defaultValue, type, onChange } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
 
@@ -72,20 +72,22 @@ const ConstantInput = (props: CustomInputProps) => {
     },
     [value]
   );
+
   useEffect(() => {
     if (defaultValue) {
       setValue(defaultValue);
     }
   }, [defaultValue]);
+
   return (
     <>
       <div className="ui selection dropdown fluid" onClick={handleClick}>
         {value && <span>{value}</span>}
       </div>
-      <ModalConstant
+      <ModalAsset
         open={openModal}
         defaultValue={defaultValue}
-        type={type}
+        type={type as AssertAcceptedType}
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}
       />
@@ -93,4 +95,4 @@ const ConstantInput = (props: CustomInputProps) => {
   );
 };
 
-export default ConstantInput;
+export default AssetInput;
