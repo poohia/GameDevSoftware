@@ -6,21 +6,23 @@ import {
   useReducer,
   useState,
 } from 'react';
-import i18n from 'translations/i18n';
 
-import { useEvents } from 'renderer/hooks';
+import { useDatabase, useEvents } from 'renderer/hooks';
 import { TranslationObject } from 'types';
 import TranslationFromReducer, { defaultState } from './TranslationFromReducer';
-import { GameModuleContext } from '../GameModulePage';
+import GameModuleContext from 'renderer/contexts/GameModuleContext';
+import TranslationsContext from 'renderer/contexts/TranslationsContext';
 
 const useTranslationPage = () => {
   const { module } = useContext(GameModuleContext);
+  const { gameLocale: locale, setGameLocale } = useContext(TranslationsContext);
   const isModuleView = useMemo(() => !!module, [module]);
   /**  */
   const [languages, setLanguages] = useState<string[]>([]);
   const [translations, setTranslations] = useState<TranslationObject>({});
-  const [locale, setLocale] = useState<string>(i18n.locale);
+  // const [locale, setLocale] = useState<string>(i18n.locale);
   /**  */
+  const { setItem } = useDatabase();
   const { once, sendMessage, requestMessage } = useEvents();
   const [state, dispatch] = useReducer(TranslationFromReducer, defaultState);
   const { translationForm } = state;
@@ -54,7 +56,7 @@ const useTranslationPage = () => {
           JSON.stringify(_languages.filter((l) => l !== language))
         );
         sendMessage('remove-language', { language, languages: _languages });
-        setLocale(_languages[0]);
+        setGameLocale(_languages[0]);
         dispatch({ type: 'hide-form' });
         return _languages;
       });
@@ -113,6 +115,11 @@ const useTranslationPage = () => {
     []
   );
 
+  const changeGameCurrentLocale = useCallback((l: string) => {
+    setItem('game-locale', l);
+    setGameLocale(l);
+  }, []);
+
   const init = useCallback(() => {
     once('languages-authorized', (args: { code: string }[]) => {
       setLanguages(args.map((arg) => arg.code));
@@ -145,13 +152,13 @@ const useTranslationPage = () => {
     languages,
     translationForm,
     isModuleView,
-    setLocale,
     appendLocale,
     deleteTranslation,
     removeLocale,
     createTranslationKey,
     appendTranslation,
     updateTranslationKey,
+    changeGameCurrentLocale,
   };
 };
 

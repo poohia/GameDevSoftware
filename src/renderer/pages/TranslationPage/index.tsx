@@ -15,7 +15,7 @@ const TranslationPage = () => {
     translationForm,
     isModuleView,
     appendLocale,
-    setLocale,
+    changeGameCurrentLocale,
     deleteTranslation,
     removeLocale,
     createTranslationKey,
@@ -35,7 +35,7 @@ const TranslationPage = () => {
                 <TranslationHeaderComponent
                   locale={locale}
                   languages={languages}
-                  onChangeLocale={(locale) => setLocale(locale)}
+                  onChangeLocale={changeGameCurrentLocale}
                   onAppendLocale={appendLocale}
                   onRemoveLocale={removeLocale}
                   onAppendTranslation={createTranslationKey}

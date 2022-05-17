@@ -31,19 +31,43 @@ export default class FileService {
 
   static readdir = (
     path: string,
-    filter: 'file' | 'directory' | 'all',
-    callback: (names: string[]) => void
-  ) => {
-    fs.readdir(path, { withFileTypes: true }, (err, files) => {
-      if (err) {
-        console.log(err);
-        throw new Error(err.message);
-      }
-      if (filter === 'all') callback(files.map((f) => f.name));
-      if (filter === 'directory')
-        callback(files.filter((f) => f.isDirectory()).map((f) => f.name));
-      if (filter === 'file')
-        callback(files.filter((f) => !f.isDirectory()).map((f) => f.name));
+    filter: 'file' | 'directory' | 'all'
+  ): Promise<string[]> =>
+    new Promise((resolve, _reject) => {
+      fs.readdir(path, { withFileTypes: true }, (err, files) => {
+        if (err) {
+          console.log(err);
+          throw new Error(err.message);
+        }
+        if (filter === 'all') resolve(files.map((f) => f.name));
+        if (filter === 'directory')
+          resolve(files.filter((f) => f.isDirectory()).map((f) => f.name));
+        if (filter === 'file')
+          resolve(files.filter((f) => !f.isDirectory()).map((f) => f.name));
+      });
     });
-  };
+
+  static readJsonFile = <T = any>(path: string): Promise<T> =>
+    new Promise((resolve, reject) => {
+      fs.readFile(path, (err, data) => {
+        if (err) {
+          console.error(err);
+          reject(err.message);
+          return;
+        }
+        // @ts-ignore
+        resolve(JSON.parse(data));
+      });
+    });
+
+  static writeJsonFile = <T = Object>(path: string, data: T): Promise<void> =>
+    new Promise((resolve) => {
+      fs.writeFile(path, JSON.stringify(data), (err) => {
+        if (err) {
+          console.error(err);
+          throw new Error(err.message);
+        }
+        resolve();
+      });
+    });
 }

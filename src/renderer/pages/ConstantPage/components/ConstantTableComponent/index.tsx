@@ -5,17 +5,26 @@ import i18n from 'translations/i18n';
 import { ConstantObject, ConstantType } from 'types';
 
 type ConstantTableComponentProps = {
-  constants: ConstantObject;
+  constants: ConstantObject[];
   keySelected?: string;
   canDelete: boolean;
+  defaultFilterType?: ConstantType;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
 const ConstantTableComponent = (props: ConstantTableComponentProps) => {
-  const { constants, keySelected, canDelete, onClickRow, onDelete } = props;
+  const {
+    constants,
+    keySelected,
+    canDelete,
+    defaultFilterType,
+    onClickRow,
+    onDelete,
+  } = props;
   const [filter, setFilter] = useState<string>('');
-  const [filterType, setFilterType] = useState<ConstantType | string>('');
-
+  const [filterType, setFilterType] = useState<ConstantType | string>(
+    defaultFilterType || ''
+  );
   const formatData = useMemo(() => {
     let _constants = constants;
     if (filter !== '') {
@@ -86,6 +95,8 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
             placeholder="Constant type"
             onChange={(_: any, data: any) => setFilterType(data.value)}
             clearable
+            defaultValue={defaultFilterType}
+            disabled={!!defaultFilterType}
           />
         </Grid.Column>
       </Grid.Row>

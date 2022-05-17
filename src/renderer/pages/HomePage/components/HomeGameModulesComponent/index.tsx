@@ -29,7 +29,14 @@ const HomeGameModulesComponent = ({
             {gameModules.map((module) => (
               <Grid.Column width={4} key={module}>
                 <Button
-                  onClick={() => appendTab(`${module} Module`, GameModulePage)}
+                  onClick={() =>
+                    appendTab(
+                      `${module} Module`,
+                      GameModulePage,
+                      true,
+                      'GameModulePage'
+                    )
+                  }
                 >
                   {`${module} Module`}
                 </Button>

@@ -3,6 +3,7 @@
   "module_application": "Application Module",
   "module_translation": "Translation Module",
   "module_constant": "Constant Module",
+  "module_gameobject": "Game Object Module",
   "dropdown_languages_placeholder_default": "Select Country",
   "dropdown_languages_placeholder_append_country": "Append language",
   "module_translation_header_button_append_translation": "Create translation",
@@ -20,6 +21,8 @@
   "module_asset": "Asset module",
   "form_title_new": "Create",
   "form_title_update": "Update",
+  "form_title_new_type": "Create {type}",
+  "form_title_update_type": "Update {type}",
   "module_constant_header_append_asset": "Create asset",
   "module_constant_header_append_multiple_asset": "Create mulitple assets",
   "module_application_params_identity_title": "Identity",
@@ -33,5 +36,12 @@
   "module_application_home_project_start": "Start project",
   "module_application_home_project_stop": "Stop",
   "module_application_home_project_open_new_project": "Open project",
-  "module_application_home_project_build": "Build"
+  "module_application_home_project_build": "Build",
+  "module_gameobject_home_title": "All Game Objects",
+  "form_button_add": "Add",
+  "modal_component_btn_close": "Cancel",
+  "modal_component_btn_accepted": "Confirm",
+  "form_input_modal_constants_title": "Constants",
+  "form_input_modal_translations_title": "Translations",
+  "form_input_modal_assets_title": "Assets"
 }

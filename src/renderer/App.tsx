@@ -1,7 +1,5 @@
-import { useTabs } from 'renderer/hooks';
 import { Tab } from 'semantic-ui-react';
 import useApp from 'renderer/useApp';
-import { useMemo } from 'react';
 import {
   ApplicationPage,
   AssetPage,
@@ -9,8 +7,10 @@ import {
   HomePage,
   TranslationPage,
   GameModulePage,
+  GameobjectPage,
 } from 'renderer/pages';
-import { UseTabsProps } from 'renderer/hooks/useTabs';
+import { GameobjectContainerComponent } from './pages/GameobjectPage/components';
+import GameDevSoftwareProvider from './contexts';
 
 export const modulesComponent: any = [];
 modulesComponent['HomePage'] = HomePage;
@@ -19,18 +19,11 @@ modulesComponent['TranslationPage'] = TranslationPage;
 modulesComponent['ConstantPage'] = ConstantPage;
 modulesComponent['AssetPage'] = AssetPage;
 modulesComponent['GameModulePage'] = GameModulePage;
+modulesComponent['GameobjectPage'] = GameobjectPage;
+modulesComponent['GameobjectContainerComponent'] = GameobjectContainerComponent;
 
 export default function App() {
-  const { path } = useApp();
-  const tabOptions: UseTabsProps = useMemo(() => {
-    return {
-      modules: modulesComponent,
-      tableTabs: 'tabs',
-      tableActiveTab: 'tab-active',
-      activeKeyboardControl: true,
-    };
-  }, []);
-  const { tabs, tabActive, onTabChange } = useTabs(tabOptions);
+  const { path, tabs, tabActive, onTabChange } = useApp();
 
   if (path === undefined) {
     return <div>Loading....</div>;
@@ -41,20 +34,22 @@ export default function App() {
   }
 
   return (
-    <main className="game-dev-software-body">
-      <Tab
-        panes={tabs}
-        onTabChange={(_, data) => {
-          const { activeIndex, panes } = data;
-          onTabChange(
-            activeIndex as number,
-            // @ts-ignore
-            panes?.find((_, i) => i === activeIndex)?.id || 0
-          );
-        }}
-        renderActiveOnly={false}
-        activeIndex={tabActive.index}
-      />
-    </main>
+    <GameDevSoftwareProvider>
+      <main className="game-dev-software-body">
+        <Tab
+          panes={tabs}
+          onTabChange={(_, data) => {
+            const { activeIndex, panes } = data;
+            onTabChange(
+              activeIndex as number,
+              // @ts-ignore
+              panes?.find((_, i) => i === activeIndex)?.id || 0
+            );
+          }}
+          renderActiveOnly={false}
+          activeIndex={tabActive.index}
+        />
+      </main>
+    </GameDevSoftwareProvider>
   );
 }

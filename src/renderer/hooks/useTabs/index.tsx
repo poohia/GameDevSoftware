@@ -6,22 +6,23 @@ import { HomePage } from 'renderer/pages';
 import useDatabase from 'renderer/hooks/useDatabase';
 import { PageProps, TabActiveType, TabDatabaseType, Tables } from 'types';
 import TransComponent from 'renderer/components/TransComponent';
+import { modulesComponent } from 'renderer/App';
+import { titleCase } from 'title-case';
 
 export type UseTabsProps = {
-  modules: any[];
   tableTabs: Tables;
   tableActiveTab: Tables;
   HomeComponent?: React.FunctionComponent<any>;
   activeKeyboardControl?: boolean;
 };
 
-const useTabs = ({
-  modules,
-  tableTabs,
-  tableActiveTab,
-  HomeComponent = HomePage,
-  activeKeyboardControl,
-}: UseTabsProps) => {
+const useTabs = (props: UseTabsProps) => {
+  const {
+    tableTabs,
+    tableActiveTab,
+    HomeComponent = HomePage,
+    activeKeyboardControl,
+  } = props;
   const { setItem, getItem } = useDatabase();
 
   const [tabActive, setTabActive] = useState<TabActiveType>({
@@ -112,7 +113,8 @@ const useTabs = ({
     (
       menuItem: string,
       Component: React.FunctionComponent<PageProps>,
-      _saveTabs = true
+      _saveTabs = true,
+      componentName = `${titleCase(menuItem.replace('module_', ''))}Page`
     ) => {
       setTabs((_tabs) => {
         const id = _tabs[_tabs.length - 1].id + 1;
@@ -125,7 +127,8 @@ const useTabs = ({
         }
         if (_saveTabs) {
           setTabActive({ index, id });
-          saveDatabaseTabs(menuItem, Component.name);
+          saveDatabaseTabActive({ index, id });
+          saveDatabaseTabs(menuItem, componentName);
         }
 
         return Array.from(
@@ -191,20 +194,17 @@ const useTabs = ({
 
   useEffect(() => {
     const tabsLocalStorage = getItem<TabDatabaseType[]>(tableTabs);
-
     if (tabsLocalStorage) {
       tabsLocalStorage.forEach((tab) => {
         const { menuItem, component } = tab;
-
-        appendTab(menuItem, modules[component], false);
+        appendTab(menuItem, modulesComponent[component], false);
       });
     }
-
     const tabActiveLocalStorage = getItem<TabActiveType>(tableActiveTab);
     if (tabActiveLocalStorage) {
       setTabActive(tabActiveLocalStorage);
     }
-  }, []);
+  }, [tableTabs, tableActiveTab]);
 
   useEffect(() => {
     if (!activeKeyboardControl) return;

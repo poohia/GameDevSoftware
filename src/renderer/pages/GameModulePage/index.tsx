@@ -1,16 +1,9 @@
-import { createContext, useMemo } from 'react';
-import { modulesComponent } from 'renderer/App';
+import { useMemo } from 'react';
+import GameModuleContext from 'renderer/contexts/GameModuleContext';
 import useTabs, { UseTabsProps } from 'renderer/hooks/useTabs';
 import { Container, Tab } from 'semantic-ui-react';
 import { PageProps } from 'types';
 import { GameModuleHomePage } from './components';
-
-type GameModuleContextType = {
-  module: string | null;
-};
-export const GameModuleContext = createContext<GameModuleContextType>({
-  module: null,
-});
 
 const GameModulePage = (props: PageProps) => {
   const { title } = props;
@@ -20,7 +13,6 @@ const GameModulePage = (props: PageProps) => {
 
   const tabOptions: UseTabsProps = useMemo(() => {
     return {
-      modules: modulesComponent,
       tableTabs: `tabs-${module}`,
       tableActiveTab: `tab-active-${module}`,
       HomeComponent: GameModuleHomePage,

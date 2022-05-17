@@ -1,5 +1,5 @@
 import { useCallback, useContext } from 'react';
-import { GameModuleContext } from 'renderer/pages/GameModulePage';
+import GameModuleContext from 'renderer/contexts/GameModuleContext';
 import { Channels, EventCallback } from 'types';
 
 const useEvents = () => {

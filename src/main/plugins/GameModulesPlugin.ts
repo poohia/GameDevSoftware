@@ -6,19 +6,22 @@ import FileService from '../services/FileService';
 export default class GameModulesPlugin {
   constructor() {}
 
+  static loadDynamicModulesName = (): Promise<string[]> =>
+    new Promise((resolve) => {
+      // @ts-ignore
+      const path = global.path;
+      FileService.readdir(
+        `${path}${FolderPlugin.modulesDirectory}`,
+        'directory'
+      ).then((folders) => {
+        resolve(folders);
+      });
+    });
+
   loadDynamicModules = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
-    const path = global.path;
-    FileService.readdir(
-      `${path}${FolderPlugin.modulesDirectory}`,
-      'directory',
-      (folders) => {
-        event.reply(
-          'load-game-modules',
-          folders.map((folder) => `${folder}`)
-        );
-      }
-    );
+    GameModulesPlugin.loadDynamicModulesName().then((folders) => {
+      event.reply('load-game-modules', folders);
+    });
   };
 
   init = () => {

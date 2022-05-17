@@ -5,6 +5,7 @@ import ConstantPlugin from './ConstantPlugin';
 import FolderPlugin from './FolderPlugin';
 import GameModulesPlugin from './GameModulesPlugin';
 import TranslationPlugin from './TranslationPlugin';
+import GameObjectPlugin from './GameObjectPlugin';
 
 type Plugins =
   | 'folderPlugin'
@@ -12,7 +13,8 @@ type Plugins =
   | 'translationPlugin'
   | 'constantPlugin'
   | 'assetPlugin'
-  | 'gameModulePlugin';
+  | 'gameModulePlugin'
+  | 'gameObjectPlugin';
 
 export default class PluginsContainer {
   private _folderPlugin;
@@ -21,6 +23,7 @@ export default class PluginsContainer {
   private _constantPlugin;
   private _assetPlugin;
   private _gameModulePlugin;
+  private _gameObjectPlugin;
 
   constructor(mainWindow: BrowserWindow) {
     this._folderPlugin = new FolderPlugin(mainWindow);
@@ -29,6 +32,7 @@ export default class PluginsContainer {
     this._constantPlugin = new ConstantPlugin();
     this._assetPlugin = new AssetPlugin(mainWindow);
     this._gameModulePlugin = new GameModulesPlugin();
+    this._gameObjectPlugin = new GameObjectPlugin();
   }
 
   init() {

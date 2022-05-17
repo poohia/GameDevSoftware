@@ -35,15 +35,33 @@ export type Channels =
   | 'load-game-modules'
   | 'load-constants-module'
   | 'load-translations-module'
-  | 'load-assets-module';
-export type Tables = 'locale' | 'tabs' | 'tab-active';
+  | 'load-assets-module'
+  | 'load-game-object-types'
+  | 'load-game-objects'
+  | 'remove-game-object'
+  | 'get-formulaire-game-object'
+  | 'create-game-object'
+  | 'get-game-object-value'
+  | 'load-all-translations'
+  | 'load-all-constants'
+  | 'load-all-assets'
+  | 'load-all-game-objects';
+export type Tables =
+  | 'locale'
+  | 'tabs'
+  | 'tab-active'
+  | 'last-path'
+  | 'game-locale'
+  | string;
 export type EventCallback = (...args: any) => void;
 export type PageProps = {
   id: number;
   title: string;
   appendTab: (
     menuItem: string,
-    Component: React.FunctionComponent<PageProps>
+    Component: React.FunctionComponent<PageProps>,
+    _saveTabs?: boolean,
+    componentName?: string
   ) => void;
 };
 export type Translation = {
@@ -58,7 +76,7 @@ export type ConstantObject = {
   key: string;
   value: ConstantValue;
   description?: string;
-}[];
+};
 export type TabType = {
   id: number;
   index: number;
@@ -120,4 +138,44 @@ export type SoftwaresInfo = {
 export type ModuleArgs<T = any> = {
   data: T;
   module: string;
+};
+export type ObjectGameTypeJSON = {
+  file: string;
+  type: string;
+};
+export type GameObject = {
+  [key: string]: any;
+  _id: number;
+  _type: string;
+  _title: string;
+};
+export type GameObjectForm = {
+  name: string;
+  type: string;
+  description: string;
+  core: {
+    [key: string]: any;
+  };
+};
+export type FormFieldType =
+  | 'string'
+  | 'number'
+  | 'image'
+  | 'color'
+  | 'translation'
+  | string;
+export type FormField = {
+  key: string;
+  core: FormFieldType | Array<FormFieldType> | FormField;
+  multiple?: boolean;
+  optional?: boolean;
+  label?: string;
+  description?: string;
+  parent?: string;
+  onChange?: (core: any, key: string, v: any, parent?: string) => void;
+};
+export type CustomInputProps = {
+  defaultValue?: any;
+  type?: string | number;
+  onChange: (value: any) => void;
 };
