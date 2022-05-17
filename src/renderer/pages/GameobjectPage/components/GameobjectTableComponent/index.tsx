@@ -5,13 +5,13 @@ import { GameObject } from 'types';
 
 type GameobjectTableComponentProps = {
   gameObjects: GameObject[];
-  keySelected?: string;
+  keySelected?: number;
   onClickRow: (id: number) => void;
-  onDelete: (id: string) => void;
+  onDelete?: (id: number) => void;
 };
 
 const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
-  const { gameObjects, onClickRow, onDelete } = props;
+  const { gameObjects, keySelected, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
   const formatData = useMemo(() => {
     if (filter !== '') {
@@ -48,16 +48,19 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData.map(({ _id, _title }) => (
+              {formatData.map(({ _id, _title, _type }) => (
                 <Table.Row
-                  key={_id}
-                  //   active={keySelected === key}
+                  key={`gameobject-${_id}`}
+                  active={keySelected === _id}
                   onClick={() => onClickRow(_id)}
                 >
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">
                       <TransComponent id={_title} />
-                      <Header.Subheader>Id: {_id}</Header.Subheader>
+                      <Header.Subheader>{_type}</Header.Subheader>
+                      <p>
+                        <i>Id: {_id}</i>
+                      </p>
                     </Header>
                   </Table.Cell>
                   <Table.Cell textAlign="right">
@@ -67,8 +70,9 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
                       color="red"
                       onClick={(event) => {
                         event.stopPropagation();
-                        onDelete(_id);
+                        onDelete && onDelete(_id);
                       }}
+                      disabled={!onDelete}
                     >
                       <Icon name="trash" />
                     </Button>

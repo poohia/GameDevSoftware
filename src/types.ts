@@ -38,13 +38,14 @@ export type Channels =
   | 'load-assets-module'
   | 'load-game-object-types'
   | 'load-game-objects'
-  | 'load-all-translations'
   | 'remove-game-object'
   | 'get-formulaire-game-object'
   | 'create-game-object'
   | 'get-game-object-value'
+  | 'load-all-translations'
   | 'load-all-constants'
-  | 'load-all-assets';
+  | 'load-all-assets'
+  | 'load-all-game-objects';
 export type Tables =
   | 'locale'
   | 'tabs'

@@ -18,7 +18,7 @@ const useGameobjectContainerComponent = (props: PageProps) => {
   );
 
   const removeGameObject = useCallback(
-    (id: string) => {
+    (id: number) => {
       dispatch({ type: 'hide-form' });
       sendMessage('remove-game-object', { id, objectType: gameObjectType });
     },

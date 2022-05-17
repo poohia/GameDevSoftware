@@ -34,13 +34,15 @@ export default class GameObjectPlugin {
       });
     });
 
-  loadGameObjects = (event: ElectronIpcMainEvent, objectType: string) => {
+  loadGameObjects = (event: ElectronIpcMainEvent, objectType?: string) => {
     //@ts-ignore
     const { path } = global;
     GameObjectPlugin.readIndexFile().then((data) => {
       const gameObjectsValue: GameObject[] = [];
       each(
-        data.filter((objectTypeFile) => objectTypeFile.type === objectType),
+        data.filter((objectTypeFile) =>
+          objectType ? objectTypeFile.type === objectType : true
+        ),
         (objectTypeFile: ObjectGameTypeJSON, callback: () => void) => {
           FileService.readJsonFile(
             `${path}${FolderPlugin.gameObjectDirectory}/${objectTypeFile.file}`
@@ -49,9 +51,13 @@ export default class GameObjectPlugin {
             callback();
           });
         }
-      ).then(() =>
-        event.reply(`load-game-objects-${objectType}`, gameObjectsValue)
-      );
+      ).then(() => {
+        if (objectType) {
+          event.reply(`load-game-objects-${objectType}`, gameObjectsValue);
+        } else {
+          event.reply(`load-game-objects`, gameObjectsValue);
+        }
+      });
     });
   };
 
@@ -180,6 +186,12 @@ export default class GameObjectPlugin {
     });
   };
 
+  private loadAllGameObjects = (event: ElectronIpcMainEvent) => {
+    GameObjectPlugin.readIndexFile().then((data) => {
+      event.reply('load-all-game-objects', data);
+    });
+  };
+
   init = () => {
     ipcMain.on('load-game-object-types', (event: Electron.IpcMainEvent) =>
       this.loadGameObjectTypes(event as ElectronIpcMainEvent)
@@ -198,6 +210,9 @@ export default class GameObjectPlugin {
     });
     ipcMain.on('get-game-object-value', (event, args) => {
       this.getGameObjectValue(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('load-all-game-objects', (event) => {
+      this.loadGameObjectTypes(event as ElectronIpcMainEvent);
     });
   };
 }

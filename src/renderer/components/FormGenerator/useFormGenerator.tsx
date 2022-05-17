@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, Dropdown, Form, Grid, Header, Input } from 'semantic-ui-react';
+import { Button, Dropdown, Form, Grid, Header } from 'semantic-ui-react';
 import { FormField } from 'types';
 import TransComponent from '../TransComponent';
 import {
@@ -8,6 +8,7 @@ import {
   TranslationInput,
   ColorPicker,
   InputComponent,
+  GameObjectInput,
 } from './components';
 import AssetInput from './components/AssetInput';
 import { FieldComponentProps } from './components/FieldComponent';
@@ -127,6 +128,17 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         return (
           <FieldComponent {...defaultProps}>
             <TranslationInput
+              defaultValue={defaultValue}
+              onChange={(data) => onChange(core, key, data, parent)}
+            />
+          </FieldComponent>
+        );
+      }
+      if (typeof core === 'string' && core.startsWith('@go:')) {
+        return (
+          <FieldComponent {...defaultProps}>
+            <GameObjectInput
+              type={core.replace('@go:', '')}
               defaultValue={defaultValue}
               onChange={(data) => onChange(core, key, data, parent)}
             />
