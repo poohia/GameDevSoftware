@@ -14,7 +14,14 @@ type HomeGlobalModulesComponent = Required<Pick<PageProps, 'appendTab'>> & {
 
 const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
   const {
-    modules = ['application', 'translation', 'constant', 'asset', 'gameobject'],
+    modules = [
+      'application',
+      'translation',
+      'constant',
+      'asset',
+      'gameobject',
+      'scene',
+    ],
     onChangeLocale,
     appendTab,
   } = props;

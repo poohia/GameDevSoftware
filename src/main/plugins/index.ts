@@ -6,6 +6,7 @@ import FolderPlugin from './FolderPlugin';
 import GameModulesPlugin from './GameModulesPlugin';
 import TranslationPlugin from './TranslationPlugin';
 import GameObjectPlugin from './GameObjectPlugin';
+import ScenePlugin from './ScenePlugin';
 
 type Plugins =
   | 'folderPlugin'
@@ -14,7 +15,8 @@ type Plugins =
   | 'constantPlugin'
   | 'assetPlugin'
   | 'gameModulePlugin'
-  | 'gameObjectPlugin';
+  | 'gameObjectPlugin'
+  | 'scenePlugin';
 
 export default class PluginsContainer {
   private _folderPlugin;
@@ -24,6 +26,7 @@ export default class PluginsContainer {
   private _assetPlugin;
   private _gameModulePlugin;
   private _gameObjectPlugin;
+  private _scenePlugin;
 
   constructor(mainWindow: BrowserWindow) {
     this._folderPlugin = new FolderPlugin(mainWindow);
@@ -33,6 +36,7 @@ export default class PluginsContainer {
     this._assetPlugin = new AssetPlugin(mainWindow);
     this._gameModulePlugin = new GameModulesPlugin();
     this._gameObjectPlugin = new GameObjectPlugin();
+    this._scenePlugin = new ScenePlugin();
   }
 
   init() {

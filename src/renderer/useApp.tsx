@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useEvents, useDatabase, useTranslations } from 'renderer/hooks';
+import { useEvents, useDatabase } from 'renderer/hooks';
 import i18n from 'translations/i18n';
 import useTabs, { UseTabsProps } from './hooks/useTabs';
 
@@ -51,6 +51,19 @@ const useApp = () => {
       sendMessage('select-path');
     }
   }, [path]);
+
+  // useEffect(() => {
+  //   const uis = document.getElementsByClassName('ui');
+  //   for (let ui of Array.from(uis)) {
+  //     ui.classList.add('inverted');
+  //   }
+  //   setTimeout(() => {
+  //     const uis = document.getElementsByClassName('ui');
+  //     for (let ui of Array.from(uis)) {
+  //       ui.classList.add('inverted');
+  //     }
+  //   }, 500);
+  // });
 
   return {
     path,

@@ -1,0 +1,60 @@
+$darkBackgroundBlack: #2c2c2c;
+$darkBlack: #797979;
+$darkBorderColor: #5c5c5c;
+
+.dark-background {
+  background-color: $darkBackgroundBlack;
+  color: white;
+}
+.dark-object {
+  background-color: $darkBlack;
+  color: white;
+}
+body.dark {
+  @extend .dark-background;
+  .ui {
+    &.tabular.menu {
+      border-bottom: none;
+      .item {
+        @extend .dark-background;
+      }
+      .active.item {
+        @extend .dark-object;
+        border: 1px solid $darkBorderColor;
+      }
+    }
+    &.container,
+    &.tab {
+      @extend .dark-object;
+      h3.ui.header,
+      h1.ui.header,
+      .sub.header {
+        color: white;
+      }
+      &.active {
+        border-color: $darkBorderColor;
+      }
+    }
+    .form {
+      label {
+        color: white;
+      }
+    }
+  }
+  .game-dev-software-module-application-params-identity-segment {
+    border: 1px solid $darkBorderColor;
+    @extend .dark-background;
+    span.game-dev-software-module-application-params-identity-segment-title {
+      color: white;
+      background: linear-gradient(
+        0deg,
+        $darkBackgroundBlack 50%,
+        $darkBlack 50%
+      );
+    }
+  }
+  a {
+    color: white;
+    text-decoration: underline;
+  }
+}

@@ -1,30 +1,29 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import ModalComponent from 'renderer/components/ModalComponent';
 import TransComponent from 'renderer/components/TransComponent';
-import AssetsContext from 'renderer/contexts/AssetsContext';
-import { AssetTableComponent } from 'renderer/pages/AssetPage/components';
 import { ModalProps } from 'semantic-ui-react';
-import { AssertAcceptedType, CustomInputProps } from 'types';
+import { CustomInputProps, GameObject } from 'types';
+import GameobjectTableComponent from 'renderer/pages/GameobjectPage/components/GameobjectTableComponent';
+import ScenesContext from 'renderer/contexts/ScenesContext';
 
-const ModalAsset = (
+const ModalSceneInput = (
   props: ModalProps & {
-    type: AssertAcceptedType;
     defaultValue?: string;
     onSubmit: (value: string) => void;
   }
 ) => {
-  const { open, defaultValue, type, onClose, onSubmit, ...rest } = props;
-  const { assets } = useContext(AssetsContext);
+  const { open, defaultValue, onClose, onSubmit, ...rest } = props;
+  const { scenes } = useContext(ScenesContext);
   const [value, setValue] = useState<string>('');
   const handleClickRow = useCallback(
-    (key: string) => {
-      setValue(`@a:${key}`);
+    (id: number) => {
+      setValue(`@s:${id}`);
     },
-    [assets]
+    [scenes]
   );
   useEffect(() => {
     if (defaultValue) {
-      setValue(defaultValue.replace('@c:', ''));
+      setValue(defaultValue.replace('@s:', ''));
     }
   }, [defaultValue]);
 
@@ -39,20 +38,17 @@ const ModalAsset = (
       disableAccepted={value === ''}
       {...rest}
     >
-      <AssetTableComponent
-        onClickRow={({ name }) => handleClickRow(name)}
-        onDelete={() => {}}
-        canDelete={false}
-        assets={assets}
-        keySelected={value.replace('@a:', '')}
-        defaultFilterType={type}
+      <GameobjectTableComponent
+        gameObjects={scenes}
+        keySelected={Number(value.replace('@s:', ''))}
+        onClickRow={handleClickRow}
       />
     </ModalComponent>
   );
 };
 
-const AssetInput = (props: CustomInputProps) => {
-  const { defaultValue, type, onChange, onBlur } = props;
+const SceneInput = (props: CustomInputProps) => {
+  const { defaultValue, onChange, onBlur } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
 
@@ -85,10 +81,9 @@ const AssetInput = (props: CustomInputProps) => {
       <div className="ui selection dropdown fluid" onClick={handleClick}>
         {value && <span>{value}</span>}
       </div>
-      <ModalAsset
+      <ModalSceneInput
         open={openModal}
         defaultValue={defaultValue}
-        type={type as AssertAcceptedType}
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}
       />
@@ -96,4 +91,4 @@ const AssetInput = (props: CustomInputProps) => {
   );
 };
 
-export default AssetInput;
+export default SceneInput;

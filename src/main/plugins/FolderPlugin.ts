@@ -15,9 +15,14 @@ export default class FolderPlugin {
   static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
   static constantFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/constants.json`;
   static assetFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/assets.json`;
-  static gameObjectTypesDirectory = `/types`;
+  /** Game Objects */
+  static gameObjectTypesDirectory = `/gameobjectTypes`;
   static gameObjectDirectory = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/gameObjects`;
   static gameObjectFile = `${FolderPlugin.gameObjectDirectory}/index.json`;
+  /* Scenes  */
+  static sceneTypesDirectory = `/scenesTypes`;
+  static sceneDirectory = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/scenes`;
+  static sceneFile = `${FolderPlugin.sceneDirectory}/index.json`;
   /** */
   static configFile = `/config.xml`;
   static indexHtml = `${FolderPlugin.publicDirectory}/index.html`;

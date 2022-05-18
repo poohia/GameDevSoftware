@@ -1,6 +1,5 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
-import each from 'async/each';
 import async from 'async';
 import FileService from '../services/FileService';
 import { ElectronIpcMainEvent, GameObject, ObjectGameTypeJSON } from 'types';
@@ -39,25 +38,28 @@ export default class GameObjectPlugin {
     const { path } = global;
     GameObjectPlugin.readIndexFile().then((data) => {
       const gameObjectsValue: GameObject[] = [];
-      each(
-        data.filter((objectTypeFile) =>
-          objectType ? objectTypeFile.type === objectType : true
-        ),
-        (objectTypeFile: ObjectGameTypeJSON, callback: () => void) => {
-          FileService.readJsonFile(
-            `${path}${FolderPlugin.gameObjectDirectory}/${objectTypeFile.file}`
-          ).then((dataFile) => {
-            gameObjectsValue.push(dataFile);
-            callback();
-          });
-        }
-      ).then(() => {
-        if (objectType) {
-          event.reply(`load-game-objects-${objectType}`, gameObjectsValue);
-        } else {
-          event.reply(`load-game-objects`, gameObjectsValue);
-        }
-      });
+      async
+        .each(
+          data.filter((objectTypeFile) =>
+            objectType ? objectTypeFile.type === objectType : true
+          ),
+          (objectTypeFile: ObjectGameTypeJSON, callback: () => void) => {
+            FileService.readJsonFile(
+              `${path}${FolderPlugin.gameObjectDirectory}/${objectTypeFile.file}`
+            ).then((dataFile) => {
+              gameObjectsValue.push(dataFile);
+              callback();
+            });
+          }
+        )
+        .then(() => {
+          if (objectType) {
+            // @ts-ignore
+            event.reply(`load-game-objects-${objectType}`, gameObjectsValue);
+          } else {
+            event.reply(`load-game-objects`, gameObjectsValue);
+          }
+        });
     });
   };
 
@@ -69,17 +71,21 @@ export default class GameObjectPlugin {
       `${path}${FolderPlugin.modulesDirectory}`,
       'directory'
     ).then((names) => {
-      each(names, (name: string, callback: () => void) => {
-        const moduleDirectory = `${path}${FolderPlugin.modulesDirectory}/${name}${FolderPlugin.gameObjectTypesDirectory}`;
-        FileService.readdir(moduleDirectory, 'file').then((filesName) => {
-          each(filesName, (fileName: string, callbackFile: () => void) => {
-            gameObjects.push(fileName.replace('.json', ''));
-            callbackFile();
-          }).then(() => callback());
+      async
+        .each(names, (name: string, callback: () => void) => {
+          const moduleDirectory = `${path}${FolderPlugin.modulesDirectory}/${name}${FolderPlugin.gameObjectTypesDirectory}`;
+          FileService.readdir(moduleDirectory, 'file').then((filesName) => {
+            async
+              .each(filesName, (fileName: string, callbackFile: () => void) => {
+                gameObjects.push(fileName.replace('.json', ''));
+                callbackFile();
+              })
+              .then(() => callback());
+          });
+        })
+        .then(() => {
+          event.reply('load-game-object-types', gameObjects);
         });
-      }).then(() => {
-        event.reply('load-game-object-types', gameObjects);
-      });
     });
   };
 
@@ -101,6 +107,7 @@ export default class GameObjectPlugin {
               throw new Error(err.message);
             }
             this.loadGameObjects(event, objectType);
+            this.loadGameObjects(event);
           }
         );
       });
@@ -118,28 +125,30 @@ export default class GameObjectPlugin {
       `${path}${FolderPlugin.modulesDirectory}`,
       'directory'
     ).then((names) => {
-      each(names, (name: string, callback: () => void) => {
-        const moduleDirectory = `${path}${FolderPlugin.modulesDirectory}/${name}${FolderPlugin.gameObjectTypesDirectory}`;
-        FileService.readdir(moduleDirectory, 'file').then((filesName) => {
-          each(filesName, (fileName: string, callbackFile: () => void) => {
-            if (fileName.includes(objectType)) {
-              gameObjectType = `${moduleDirectory}/${fileName}`;
-            }
-            callbackFile();
-          }).then(() => callback());
+      async
+        .each(names, (name: string, callback: () => void) => {
+          const moduleDirectory = `${path}${FolderPlugin.modulesDirectory}/${name}${FolderPlugin.gameObjectTypesDirectory}`;
+          FileService.readdir(moduleDirectory, 'file').then((filesName) => {
+            async
+              .each(filesName, (fileName: string, callbackFile: () => void) => {
+                if (fileName.includes(objectType)) {
+                  gameObjectType = `${moduleDirectory}/${fileName}`;
+                }
+                callbackFile();
+              })
+              .then(() => callback());
+          });
+        })
+        .then(() => {
+          FileService.readJsonFile(gameObjectType).then((data) => {
+            // @ts-ignore
+            event.reply(`get-formulaire-game-object-${objectType}`, data);
+          });
         });
-      }).then(() => {
-        FileService.readJsonFile(gameObjectType).then((data) => {
-          event.reply(`get-formulaire-game-object-${objectType}`, data);
-        });
-      });
     });
   };
 
-  createGameObject = (
-    event: ElectronIpcMainEvent,
-    args: GameObject & { id?: string }
-  ) => {
+  createGameObject = (event: ElectronIpcMainEvent, args: GameObject) => {
     //@ts-ignore
     const { path } = global;
     GameObjectPlugin.readIndexFile().then((data) => {
@@ -167,6 +176,7 @@ export default class GameObjectPlugin {
         ],
         () => {
           this.loadGameObjects(event, args._type);
+          this.loadGameObjects(event);
         }
       );
     });
@@ -182,13 +192,8 @@ export default class GameObjectPlugin {
     FileService.readJsonFile(
       `${path}/${FolderPlugin.gameObjectDirectory}/${id}.json`
     ).then((data) => {
+      // @ts-ignore
       event.reply(`get-game-object-value-${gameObjectType}`, data);
-    });
-  };
-
-  private loadAllGameObjects = (event: ElectronIpcMainEvent) => {
-    GameObjectPlugin.readIndexFile().then((data) => {
-      event.reply('load-all-game-objects', data);
     });
   };
 

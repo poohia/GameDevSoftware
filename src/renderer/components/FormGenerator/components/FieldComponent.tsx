@@ -20,11 +20,12 @@ const FieldComponent: React.FunctionComponent<FieldComponentProps> = (
     description,
     keyValue: key,
   } = props;
+
   if (isObject) {
     return (
       <Segment className="game-dev-software-module-application-params-identity-segment">
         <span className="game-dev-software-module-application-params-identity-segment-title">
-          {label}
+          {label} {required && '*'}
         </span>
         {children}
         {description && (

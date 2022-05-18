@@ -8,8 +8,10 @@ import {
   TranslationPage,
   GameModulePage,
   GameobjectPage,
+  ScenePage,
 } from 'renderer/pages';
 import { GameobjectContainerComponent } from './pages/GameobjectPage/components';
+import { SceneContainerComponent } from './pages/ScenePage/components';
 import GameDevSoftwareProvider from './contexts';
 
 export const modulesComponent: any = [];
@@ -21,6 +23,8 @@ modulesComponent['AssetPage'] = AssetPage;
 modulesComponent['GameModulePage'] = GameModulePage;
 modulesComponent['GameobjectPage'] = GameobjectPage;
 modulesComponent['GameobjectContainerComponent'] = GameobjectContainerComponent;
+modulesComponent['ScenePage'] = ScenePage;
+modulesComponent['SceneContainerComponent'] = SceneContainerComponent;
 
 export default function App() {
   const { path, tabs, tabActive, onTabChange } = useApp();

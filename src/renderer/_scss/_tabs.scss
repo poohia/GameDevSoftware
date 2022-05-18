@@ -5,8 +5,12 @@
     justify-content: space-between;
     padding: 5px;
     width: 200px;
+    border-radius: 0 !important;
     &:hover {
       color: black;
+    }
+    &.active {
+      border-radius: 0 !important;
     }
   }
   overflow-x: auto;

@@ -52,7 +52,7 @@ const ModalConstant = (
 };
 
 const ConstantInput = (props: CustomInputProps) => {
-  const { defaultValue, type = 'string', onChange } = props;
+  const { defaultValue, type = 'string', onChange, onBlur } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
 
@@ -69,6 +69,7 @@ const ConstantInput = (props: CustomInputProps) => {
       setValue(value);
       setOpenModal(false);
       onChange(value);
+      setTimeout(() => onBlur && onBlur(), 500);
     },
     [value]
   );

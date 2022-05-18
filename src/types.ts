@@ -2,7 +2,7 @@ export interface ElectronIpcMainEvent extends Electron.IpcMainEvent {
   reply: (chanel: Channels, args?: any) => void;
 }
 export type Channels =
-  | string
+  // | string
   | 'set-path'
   | 'select-path'
   | 'last-path'
@@ -45,7 +45,15 @@ export type Channels =
   | 'load-all-translations'
   | 'load-all-constants'
   | 'load-all-assets'
-  | 'load-all-game-objects';
+  | 'load-all-game-objects'
+  | 'load-scene-types'
+  | 'load-scenes'
+  | 'remove-scene'
+  | 'get-formulaire-scene'
+  | 'create-scene'
+  | 'get-scene-value'
+  | 'load-all-scene'
+  | 'load-scene';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -177,5 +185,29 @@ export type FormField = {
 export type CustomInputProps = {
   defaultValue?: any;
   type?: string | number;
+  required?: boolean;
   onChange: (value: any) => void;
+  onBlur?: () => void;
+};
+export type FieldMultipleComponentProps = Pick<
+  CustomInputProps,
+  'onChange' | 'defaultValue' | 'required'
+> & {
+  keyValue: string;
+  core: any;
+  components: any[];
+};
+
+export type SceneTypeJSON = ObjectGameTypeJSON;
+export type ActionOfScene = {
+  [key: string]: any;
+  _title: string;
+  _scene: string;
+};
+export type SceneObject = {
+  [key: string]: any;
+  _id: number;
+  _type: string;
+  _title: string;
+  _actions: ActionOfScene[];
 };

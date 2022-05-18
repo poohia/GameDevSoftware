@@ -6,7 +6,7 @@ import { CustomInputProps, GameObject } from 'types';
 import GameObjectContext from 'renderer/contexts/GameObjectContext';
 import GameobjectTableComponent from 'renderer/pages/GameobjectPage/components/GameobjectTableComponent';
 
-const ModalAsset = (
+const ModalGameObjectInput = (
   props: ModalProps & {
     type: string;
     defaultValue?: string;
@@ -54,7 +54,7 @@ const ModalAsset = (
 };
 
 const GameObjectInput = (props: CustomInputProps) => {
-  const { defaultValue, type, onChange } = props;
+  const { defaultValue, type, onChange, onBlur } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
 
@@ -71,6 +71,7 @@ const GameObjectInput = (props: CustomInputProps) => {
       setValue(value);
       setOpenModal(false);
       onChange(value);
+      setTimeout(() => onBlur && onBlur(), 500);
     },
     [value]
   );
@@ -86,7 +87,7 @@ const GameObjectInput = (props: CustomInputProps) => {
       <div className="ui selection dropdown fluid" onClick={handleClick}>
         {value && <span>{value}</span>}
       </div>
-      <ModalAsset
+      <ModalGameObjectInput
         open={openModal}
         defaultValue={defaultValue}
         type={type}

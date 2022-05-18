@@ -4,7 +4,7 @@ import { CustomInputProps } from 'types';
 import InputComponent from './InputComponent';
 
 const ColorPicker = (props: CustomInputProps) => {
-  const { defaultValue, onChange } = props;
+  const { defaultValue, onChange, onBlur } = props;
   const [showColorPick, setShowColorPicker] = useState<boolean>(false);
   const [color, setColor] = useState<string>('');
   const [value, setValue] = useState<string>('');
@@ -14,6 +14,7 @@ const ColorPicker = (props: CustomInputProps) => {
       setShowColorPicker(false);
       setValue(c);
       onChange(c);
+      setTimeout(() => onBlur && onBlur(), 500);
     },
     [color]
   );

@@ -1,11 +1,16 @@
 import { ReactNode } from 'react';
-import { useTranslations, useConstants } from 'renderer/hooks';
+import {
+  useTranslations,
+  useConstants,
+  useAssets,
+  useGameObjects,
+  useScenes,
+} from 'renderer/hooks';
 import TranslationsContext from './TranslationsContext';
 import ConstantsContext from './ConstantsContext';
-import useAssets from 'renderer/hooks/useAssets';
 import AssetsContext from './AssetsContext';
 import GameObjectContext from './GameObjectContext';
-import useGameObjects from 'renderer/hooks/useGameObjects';
+import ScenesContext from './ScenesContext';
 
 type GameDevSoftwareProviderProps = {
   children: ReactNode;
@@ -18,6 +23,7 @@ const GameDevSoftwareProvider: React.FunctionComponent<
   const translationsHook = useTranslations();
   const constants = useConstants();
   const assets = useAssets();
+  const scenes = useScenes();
   const { gameObjects, findGameObjectsByType } = useGameObjects();
   return (
     <TranslationsContext.Provider value={{ ...translationsHook }}>
@@ -26,7 +32,9 @@ const GameDevSoftwareProvider: React.FunctionComponent<
           <GameObjectContext.Provider
             value={{ gameObjects, findGameObjectsByType }}
           >
-            {children}
+            <ScenesContext.Provider value={{ scenes }}>
+              {children}
+            </ScenesContext.Provider>
           </GameObjectContext.Provider>
         </AssetsContext.Provider>
       </ConstantsContext.Provider>

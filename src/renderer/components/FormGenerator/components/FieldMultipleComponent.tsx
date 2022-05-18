@@ -1,27 +1,33 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, FormField, Grid, Header, Icon } from 'semantic-ui-react';
+import { FieldMultipleComponentProps } from 'types';
 import TransComponent from '../../TransComponent';
-
-type FieldMultipleComponentProps = {
-  keyValue: string;
-  core: any;
-  components: any[];
-  defaultValue?: any;
-  onChange: (values: any) => void;
-};
 
 const FieldMultipleComponent: React.FunctionComponent<
   FieldMultipleComponentProps
 > = (props) => {
-  const { keyValue, components, core, defaultValue, onChange } = props;
+  const {
+    keyValue,
+    components,
+    core,
+    defaultValue,
+    required = true,
+    onChange,
+  } = props;
+
   const [items, setItems] = useState<number[]>([]);
   const [values, setValues] = useState<{ id: Number; value: any }[]>([]);
   const handleChange = useCallback(
     (item: number, core: any, key: string, value: any) =>
       setValues((_values) => {
         const valueFind = _values.find((v) => v.id === item);
+
         if (valueFind) {
-          valueFind.value[key] = core === 'number' ? Number(value) : value;
+          valueFind.value[key] =
+            core === 'number' &&
+            !(typeof value === 'string' && value.startsWith('@'))
+              ? Number(value)
+              : value;
         } else {
           _values.push({
             id: item,
@@ -30,31 +36,44 @@ const FieldMultipleComponent: React.FunctionComponent<
             },
           });
         }
-        return Array.from(_values);
+        return _values;
       }),
     []
   );
 
-  const handleRemove = useCallback(
-    (item: number) => {
-      setItems(Array.from(items.filter((i) => i !== item)));
-      setValues(Array.from(values.filter((value) => value.id !== item)));
+  const sendOnChange = useCallback(
+    (_values = values) => {
+      const definitiveValue: any = {};
+      definitiveValue[keyValue] = [];
+      _values.forEach((value) => {
+        const v: any = {};
+        Object.keys(value.value).forEach((key) => {
+          v[key] = value.value[key];
+        });
+        definitiveValue[keyValue].push(v);
+      });
+      onChange(definitiveValue);
     },
-    [items, values]
+    [onChange, keyValue, values]
   );
 
-  const sendOnChange = useCallback(() => {
-    const definitiveValue: any = {};
-    definitiveValue[keyValue] = [];
-    values.forEach((value) => {
-      const v: any = {};
-      Object.keys(value.value).forEach((key) => {
-        v[key] = value.value[key];
-      });
-      definitiveValue[keyValue].push(v);
-    });
-    onChange(definitiveValue);
-  }, [onChange, keyValue, values]);
+  const handleRemove = useCallback(
+    (item: number) => {
+      const _values = Array.from(values.filter((value) => value.id !== item));
+      setItems(Array.from(items.filter((i) => i !== item)));
+      setValues(_values);
+      sendOnChange(_values);
+    },
+    [items, values, sendOnChange]
+  );
+
+  const appendItem = useCallback(() => {
+    const nextItem =
+      items.length > 0
+        ? Array.from(items.concat(items[items.length - 1] + 1))
+        : [0];
+    setItems(nextItem);
+  }, [items]);
 
   useEffect(() => {
     if (defaultValue) {
@@ -66,9 +85,9 @@ const FieldMultipleComponent: React.FunctionComponent<
       );
       setItems(defaultValue.map((_: any, i: number) => i));
     } else {
-      setItems([0]);
+      setItems(required ? [0] : []);
     }
-  }, [defaultValue]);
+  }, [defaultValue, required]);
 
   return (
     <Grid>
@@ -81,11 +100,12 @@ const FieldMultipleComponent: React.FunctionComponent<
                   <Header as="h3">{item}.</Header>
                 </Grid.Column>
                 <Grid.Column width={2} floated="right">
-                  {item > 0 && (
+                  {(!required ? true : item > 0) && (
                     <Button
                       icon
                       color="red"
                       basic
+                      type="button"
                       onClick={() => handleRemove(item)}
                     >
                       <Icon name="delete" />
@@ -106,7 +126,7 @@ const FieldMultipleComponent: React.FunctionComponent<
                             onChange={(core: any, key: string, value: any) =>
                               handleChange(item, core, key, value)
                             }
-                            onBlur={sendOnChange}
+                            onBlur={() => sendOnChange()}
                             defaultValue={
                               defaultValueFind &&
                               defaultValueFind[Object.keys(core)[i]]
@@ -128,9 +148,7 @@ const FieldMultipleComponent: React.FunctionComponent<
           type="button"
           icon
           labelPosition="right"
-          onClick={() =>
-            setItems(Array.from(items.concat(items[items.length - 1] + 1)))
-          }
+          onClick={appendItem}
         >
           <TransComponent id="form_button_add" />
           <Icon name="add" />

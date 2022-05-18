@@ -51,7 +51,7 @@ const ModalTranslation = (
 };
 
 const TranslationInput = (props: CustomInputProps) => {
-  const { defaultValue, onChange } = props;
+  const { defaultValue, onChange, onBlur } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
 
@@ -68,6 +68,7 @@ const TranslationInput = (props: CustomInputProps) => {
       setValue(value);
       setOpenModal(false);
       onChange(value);
+      setTimeout(() => onBlur && onBlur(), 500);
     },
     [value]
   );

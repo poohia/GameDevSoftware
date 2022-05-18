@@ -12,12 +12,23 @@ import {
 } from './components';
 import AssetInput from './components/AssetInput';
 import { FieldComponentProps } from './components/FieldComponent';
+import SceneInput from './components/SceneInput';
 
 export type FormGeneratorProps = {
   form: any;
   type: string;
   defaultValues?: any;
   onSubmit: (data: any) => void;
+};
+
+export const mergeDeeply = (obj1: any, obj2: any) => {
+  for (const key of Object.keys(obj1)) {
+    if (obj2[key] === undefined) {
+      obj2[key] = obj1[key];
+    }
+  }
+
+  return obj2;
 };
 
 const useFormGenerator = (props: FormGeneratorProps) => {
@@ -70,12 +81,11 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         onChange = handleChange,
         ...rest
       } = field;
-
       const defaultProps: Omit<FieldComponentProps, 'children'> = {
         keyValue: key,
         label: label || key,
         description,
-        required: !optional,
+        required: !optional && !core?.optional,
       };
       let defaultValue = undefined;
 
@@ -85,6 +95,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
       if (parent && defaultValues && defaultValues[parent]) {
         defaultValue = defaultValues[parent][key];
       }
+
       if (core === 'string' || core === 'number') {
         return (
           <FieldComponent {...defaultProps}>
@@ -110,6 +121,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               type={core}
               onChange={(data) => onChange(core, key, data, parent)}
               defaultValue={defaultValue}
+              {...rest}
             />
           </FieldComponent>
         );
@@ -120,6 +132,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
             <ColorPicker
               defaultValue={defaultValue}
               onChange={(data) => onChange(core, key, data, parent)}
+              {...rest}
             />
           </FieldComponent>
         );
@@ -130,6 +143,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
             <TranslationInput
               defaultValue={defaultValue}
               onChange={(data) => onChange(core, key, data, parent)}
+              {...rest}
             />
           </FieldComponent>
         );
@@ -141,6 +155,18 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               type={core.replace('@go:', '')}
               defaultValue={defaultValue}
               onChange={(data) => onChange(core, key, data, parent)}
+              {...rest}
+            />
+          </FieldComponent>
+        );
+      }
+      if (core === 'scene') {
+        return (
+          <FieldComponent {...defaultProps}>
+            <SceneInput
+              defaultValue={defaultValue}
+              onChange={(data) => onChange(core, key, data, parent)}
+              {...rest}
             />
           </FieldComponent>
         );
@@ -202,6 +228,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               <FieldMultipleComponent
                 keyValue={key}
                 core={core.core}
+                required={!core.optional}
                 defaultValue={defaultValue}
                 components={Object.keys(core.core).map((coreKey) => {
                   return (props: any) => (
@@ -250,7 +277,11 @@ const useFormGenerator = (props: FormGeneratorProps) => {
           <Grid.Column>
             <Form
               onSubmit={() => {
-                onSubmit({ ...defaultValues, ...value, _type });
+                if (defaultValues === undefined) {
+                  onSubmit({ ...value, _type });
+                } else {
+                  onSubmit({ ...mergeDeeply(defaultValues, value), _type });
+                }
               }}
             >
               {Object.keys(form).map((key) => (

@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
 import { defaultStateFormReducer, FormReducer } from 'renderer/reducers';
-import { GameObject, GameObjectForm, PageProps } from 'types';
+import { GameObjectForm, PageProps, SceneObject } from 'types';
 
-const useGameobjectContainerComponent = (props: PageProps) => {
-  const [gameObjects, setGameObjects] = useState<GameObject[]>([]);
+const useSceneContainerComponent = (props: PageProps) => {
+  const [scenes, setScenes] = useState<SceneObject[]>([]);
   const [gameObjectForm, setGameObjectForm] = useState<
     GameObjectForm | undefined
   >(undefined);
 
-  const { title: gameObjectType } = props;
+  const { title: sceneType } = props;
   const { sendMessage, on, once } = useEvents();
 
   const [stateForm, dispatch] = useReducer(
@@ -20,9 +20,9 @@ const useGameobjectContainerComponent = (props: PageProps) => {
   const removeGameObject = useCallback(
     (id: number) => {
       dispatch({ type: 'hide-form' });
-      sendMessage('remove-game-object', { id, objectType: gameObjectType });
+      sendMessage('remove-scene', { id, sceneType });
     },
-    [gameObjectType]
+    [sceneType]
   );
 
   const createGameobject = useCallback(
@@ -37,37 +37,37 @@ const useGameobjectContainerComponent = (props: PageProps) => {
   const updateGameobject = useCallback(
     (id: number) => {
       // @ts-ignore
-      once(`get-game-object-value-${gameObjectType}`, (value) => {
+      once(`get-scene-value-${sceneType}`, (value) => {
         dispatch({
           type: 'show-update-form',
           data: { key: id.toString(), value },
         });
       });
-      sendMessage('get-game-object-value', { id, gameObjectType });
+      sendMessage('get-scene-value', { id, sceneType });
     },
-    [gameObjectType]
+    [sceneType]
   );
 
   const sendCreateGameobject = useCallback((data: any) => {
     dispatch({ type: 'hide-form' });
-    sendMessage('create-game-object', data);
+    sendMessage('create-scene', data);
   }, []);
 
   useEffect(() => {
-    sendMessage('load-game-objects', gameObjectType);
-    sendMessage('get-formulaire-game-object', gameObjectType);
+    sendMessage('load-scenes', sceneType);
+    sendMessage('get-formulaire-scene', sceneType);
     // @ts-ignore
-    on(`load-game-objects-${gameObjectType}`, (args) => {
-      setGameObjects(args);
+    on(`load-scene-${sceneType}`, (args) => {
+      setScenes(args);
     });
     // @ts-ignore
-    once(`get-formulaire-game-object-${gameObjectType}`, (args) => {
+    once(`get-formulaire-scene-${sceneType}`, (args) => {
       setGameObjectForm(args);
     });
-  }, [gameObjectType]);
+  }, [sceneType]);
 
   return {
-    gameObjects,
+    scenes,
     gameObjectForm,
     stateForm,
     removeGameObject,
@@ -77,4 +77,4 @@ const useGameobjectContainerComponent = (props: PageProps) => {
   };
 };
 
-export default useGameobjectContainerComponent;
+export default useSceneContainerComponent;
