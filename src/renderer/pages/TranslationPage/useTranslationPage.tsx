@@ -20,10 +20,9 @@ const useTranslationPage = () => {
   /**  */
   const [languages, setLanguages] = useState<string[]>([]);
   const [translations, setTranslations] = useState<TranslationObject>({});
-  // const [locale, setLocale] = useState<string>(i18n.locale);
   /**  */
   const { setItem } = useDatabase();
-  const { once, sendMessage, requestMessage } = useEvents();
+  const { once, sendMessage, on } = useEvents();
   const [state, dispatch] = useReducer(TranslationFromReducer, defaultState);
   const { translationForm } = state;
   const currentTranslations = useMemo(() => {
@@ -36,6 +35,7 @@ const useTranslationPage = () => {
 
   const appendLocale = useCallback(
     (locale: string) => {
+      if (locale === '') return;
       setTranslations((_translations: any) => {
         _translations[locale] = {};
         Object.keys(currentTranslations).forEach((key) => {
@@ -69,6 +69,7 @@ const useTranslationPage = () => {
       Object.keys(_translations).forEach((code: string) => {
         delete _translations[code][key];
       });
+      sendMessage('save-translations', _translations);
       return JSON.parse(JSON.stringify(_translations));
     });
     dispatch({ type: 'hide-form' });
@@ -82,21 +83,24 @@ const useTranslationPage = () => {
     (key: string) => {
       const formatValues = () => {
         const values: { code: string; value: string }[] = [];
-
-        Object.keys(translations).forEach((arrKey) => {
-          values.push({ code: arrKey, value: translations[arrKey][key] });
+        languages.forEach((code) => {
+          values.push({ code, value: translations[code][key] });
         });
+
         return values;
       };
-      dispatch({
-        type: 'show-update-form',
-        data: {
-          keyTranslation: key,
-          values: formatValues(),
-        },
-      });
+      dispatch({ type: 'hide-form' });
+      setTimeout(() =>
+        dispatch({
+          type: 'show-update-form',
+          data: {
+            keyTranslation: key,
+            values: formatValues(),
+          },
+        })
+      );
     },
-    [translations]
+    [translations, languages]
   );
 
   const appendTranslation = useCallback(
@@ -109,6 +113,7 @@ const useTranslationPage = () => {
           };
         });
         dispatch({ type: 'hide-form' });
+        sendMessage('save-translations', _translations);
         return JSON.parse(JSON.stringify(_translations));
       });
     },
@@ -121,26 +126,25 @@ const useTranslationPage = () => {
   }, []);
 
   const init = useCallback(() => {
-    once('languages-authorized', (args: { code: string }[]) => {
+    on('languages-authorized', (args: { code: string }[]) => {
       setLanguages(args.map((arg) => arg.code));
     });
-    const unSub = requestMessage('load-translations', (args) => {
-      setTranslations(args);
-    });
-    return () => {
-      unSub();
-    };
-  }, []);
+    if (module) {
+      // @ts-ignore
+      once(`load-translations-module-${module}`, (args) => {
+        setTranslations(args);
+      });
+    } else {
+      once('load-translations', (args) => {
+        setTranslations(args);
+      });
+    }
+    sendMessage('load-translations');
+  }, [module]);
 
   useEffect(() => {
     init();
   }, []);
-
-  useEffect(() => {
-    if (translations) {
-      sendMessage('save-translations', translations);
-    }
-  }, [translations]);
 
   useEffect(() => {
     dispatch({ type: 'hide-form' });

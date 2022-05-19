@@ -1,11 +1,14 @@
 import { DropdownLanguagesComponent } from 'renderer/components';
-import { Button, Container, Grid, Segment } from 'semantic-ui-react';
+import { Container, Grid, Icon, Radio, Segment } from 'semantic-ui-react';
 import i18n, { localeEnable } from 'translations/i18n';
 import { titleCase } from 'title-case';
 
 import { PageProps } from 'types';
 import TransComponent from 'renderer/components/TransComponent';
 import { modulesComponent } from 'renderer/App';
+import { useContext } from 'react';
+import DarkModeContext from 'renderer/contexts/DarkModeContext';
+import { Button } from 'renderer/semantic-ui';
 
 type HomeGlobalModulesComponent = Required<Pick<PageProps, 'appendTab'>> & {
   onChangeLocale?: (locale: string) => void;
@@ -25,6 +28,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
     onChangeLocale,
     appendTab,
   } = props;
+  const { darkModeActived, toggleDarkMode } = useContext(DarkModeContext);
   return (
     <Container>
       <Segment className="game-dev-software-module-application-params-identity-segment">
@@ -50,8 +54,30 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
                   onChange={(_, { value }) => onChangeLocale(value as string)}
                 />
               </Grid.Column>
+              <Grid.Column width={6}>
+                <Segment>
+                  <Grid textAlign="center">
+                    <Grid.Row>
+                      <Grid.Column width={16}>
+                        <Icon name={darkModeActived ? 'sun outline' : 'sun'} />
+                      </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                      <Grid.Column width={16}>
+                        <Radio
+                          fluid
+                          slider
+                          checked={darkModeActived}
+                          onClick={toggleDarkMode}
+                        />
+                      </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                </Segment>
+              </Grid.Column>
             </Grid.Row>
           )}
+
           <Grid.Row>
             {modules.map((module) => (
               <Grid.Column width={4} key={module}>

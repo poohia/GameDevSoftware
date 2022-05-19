@@ -60,6 +60,7 @@ export type Tables =
   | 'tab-active'
   | 'last-path'
   | 'game-locale'
+  | 'dark-mode'
   | string;
 export type EventCallback = (...args: any) => void;
 export type PageProps = {

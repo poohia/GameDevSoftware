@@ -3,7 +3,8 @@ import {
   DropdownAssetTypesComponent,
   DropzoneAssetFileComponent,
 } from 'renderer/components';
-import { Button, Container, Form, Grid, Header } from 'semantic-ui-react';
+import { Container, Form, Grid, Header } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { AssertFileValueType, AssetType } from 'types';
 

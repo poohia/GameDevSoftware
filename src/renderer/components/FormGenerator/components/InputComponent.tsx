@@ -1,5 +1,6 @@
 import { ReactFragment, ReactNode, useEffect, useMemo, useState } from 'react';
-import { Button, Grid, Icon, Input, InputProps } from 'semantic-ui-react';
+import { Grid, Icon, Input, InputProps } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import ConstantInput from './ConstantInput';
 
 type InputComponentProps = InputProps & {

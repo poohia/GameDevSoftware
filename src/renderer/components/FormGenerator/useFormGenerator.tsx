@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, Dropdown, Form, Grid, Header } from 'semantic-ui-react';
+import { Dropdown, Form, Grid, Header } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import { FormField } from 'types';
 import TransComponent from '../TransComponent';
 import {

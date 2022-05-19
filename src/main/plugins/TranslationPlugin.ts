@@ -18,25 +18,31 @@ export default class TranslationPlugin {
     // @ts-ignore
     const languages: { code: string }[] = JSON.parse(data);
     event.reply('languages-authorized', languages);
-    Promise.all(
-      languages.map(
-        (l) =>
-          new Promise((resolve) => {
-            const { code } = l;
-            const dataTranslation = fs.readFileSync(
-              `${path}${FolderPlugin.translationDirectory}/${code}.json`
-            );
-            // @ts-ignore
-            translations[code] = JSON.parse(dataTranslation);
-            resolve(true);
-          })
-      )
-    ).then(() => {
-      event.reply('load-translations', translations);
-    });
+    async
+      .each(languages, (language, callback) => {
+        const { code } = language;
+        fs.readFile(
+          `${path}${FolderPlugin.translationDirectory}/${code}.json`,
+          (err, dataTranslation) => {
+            if (err) {
+              translations[code] = {};
+            } else {
+              // @ts-ignore
+              translations[code] = JSON.parse(dataTranslation);
+            }
+            callback();
+          }
+        );
+      })
+      .then(() => {
+        event.reply('load-translations', translations);
+      });
   };
 
-  loadTranslationsModule = (event: ElectronIpcMainEvent, module: string) => {
+  loadTranslationsModule = (
+    event: ElectronIpcMainEvent,
+    { module }: { module: string }
+  ) => {
     const translations: any = {};
     // @ts-ignore
     const { path } = global;
@@ -64,6 +70,7 @@ export default class TranslationPlugin {
           })
       )
     ).then(() => {
+      // @ts-ignore
       event.reply(`load-translations-module-${module}`, translations);
     });
   };
@@ -95,8 +102,12 @@ export default class TranslationPlugin {
     // @ts-ignore
     const { path } = global;
     const { data, module } = args;
+    console.log(
+      '🚀 ~ file: TranslationPlugin.ts ~ line 129 ~ TranslationPlugin ~ data',
+      data
+    );
     Promise.all(
-      Object.keys(args).map((code) => {
+      Object.keys(data).map((code) => {
         new Promise((resolve) => {
           fs.writeFile(
             `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${code}.json`,
@@ -112,14 +123,67 @@ export default class TranslationPlugin {
     });
   };
 
+  private setLanguagesModules = (languages: string[]): Promise<void> =>
+    new Promise((resolve) => {
+      // @ts-ignore
+      const { path } = global;
+      async.parallel(
+        [
+          (c) => {
+            GameModulesPlugin.loadDynamicModulesName()
+              .then((modules) => {
+                async.each(modules, (module, callback) => {
+                  async
+                    .each(languages, (language, callbackLanguage) => {
+                      const languageFile = `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${language}.json`;
+                      fs.access(languageFile, (err) => {
+                        if (err) {
+                          fs.writeFile(languageFile, JSON.stringify({}), () =>
+                            callbackLanguage()
+                          );
+                        } else {
+                          callbackLanguage();
+                        }
+                      });
+                    })
+                    .then(() => callback());
+                });
+              })
+              .then(() => c());
+          },
+          (c) => {
+            async
+              .each(languages, (language, callbackLanguage) => {
+                const languageFile = `${path}${FolderPlugin.translationDirectory}/${language}.json`;
+                fs.access(languageFile, (err) => {
+                  if (err) {
+                    fs.writeFile(languageFile, JSON.stringify({}), () =>
+                      callbackLanguage()
+                    );
+                  } else {
+                    callbackLanguage();
+                  }
+                });
+              })
+              .then(() => c());
+          },
+        ],
+        () => {
+          resolve();
+        }
+      );
+    });
+
   setLanguages = (event: ElectronIpcMainEvent, args: string[]) => {
     // @ts-ignore
     const { path } = global;
-    fs.writeFileSync(
+    fs.writeFile(
       `${path}${FolderPlugin.languageFile}`,
-      JSON.stringify(args.map((locale) => ({ code: locale })))
+      JSON.stringify(args.map((locale) => ({ code: locale }))),
+      () => {
+        this.setLanguagesModules(args).then(() => this.loadTranslations(event));
+      }
     );
-    this.loadTranslations(event);
   };
 
   removeLanguage = (
@@ -204,5 +268,8 @@ export default class TranslationPlugin {
     ipcMain.on('load-all-translations', (event, args) => {
       this.loadAllTranslations(event as ElectronIpcMainEvent, args);
     });
+    ipcMain.on('save-translations-module', (event, args) =>
+      this.saveTranslationsModule(event as ElectronIpcMainEvent, args)
+    );
   };
 }

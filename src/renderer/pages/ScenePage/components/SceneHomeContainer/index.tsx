@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TransComponent } from 'renderer/components';
-import { Button, Container, Grid, Segment } from 'semantic-ui-react';
+import { Container, Grid, Segment } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import { useEvents } from 'renderer/hooks';
 import { PageProps } from 'types';
 import SceneContainerComponent from '../SceneContainerComponent';

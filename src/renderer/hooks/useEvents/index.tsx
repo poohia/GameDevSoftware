@@ -9,9 +9,12 @@ const useEvents = () => {
     (chanel: Channels, callback: EventCallback) => {
       if (module) {
         console.log(`${chanel}-module`);
+        //@ts-ignore
         window.electron.ipcRenderer.sendMessage(`${chanel}-module`, module);
+        //@ts-ignore
         return on(`${chanel}-module-${module}`, callback);
       }
+      console.log(chanel);
       sendMessage(chanel);
       return on(chanel, callback);
     },
@@ -20,13 +23,15 @@ const useEvents = () => {
 
   const sendMessage = useCallback((chanel: Channels, args?: any) => {
     if (module) {
-      console.log(`${chanel}-module`);
+      console.log(`${chanel}-module`, args);
+      //@ts-ignore
       window.electron.ipcRenderer.sendMessage(`${chanel}-module`, {
         data: args,
         module,
       });
       return;
     }
+    console.log(chanel, args);
     window.electron.ipcRenderer.sendMessage(chanel, args);
   }, []);
 

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  Button,
   Container,
   Dropdown,
   DropdownProps,
@@ -8,6 +7,7 @@ import {
   Grid,
   Header,
 } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { ConstantType, ConstantValue } from 'types';
 

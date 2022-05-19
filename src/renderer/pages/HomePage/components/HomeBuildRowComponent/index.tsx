@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react';
 import { DropdownPlatformsComponent } from 'renderer/components';
 import { useEvents } from 'renderer/hooks';
-import { Button, Grid, Icon } from 'semantic-ui-react';
+import { Grid, Icon } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { PlatformsParams } from 'types';
 

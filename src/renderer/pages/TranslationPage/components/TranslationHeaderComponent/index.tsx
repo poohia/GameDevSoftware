@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DropdownLanguagesComponent } from 'renderer/components';
-import { Button, Grid, Icon } from 'semantic-ui-react';
+import { Grid, Icon } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 
 type TranslationHeaderComponentProps = {

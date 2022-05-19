@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, FormField, Grid, Header, Icon } from 'semantic-ui-react';
+import { FormField, Grid, Header, Icon } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import { FieldMultipleComponentProps } from 'types';
 import TransComponent from '../../TransComponent';
 

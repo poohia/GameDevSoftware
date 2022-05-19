@@ -1,5 +1,6 @@
 import { TransComponent } from 'renderer/components';
-import { Button, Container, Grid, Header, Icon } from 'semantic-ui-react';
+import { Container, Grid, Header, Icon } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import { AssetHeaderComponentProps } from 'types';
 
 type GameobjectHeaderComponentProps = Pick<

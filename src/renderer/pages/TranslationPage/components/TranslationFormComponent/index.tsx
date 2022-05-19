@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Button,
-  Container,
-  Flag,
-  Form,
-  Grid,
-  Header,
-  Input,
-} from 'semantic-ui-react';
+import { Container, Flag, Form, Grid, Header, Input } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { TranslationObject } from 'types';
 

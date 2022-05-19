@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
-import { Button, Icon, Modal, ModalProps } from 'semantic-ui-react';
+import { Icon, Modal, ModalProps } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import TransComponent from '../TransComponent';
 
 type ModalComponentProps = ModalProps & {

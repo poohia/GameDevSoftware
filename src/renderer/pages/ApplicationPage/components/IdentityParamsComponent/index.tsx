@@ -1,4 +1,5 @@
-import { Button, Container, Form, Segment } from 'semantic-ui-react';
+import { Container, Form, Segment } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import useIdentityParams from './useIdentityParam';
 

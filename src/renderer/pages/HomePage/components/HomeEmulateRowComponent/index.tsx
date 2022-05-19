@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import usePlatformsComponent from 'renderer/components/DropdownPlatformsComponent/usePlatformsComponent';
 import { useEvents } from 'renderer/hooks';
-import { Button, Grid } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 
 const HomeEmulateRowComponent = () => {
   const { platforms } = usePlatformsComponent();

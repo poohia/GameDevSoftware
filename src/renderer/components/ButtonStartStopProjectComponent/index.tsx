@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
-import { Button, Icon } from 'semantic-ui-react';
+import { Icon } from 'semantic-ui-react';
+import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 
 const ButtonStartStopProjectComponent = () => {
