@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { TransComponent } from 'renderer/components';
-import { Grid, Header, Icon, Input, Table } from 'semantic-ui-react';
-import { Button } from 'renderer/semantic-ui';
+import { Grid, Header, Icon, Input } from 'semantic-ui-react';
+import { Button, Table } from 'renderer/semantic-ui';
 import { GameObject } from 'types';
 
 type GameobjectTableComponentProps = {

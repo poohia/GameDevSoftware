@@ -111,7 +111,7 @@ const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
   console.log(isDragAccept, isDragReject);
 
   return (
-    <Container fluid>
+    <Container fluid className="game-dev-software-file-preview-container">
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
         {/* {isDragAccept && <p>File will be accepted</p>}

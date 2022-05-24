@@ -1,5 +1,6 @@
 import { DropdownLanguagesComponent } from 'renderer/components';
-import { Container, Grid, Icon, Radio, Segment } from 'semantic-ui-react';
+import { Container, Grid, Icon, Radio } from 'semantic-ui-react';
+import { Button, Segment } from 'renderer/semantic-ui';
 import i18n, { localeEnable } from 'translations/i18n';
 import { titleCase } from 'title-case';
 
@@ -8,7 +9,6 @@ import TransComponent from 'renderer/components/TransComponent';
 import { modulesComponent } from 'renderer/App';
 import { useContext } from 'react';
 import DarkModeContext from 'renderer/contexts/DarkModeContext';
-import { Button } from 'renderer/semantic-ui';
 
 type HomeGlobalModulesComponent = Required<Pick<PageProps, 'appendTab'>> & {
   onChangeLocale?: (locale: string) => void;
@@ -31,7 +31,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
   const { darkModeActived, toggleDarkMode } = useContext(DarkModeContext);
   return (
     <Container>
-      <Segment className="game-dev-software-module-application-params-identity-segment">
+      <Segment className="game-dev-software-module-application-params-identity-segment game-dev-software-module-home-project-segment">
         <span className="game-dev-software-module-application-params-identity-segment-title">
           <TransComponent id="module_application_home_global_modules_title" />
         </span>
@@ -78,9 +78,9 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
             </Grid.Row>
           )}
 
-          <Grid.Row>
+          <Grid.Row columns={4} width="equals">
             {modules.map((module) => (
-              <Grid.Column width={4} key={module}>
+              <Grid.Column key={module}>
                 <Button
                   onClick={() =>
                     appendTab(

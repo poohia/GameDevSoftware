@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
-import { Form, Segment } from 'semantic-ui-react';
+import { Form } from 'semantic-ui-react';
+import { Segment } from 'renderer/semantic-ui';
 
 export type FieldComponentProps = {
   keyValue: string;

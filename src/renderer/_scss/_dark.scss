@@ -41,7 +41,7 @@ body.dark {
       }
     }
   }
-  .game-dev-software-module-application-params-identity-segment {
+  .game-dev-software-module-application-params-identity-segment.inverted {
     border: 1px solid $darkBorderColor;
     @extend .dark-background;
     span.game-dev-software-module-application-params-identity-segment-title {
@@ -53,8 +53,31 @@ body.dark {
       );
     }
   }
+  .game-dev-software-module-application-params-mobile-action-segment.inverted {
+    background-color: $darkBackgroundBlack;
+    .container {
+      background-color: $darkBackgroundBlack;
+    }
+  }
   a {
     color: white;
     text-decoration: underline;
+  }
+  .ui.table td.active,
+  .ui.table tr.active {
+    background-color: $darkBorderColor !important;
+  }
+  form.ui.form {
+    background: $darkBackgroundBlack;
+    padding: 30px 11px;
+    color: white;
+    height: 100%;
+    border-radius: 5px;
+  }
+  .game-dev-software-file-preview-container {
+    background-color: $darkBackgroundBlack;
+    aside {
+      background-color: $darkBackgroundBlack;
+    }
   }
 }

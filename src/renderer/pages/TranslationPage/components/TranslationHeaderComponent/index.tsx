@@ -23,9 +23,9 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
   } = props;
   const [value, setValue] = useState<string | null>(null);
   return (
-    <Grid>
-      <Grid.Row columns={3}>
-        <Grid.Column>
+    <Grid className="game-dev-software-module-translation-header">
+      <Grid.Row>
+        <Grid.Column width={12}>
           <Grid>
             <Grid.Row columns={2}>
               <Grid.Column width={13}>
@@ -57,7 +57,7 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
             </Grid.Row>
           </Grid>
         </Grid.Column>
-        <Grid.Column>
+        <Grid.Column width={12}>
           <Grid>
             <Grid.Row columns={2}>
               <Grid.Column width={13}>
@@ -81,7 +81,7 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
             </Grid.Row>
           </Grid>
         </Grid.Column>
-        <Grid.Column>
+        <Grid.Column width={12}>
           <Button
             color="green"
             icon

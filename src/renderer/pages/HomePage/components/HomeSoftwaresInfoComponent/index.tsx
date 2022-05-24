@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
-import { Segment } from 'semantic-ui-react';
+import { Segment } from 'renderer/semantic-ui';
 import { SoftwaresInfo } from 'types';
 
 const HomeSoftwaresInfoComponent = () => {

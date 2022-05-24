@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Container, Grid, Segment } from 'semantic-ui-react';
-import { Button } from 'renderer/semantic-ui';
+import { Container, Grid } from 'semantic-ui-react';
+import { Button, Segment } from 'renderer/semantic-ui';
 import TransComponent from 'renderer/components/TransComponent';
 import { useEvents } from 'renderer/hooks';
 import { PageProps } from 'types';
@@ -21,14 +21,14 @@ const HomeGameModulesComponent = ({
 
   return (
     <Container>
-      <Segment className="game-dev-software-module-application-params-identity-segment">
+      <Segment className="game-dev-software-module-application-params-identity-segment game-dev-software-module-home-project-segment">
         <span className="game-dev-software-module-application-params-identity-segment-title">
           <TransComponent id="module_application_home_game_modules_title" />
         </span>
         <Grid>
-          <Grid.Row columns={4}>
+          <Grid.Row columns={4} width="equals">
             {gameModules.map((module) => (
-              <Grid.Column width={4} key={module}>
+              <Grid.Column key={module}>
                 <Button
                   onClick={() =>
                     appendTab(

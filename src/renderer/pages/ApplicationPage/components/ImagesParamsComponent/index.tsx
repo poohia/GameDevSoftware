@@ -1,4 +1,5 @@
-import { Container, Grid, Segment } from 'semantic-ui-react';
+import { Container, Grid } from 'semantic-ui-react';
+import { Segment } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import useImagesParamsComponent from './useImagesParamsComponent';
 

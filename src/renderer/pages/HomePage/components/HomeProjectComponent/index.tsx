@@ -1,5 +1,5 @@
-import { Container, Grid, Header, Icon, Segment } from 'semantic-ui-react';
-import { Button } from 'renderer/semantic-ui';
+import { Container, Grid, Header, Icon } from 'semantic-ui-react';
+import { Button, Segment } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { ButtonStartStopProjectComponent } from 'renderer/components';
 import { HomeSoftwaresInfoComponent } from 'renderer/pages/HomePage/components';

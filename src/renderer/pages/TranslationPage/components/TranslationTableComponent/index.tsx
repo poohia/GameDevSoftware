@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Grid, Header, Icon, Input, Table } from 'semantic-ui-react';
-import { Button } from 'renderer/semantic-ui';
+import { Grid, Header, Icon, Input } from 'semantic-ui-react';
+import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { Translation } from 'types';
 
