@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import useDatabase from '../useDatabase';
+import useEvents from '../useEvents';
 
 const useDarkMode = () => {
   const [darkModeActived, setDarkModeActived] = useState<boolean>(true);
   const { setItem, getItem } = useDatabase();
+  const { sendMessage } = useEvents();
 
   const toggleDarkMode = useCallback(() => {
     setItem<boolean>('dark-mode', !darkModeActived);
@@ -29,6 +31,7 @@ const useDarkMode = () => {
 
   useEffect(() => {
     toggleClassBody();
+    sendMessage('switch-theme', darkModeActived ? 'dark' : 'light');
   }, [darkModeActived]);
 
   return {

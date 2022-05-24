@@ -53,7 +53,8 @@ export type Channels =
   | 'create-scene'
   | 'get-scene-value'
   | 'load-all-scene'
-  | 'load-scene';
+  | 'load-scene'
+  | 'switch-theme';
 export type Tables =
   | 'locale'
   | 'tabs'
