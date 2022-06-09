@@ -167,6 +167,9 @@ export type GameObjectForm = {
     [key: string]: any;
   };
 };
+export type SceneObjectForm = GameObjectForm & {
+  module: string;
+};
 export type FormFieldType =
   | 'string'
   | 'number'
@@ -200,7 +203,9 @@ export type FieldMultipleComponentProps = Pick<
   components: any[];
 };
 
-export type SceneTypeJSON = ObjectGameTypeJSON;
+export type SceneTypeJSON = ObjectGameTypeJSON & {
+  module: string;
+};
 export type ActionOfScene = {
   [key: string]: any;
   _title: string;
@@ -211,5 +216,6 @@ export type SceneObject = {
   _id: number;
   _type: string;
   _title: string;
+  _module: string;
   _actions: ActionOfScene[];
 };

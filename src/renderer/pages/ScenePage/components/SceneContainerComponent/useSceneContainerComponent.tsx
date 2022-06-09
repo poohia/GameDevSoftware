@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
 import { defaultStateFormReducer, FormReducer } from 'renderer/reducers';
-import { GameObjectForm, PageProps, SceneObject } from 'types';
+import { SceneObjectForm, PageProps, SceneObject } from 'types';
 
 const useSceneContainerComponent = (props: PageProps) => {
   const [scenes, setScenes] = useState<SceneObject[]>([]);
-  const [gameObjectForm, setGameObjectForm] = useState<
-    GameObjectForm | undefined
+  const [sceneObjectForm, setSceneObjectForm] = useState<
+    SceneObjectForm | undefined
   >(undefined);
 
   const { title: sceneType } = props;
@@ -48,10 +48,18 @@ const useSceneContainerComponent = (props: PageProps) => {
     [sceneType]
   );
 
-  const sendCreateGameobject = useCallback((data: any) => {
-    dispatch({ type: 'hide-form' });
-    sendMessage('create-scene', data);
-  }, []);
+  const sendCreateGameobject = useCallback(
+    (data: any) => {
+      if (sceneObjectForm) {
+        dispatch({ type: 'hide-form' });
+        sendMessage('create-scene', {
+          ...data,
+          _module: sceneObjectForm.module,
+        });
+      }
+    },
+    [sceneObjectForm]
+  );
 
   useEffect(() => {
     sendMessage('load-scenes', sceneType);
@@ -62,13 +70,13 @@ const useSceneContainerComponent = (props: PageProps) => {
     });
     // @ts-ignore
     once(`get-formulaire-scene-${sceneType}`, (args) => {
-      setGameObjectForm(args);
+      setSceneObjectForm(args);
     });
   }, [sceneType]);
 
   return {
     scenes,
-    gameObjectForm,
+    gameObjectForm: sceneObjectForm,
     stateForm,
     removeGameObject,
     createGameobject,

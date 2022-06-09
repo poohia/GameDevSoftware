@@ -115,7 +115,13 @@ export default class ScenePlugin {
   getFormulaireScene = (event: ElectronIpcMainEvent, sType: string) => {
     //@ts-ignore
     const { path } = global;
-    let sceneType: string = '';
+    let sceneType: {
+      value: string;
+      module: string;
+    } = {
+      value: '',
+      module: '',
+    };
     FileService.readdir(
       `${path}${FolderPlugin.modulesDirectory}`,
       'directory'
@@ -127,7 +133,8 @@ export default class ScenePlugin {
             async
               .each(filesName, (fileName: string, callbackFile: () => void) => {
                 if (fileName.includes(sType)) {
-                  sceneType = `${moduleDirectory}/${fileName}`;
+                  sceneType.value = `${moduleDirectory}/${fileName}`;
+                  sceneType.module = name;
                 }
                 callbackFile();
               })
@@ -135,14 +142,22 @@ export default class ScenePlugin {
           });
         })
         .then(() => {
-          FileService.readJsonFile(sceneType).then((data) => {
-            event.reply(`get-formulaire-scene-${sType}`, data);
+          FileService.readJsonFile(sceneType.value).then((data) => {
+            // @ts-ignore
+            event.reply(`get-formulaire-scene-${sType}`, {
+              ...data,
+              module: sceneType.module,
+            });
           });
         });
     });
   };
 
   createScene = (event: ElectronIpcMainEvent, args: SceneObject) => {
+    console.log(
+      '🚀 ~ file: ScenePlugin.ts ~ line 157 ~ ScenePlugin ~ SceneObject',
+      args
+    );
     //@ts-ignore
     const { path } = global;
     ScenePlugin.readIndexFile().then((data) => {
@@ -153,7 +168,12 @@ export default class ScenePlugin {
       } else if (ids.length > 0) {
         _id = ids[ids.length - 1] + 1;
       }
-      data.push({ file: `${_id}.json`, type: args._type });
+      data.push({
+        file: `${_id}.json`,
+        type: args._type,
+        module: args._module,
+      });
+
       async.parallel(
         [
           (callback) =>
