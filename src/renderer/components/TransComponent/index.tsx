@@ -2,14 +2,17 @@ import { useContext, useMemo } from 'react';
 import TranslationsContext from 'renderer/contexts/TranslationsContext';
 import i18n from 'translations/i18n';
 
-type TransComponentProps = {
+type TransComponentProps = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLSpanElement>,
+  HTMLSpanElement
+> & {
   id: string;
   values?: { key: string; value: string }[];
   defaultValue?: string;
 };
 
 const TransComponent = (props: TransComponentProps) => {
-  const { id, defaultValue = id, values = [] } = props;
+  const { id, defaultValue = id, values = [], ...rest } = props;
   const { translations } = useContext(TranslationsContext);
 
   const value = useMemo(() => {
@@ -26,7 +29,7 @@ const TransComponent = (props: TransComponentProps) => {
     );
     return v;
   }, [props]);
-  return <span>{value}</span>;
+  return <span {...rest}>{value}</span>;
 };
 
 export default TransComponent;

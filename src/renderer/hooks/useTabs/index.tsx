@@ -138,7 +138,17 @@ const useTabs = (props: UseTabsProps) => {
             menuItemKey: menuItem,
             menuItem: (
               <Menu.Item key={key}>
-                <TransComponent id={menuItem} defaultValue={menuItem} />
+                <TransComponent
+                  id={menuItem}
+                  defaultValue={menuItem}
+                  onMouseDown={(e) => {
+                    const { button } = e;
+                    if (button === 1) {
+                      e?.stopPropagation();
+                      removeTab(id);
+                    }
+                  }}
+                />
                 <Icon
                   name="close"
                   onClick={(event: Event) => {
