@@ -36,6 +36,7 @@ export default class TranslationPlugin {
       })
       .then(() => {
         event.reply('load-translations', translations);
+        this.loadAllTranslations(event);
       });
   };
 
@@ -102,10 +103,7 @@ export default class TranslationPlugin {
     // @ts-ignore
     const { path } = global;
     const { data, module } = args;
-    console.log(
-      '🚀 ~ file: TranslationPlugin.ts ~ line 129 ~ TranslationPlugin ~ data',
-      data
-    );
+
     Promise.all(
       Object.keys(data).map((code) => {
         new Promise((resolve) => {

@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import ModalComponent from 'renderer/components/ModalComponent';
 import TransComponent from 'renderer/components/TransComponent';
 import { ModalProps } from 'semantic-ui-react';
-import { CustomInputProps, GameObject } from 'types';
+import { CustomInputProps } from 'types';
 import GameobjectTableComponent from 'renderer/pages/GameobjectPage/components/GameobjectTableComponent';
 import ScenesContext from 'renderer/contexts/ScenesContext';
 

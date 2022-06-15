@@ -5,6 +5,7 @@ import { Button, Segment } from 'renderer/semantic-ui';
 import { useEvents } from 'renderer/hooks';
 import { PageProps } from 'types';
 import SceneContainerComponent from '../SceneContainerComponent';
+import DropdownFirstScene from '../DropdownFirstScene';
 
 const SceneHomeContainer = ({ appendTab }: PageProps) => {
   const [scenesType, setScenesType] = useState<any[]>([]);
@@ -15,8 +16,19 @@ const SceneHomeContainer = ({ appendTab }: PageProps) => {
       setScenesType(args);
     });
   }, []);
+
   return (
     <Container>
+      <Segment className="game-dev-software-module-application-params-identity-segment">
+        <span className="game-dev-software-module-application-params-identity-segment-title">
+          <TransComponent id="module_application_home_global_modules_title" />
+        </span>
+        <Grid>
+          <Grid.Row columns={1}>
+            <DropdownFirstScene />
+          </Grid.Row>
+        </Grid>
+      </Segment>
       <Segment className="game-dev-software-module-application-params-identity-segment">
         <span className="game-dev-software-module-application-params-identity-segment-title">
           <TransComponent id="module_gameobject_home_title" />

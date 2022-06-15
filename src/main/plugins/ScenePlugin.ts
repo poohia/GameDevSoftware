@@ -213,6 +213,35 @@ export default class ScenePlugin {
     });
   };
 
+  loadFirstScene = (event: ElectronIpcMainEvent) => {
+    //@ts-ignore
+    const { path } = global;
+    ScenePlugin.readIndexFile().then((data) => {
+      let firstScene = data.find((scene) => scene.firstScene);
+      if (!firstScene) {
+        firstScene = data.find((scene) => scene.file === '1.json');
+      }
+      event.reply('load-first-scene', firstScene);
+    });
+  };
+
+  setFirstScene = (event: ElectronIpcMainEvent, arg: number) => {
+    //@ts-ignore
+    const { path } = global;
+    ScenePlugin.readIndexFile().then((data) => {
+      data.forEach((scene) => {
+        if (Number(scene.file.replace('.json', '')) === arg) {
+          scene.firstScene = true;
+        } else {
+          scene.firstScene = false;
+        }
+      });
+      ScenePlugin.writeIndexFile(data).then(() => {
+        this.loadFirstScene(event);
+      });
+    });
+  };
+
   init = () => {
     ipcMain.on('load-scene-types', (event: Electron.IpcMainEvent) =>
       this.loadSceneTypes(event as ElectronIpcMainEvent)
@@ -234,6 +263,12 @@ export default class ScenePlugin {
     });
     ipcMain.on('load-all-scene', (event) => {
       this.loadScenes(event as ElectronIpcMainEvent);
+    });
+    ipcMain.on('load-first-scene', (event) => {
+      this.loadFirstScene(event as ElectronIpcMainEvent);
+    });
+    ipcMain.on('set-first-scene', (event, args) => {
+      this.setFirstScene(event as ElectronIpcMainEvent, args);
     });
   };
 }

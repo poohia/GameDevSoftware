@@ -14,6 +14,7 @@ const ModalTranslation = (
 ) => {
   const { open, defaultValue, onClose, onSubmit, ...rest } = props;
   const { translations } = useContext(TranslationsContext);
+
   const [value, setValue] = useState<string>('');
   const handleClickRow = useCallback(
     (key: string) => {

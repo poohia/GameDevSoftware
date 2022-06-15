@@ -54,7 +54,9 @@ export type Channels =
   | 'get-scene-value'
   | 'load-all-scene'
   | 'load-scene'
-  | 'switch-theme';
+  | 'switch-theme'
+  | 'load-first-scene'
+  | 'set-first-scene';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -205,6 +207,7 @@ export type FieldMultipleComponentProps = Pick<
 
 export type SceneTypeJSON = ObjectGameTypeJSON & {
   module: string;
+  firstScene?: boolean;
 };
 export type ActionOfScene = {
   [key: string]: any;
