@@ -64,7 +64,7 @@ export default class ScenePlugin {
   loadSceneTypes = (event: ElectronIpcMainEvent) => {
     //@ts-ignore
     const { path } = global;
-    const scenes: any[] = [];
+    const scenes: string[] = [];
     FileService.readdir(
       `${path}${FolderPlugin.modulesDirectory}`,
       'directory'
@@ -75,6 +75,13 @@ export default class ScenePlugin {
           FileService.readdir(moduleDirectory, 'file').then((filesName) => {
             async
               .each(filesName, (fileName: string, callbackFile: () => void) => {
+                // FileService.readJsonFile(`${moduleDirectory}/${fileName}`).then(
+                //   (data) => {
+                //     scenes.push(data.label || data.type);
+                //     callbackFile();
+                //   }
+                // );
+
                 scenes.push(fileName.replace('.json', ''));
                 callbackFile();
               })

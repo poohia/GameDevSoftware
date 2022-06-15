@@ -8,7 +8,7 @@ import SceneContainerComponent from '../SceneContainerComponent';
 import DropdownFirstScene from '../DropdownFirstScene';
 
 const SceneHomeContainer = ({ appendTab }: PageProps) => {
-  const [scenesType, setScenesType] = useState<any[]>([]);
+  const [scenesType, setScenesType] = useState<string[]>([]);
   const { requestMessage } = useEvents();
 
   useEffect(() => {
