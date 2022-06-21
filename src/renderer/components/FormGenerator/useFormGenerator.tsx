@@ -14,6 +14,7 @@ import {
 import AssetInput from './components/AssetInput';
 import { FieldComponentProps } from './components/FieldComponent';
 import SceneInput from './components/SceneInput';
+import ConstantValueInput from './components/ConstantValueInput';
 
 export type FormGeneratorProps = {
   form: any;
@@ -167,6 +168,21 @@ const useFormGenerator = (props: FormGeneratorProps) => {
             <SceneInput
               defaultValue={defaultValue}
               onChange={(data) => onChange(core, key, data, parent)}
+              {...rest}
+            />
+          </FieldComponent>
+        );
+      }
+      if (typeof core === 'string' && core.startsWith('@c:')) {
+        return (
+          <FieldComponent {...defaultProps}>
+            <ConstantValueInput
+              type={core}
+              onChange={(data) => {
+                onChange(core, key, data, parent);
+              }}
+              multiple={multiple}
+              defaultValue={defaultValue}
               {...rest}
             />
           </FieldComponent>
