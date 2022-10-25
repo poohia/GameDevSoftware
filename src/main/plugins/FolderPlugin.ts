@@ -25,6 +25,7 @@ export default class FolderPlugin {
   static sceneFile = `${FolderPlugin.sceneDirectory}/index.json`;
   /** */
   static configFile = `/config.xml`;
+  static configFileJson = '/config.json';
   static indexHtml = `${FolderPlugin.publicDirectory}/index.html`;
   /** directories */
   static assetsDirectory = `${FolderPlugin.publicDirectory}/assets`;

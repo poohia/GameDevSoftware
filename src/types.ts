@@ -119,6 +119,46 @@ export type AssetType = {
 export type AssetHeaderComponentProps = {
   onClickAdd: () => void;
 };
+export type ApplicationConfigJson = {
+  name: string;
+  build: {
+    version: string;
+    id: string;
+    description?: string;
+    ios: {
+      CFBundleVersion: string;
+    };
+    android: {
+      versionCode: string;
+    };
+  };
+  author?: {
+    email: string;
+    link: string;
+    name: string;
+  };
+  fullscreen?: boolean;
+  statusbar?: {
+    show?: boolean;
+    overlaysWebView?: boolean;
+    backgroundColor?: string;
+    contentStyle?: 'default' | 'lightContent';
+  };
+  screenOrientation?:
+    | 'any'
+    | 'landscape'
+    | 'landscape-primary'
+    | 'landscape-secondary'
+    | 'portrait'
+    | 'portrait-primary'
+    | 'portrait-secondary';
+  splashscreen?: {
+    splashscreenDelay?: number;
+    fadeSplashscreen?: boolean;
+    fadeSplashscreenDuration?: number;
+  };
+  description?: string;
+};
 export type ApplicationIdentityParams = {
   package: string;
   version: string;
@@ -146,7 +186,6 @@ export type SoftwaresInfo = {
   node: string | null;
   npm: string | null;
   cordova: string | null;
-  ['cordova-res']: string | null;
 };
 export type ModuleArgs<T = any> = {
   data: T;

@@ -9,7 +9,6 @@ const HomeSoftwaresInfoComponent = () => {
     node: null,
     npm: null,
     cordova: null,
-    'cordova-res': null,
   });
   const { requestMessage } = useEvents();
   useEffect(() => {

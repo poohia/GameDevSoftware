@@ -1,5 +1,5 @@
 import { PlatformsParams } from 'types';
-import childProcess from 'child_process';
+import childProcess, { execSync } from 'child_process';
 import pathModule from 'path';
 import fs from 'fs';
 
@@ -144,15 +144,16 @@ export default class CordovaService {
   toggleProcess = () => {
     // @ts-ignore
     const { mainWindow } = global;
-    exec('npm exec kill-port 3000 -y');
-    if (this._childProcessStart !== null) {
-      this._childProcessStart = null;
-      mainWindow.webContents.send('projected-started', false);
-      return;
-    }
-    // @ts-ignore
-    const path = global.path;
-    this._childProcessStart = spawn('npm', ['start'], { cwd: path });
-    mainWindow.webContents.send('projected-started', true);
+    exec('npm exec kill-port 3000 -y', () => {
+      if (this._childProcessStart !== null) {
+        this._childProcessStart = null;
+        mainWindow.webContents.send('projected-started', false);
+        return;
+      }
+      // @ts-ignore
+      const path = global.path;
+      this._childProcessStart = spawn('npm', ['start'], { cwd: path });
+      mainWindow.webContents.send('projected-started', true);
+    });
   };
 }

@@ -3,6 +3,7 @@ import fs from 'fs';
 import async from 'async';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import {
+  ApplicationConfigJson,
   ApplicationIdentityParams,
   ElectronIpcMainEvent,
   SoftwaresInfo,
@@ -28,7 +29,6 @@ export default class ApplicationPlugin {
     'node',
     'npm',
     'cordova',
-    'cordova-res',
   ];
   constructor(private mainWindow: BrowserWindow) {
     this._imagePlugin = new ApplicationImagesPlugin(mainWindow);
@@ -61,37 +61,35 @@ export default class ApplicationPlugin {
     );
   };
 
-  private openConfigFile = () => {
+  private openConfigFile = (): ApplicationConfigJson => {
     // @ts-ignore
     const { path } = global;
-    const xmlString = fs.readFileSync(
-      `${path}${FolderPlugin.configFile}`,
-      'utf8'
-    );
-    return parser.parse(xmlString);
+    const data = fs.readFileSync(`${path}${FolderPlugin.configFileJson}`);
+    // @ts-ignore
+    return JSON.parse(data);
   };
 
-  private writeConfigFile = (xml: any) => {
+  private writeConfigFile = (json: ApplicationConfigJson) => {
     // @ts-ignore
     const { path } = global;
-    fs.writeFileSync(`${path}${FolderPlugin.configFile}`, builder.build(xml));
+    fs.writeFileSync(
+      `${path}${FolderPlugin.configFileJson}`,
+      JSON.stringify(json)
+    );
   };
 
   loadParamsIdentity = (event: ElectronIpcMainEvent) => {
-    const xml = this.openConfigFile();
-    const { widget } = xml;
-    const { author } = widget;
+    const json = this.openConfigFile();
     const data: ApplicationIdentityParams = {
-      package: widget['@_id'],
-      version: widget['@_version'],
-      buildVersion: widget['@_android-versionCode'],
-      name: widget.name,
-      description: widget.description,
-      authorEmail: author['@_email'],
-      authorName: author['#text'],
-      authorWebSite: author['@_href'],
+      package: json.build.id,
+      version: json.build.version,
+      buildVersion: json.build.android.versionCode,
+      name: json.name,
+      description: json.description || '',
+      authorName: json.author?.name || '',
+      authorEmail: json.author?.email || '',
+      authorWebSite: json.author?.link || '',
     };
-
     event.reply('load-params-identity', data);
   };
 
@@ -99,19 +97,28 @@ export default class ApplicationPlugin {
     event: ElectronIpcMainEvent,
     args: ApplicationIdentityParams
   ) => {
-    const xml = this.openConfigFile();
-    const { widget } = xml;
-    const { author } = widget;
-    (widget['@_id'] = args.package),
-      (widget['@_version'] = args.version),
-      (widget['@_android-versionCode'] = args.buildVersion),
-      (widget['@_ios-CFBundleVersion'] = args.buildVersion),
-      (widget.name = args.name),
-      (widget.description = args.description || ''),
-      (author['@_email'] = args.authorEmail),
-      (author['#text'] = args.authorName),
-      (author['@_href'] = args.authorWebSite);
-    this.writeConfigFile(xml);
+    let json = this.openConfigFile();
+    json = {
+      ...json,
+      name: args.name,
+      build: {
+        version: args.version,
+        id: args.package,
+        android: {
+          versionCode: args.buildVersion,
+        },
+        ios: {
+          CFBundleVersion: args.buildVersion,
+        },
+      },
+      description: args.description || '',
+      author: {
+        email: args.authorEmail,
+        link: args.authorWebSite,
+        name: args.authorName,
+      },
+    };
+    this.writeConfigFile(json);
     this.loadParamsIdentity(event);
     this.writeOnIndexHtml({ name: args.name, description: args.description });
   };
@@ -122,7 +129,6 @@ export default class ApplicationPlugin {
       node: null,
       npm: null,
       cordova: null,
-      'cordova-res': null,
     };
     async.each(
       this._softwaresToCheck,
