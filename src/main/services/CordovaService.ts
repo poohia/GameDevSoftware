@@ -35,6 +35,19 @@ export default class CordovaService {
       callback(Error(error?.message));
     });
   };
+
+  static preparePlatform = (
+    platform: keyof PlatformsParams,
+    callback: (err: Error) => void
+  ) => {
+    // @ts-ignore
+    const path = global.path;
+    exec(`cordova prepare ${platform}`, { cwd: path }, (error, stdout) => {
+      console.log(stdout);
+      callback(Error(error?.message));
+    });
+  };
+
   static buildPlatform = (
     platform: keyof PlatformsParams,
     callback: (err: Error) => void

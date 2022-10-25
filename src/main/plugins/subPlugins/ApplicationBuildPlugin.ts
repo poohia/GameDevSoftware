@@ -3,6 +3,19 @@ import { ElectronIpcMainEvent, PlatformsParams } from 'types';
 
 export default class ApplicationBuildPlugin {
   private _browserIsOpenned = false;
+
+  preparePlatform = (
+    event: ElectronIpcMainEvent,
+    arg: keyof PlatformsParams
+  ) => {
+    CordovaService.preparePlatform(arg, (err) => {
+      if (err) {
+        event.reply('prepare-platform', false);
+      }
+      event.reply('prepare-platform', true);
+    });
+  };
+
   buildPlatform = (event: ElectronIpcMainEvent, arg: keyof PlatformsParams) => {
     CordovaService.buildPlatform(arg, (err) => {
       if (err) {

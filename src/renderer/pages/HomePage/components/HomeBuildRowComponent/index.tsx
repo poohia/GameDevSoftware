@@ -11,10 +11,10 @@ const HomeBuildRowComponent = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { sendMessage, once } = useEvents();
 
-  const sendBuild = useCallback(() => {
+  const sendPrepare = useCallback(() => {
     setLoading(true);
-    sendMessage('build-platform');
-    once('build-platform', () => {
+    sendMessage('prepare-platform', platform);
+    once('prepare-platform', () => {
       setLoading(false);
     });
   }, [platform]);
@@ -42,7 +42,7 @@ const HomeBuildRowComponent = () => {
             labelPosition="right"
             icon
             disabled={!platform}
-            onClick={sendBuild}
+            onClick={sendPrepare}
             loading={loading}
           >
             {i18n.t('module_application_home_project_build')}

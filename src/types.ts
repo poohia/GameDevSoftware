@@ -30,6 +30,7 @@ export type Channels =
   | 'toggle-project'
   | 'projected-started'
   | 'get-softwares-info'
+  | 'prepare-platform'
   | 'build-platform'
   | 'emulate-platform'
   | 'load-game-modules'

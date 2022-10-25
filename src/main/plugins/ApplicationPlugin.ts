@@ -169,6 +169,9 @@ export default class ApplicationPlugin {
     ipcMain.on('build-platform', (event: Electron.IpcMainEvent, args) =>
       this._buildPlugin.buildPlatform(event as ElectronIpcMainEvent, args)
     );
+    ipcMain.on('prepare-platform', (event: Electron.IpcMainEvent, args) =>
+      this._buildPlugin.preparePlatform(event as ElectronIpcMainEvent, args)
+    );
     ipcMain.on('emulate-platform', (event: Electron.IpcMainEvent, args) =>
       this._buildPlugin.emulatePlatform(event as ElectronIpcMainEvent, args)
     );
