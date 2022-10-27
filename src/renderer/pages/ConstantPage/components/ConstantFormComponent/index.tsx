@@ -14,6 +14,7 @@ import { ConstantType, ConstantValue } from 'types';
 type ConstantFormComponentProps = {
   defaultKey: string;
   defaultValue?: { value: ConstantValue; description: string };
+  canEditeDescription?: boolean;
   onSubmit: (key: string, value: ConstantValue, description?: string) => void;
 };
 const options: DropdownProps['options'] = [
@@ -27,7 +28,12 @@ const options: DropdownProps['options'] = [
   { key: 'number[]', text: 'Array of number', value: 'number[]' },
 ];
 const ConstantFormComponent = (props: ConstantFormComponentProps) => {
-  const { defaultKey, defaultValue, onSubmit } = props;
+  const {
+    defaultKey,
+    defaultValue,
+    canEditeDescription = true,
+    onSubmit,
+  } = props;
   const [key, setKey] = useState<string>(defaultKey);
   const [type, setType] = useState<ConstantType>('string');
   const [value, setValue] = useState<ConstantValue>(defaultValue?.value || '');
@@ -191,6 +197,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   onChange={(_: any, data: { value: string }) =>
                     setDescription(data.value)
                   }
+                  disabled={!canEditeDescription}
                 />
               </Form.Field>
               <Button

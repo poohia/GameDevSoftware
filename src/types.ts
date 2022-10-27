@@ -115,6 +115,7 @@ export type AssertFileValueType = {
 export type AssetType = {
   type: AssertAcceptedType;
   name: string;
+  module?: string;
 };
 export type AssetHeaderComponentProps = {
   onClickAdd: () => void;

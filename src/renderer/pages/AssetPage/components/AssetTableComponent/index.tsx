@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { DropdownAssetTypesComponent } from 'renderer/components';
-import { Grid, Header, Icon, Input } from 'semantic-ui-react';
+import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { AssertAcceptedType, AssetType } from 'types';
@@ -26,6 +26,7 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
   const [filterType, setFilterType] = useState<AssertAcceptedType | string>(
     defaultFilterType || ''
   );
+  const [filterModuleAssets, setFilterModuleAssets] = useState<boolean>(true);
   const formatData = useCallback(() => {
     let _assets = assets;
     if (filter !== '') {
@@ -34,10 +35,14 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
     if (filterType !== '') {
       _assets = _assets.filter((asset) => asset.type === filterType);
     }
+    if (!filterModuleAssets) {
+      _assets = _assets.filter((asset) => typeof asset.module === 'undefined');
+    }
     return _assets;
-  }, [filter, filterType, assets]);
+  }, [filter, filterType, filterModuleAssets, assets]);
   const assetsToShow = useMemo(() => formatData(), [formatData]);
   const lengthAssets = useMemo(() => assetsToShow.length, [assetsToShow]);
+
   return (
     <Grid className="game-dev-software-table-component">
       <Grid.Row
@@ -62,7 +67,15 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
             defaultValue={defaultFilterType}
           />
         </Grid.Column>
+        <Grid.Column width={16}>
+          <Checkbox
+            label="Show module assets"
+            checked={filterModuleAssets}
+            onClick={() => setFilterModuleAssets(!filterModuleAssets)}
+          />
+        </Grid.Column>
       </Grid.Row>
+
       <Grid.Row>
         <Grid.Column width={16}>
           <Table celled selectable>
@@ -72,10 +85,10 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {assetsToShow.map(({ name, type }) => (
+              {assetsToShow.map(({ name, type, module }) => (
                 <Table.Row
                   key={name}
-                  onClick={() => onClickRow({ name, type })}
+                  onClick={() => onClickRow({ name, type, module })}
                   active={keySelected === name}
                 >
                   <Table.Cell width={16}>
@@ -85,18 +98,20 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
                     </Header>
                   </Table.Cell>
                   <Table.Cell textAlign="right">
-                    <Button
-                      basic
-                      icon
-                      color="red"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        canDelete && onDelete(name);
-                      }}
-                      disabled={!canDelete}
-                    >
-                      <Icon name="trash" />
-                    </Button>
+                    {!module && (
+                      <Button
+                        basic
+                        icon
+                        color="red"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          canDelete && onDelete(name);
+                        }}
+                        disabled={!canDelete}
+                      >
+                        <Icon name="trash" />
+                      </Button>
+                    )}
                   </Table.Cell>
                 </Table.Row>
               ))}

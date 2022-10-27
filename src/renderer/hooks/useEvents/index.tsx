@@ -21,19 +21,22 @@ const useEvents = () => {
     []
   );
 
-  const sendMessage = useCallback((chanel: Channels, args?: any) => {
-    if (module) {
-      console.log(`${chanel}-module`, args);
-      //@ts-ignore
-      window.electron.ipcRenderer.sendMessage(`${chanel}-module`, {
-        data: args,
-        module,
-      });
-      return;
-    }
-    console.log(chanel, args);
-    window.electron.ipcRenderer.sendMessage(chanel, args);
-  }, []);
+  const sendMessage = useCallback(
+    (chanel: Channels, args?: any, forceModule?: string) => {
+      if (module || forceModule) {
+        console.log(`${chanel}-module`, args);
+        //@ts-ignore
+        window.electron.ipcRenderer.sendMessage(`${chanel}-module`, {
+          data: args,
+          module: module || forceModule,
+        });
+        return;
+      }
+      console.log(chanel, args);
+      window.electron.ipcRenderer.sendMessage(chanel, args);
+    },
+    []
+  );
 
   const on = useCallback((chanel: Channels, callback: EventCallback) => {
     return window.electron.ipcRenderer.on(chanel, callback);

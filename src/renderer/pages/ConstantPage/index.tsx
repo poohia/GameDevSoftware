@@ -46,6 +46,7 @@ const ConstantPage = () => {
             <Grid.Column width={8}>
               <ConstantFormComponent
                 defaultKey={stateForm.key}
+                canEditeDescription={!isModuleView}
                 defaultValue={stateForm.value as ConstantValue}
                 onSubmit={sendCreateConstant}
               />

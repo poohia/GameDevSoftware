@@ -10,14 +10,15 @@ type AssetPreviewComponentProps = {
 
 const AssetPreviewComponent = (props: AssetPreviewComponentProps) => {
   const { asset } = props;
-  const { name, type } = asset;
+  const { name, type, module } = asset;
 
   const { once, sendMessage } = useEvents();
   const [base64, setBase64] = useState<string | undefined>();
 
   useEffect(() => {
-    sendMessage('get-asset-information', { name, type });
+    sendMessage('get-asset-information', { name, type }, module);
     once('get-asset-information', (arg: string) => {
+      console.log("i'm here");
       setBase64(formatBase64(type, arg));
     });
   }, [asset]);

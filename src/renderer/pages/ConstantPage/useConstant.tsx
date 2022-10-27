@@ -57,7 +57,7 @@ const useConstant = () => {
         data: {
           key,
           value: {
-            value: constant?.value || '',
+            value: constant ? constant.value : '',
             description: constant?.description || '',
           },
         },

@@ -52,6 +52,9 @@ body.dark {
         $darkBlack 50%
       );
     }
+    span.game-dev-software-module-application-params-identity-segment-title-label-form {
+      background: $darkBackgroundBlack;
+    }
   }
   .game-dev-software-module-application-params-mobile-action-segment.inverted {
     background-color: $darkBackgroundBlack;

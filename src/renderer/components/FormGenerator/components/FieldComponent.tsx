@@ -25,7 +25,7 @@ const FieldComponent: React.FunctionComponent<FieldComponentProps> = (
   if (isObject) {
     return (
       <Segment className="game-dev-software-module-application-params-identity-segment">
-        <span className="game-dev-software-module-application-params-identity-segment-title">
+        <span className="game-dev-software-module-application-params-identity-segment-title game-dev-software-module-application-params-identity-segment-title-label-form">
           {label} {required && '*'}
         </span>
         {children}
