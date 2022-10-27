@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Container,
   Dropdown,
@@ -13,7 +13,11 @@ import { ConstantType, ConstantValue } from 'types';
 
 type ConstantFormComponentProps = {
   defaultKey: string;
-  defaultValue?: { value: ConstantValue; description: string };
+  defaultValue?: {
+    value: ConstantValue;
+    description: string;
+    editable: boolean;
+  };
   canEditeDescription?: boolean;
   onSubmit: (key: string, value: ConstantValue, description?: string) => void;
 };
@@ -39,6 +43,11 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
   const [value, setValue] = useState<ConstantValue>(defaultValue?.value || '');
   const [description, setDescription] = useState<string>(
     defaultValue?.description || ''
+  );
+
+  const disableForm = useMemo(
+    () => (defaultValue ? !defaultValue.editable : false),
+    [defaultValue]
   );
 
   const handleSubmit = useCallback(() => {
@@ -123,7 +132,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
             <Form>
               <Form.Field>
                 <Form.Input
-                  disabled={!!defaultValue}
+                  disabled={!!defaultValue || disableForm}
                   label={i18n.t('module_translation_form_field_key_label')}
                   value={key}
                   onChange={(_: any, data: { value: string }) =>
@@ -143,6 +152,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   value={type}
                   options={options}
                   onChange={(_, { value }) => setType(value as ConstantType)}
+                  disabled={disableForm}
                 />
               </Form.Field>
               <Form.Field required>
@@ -155,6 +165,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                     onChange={(_: any, data: { value: string }) =>
                       setValue(data.value)
                     }
+                    disabled={disableForm}
                   />
                 )}
                 {type === 'number' && (
@@ -164,6 +175,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                       setValue(data.value)
                     }
                     type={'number'}
+                    disabled={disableForm}
                   />
                 )}
                 {Array.isArray(value) && (
@@ -175,6 +187,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                     multiple
                     allowAdditions
                     selection
+                    disabled={disableForm}
                     onAddItem={(_, data) => {
                       if (type === 'number[]' && isNaN(Number(data.value))) {
                         setValue(JSON.parse(JSON.stringify(value)));
@@ -197,7 +210,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   onChange={(_: any, data: { value: string }) =>
                     setDescription(data.value)
                   }
-                  disabled={!canEditeDescription}
+                  disabled={!canEditeDescription || disableForm}
                 />
               </Form.Field>
               <Button
@@ -208,6 +221,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   (Array.isArray(value) && value.length === 0)
                 }
                 onClick={handleSubmit}
+                disabled={disableForm}
               >
                 {i18n.t('module_translation_form_field_submit')}
               </Button>

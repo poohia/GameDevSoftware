@@ -89,6 +89,7 @@ export type ConstantObject = {
   key: string;
   value: ConstantValue;
   description?: string;
+  editable?: boolean;
 };
 export type TabType = {
   id: number;

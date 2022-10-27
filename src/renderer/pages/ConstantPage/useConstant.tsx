@@ -59,6 +59,10 @@ const useConstant = () => {
           value: {
             value: constant ? constant.value : '',
             description: constant?.description || '',
+            editable:
+              typeof constant?.editable === 'undefined'
+                ? true
+                : constant?.editable,
           },
         },
       });
@@ -82,6 +86,7 @@ const useConstant = () => {
 
   useEffect(() => {
     const unSub = requestMessage('load-constants', (args) => {
+      console.log(args);
       setConstants(args);
     });
     return () => {
