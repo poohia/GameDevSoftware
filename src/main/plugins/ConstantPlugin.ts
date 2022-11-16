@@ -9,15 +9,16 @@ import GameModulesPlugin from './GameModulesPlugin';
 export default class ConstantPlugin {
   constructor() {}
 
-  loadConstants = (event: ElectronIpcMainEvent) => {
+  loadConstantsFile = (): ConstantObject[] => {
     // @ts-ignore
     const { path } = global;
-    FileService.readJsonFile(`${path}${FolderPlugin.constantFile}`).then(
-      (data) => {
-        event.reply('load-constants', data);
-      }
-    );
     // @ts-ignore
+    return JSON.parse(fs.readFileSync(`${path}${FolderPlugin.constantFile}`));
+  };
+
+  loadConstants = (event: ElectronIpcMainEvent) => {
+    const data = this.loadConstantsFile();
+    event.reply('load-constants', data);
   };
 
   saveConstants = (event: ElectronIpcMainEvent, args: ConstantObject[]) => {
@@ -28,17 +29,16 @@ export default class ConstantPlugin {
       JSON.stringify(args)
     );
     this.loadConstants(event);
-    this.loadAllConstants(event);
   };
 
   loadConstantsModule = (event: ElectronIpcMainEvent, arg: string) => {
-    // @ts-ignore
-    const { path } = global;
-    const data = fs.readFileSync(
-      `${path}${FolderPlugin.modulesDirectory}/${arg}/constants.json`
+    const data = this.loadConstantsFile();
+
+    event.reply(
+      // @ts-ignore
+      `load-constants-module-${arg}`,
+      data.filter((d) => d.module && d.module === arg)
     );
-    // @ts-ignore
-    event.reply(`load-constants-module-${arg}`, JSON.parse(data));
   };
 
   saveConstantsModule = (
@@ -47,37 +47,8 @@ export default class ConstantPlugin {
   ) => {
     // @ts-ignore
     const { path } = global;
-    const { data, module } = args;
-    fs.writeFileSync(
-      `${path}${FolderPlugin.modulesDirectory}/${module}/constants.json`,
-      JSON.stringify(data)
-    );
-    this.loadConstantsModule(event, module);
-    this.loadAllConstants(event);
-  };
-
-  loadAllConstants = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
-    const { path } = global;
-    let finalData: any = [];
-    GameModulesPlugin.loadDynamicModulesName().then((modules) => {
-      async
-        .each(modules, (module, callback) => {
-          FileService.readJsonFile(
-            `${path}${FolderPlugin.modulesDirectory}/${module}/constants.json`
-          ).then((data: any) => {
-            finalData = finalData.concat([...data]);
-            callback();
-          });
-        })
-        .then(() => {
-          FileService.readJsonFile(`${path}${FolderPlugin.constantFile}`).then(
-            (data) => {
-              event.reply('load-all-constants', finalData.concat([...data]));
-            }
-          );
-        });
-    });
+    const { data } = args;
+    this.saveConstants(event, data);
   };
 
   init = () => {
@@ -93,8 +64,5 @@ export default class ConstantPlugin {
     ipcMain.on('save-constants-module', (event: Electron.IpcMainEvent, args) =>
       this.saveConstantsModule(event as ElectronIpcMainEvent, args)
     );
-    ipcMain.on('load-all-constants', (event) => {
-      this.loadAllConstants(event as ElectronIpcMainEvent);
-    });
   };
 }

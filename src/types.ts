@@ -44,7 +44,6 @@ export type Channels =
   | 'create-game-object'
   | 'get-game-object-value'
   | 'load-all-translations'
-  | 'load-all-constants'
   | 'load-all-assets'
   | 'load-all-game-objects'
   | 'load-scene-types'
@@ -90,6 +89,7 @@ export type ConstantObject = {
   value: ConstantValue;
   description?: string;
   editable?: boolean;
+  module?: string;
 };
 export type TabType = {
   id: number;

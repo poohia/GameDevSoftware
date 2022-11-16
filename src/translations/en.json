@@ -44,5 +44,6 @@
   "modal_component_btn_accepted": "Confirm",
   "form_input_modal_constants_title": "Constants",
   "form_input_modal_translations_title": "Translations",
-  "form_input_modal_assets_title": "Assets"
+  "form_input_modal_assets_title": "Assets",
+  "table_filter_module": "Show module values"
 }

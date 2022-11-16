@@ -6,7 +6,7 @@ const useConstants = () => {
   const [constants, setConstants] = useState<ConstantObject[]>([]);
   const { requestMessage } = useEvents();
   useEffect(() => {
-    requestMessage('load-all-constants', (args) => {
+    requestMessage('load-constants', (args) => {
       setConstants(args);
     });
   }, []);

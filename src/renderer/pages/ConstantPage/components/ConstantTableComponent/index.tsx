@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DropdownConstantTypesComponent } from 'renderer/components';
-import { Grid, Header, Icon, Input } from 'semantic-ui-react';
+import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { ConstantObject, ConstantType } from 'types';
@@ -26,6 +26,7 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
   const [filterType, setFilterType] = useState<ConstantType | string>(
     defaultFilterType || ''
   );
+  const [filterModule, setFilterModule] = useState<boolean>(true);
   const formatData = useMemo(() => {
     let _constants = constants;
     if (filter !== '') {
@@ -57,8 +58,13 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
         return false;
       });
     }
+    if (!filterModule) {
+      _constants = _constants.filter(
+        (predicate) => typeof predicate.module === 'undefined'
+      );
+    }
     return _constants;
-  }, [filter, filterType, constants]);
+  }, [filter, filterType, filterModule, constants]);
   const formatString = useCallback(
     (value: number | number[] | string | string[]) => {
       if (Array.isArray(value)) {
@@ -100,6 +106,13 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
             disabled={!!defaultFilterType}
           />
         </Grid.Column>
+        <Grid.Column width={16}>
+          <Checkbox
+            label={i18n.t('table_filter_module')}
+            checked={filterModule}
+            onClick={() => setFilterModule(!filterModule)}
+          />
+        </Grid.Column>
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>
@@ -110,7 +123,7 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData.map(({ key, value, description }) => (
+              {formatData.map(({ key, value, description, module }) => (
                 <Table.Row
                   key={key}
                   active={keySelected === key}
@@ -136,7 +149,7 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
                         event.stopPropagation();
                         canDelete && onDelete(key);
                       }}
-                      disabled={!canDelete}
+                      disabled={!canDelete || !!module}
                     >
                       <Icon name="trash" />
                     </Button>

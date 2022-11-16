@@ -34,7 +34,8 @@ const useConstant = () => {
       setConstants((_constants) => {
         const constant = _constants.find((c) => c.key === key);
         if (constant) {
-          (constant.value = value), (constant.description = description);
+          constant.value = value;
+          constant.description = description;
         } else {
           _constants = _constants.concat({ key, value, description });
         }
@@ -86,7 +87,6 @@ const useConstant = () => {
 
   useEffect(() => {
     const unSub = requestMessage('load-constants', (args) => {
-      console.log(args);
       setConstants(args);
     });
     return () => {

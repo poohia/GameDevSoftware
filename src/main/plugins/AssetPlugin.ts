@@ -74,15 +74,8 @@ export default class AssetPlugin {
   };
 
   private readAssetFileModule = (module: string): AssetType[] => {
-    // @ts-ignore
-    const { path } = global;
-
-    return JSON.parse(
-      // @ts-ignore
-      fs.readFileSync(
-        `${path}${FolderPlugin.modulesDirectory}/${module}/assets.json`
-      )
-    );
+    const assets = this.readAssetFile();
+    return assets.filter((a) => a.module && a.module === module);
   };
 
   private writeAssetFile = (data: AssetType[], callback: () => void) => {

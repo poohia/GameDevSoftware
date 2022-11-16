@@ -26,7 +26,7 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
   const [filterType, setFilterType] = useState<AssertAcceptedType | string>(
     defaultFilterType || ''
   );
-  const [filterModuleAssets, setFilterModuleAssets] = useState<boolean>(true);
+  const [filterModule, setFilterModule] = useState<boolean>(true);
   const formatData = useCallback(() => {
     let _assets = assets;
     if (filter !== '') {
@@ -35,11 +35,13 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
     if (filterType !== '') {
       _assets = _assets.filter((asset) => asset.type === filterType);
     }
-    if (!filterModuleAssets) {
-      _assets = _assets.filter((asset) => typeof asset.module === 'undefined');
+    if (!filterModule) {
+      _assets = _assets.filter(
+        (predicate) => typeof predicate.module === 'undefined'
+      );
     }
     return _assets;
-  }, [filter, filterType, filterModuleAssets, assets]);
+  }, [filter, filterType, filterModule, assets]);
   const assetsToShow = useMemo(() => formatData(), [formatData]);
   const lengthAssets = useMemo(() => assetsToShow.length, [assetsToShow]);
 
@@ -69,9 +71,9 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
         </Grid.Column>
         <Grid.Column width={16}>
           <Checkbox
-            label="Show module assets"
-            checked={filterModuleAssets}
-            onClick={() => setFilterModuleAssets(!filterModuleAssets)}
+            label={i18n.t('table_filter_module')}
+            checked={filterModule}
+            onClick={() => setFilterModule(!filterModule)}
           />
         </Grid.Column>
       </Grid.Row>
@@ -98,20 +100,18 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
                     </Header>
                   </Table.Cell>
                   <Table.Cell textAlign="right">
-                    {!module && (
-                      <Button
-                        basic
-                        icon
-                        color="red"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          canDelete && onDelete(name);
-                        }}
-                        disabled={!canDelete}
-                      >
-                        <Icon name="trash" />
-                      </Button>
-                    )}
+                    <Button
+                      basic
+                      icon
+                      color="red"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        canDelete && onDelete(name);
+                      }}
+                      disabled={!canDelete || !!module}
+                    >
+                      <Icon name="trash" />
+                    </Button>
                   </Table.Cell>
                 </Table.Row>
               ))}
