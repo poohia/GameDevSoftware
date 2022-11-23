@@ -25,15 +25,6 @@ const InputComponent = (props: InputComponentProps) => {
   }, [defaultValue]);
 
   useEffect(() => {
-    const { type } = props;
-    let _defaultValue: string | number = '';
-    if (type === 'number') {
-      _defaultValue = 0;
-    }
-    onChange(defaultValue || _defaultValue);
-  }, [inputType, type]);
-
-  useEffect(() => {
     if (
       defaultValue &&
       typeof defaultValue === 'string' &&
@@ -48,6 +39,7 @@ const InputComponent = (props: InputComponentProps) => {
       if (children) {
         return () => <>{children}</>;
       }
+
       return () => (
         <Input
           onChange={(_e, { value }) => onChange(value)}

@@ -91,10 +91,14 @@ const useFormGenerator = (props: FormGeneratorProps) => {
       };
       let defaultValue = undefined;
 
-      if (defaultValues && defaultValues[key]) {
+      if (defaultValues && typeof defaultValues[key] !== 'undefined') {
         defaultValue = defaultValues[key];
       }
-      if (parent && defaultValues && defaultValues[parent]) {
+      if (
+        parent &&
+        defaultValues &&
+        typeof defaultValues[parent] !== 'undefined'
+      ) {
         defaultValue = defaultValues[parent][key];
       }
 
