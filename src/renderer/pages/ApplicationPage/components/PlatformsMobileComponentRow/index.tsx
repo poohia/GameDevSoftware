@@ -3,6 +3,7 @@ import { useEvents } from 'renderer/hooks';
 import { Container, Grid, Icon } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
+import { TransComponent } from 'renderer/components';
 
 const PlatformsMobileComponentRow = (props: {
   platform: string;
@@ -28,8 +29,9 @@ const PlatformsMobileComponentRow = (props: {
                   setLoading(true);
                   sendMessage('remove-platform', platform);
                 }}
+                disabled={platform === 'browser'}
               >
-                {i18n.t('module_application_params_platforms_remove')}
+                <TransComponent id="module_application_params_platforms_remove" />
                 <Icon name="close" />
               </Button>
             )}
@@ -44,7 +46,7 @@ const PlatformsMobileComponentRow = (props: {
                   sendMessage('add-platform', platform);
                 }}
               >
-                {i18n.t('module_application_params_platforms_append')}
+                <TransComponent id="module_application_params_platforms_append" />
                 <Icon name="add" />
               </Button>
             )}
