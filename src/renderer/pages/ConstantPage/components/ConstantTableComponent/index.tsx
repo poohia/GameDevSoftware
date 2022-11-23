@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { DropdownConstantTypesComponent } from 'renderer/components';
+import {
+  DropdownConstantTypesComponent,
+  TransComponent,
+} from 'renderer/components';
 import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
@@ -13,7 +16,9 @@ type ConstantTableComponentProps = {
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
-const ConstantTableComponent = (props: ConstantTableComponentProps) => {
+const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
+  props
+) => {
   const {
     constants,
     keySelected,
@@ -160,7 +165,8 @@ const ConstantTableComponent = (props: ConstantTableComponentProps) => {
             <Table.Footer>
               <Table.Row>
                 <Table.HeaderCell>
-                  {i18n.t('module_table_count')}:&nbsp;
+                  <TransComponent id="module_table_count" />
+                  :&nbsp;
                   <b>{lengthConstants}</b>
                 </Table.HeaderCell>
               </Table.Row>

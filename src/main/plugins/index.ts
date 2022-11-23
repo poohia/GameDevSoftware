@@ -8,6 +8,7 @@ import TranslationPlugin from './TranslationPlugin';
 import GameObjectPlugin from './GameObjectPlugin';
 import DarkModePlugin from './DarkModePlugin';
 import ScenePlugin from './ScenePlugin';
+import EnvPlugin from './EnvPlugin';
 
 type Plugins =
   | 'folderPlugin'
@@ -18,7 +19,8 @@ type Plugins =
   | 'gameModulePlugin'
   | 'gameObjectPlugin'
   | 'scenePlugin'
-  | 'darkModePlugin';
+  | 'darkModePlugin'
+  | 'envPlugin';
 
 export default class PluginsContainer {
   private _folderPlugin;
@@ -30,6 +32,7 @@ export default class PluginsContainer {
   private _gameObjectPlugin;
   private _scenePlugin;
   private _darkModePlugin;
+  private _envPlugin;
 
   constructor(mainWindow: BrowserWindow) {
     this._folderPlugin = new FolderPlugin(mainWindow);
@@ -41,6 +44,7 @@ export default class PluginsContainer {
     this._gameObjectPlugin = new GameObjectPlugin();
     this._scenePlugin = new ScenePlugin();
     this._darkModePlugin = new DarkModePlugin();
+    this._envPlugin = new EnvPlugin();
   }
 
   init() {

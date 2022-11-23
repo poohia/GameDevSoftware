@@ -16,3 +16,13 @@
     }
   }
 }
+.game-dev-software-table-component-unscroll {
+  margin-top: 30px !important;
+  table.ui.table {
+    tbody {
+      tr {
+        cursor: pointer;
+      }
+    }
+  }
+}

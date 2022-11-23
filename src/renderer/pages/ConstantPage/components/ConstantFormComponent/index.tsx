@@ -10,6 +10,7 @@ import {
 import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { ConstantType, ConstantValue } from 'types';
+import { TransComponent } from 'renderer/components';
 
 type ConstantFormComponentProps = {
   defaultKey: string;
@@ -121,15 +122,17 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
         <Grid.Row>
           <Grid.Column>
             <Header as="h1">
-              {defaultValue === undefined
-                ? i18n.t('module_translation_form_title_new')
-                : i18n.t('module_constant_form_title_update')}
+              {defaultValue === undefined ? (
+                <TransComponent id="module_translation_form_title_new" />
+              ) : (
+                <TransComponent id="module_constant_form_title_update" />
+              )}
             </Header>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
           <Container fluid>
-            <Form>
+            <Form onSubmit={handleSubmit}>
               <Form.Field>
                 <Form.Input
                   disabled={!!defaultValue || disableForm}
@@ -218,10 +221,9 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                 disabled={
                   key === '' ||
                   value === '' ||
-                  (Array.isArray(value) && value.length === 0)
+                  (Array.isArray(value) && value.length === 0) ||
+                  disableForm
                 }
-                onClick={handleSubmit}
-                disabled={disableForm}
               >
                 {i18n.t('module_translation_form_field_submit')}
               </Button>

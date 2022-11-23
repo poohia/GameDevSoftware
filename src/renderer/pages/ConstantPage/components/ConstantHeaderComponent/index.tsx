@@ -1,7 +1,7 @@
 import { Grid, Icon } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
-import i18n from 'translations/i18n';
 import { AssetHeaderComponentProps } from 'types';
+import { TransComponent } from 'renderer/components';
 
 const ConstantHeaderComponent = (props: AssetHeaderComponentProps) => {
   const { onClickAdd } = props;
@@ -10,7 +10,7 @@ const ConstantHeaderComponent = (props: AssetHeaderComponentProps) => {
       <Grid.Row>
         <Grid.Column>
           <Button icon color="green" labelPosition="right" onClick={onClickAdd}>
-            {i18n.t('module_constant_header_append_constant')}
+            <TransComponent id="module_constant_header_append_constant" />
             <Icon name="add" />
           </Button>
         </Grid.Column>

@@ -56,7 +56,11 @@ export type Channels =
   | 'load-scene'
   | 'switch-theme'
   | 'load-first-scene'
-  | 'set-first-scene';
+  | 'set-first-scene'
+  | 'load-env-development-vars'
+  | 'write-env-development-vars'
+  | 'load-env-production-vars'
+  | 'write-env-production-vars';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -264,4 +268,8 @@ export type SceneObject = {
   _title: string;
   _module: string;
   _actions: ActionOfScene[];
+};
+export type EnvObject = {
+  key: string;
+  value: string;
 };

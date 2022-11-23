@@ -33,6 +33,8 @@ export default class FolderPlugin {
   static directoryVideos = `${FolderPlugin.assetsDirectory}/videos`;
   static directorySounds = `${FolderPlugin.assetsDirectory}/sounds`;
   static directoryJson = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/configurationsFiles`;
+  /** env files */
+  static envFiles = ['/.env.development', '/.env.production'];
   /** */
   static appImages = [
     `${FolderPlugin.publicDirectory}/favicon.png`,

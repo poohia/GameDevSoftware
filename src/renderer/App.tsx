@@ -9,6 +9,7 @@ import {
   GameModulePage,
   GameobjectPage,
   ScenePage,
+  EnvPage,
 } from 'renderer/pages';
 import { GameobjectContainerComponent } from './pages/GameobjectPage/components';
 import { SceneContainerComponent } from './pages/ScenePage/components';
@@ -20,6 +21,7 @@ modulesComponent['ApplicationPage'] = ApplicationPage;
 modulesComponent['TranslationPage'] = TranslationPage;
 modulesComponent['ConstantPage'] = ConstantPage;
 modulesComponent['AssetPage'] = AssetPage;
+modulesComponent['EnvPage'] = EnvPage;
 modulesComponent['GameModulePage'] = GameModulePage;
 modulesComponent['GameobjectPage'] = GameobjectPage;
 modulesComponent['GameobjectContainerComponent'] = GameobjectContainerComponent;

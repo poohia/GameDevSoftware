@@ -1,19 +1,20 @@
+import { TransComponent } from 'renderer/components';
 import { Container, Grid } from 'semantic-ui-react';
-import i18n from 'translations/i18n';
 import {
   IdentityParamsComponent,
   ImagesParamsComponent,
   PlatformsComponent,
 } from './components';
-import useApplicationPage from './useApplicationPage';
 
-const ApplicationPage = () => {
+const ApplicationPage: React.FC = () => {
   return (
     <Container>
       <Grid>
         <Grid.Row>
           <Grid.Column width={16} textAlign="center">
-            <h1>{i18n.t('module_application')}</h1>
+            <h1>
+              <TransComponent id="module_application" />
+            </h1>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>

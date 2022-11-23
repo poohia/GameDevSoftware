@@ -11,7 +11,7 @@ const GameModuleHomePage = (props: PageProps) => {
           <Grid.Column width={16}>
             <HomeGlobalModulesComponent
               appendTab={appendTab}
-              modules={['translation', 'constant', 'asset']}
+              modules={['translation', 'constant', 'asset', 'env']}
             />
           </Grid.Column>
         </Grid.Row>

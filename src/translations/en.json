@@ -45,5 +45,13 @@
   "form_input_modal_constants_title": "Constants",
   "form_input_modal_translations_title": "Translations",
   "form_input_modal_assets_title": "Assets",
-  "table_filter_module": "Show module values"
+  "table_filter_module": "Show module values",
+  "module_env": "Var env module",
+  "module_env_append_var": "Create var",
+  "module_env_development_title": "Development vars",
+  "module_env_production_title": "Production vars",
+  "table_header_key": "Key",
+  "table_header_value": "Value",
+  "module_env_form_development_value_label": "Development value",
+  "module_env_form_production_value_label": "Production value"
 }

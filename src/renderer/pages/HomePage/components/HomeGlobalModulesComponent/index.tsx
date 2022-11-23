@@ -22,6 +22,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
       'translation',
       'constant',
       'asset',
+      'env',
       'gameobject',
       'scene',
     ],
