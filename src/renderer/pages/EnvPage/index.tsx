@@ -22,6 +22,9 @@ const EnvPage: React.FC = () => {
             <Grid.Row>
               <Header as="h1">
                 <TransComponent id="module_env" />
+                <Header.Subheader>
+                  <TransComponent id="module_env_info" />
+                </Header.Subheader>
               </Header>
             </Grid.Row>
             <Grid.Row>
