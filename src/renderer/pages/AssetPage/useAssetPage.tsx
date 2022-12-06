@@ -1,18 +1,19 @@
-import { useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import { useContext, useMemo, useReducer } from 'react';
+import AssetsContext from 'renderer/contexts/AssetsContext';
 import GameModuleContext from 'renderer/contexts/GameModuleContext';
 import { useEvents } from 'renderer/hooks';
 import { defaultStateFormReducer, FormReducer } from 'renderer/reducers';
-import { AssertFileValueType, AssetType } from 'types';
+import { AssertFileValueType } from 'types';
 
 const useAssetPage = () => {
   const { module } = useContext(GameModuleContext);
+  const { assets } = useContext(AssetsContext);
   const isModuleView = useMemo(() => !!module, [module]);
-  const { requestMessage, sendMessage } = useEvents();
+  const { sendMessage } = useEvents();
   const [stateForm, dispatch] = useReducer(
     FormReducer,
     defaultStateFormReducer
   );
-  const [assets, setAssets] = useState<AssetType[]>([]);
   const saveFile = (file: AssertFileValueType) => {
     dispatch({
       type: 'hide-form',
@@ -28,14 +29,7 @@ const useAssetPage = () => {
   const sendMultipleUploads = () => {
     sendMessage('select-multiple-files');
   };
-  useEffect(() => {
-    const unSub = requestMessage('load-assets', (args) => {
-      setAssets(args);
-    });
-    return () => {
-      unSub();
-    };
-  }, []);
+
   return {
     assets,
     stateForm,

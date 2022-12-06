@@ -7,10 +7,12 @@ type InputComponentProps = InputProps & {
   onChange: (value: any) => void;
   children?: ReactFragment | ReactNode;
   defaultValue?: string | number;
+  hideConstant?: boolean;
 };
 
 const InputComponent = (props: InputComponentProps) => {
-  const { onChange, defaultValue, type, children, ...rest } = props;
+  const { onChange, defaultValue, type, children, hideConstant, ...rest } =
+    props;
   const [inputType, setInputType] = useState<'c' | 'v'>('v');
 
   const defaultValueConstant = useMemo(() => {
@@ -64,21 +66,23 @@ const InputComponent = (props: InputComponentProps) => {
         <Grid.Column width={14}>
           <Component />
         </Grid.Column>
-        <Grid.Column width={2}>
-          <Button
-            type="button"
-            basic
-            color="blue"
-            icon
-            labelPosition="right"
-            onClick={() =>
-              setInputType((_inputType) => (_inputType === 'c' ? 'v' : 'c'))
-            }
-          >
-            {inputType.toUpperCase()}
-            <Icon name="refresh" />
-          </Button>
-        </Grid.Column>
+        {!hideConstant && (
+          <Grid.Column width={2}>
+            <Button
+              type="button"
+              basic
+              color="blue"
+              icon
+              labelPosition="right"
+              onClick={() =>
+                setInputType((_inputType) => (_inputType === 'c' ? 'v' : 'c'))
+              }
+            >
+              {inputType.toUpperCase()}
+              <Icon name="refresh" />
+            </Button>
+          </Grid.Column>
+        )}
       </Grid.Row>
     </Grid>
   );

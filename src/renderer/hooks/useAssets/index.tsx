@@ -6,7 +6,7 @@ const useAssets = () => {
   const [assets, setAssets] = useState<AssetType[]>([]);
   const { requestMessage } = useEvents();
   useEffect(() => {
-    requestMessage('load-all-assets', (args) => {
+    requestMessage('load-assets', (args) => {
       setAssets(args);
     });
   }, []);

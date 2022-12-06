@@ -55,5 +55,12 @@
   "table_header_key": "Key",
   "table_header_value": "Value",
   "module_env_form_development_value_label": "Development value",
-  "module_env_form_production_value_label": "Production value"
+  "module_env_form_production_value_label": "Production value",
+  "form_input_sprite_source_image": "Source image",
+  "form_input_sprite_width": "Width",
+  "form_input_sprite_height": "Height",
+  "form_input_sprite_max_frame": "Max frame",
+  "form_input_sprite_time_beetween_sprite": "Time beetween sprite",
+  "form_input_sprite_loop": "Loop",
+  "form_input_sprite_loop_activate": "Activate"
 }

@@ -15,6 +15,7 @@ import AssetInput from './components/AssetInput';
 import { FieldComponentProps } from './components/FieldComponent';
 import SceneInput from './components/SceneInput';
 import ConstantValueInput from './components/ConstantValueInput';
+import SpriteInput from './components/SpriteInput';
 
 export type FormGeneratorProps = {
   form: any;
@@ -159,6 +160,18 @@ const useFormGenerator = (props: FormGeneratorProps) => {
           <FieldComponent {...defaultProps}>
             <GameObjectInput
               type={core.replace('@go:', '')}
+              defaultValue={defaultValue}
+              onChange={(data) => onChange(core, key, data, parent)}
+              {...rest}
+            />
+          </FieldComponent>
+        );
+      }
+      if (core === 'sprite') {
+        console.log(core);
+        return (
+          <FieldComponent {...defaultProps} isObject>
+            <SpriteInput
               defaultValue={defaultValue}
               onChange={(data) => onChange(core, key, data, parent)}
               {...rest}

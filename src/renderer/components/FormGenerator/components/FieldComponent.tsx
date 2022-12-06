@@ -3,7 +3,7 @@ import { Form } from 'semantic-ui-react';
 import { Segment } from 'renderer/semantic-ui';
 
 export type FieldComponentProps = {
-  keyValue: string;
+  keyValue?: string;
   children: ReactNode;
   label: string;
   isObject?: boolean;
