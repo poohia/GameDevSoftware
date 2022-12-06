@@ -161,10 +161,6 @@ export default class ScenePlugin {
   };
 
   createScene = (event: ElectronIpcMainEvent, args: SceneObject) => {
-    console.log(
-      '🚀 ~ file: ScenePlugin.ts ~ line 157 ~ ScenePlugin ~ SceneObject',
-      args
-    );
     //@ts-ignore
     const { path } = global;
     ScenePlugin.readIndexFile().then((data) => {

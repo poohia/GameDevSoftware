@@ -49,7 +49,6 @@
   "form_input_modal_assets_title": "Assets",
   "table_filter_module": "Show module values",
   "module_env": "Var env module",
-  "module_env_info": "Every changes needs to restart project",
   "module_env_append_var": "Create var",
   "module_env_development_title": "Development vars",
   "module_env_production_title": "Production vars",

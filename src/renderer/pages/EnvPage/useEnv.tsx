@@ -8,8 +8,8 @@ const useEnv = () => {
     FormReducer,
     defaultStateFormReducer
   );
-  const [developmentEnvs, setDevelopmentEnvs] = useState<EnvObject[]>([]);
-  const [productionEnvs, setProductionEnvs] = useState<EnvObject[]>([]);
+  const [developmentEnvs, setDevelopmentEnvs] = useState<EnvObject>({});
+  const [productionEnvs, setProductionEnvs] = useState<EnvObject>({});
   const { requestMessage, sendMessage } = useEvents();
 
   const createEnv = useCallback(() => {
@@ -22,22 +22,12 @@ const useEnv = () => {
   const sendCreateEnv = useCallback(
     (key: string, developmentEnvValue: string, productionEnvValue: string) => {
       setDevelopmentEnvs((_envs) => {
-        const env = _envs.find((e) => e.key === key);
-        if (env) {
-          env.value = developmentEnvValue;
-        } else {
-          _envs = _envs.concat({ key, value: developmentEnvValue });
-        }
+        _envs[key] = developmentEnvValue;
         sendMessage('write-env-development-vars', _envs);
         return _envs;
       });
       setProductionEnvs((_envs) => {
-        const env = _envs.find((e) => e.key === key);
-        if (env) {
-          env.value = productionEnvValue;
-        } else {
-          _envs = _envs.concat({ key, value: productionEnvValue });
-        }
+        _envs[key] = productionEnvValue;
         sendMessage('write-env-production-vars', _envs);
         return _envs;
       });
@@ -50,14 +40,18 @@ const useEnv = () => {
 
   const updateEnv = useCallback(
     (key: string) => {
-      const envDevelopment = developmentEnvs.find((e) => e.key === key);
-      const envProduction = productionEnvs.find((e) => e.key === key);
+      // const envDevelopment = developmentEnvs.find((e) => e.key === key);
+      const envDevelopment = developmentEnvs[key];
+      const envProduction = productionEnvs[key];
+
+      // const envProduction = productionEnvs.find((e) => e.key === key);
       if (!envDevelopment || !envProduction) return;
       dispatch({
         type: 'show-update-form',
         data: {
           key,
-          value: [envDevelopment.value, envProduction.value],
+          value: [envDevelopment, envProduction],
+          // value: [envDevelopment.value, envProduction.value],
         },
       });
     },
@@ -67,12 +61,12 @@ const useEnv = () => {
   const deleteEnv = useCallback(
     (key: string) => {
       setDevelopmentEnvs((_envs) => {
-        _envs = _envs.filter((env) => env.key !== key);
+        delete _envs[key];
         sendMessage('write-env-development-vars', _envs);
         return JSON.parse(JSON.stringify(_envs));
       });
       setProductionEnvs((_envs) => {
-        _envs = _envs.filter((env) => env.key !== key);
+        delete _envs[key];
         sendMessage('write-env-production-vars', _envs);
         return JSON.parse(JSON.stringify(_envs));
       });
@@ -84,10 +78,10 @@ const useEnv = () => {
   );
 
   useEffect(() => {
-    requestMessage('load-env-development-vars', (envs: EnvObject[]) => {
+    requestMessage('load-env-development-vars', (envs: EnvObject) => {
       setDevelopmentEnvs(envs);
     });
-    requestMessage('load-env-production-vars', (envs: EnvObject[]) => {
+    requestMessage('load-env-production-vars', (envs: EnvObject) => {
       setProductionEnvs(envs);
     });
   }, []);

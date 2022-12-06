@@ -7,8 +7,13 @@ export default class EnvPlugin {
   loadEnvDevelopmentVars = (event: ElectronIpcMainEvent) => {
     // @ts-ignore
     const { path } = global;
-    FileService.readFile(`${path}${FolderPlugin.envFiles[0]}`).then((envs) => {
-      event.reply('load-env-development-vars', this.deserializeEnvs(envs));
+    FileService.readJsonFile(
+      `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[0]}`
+    ).then((envs) => {
+      event.reply('load-env-development-vars', {
+        ...envs,
+        ENV: 'development',
+      });
     });
   };
 
@@ -18,56 +23,36 @@ export default class EnvPlugin {
   ) => {
     // @ts-ignore
     const { path } = global;
-    FileService.writeFile(
-      `${path}${FolderPlugin.envFiles[0]}`,
-      this.serializeEnvs(envs)
+    FileService.writeJsonFile(
+      `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[0]}`,
+      envs
     ).then(() => {
-      event.reply('load-env-development-vars', envs);
+      this.loadEnvDevelopmentVars(event);
     });
   };
 
   loadEnvProductionVars = (event: ElectronIpcMainEvent) => {
     // @ts-ignore
     const { path } = global;
-    FileService.readFile(`${path}${FolderPlugin.envFiles[1]}`).then((envs) => {
-      event.reply('load-env-production-vars', this.deserializeEnvs(envs));
+    FileService.readJsonFile(
+      `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[1]}`
+    ).then((envs) => {
+      event.reply('load-env-production-vars', {
+        ...envs,
+        ENV: 'production',
+      });
     });
   };
 
   writeEnvProductionVars = (event: ElectronIpcMainEvent, envs: EnvObject[]) => {
     // @ts-ignore
     const { path } = global;
-    FileService.writeFile(
-      `${path}${FolderPlugin.envFiles[1]}`,
-      this.serializeEnvs(envs)
+    FileService.writeJsonFile(
+      `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[1]}`,
+      envs
     ).then(() => {
-      event.reply('load-env-production-vars', envs);
+      this.loadEnvProductionVars(event);
     });
-  };
-
-  private deserializeEnvs = (envs: string): EnvObject[] => {
-    const finalEnvs: EnvObject[] = [];
-    const envsSplit = envs.split('\n');
-    envsSplit.forEach((env) => {
-      const envSplit = env.split('=');
-      finalEnvs.push({
-        key: envSplit[0].replace('REACT_APP_', ''),
-        value: envSplit[1],
-      });
-    });
-    return finalEnvs;
-  };
-
-  private serializeEnvs = (envs: EnvObject[]): string => {
-    let finalEnvs = '';
-    envs.forEach((env, i) => {
-      if (i === envs.length - 1) {
-        finalEnvs += `REACT_APP_${env.key}=${env.value}`;
-      } else {
-        finalEnvs += `REACT_APP_${env.key}=${env.value}\n`;
-      }
-    });
-    return finalEnvs;
   };
 
   init = () => {

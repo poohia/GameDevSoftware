@@ -4,8 +4,8 @@ import { Grid, Icon } from 'semantic-ui-react';
 import { EnvObject } from 'types';
 
 type EnvsTableComponentProps = {
-  productionEnvs: EnvObject[];
-  developmentEnvs: EnvObject[];
+  productionEnvs: EnvObject;
+  developmentEnvs: EnvObject;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
@@ -33,17 +33,15 @@ const EnvsTableComponent: React.FC<EnvsTableComponentProps> = (props) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {productionEnvs.map((env) => (
+              {Object.keys(productionEnvs).map((key: string) => (
                 <Table.Row
-                  key={`table-row-env-development-${env.key}`}
-                  onClick={() => onClickRow(env.key)}
-                  disabled={env.key === 'ENV'}
+                  key={`table-row-env-development-${key}`}
+                  onClick={() => onClickRow(key)}
+                  disabled={key === 'ENV'}
                 >
-                  <Table.Cell>{env.key}</Table.Cell>
-                  <Table.Cell>
-                    {developmentEnvs.find((e) => e.key === env.key)?.value}
-                  </Table.Cell>
-                  <Table.Cell>{env.value}</Table.Cell>
+                  <Table.Cell>{key}</Table.Cell>
+                  <Table.Cell>{developmentEnvs[key]}</Table.Cell>
+                  <Table.Cell>{productionEnvs[key]}</Table.Cell>
                   <Table.Cell>
                     <Button
                       basic
@@ -51,9 +49,9 @@ const EnvsTableComponent: React.FC<EnvsTableComponentProps> = (props) => {
                       color="red"
                       onClick={(event) => {
                         event.stopPropagation();
-                        onDelete(env.key);
+                        onDelete(key);
                       }}
-                      disabled={env.key === 'ENV'}
+                      disabled={key === 'ENV'}
                     >
                       <Icon name="trash" />
                     </Button>

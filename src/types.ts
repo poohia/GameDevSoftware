@@ -272,7 +272,6 @@ export type SceneObject = {
   _actions: ActionOfScene[];
 };
 export type EnvObject = {
-  key: string;
-  value: string;
+  [key: string]: string;
 };
 export type MenusViewsType = { module: string; path: string; used: boolean };
