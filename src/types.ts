@@ -60,7 +60,9 @@ export type Channels =
   | 'load-env-development-vars'
   | 'write-env-development-vars'
   | 'load-env-production-vars'
-  | 'write-env-production-vars';
+  | 'write-env-production-vars'
+  | 'load-menus-views'
+  | 'set-menu-view';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -273,3 +275,4 @@ export type EnvObject = {
   key: string;
   value: string;
 };
+export type MenusViewsType = { module: string; path: string; used: boolean };

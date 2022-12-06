@@ -1,6 +1,7 @@
 import { TransComponent } from 'renderer/components';
 import { Container, Grid } from 'semantic-ui-react';
 import {
+  AdvancedParamsComponent,
   IdentityParamsComponent,
   ImagesParamsComponent,
   PlatformsComponent,
@@ -30,6 +31,11 @@ const ApplicationPage: React.FC = () => {
         <Grid.Row>
           <Grid.Column width={16}>
             <PlatformsComponent />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <AdvancedParamsComponent />
           </Grid.Column>
         </Grid.Row>
       </Grid>

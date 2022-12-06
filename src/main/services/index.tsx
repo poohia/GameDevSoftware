@@ -1,13 +1,12 @@
 import CordovaService from './CordovaService';
-import FileService from './FileService';
-import VersionSoftwareService from './VersionSoftwareService';
 
-type Services = 'fileService' | 'cordovaService' | 'versionSoftwareService';
+type Services = 'cordovaService';
 
 export default class ServiceContainer {
-  private _fileService = new FileService();
+  // doesn't work with class have only static function
+  // private _fileService = new FileService();
+  // private _versionSoftwareService = new VersionSoftwareService();
   private _cordovaService = new CordovaService();
-  private _versionSoftwareService = new VersionSoftwareService();
 
   get = (service: Services) => {
     return this[`_${service}`];

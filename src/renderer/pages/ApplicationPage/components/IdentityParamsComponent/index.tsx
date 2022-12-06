@@ -2,6 +2,7 @@ import { Container, Form, Grid } from 'semantic-ui-react';
 import { Button, Segment } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import useIdentityParams from './useIdentityParam';
+import { TransComponent } from 'renderer/components';
 
 const IdentityParamsComponent = () => {
   const { params, setParam, onSubmit } = useIdentityParams();
@@ -11,9 +12,10 @@ const IdentityParamsComponent = () => {
   return (
     <Container>
       <Segment className="game-dev-software-module-application-params-identity-segment">
-        <span className="game-dev-software-module-application-params-identity-segment-title">
-          {i18n.t('module_application_params_identity_title')}
-        </span>
+        <TransComponent
+          id="module_application_params_identity_title"
+          className="game-dev-software-module-application-params-identity-segment-title"
+        />
         <Grid>
           <Form onSubmit={onSubmit}>
             <Form.Group widths="equal">
