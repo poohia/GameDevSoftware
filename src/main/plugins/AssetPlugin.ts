@@ -205,7 +205,6 @@ export default class AssetPlugin {
 
   getAssetBase64FromAssets = (event: ElectronIpcMainEvent, arg: string) => {
     const data = this.readAssetFile();
-    console.log(data);
     const assetFind = data.find((d) => d.name === arg);
     if (assetFind && assetFind.module) {
       this.getAssetInformationModule(event, {
