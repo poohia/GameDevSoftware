@@ -168,7 +168,6 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         );
       }
       if (core === 'sprite') {
-        console.log(core);
         return (
           <FieldComponent {...defaultProps} isObject>
             <SpriteInput

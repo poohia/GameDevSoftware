@@ -1,4 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
+import SpriteComponent, {
+  SpriteComponentProps,
+} from 'renderer/components/SpriteComponent/SpriteComponent';
+import { useEvents } from 'renderer/hooks';
+import { Button } from 'renderer/semantic-ui';
 import { Checkbox, Grid, Input } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import { CustomInputProps } from 'types';
@@ -6,8 +11,8 @@ import AssetInput from './AssetInput';
 import FieldComponent from './FieldComponent';
 
 const SpriteInput: React.FC<CustomInputProps> = (props) => {
-  const { defaultValue, type, onChange, onBlur } = props;
-  console.log('🚀 ~ file: SpriteInput.tsx:10 ~ defaultValue', defaultValue);
+  const { defaultValue, onChange } = props;
+  const { sendMessage, once } = useEvents();
 
   const [image, setImage] = useState<string>(defaultValue?.image || '');
   const [width, setWidth] = useState<number | undefined>(defaultValue?.width);
@@ -21,15 +26,29 @@ const SpriteInput: React.FC<CustomInputProps> = (props) => {
     number | undefined
   >(defaultValue?.timeBeetweenSprite);
   const [loop, setLoop] = useState<boolean>(defaultValue?.loop || false);
+  const [spriteProps, setSpriteProps] = useState<SpriteComponentProps | null>(
+    null
+  );
 
-  const handleSubmit = useCallback(() => {
-    if (image && width && height && maxFrame && timeBeetweenSprite) {
-      onChange({ image, width, height, maxFrame, timeBeetweenSprite, loop });
+  const showAnimationHandle = useCallback(() => {
+    if (image !== '' && width && height && maxFrame && timeBeetweenSprite) {
+      sendMessage('load-asset-base64', image.replace('@a:', ''));
+      once('get-asset-information', (data) => {
+        setSpriteProps({
+          image: `data:image/png;base64,${data}`,
+          maxFrame,
+          timeBeetweenSprite,
+          width,
+          height,
+          loop,
+        });
+      });
     }
   }, [image, width, height, maxFrame, timeBeetweenSprite, loop]);
 
   useEffect(() => {
-    if (image && width && height && maxFrame && timeBeetweenSprite) {
+    setSpriteProps(null);
+    if (image !== '' && width && height && maxFrame && timeBeetweenSprite) {
       onChange({ image, width, height, maxFrame, timeBeetweenSprite, loop });
     }
   }, [image, width, height, maxFrame, timeBeetweenSprite, loop]);
@@ -121,18 +140,42 @@ const SpriteInput: React.FC<CustomInputProps> = (props) => {
           </FieldComponent>
         </Grid.Column>
       </Grid.Row>
-      <Grid.Column>
-        <FieldComponent
-          label={i18n.t('form_input_sprite_loop')}
-          required={false}
-        >
-          <Checkbox
-            checked={loop}
-            label={i18n.t('form_input_sprite_loop_activate')}
-            onChange={() => setLoop(!loop)}
-          />
-        </FieldComponent>
-      </Grid.Column>
+      <Grid.Row columns={2}>
+        <Grid.Column>
+          <FieldComponent
+            label={i18n.t('form_input_sprite_loop')}
+            required={false}
+          >
+            <Checkbox
+              checked={loop}
+              label={i18n.t('form_input_sprite_loop_activate')}
+              onChange={() => setLoop(!loop)}
+            />
+          </FieldComponent>
+        </Grid.Column>
+        <Grid.Column>
+          <Button
+            onClick={showAnimationHandle}
+            type="button"
+            disabled={
+              !(
+                image !== '' &&
+                width &&
+                height &&
+                maxFrame &&
+                timeBeetweenSprite
+              )
+            }
+          >
+            Show Animation
+          </Button>
+        </Grid.Column>
+      </Grid.Row>
+      {spriteProps && (
+        <Grid.Row>
+          <SpriteComponent {...spriteProps} />
+        </Grid.Row>
+      )}
     </Grid>
   );
 };

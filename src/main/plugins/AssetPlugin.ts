@@ -203,6 +203,20 @@ export default class AssetPlugin {
     }
   };
 
+  getAssetBase64FromAssets = (event: ElectronIpcMainEvent, arg: string) => {
+    const data = this.readAssetFile();
+    console.log(data);
+    const assetFind = data.find((d) => d.name === arg);
+    if (assetFind && assetFind.module) {
+      this.getAssetInformationModule(event, {
+        data: { name: assetFind.name, type: assetFind.type },
+        module: assetFind.module,
+      });
+    } else if (assetFind) {
+      this.getAssetInformation(event, assetFind);
+    }
+  };
+
   selectMultipleFiles = (event: ElectronIpcMainEvent) => {
     dialog
       .showOpenDialog(this.mainWindow, {
@@ -304,6 +318,9 @@ export default class AssetPlugin {
     );
     ipcMain.on('load-all-assets', (event) =>
       this.loadAllAssets(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('load-asset-base64', (event: Electron.IpcMainEvent, arg) =>
+      this.getAssetBase64FromAssets(event as ElectronIpcMainEvent, arg)
     );
   };
 }

@@ -45,6 +45,7 @@ export type Channels =
   | 'get-game-object-value'
   | 'load-all-translations'
   | 'load-all-assets'
+  | 'load-asset-base64'
   | 'load-all-game-objects'
   | 'load-scene-types'
   | 'load-scenes'
