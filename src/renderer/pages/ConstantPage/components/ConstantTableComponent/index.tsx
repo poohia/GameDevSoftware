@@ -33,7 +33,10 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
   );
   const [filterModule, setFilterModule] = useState<boolean>(true);
   const formatData = useMemo(() => {
-    let _constants = constants;
+    let _constants = constants.map((constant) => ({
+      ...constant,
+      key: constant.key.toLowerCase(),
+    }));
     if (filter !== '') {
       _constants = _constants.filter((c) => c.key.includes(filter));
     }
@@ -99,7 +102,9 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
             placeholder="Search..."
             value={filter}
             fluid
-            onChange={(_, { value }) => setFilter(value as string)}
+            onChange={(_, { value }) =>
+              setFilter(value.toLowerCase() as string)
+            }
           />
         </Grid.Column>
         <Grid.Column width={4}>

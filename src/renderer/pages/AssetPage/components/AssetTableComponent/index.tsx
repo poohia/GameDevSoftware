@@ -28,7 +28,10 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
   );
   const [filterModule, setFilterModule] = useState<boolean>(true);
   const formatData = useCallback(() => {
-    let _assets = assets;
+    let _assets = assets.map((asset) => ({
+      ...asset,
+      name: asset.name.toLocaleLowerCase(),
+    }));
     if (filter !== '') {
       _assets = _assets.filter((asset) => asset.name.includes(filter));
     }
@@ -57,7 +60,9 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
             placeholder="Search..."
             value={filter}
             fluid
-            onChange={(_, { value }) => setFilter(value as string)}
+            onChange={(_, { value }) =>
+              setFilter(value.toLocaleLowerCase() as string)
+            }
           />
         </Grid.Column>
         <Grid.Column width={6}>

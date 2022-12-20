@@ -20,7 +20,7 @@ const SpriteComponent: React.FC<SpriteComponentProps> = (props) => {
   } = props;
   const [backgroundPosition, setBackgroundPosition] = useState<number>(0);
   const [animationIsFinish, setAnimationIsFinish] = useState<boolean>(false);
-  const [timeout, setTimeout] = useState<any>(null);
+  const [timeout, setTImeout] = useState<any>(null);
   const [i, setI] = useState<number>(0);
 
   const startAnimation = useCallback(() => {
@@ -41,7 +41,7 @@ const SpriteComponent: React.FC<SpriteComponentProps> = (props) => {
         return 0;
       });
     }, timeBeetweenSprite);
-    setTimeout(t);
+    setTImeout(t);
   }, [props]);
 
   useEffect(() => {

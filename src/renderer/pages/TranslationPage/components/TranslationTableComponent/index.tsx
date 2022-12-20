@@ -39,7 +39,9 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
             placeholder="Search..."
             value={filter}
             fluid
-            onChange={(_, { value }) => setFilter(value as string)}
+            onChange={(_, { value }) =>
+              setFilter(value.toLowerCase() as string)
+            }
           />
         </Grid.Column>
       </Grid.Row>

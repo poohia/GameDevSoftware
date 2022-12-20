@@ -20,7 +20,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
         (gameObject) =>
           gameObject._id === Number(filter) ||
           gameObject._type.includes(filter) ||
-          gameObject._title.includes(filter)
+          gameObject._title.toLowerCase().includes(filter)
       );
     }
     return gameObjects;
@@ -36,7 +36,9 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
             placeholder="Search..."
             value={filter}
             fluid
-            onChange={(_, { value }) => setFilter(value as string)}
+            onChange={(_, { value }) =>
+              setFilter(value.toLocaleLowerCase() as string)
+            }
           />
         </Grid.Column>
       </Grid.Row>
