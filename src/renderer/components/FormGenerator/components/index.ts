@@ -4,3 +4,4 @@ export { default as FieldMultipleComponent } from './FieldMultipleComponent';
 export { default as TranslationInput } from './TranslationInput';
 export { default as ColorPicker } from './ColorPicker';
 export { default as GameObjectInput } from './GameObjectInput';
+export { default as BooleanInput } from './BooleanInput';

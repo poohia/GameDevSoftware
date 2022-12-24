@@ -10,6 +10,7 @@ import {
   ColorPicker,
   InputComponent,
   GameObjectInput,
+  BooleanInput,
 } from './components';
 import AssetInput from './components/AssetInput';
 import { FieldComponentProps } from './components/FieldComponent';
@@ -94,8 +95,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
 
       if (defaultValues && typeof defaultValues[key] !== 'undefined') {
         defaultValue = defaultValues[key];
-      }
-      if (
+      } else if (
         parent &&
         defaultValues &&
         typeof defaultValues[parent] !== 'undefined'
@@ -103,6 +103,9 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         defaultValue = defaultValues[parent][key];
       }
 
+      if (parent) {
+        console.log(key, core, defaultValues, parent);
+      }
       if (core === 'string' || core === 'number') {
         return (
           <FieldComponent {...defaultProps}>
@@ -133,6 +136,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
           </FieldComponent>
         );
       }
+
       if (core === 'color') {
         return (
           <FieldComponent {...defaultProps}>
@@ -165,6 +169,19 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               {...rest}
             />
           </FieldComponent>
+        );
+      }
+      if (core === 'boolean') {
+        return (
+          <BooleanInput
+            onChange={(data) => {
+              console.log(core, key, data, parent);
+              onChange(core, key, data, parent);
+            }}
+            defaultValue={defaultValue}
+            label={defaultProps.label}
+            {...rest}
+          />
         );
       }
       if (core === 'sprite') {
