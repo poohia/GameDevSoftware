@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ModalComponent from 'renderer/components/ModalComponent';
 import TransComponent from 'renderer/components/TransComponent';
 import TranslationsContext from 'renderer/contexts/TranslationsContext';
@@ -16,6 +16,7 @@ const ModalTranslation = (
   const { translations } = useContext(TranslationsContext);
 
   const [value, setValue] = useState<string>('');
+
   const handleClickRow = useCallback(
     (key: string) => {
       setValue(`@t:${key}`);
@@ -52,9 +53,10 @@ const ModalTranslation = (
 };
 
 const TranslationInput = (props: CustomInputProps) => {
-  const { defaultValue, onChange, onBlur } = props;
+  const { defaultValue, name, onChange, onBlur } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -68,10 +70,13 @@ const TranslationInput = (props: CustomInputProps) => {
     (value: string) => {
       setValue(value);
       setOpenModal(false);
-      onChange(value);
+      if (inputRef.current) {
+        inputRef.current.value = value;
+        onChange({ target: inputRef.current });
+      }
       setTimeout(() => onBlur && onBlur(), 500);
     },
-    [value]
+    [value, inputRef]
   );
   useEffect(() => {
     if (defaultValue) {
@@ -89,6 +94,7 @@ const TranslationInput = (props: CustomInputProps) => {
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}
       />
+      <input type="hidden" name={name} ref={inputRef} />
     </>
   );
 };

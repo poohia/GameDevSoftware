@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FieldArray, FormikProvider, useFormik } from 'formik';
-import { Dropdown, Form, Grid, Header } from 'semantic-ui-react';
+import React, { useCallback, useMemo } from 'react';
+import { FormikProvider, useFormik } from 'formik';
+import { Form, Grid, Header } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import { FormField } from 'types';
 import TransComponent from '../TransComponent';
@@ -32,6 +32,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
   const formik = useFormik<any>({
     initialValues: defaultValues ? defaultValues : {},
     onSubmit: (values) => {
+      console.log(values);
       onSubmit({ ...values, _type });
     },
     enableReinitialize: true,
@@ -58,7 +59,6 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         multiple,
         optional,
         parent,
-        onChange = () => {},
         ...rest
       } = field;
 
@@ -68,7 +68,8 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         description,
         required: !optional && !core?.optional,
       };
-      let defaultValue = getDefaultValue(key);
+      const defaultValue = getDefaultValue(key);
+      const onChange = formik.handleChange;
 
       if (core === 'string' || core === 'number') {
         return (
@@ -76,7 +77,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
             <InputComponent
               name={key}
               type={core}
-              onChange={formik.handleChange}
+              onChange={onChange}
               defaultValue={defaultValue}
               {...rest}
             />
@@ -93,7 +94,8 @@ const useFormGenerator = (props: FormGeneratorProps) => {
           <FieldComponent {...defaultProps}>
             <AssetInput
               type={core}
-              onChange={(data) => onChange(core, key, data, parent)}
+              name={key}
+              onChange={onChange}
               defaultValue={defaultValue}
               {...rest}
             />
@@ -105,8 +107,9 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         return (
           <FieldComponent {...defaultProps}>
             <ColorPicker
+              name={key}
               defaultValue={defaultValue}
-              onChange={(data) => onChange(core, key, data, parent)}
+              onChange={onChange}
               {...rest}
             />
           </FieldComponent>
@@ -116,8 +119,9 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         return (
           <FieldComponent {...defaultProps}>
             <TranslationInput
+              name={key}
               defaultValue={defaultValue}
-              onChange={(data) => onChange(core, key, data, parent)}
+              onChange={onChange}
               {...rest}
             />
           </FieldComponent>
@@ -127,9 +131,10 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         return (
           <FieldComponent {...defaultProps}>
             <GameObjectInput
+              name={key}
               type={core.replace('@go:', '')}
               defaultValue={defaultValue}
-              onChange={(data) => onChange(core, key, data, parent)}
+              onChange={onChange}
               {...rest}
             />
           </FieldComponent>
@@ -138,8 +143,8 @@ const useFormGenerator = (props: FormGeneratorProps) => {
       if (core === 'boolean') {
         return (
           <BooleanInput
-            onChange={(data) => {
-              onChange(core, key, data, parent);
+            onChange={(value) => {
+              formik.setFieldValue(key, value);
             }}
             defaultValue={defaultValue}
             label={defaultProps.label}
@@ -152,7 +157,9 @@ const useFormGenerator = (props: FormGeneratorProps) => {
           <FieldComponent {...defaultProps} isObject>
             <SpriteInput
               defaultValue={defaultValue}
-              onChange={(data) => onChange(core, key, data, parent)}
+              onChange={(value) => {
+                formik.setFieldValue(key, value);
+              }}
               {...rest}
             />
           </FieldComponent>
@@ -162,8 +169,9 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         return (
           <FieldComponent {...defaultProps}>
             <SceneInput
+              name={key}
               defaultValue={defaultValue}
-              onChange={(data) => onChange(core, key, data, parent)}
+              onChange={onChange}
               {...rest}
             />
           </FieldComponent>
@@ -174,8 +182,8 @@ const useFormGenerator = (props: FormGeneratorProps) => {
           <FieldComponent {...defaultProps}>
             <ConstantValueInput
               type={core}
-              onChange={(data) => {
-                onChange(core, key, data, parent);
+              onChange={(value) => {
+                formik.setFieldValue(key, value);
               }}
               multiple={multiple}
               defaultValue={defaultValue}

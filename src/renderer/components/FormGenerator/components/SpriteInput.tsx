@@ -10,7 +10,11 @@ import { CustomInputProps } from 'types';
 import AssetInput from './AssetInput';
 import FieldComponent from './FieldComponent';
 
-const SpriteInput: React.FC<CustomInputProps> = (props) => {
+const SpriteInput: React.FC<
+  Omit<CustomInputProps, 'onChange' | 'name'> & {
+    onChange: (sprite: SpriteComponentProps) => void;
+  }
+> = (props) => {
   const { defaultValue, onChange } = props;
   const { sendMessage, once } = useEvents();
 
@@ -59,9 +63,10 @@ const SpriteInput: React.FC<CustomInputProps> = (props) => {
         <Grid.Column>
           <FieldComponent label={i18n.t('form_input_sprite_source_image')}>
             <AssetInput
+              name="unknow"
               type="image"
-              onChange={(data) => {
-                setImage(data);
+              onChange={(e) => {
+                setImage(e.target.value);
               }}
               defaultValue={image}
             />

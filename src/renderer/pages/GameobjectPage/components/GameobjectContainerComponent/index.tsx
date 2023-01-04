@@ -3,7 +3,7 @@ import { PageProps } from 'types';
 import GameobjectHeaderComponent from '../GameobjectHeaderComponent';
 import GameobjectTableComponent from '../GameobjectTableComponent';
 import useGameobjectContainerComponent from './useGameobjectContainerComponent';
-import useFormGenerator from 'renderer/components/FormGenerator/useFormGenerator';
+import FormGenerator from 'renderer/components/FormGenerator';
 
 const GameobjectContainerComponent = (props: PageProps) => {
   const {
@@ -15,12 +15,6 @@ const GameobjectContainerComponent = (props: PageProps) => {
     updateGameobject,
     sendCreateGameobject,
   } = useGameobjectContainerComponent(props);
-  // const Form = useFormGenerator({
-  //   type: gameObjectForm?.type || '',
-  //   form: gameObjectForm && gameObjectForm.core,
-  //   defaultValues: stateForm.value,
-  //   onSubmit: sendCreateGameobject,
-  // });
 
   return (
     <Grid>
@@ -48,13 +42,12 @@ const GameobjectContainerComponent = (props: PageProps) => {
         </Grid.Column>
         {stateForm.show && gameObjectForm && (
           <Grid.Column width={8}>
-            {/* <GameobjectFormComponent
+            <FormGenerator
               type={gameObjectForm.type}
               form={gameObjectForm.core}
               defaultValues={stateForm.value}
               onSubmit={sendCreateGameobject}
-            /> */}
-            {/* {Form} */}
+            />
           </Grid.Column>
         )}
       </Grid.Row>

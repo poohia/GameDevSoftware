@@ -3,9 +3,17 @@ import ConstantsContext from 'renderer/contexts/ConstantsContext';
 import { Dropdown } from 'semantic-ui-react';
 import { CustomInputProps } from 'types';
 
-const ConstantValueInput = (props: CustomInputProps & { type: string }) => {
+const ConstantValueInput: React.FC<
+  Omit<CustomInputProps, 'onChange' | 'name'> & {
+    type: string;
+    onChange: (
+      value?: boolean | number | string | (boolean | number | string)[]
+    ) => void;
+  }
+> = (props) => {
   const { type, multiple, defaultValue, onChange } = props;
   const { constants } = useContext(ConstantsContext);
+
   const constant = useMemo(
     () => constants.find((c) => c.key === type.replace('@c:', '')),
     [constants, type]

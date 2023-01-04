@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ModalComponent from 'renderer/components/ModalComponent';
 import TransComponent from 'renderer/components/TransComponent';
 import { ModalProps } from 'semantic-ui-react';
@@ -54,9 +54,10 @@ const ModalGameObjectInput = (
 };
 
 const GameObjectInput = (props: CustomInputProps) => {
-  const { defaultValue, type, onChange, onBlur } = props;
+  const { defaultValue, type, name, onChange, onBlur } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -70,10 +71,13 @@ const GameObjectInput = (props: CustomInputProps) => {
     (value: string) => {
       setValue(value);
       setOpenModal(false);
-      onChange(value);
+      if (inputRef.current) {
+        inputRef.current.value = value;
+        onChange({ target: inputRef.current });
+      }
       setTimeout(() => onBlur && onBlur(), 500);
     },
-    [value]
+    [value, inputRef]
   );
 
   useEffect(() => {
@@ -94,6 +98,7 @@ const GameObjectInput = (props: CustomInputProps) => {
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}
       />
+      <input type="hidden" name={name} ref={inputRef} />
     </>
   );
 };

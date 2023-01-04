@@ -236,7 +236,6 @@ export type FormField = {
   label?: string;
   description?: string;
   parent?: string | any;
-  onChange?: (core: any, key: string, v: any, parent?: string) => void;
 };
 export type CustomInputProps = {
   name: string;

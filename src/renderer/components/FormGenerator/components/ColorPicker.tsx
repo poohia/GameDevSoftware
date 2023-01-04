@@ -1,22 +1,26 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { PhotoshopPicker } from 'react-color';
 import { CustomInputProps } from 'types';
 import InputComponent from './InputComponent';
 
 const ColorPicker = (props: CustomInputProps) => {
-  const { defaultValue, onChange, onBlur } = props;
+  const { defaultValue, name, onChange, onBlur } = props;
   const [showColorPick, setShowColorPicker] = useState<boolean>(false);
   const [color, setColor] = useState<string>('');
   const [value, setValue] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = useCallback(
     (c = color) => {
       setShowColorPicker(false);
       setValue(c);
-      onChange(c);
+      if (inputRef.current) {
+        inputRef.current.value = c;
+        onChange({ target: inputRef.current });
+      }
       setTimeout(() => onBlur && onBlur(), 500);
     },
-    [color]
+    [color, inputRef]
   );
 
   useEffect(() => {
@@ -26,30 +30,32 @@ const ColorPicker = (props: CustomInputProps) => {
     }
   }, [defaultValue]);
 
-  if (!showColorPick) {
-    return (
-      <InputComponent
-        defaultValue={value}
-        onChange={(color) => handleSubmit(color)}
-        type="string"
-      >
-        <div
-          className="ui selection dropdown fluid"
-          onClick={() => setShowColorPicker(true)}
-        >
-          {!value.startsWith('@c:') ? <span>{value}</span> : <span></span>}
-        </div>
-      </InputComponent>
-    );
-  }
-
   return (
-    <PhotoshopPicker
-      color={color}
-      onChange={(color) => setColor(color.hex)}
-      onAccept={() => handleSubmit()}
-      onCancel={() => setShowColorPicker(false)}
-    />
+    <>
+      {!showColorPick && (
+        <InputComponent
+          defaultValue={value}
+          onChange={(e) => handleSubmit(e.target.value)}
+          type="string"
+        >
+          <div
+            className="ui selection dropdown fluid"
+            onClick={() => setShowColorPicker(true)}
+          >
+            {!value.startsWith('@c:') ? <span>{value}</span> : <span></span>}
+          </div>
+        </InputComponent>
+      )}
+      {showColorPick && (
+        <PhotoshopPicker
+          color={color}
+          onChange={(color) => setColor(color.hex)}
+          onAccept={() => handleSubmit()}
+          onCancel={() => setShowColorPicker(false)}
+        />
+      )}
+      <input type="hidden" name={name} ref={inputRef} />
+    </>
   );
 };
 
