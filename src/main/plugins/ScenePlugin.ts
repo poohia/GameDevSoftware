@@ -51,6 +51,11 @@ export default class ScenePlugin {
           }
         )
         .then(() => {
+          sceneValue.sort(({ _id: _idA }, { _id: _idB }) => {
+            if (_idA < _idB) return -1;
+            if (_idA > _idB) return 1;
+            return 0;
+          });
           if (sceneType) {
             // @ts-ignore
             event.reply(`load-scene-${sceneType}`, sceneValue);

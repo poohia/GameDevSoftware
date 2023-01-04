@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ModalComponent from 'renderer/components/ModalComponent';
 import TransComponent from 'renderer/components/TransComponent';
 import ConstantsContext from 'renderer/contexts/ConstantsContext';
@@ -52,9 +52,10 @@ const ModalConstant = (
 };
 
 const ConstantInput = (props: CustomInputProps) => {
-  const { defaultValue, type = 'string', onChange, onBlur } = props;
+  const { defaultValue, type = 'string', name, onChange, onBlur } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -68,10 +69,13 @@ const ConstantInput = (props: CustomInputProps) => {
     (value: string) => {
       setValue(value);
       setOpenModal(false);
-      onChange(value);
+      if (inputRef.current) {
+        inputRef.current.value = value;
+        onChange({ target: inputRef.current });
+      }
       setTimeout(() => onBlur && onBlur(), 500);
     },
-    [value]
+    [value, inputRef]
   );
   useEffect(() => {
     if (defaultValue) {
@@ -90,6 +94,7 @@ const ConstantInput = (props: CustomInputProps) => {
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}
       />
+      <input type="hidden" name={name} ref={inputRef} />
     </>
   );
 };

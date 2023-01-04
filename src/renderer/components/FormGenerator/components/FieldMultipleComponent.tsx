@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FormField, Grid, Header, Icon } from 'semantic-ui-react';
+import { Grid, Header, Icon } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import { FieldMultipleComponentProps } from 'types';
 import TransComponent from '../../TransComponent';
@@ -9,63 +9,22 @@ const FieldMultipleComponent: React.FunctionComponent<
 > = (props) => {
   const {
     keyValue,
-    components,
     core,
     defaultValue,
     required = true,
-    onChange,
+    generateField,
   } = props;
 
   const [items, setItems] = useState<number[]>([]);
   const [values, setValues] = useState<{ id: Number; value: any }[]>([]);
-  const handleChange = useCallback(
-    (item: number, core: any, key: string, value: any) =>
-      setValues((_values) => {
-        const valueFind = _values.find((v) => v.id === item);
-
-        if (valueFind) {
-          valueFind.value[key] =
-            core === 'number' &&
-            !(typeof value === 'string' && value.startsWith('@'))
-              ? Number(value)
-              : value;
-        } else {
-          _values.push({
-            id: item,
-            value: {
-              [key]: value,
-            },
-          });
-        }
-        return _values;
-      }),
-    []
-  );
-
-  const sendOnChange = useCallback(
-    (_values = values) => {
-      const definitiveValue: any = {};
-      definitiveValue[keyValue] = [];
-      _values.forEach((value) => {
-        const v: any = {};
-        Object.keys(value.value).forEach((key) => {
-          v[key] = value.value[key];
-        });
-        definitiveValue[keyValue].push(v);
-      });
-      onChange(definitiveValue);
-    },
-    [onChange, keyValue, values]
-  );
 
   const handleRemove = useCallback(
     (item: number) => {
       const _values = Array.from(values.filter((value) => value.id !== item));
       setItems(Array.from(items.filter((i) => i !== item)));
       setValues(_values);
-      sendOnChange(_values);
     },
-    [items, values, sendOnChange]
+    [items, values]
   );
 
   const appendItem = useCallback(() => {
@@ -116,27 +75,15 @@ const FieldMultipleComponent: React.FunctionComponent<
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column>
-                  {components.map((Component, i) => {
-                    const defaultValueFind = values.find(
-                      (v) => v.id === item
-                    )?.value;
-                    return (
-                      <React.Fragment key={`${keyValue}-${i}`}>
-                        <FormField>
-                          <Component
-                            onChange={(core: any, key: string, value: any) =>
-                              handleChange(item, core, key, value)
-                            }
-                            onBlur={() => sendOnChange()}
-                            defaultValue={
-                              defaultValueFind &&
-                              defaultValueFind[Object.keys(core)[i]]
-                            }
-                          />
-                        </FormField>
-                      </React.Fragment>
-                    );
-                  })}
+                  {Object.keys(core).map((c) => (
+                    <React.Fragment>
+                      {generateField({
+                        key: `${keyValue}.${item}.${c}`,
+                        core: core[c],
+                        label: c,
+                      })}
+                    </React.Fragment>
+                  ))}
                 </Grid.Column>
               </Grid.Row>
             </Grid>

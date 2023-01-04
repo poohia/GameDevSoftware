@@ -11,8 +11,16 @@ type InputComponentProps = InputProps & {
 };
 
 const InputComponent = (props: InputComponentProps) => {
-  const { onChange, defaultValue, type, children, hideConstant, ...rest } =
-    props;
+  const {
+    onChange,
+    defaultValue,
+    type,
+    children,
+    hideConstant,
+    name,
+    ...rest
+  } = props;
+
   const [inputType, setInputType] = useState<'c' | 'v'>('v');
 
   const defaultValueConstant = useMemo(() => {
@@ -33,6 +41,8 @@ const InputComponent = (props: InputComponentProps) => {
       defaultValue.startsWith('@c:')
     ) {
       setInputType('c');
+    } else {
+      setInputType('v');
     }
   }, [defaultValue]);
 
@@ -44,9 +54,15 @@ const InputComponent = (props: InputComponentProps) => {
 
       return () => (
         <Input
-          onChange={(_e, { value }) => onChange(value)}
+          onChange={(e, { value }) => {
+            if (type === 'number') {
+              e.target.value = Number(value);
+            }
+            onChange(e);
+          }}
           defaultValue={defaultValue}
           type={type}
+          name={name}
           {...rest}
         />
       );
@@ -56,6 +72,7 @@ const InputComponent = (props: InputComponentProps) => {
         onChange={onChange}
         type={type}
         defaultValue={defaultValueConstant}
+        name={name}
       />
     );
   }, [inputType, type, defaultValue, children, onChange]);

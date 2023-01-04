@@ -1,9 +1,9 @@
 import { Grid } from 'semantic-ui-react';
 import { PageProps } from 'types';
-import { FormGenerator as GameobjectFormComponent } from 'renderer/components';
 import GameobjectHeaderComponent from '../GameobjectHeaderComponent';
 import GameobjectTableComponent from '../GameobjectTableComponent';
 import useGameobjectContainerComponent from './useGameobjectContainerComponent';
+import useFormGenerator from 'renderer/components/FormGenerator/useFormGenerator';
 
 const GameobjectContainerComponent = (props: PageProps) => {
   const {
@@ -15,6 +15,12 @@ const GameobjectContainerComponent = (props: PageProps) => {
     updateGameobject,
     sendCreateGameobject,
   } = useGameobjectContainerComponent(props);
+  // const Form = useFormGenerator({
+  //   type: gameObjectForm?.type || '',
+  //   form: gameObjectForm && gameObjectForm.core,
+  //   defaultValues: stateForm.value,
+  //   onSubmit: sendCreateGameobject,
+  // });
 
   return (
     <Grid>
@@ -42,12 +48,13 @@ const GameobjectContainerComponent = (props: PageProps) => {
         </Grid.Column>
         {stateForm.show && gameObjectForm && (
           <Grid.Column width={8}>
-            <GameobjectFormComponent
+            {/* <GameobjectFormComponent
               type={gameObjectForm.type}
               form={gameObjectForm.core}
               defaultValues={stateForm.value}
               onSubmit={sendCreateGameobject}
-            />
+            /> */}
+            {/* {Form} */}
           </Grid.Column>
         )}
       </Grid.Row>

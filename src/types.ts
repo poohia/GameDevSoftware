@@ -235,10 +235,11 @@ export type FormField = {
   optional?: boolean;
   label?: string;
   description?: string;
-  parent?: string;
+  parent?: string | any;
   onChange?: (core: any, key: string, v: any, parent?: string) => void;
 };
 export type CustomInputProps = {
+  name: string;
   defaultValue?: any;
   type?: string | number;
   required?: boolean;
@@ -248,11 +249,11 @@ export type CustomInputProps = {
 };
 export type FieldMultipleComponentProps = Pick<
   CustomInputProps,
-  'onChange' | 'defaultValue' | 'required'
+  'defaultValue' | 'required'
 > & {
   keyValue: string;
   core: any;
-  components: any[];
+  generateField: (field: FormField) => any;
 };
 
 export type SceneTypeJSON = ObjectGameTypeJSON & {

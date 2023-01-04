@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { FieldArray, FormikProvider, useFormik } from 'formik';
 import { Dropdown, Form, Grid, Header } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import { FormField } from 'types';
@@ -25,51 +26,26 @@ export type FormGeneratorProps = {
   onSubmit: (data: any) => void;
 };
 
-export const mergeDeeply = (obj1: any, obj2: any) => {
-  for (const key of Object.keys(obj1)) {
-    if (obj2[key] === undefined) {
-      obj2[key] = obj1[key];
-    }
-  }
-
-  return obj2;
-};
-
 const useFormGenerator = (props: FormGeneratorProps) => {
-  const { form, type: _type, defaultValues, onSubmit } = props;
+  const { form = [], type: _type, defaultValues, onSubmit } = props;
 
-  const [value, setValue] = useState<any>({});
-
-  const handleChangeMultiple = useCallback((data: any) => {
-    setValue((_value: any) => {
-      const key = Object.keys(data)[0];
-      _value[key] = data[key];
-      return _value;
-    });
-  }, []);
-
-  const handleChange = useCallback(
-    (core: any, key: string, v: any, parent?: string) => {
-      setValue((_value: any) => {
-        const defKey = parent ? parent : key;
-        if (typeof core === 'string') {
-          let _v = v;
-          if (
-            core === 'number' &&
-            !(typeof v === 'string' && v.startsWith('@c:'))
-          ) {
-            _v = Number(v);
-          }
-          _value[defKey] = parent ? { ..._value[defKey], [key]: _v } : _v;
-        } else if (Array.isArray(core)) {
-          _value[defKey] = parent ? { ..._value[defKey], [key]: v } : v;
-        } else {
-          _value[defKey] = parent ? { ..._value[defKey], [key]: v } : v;
-        }
-        return _value;
-      });
+  const formik = useFormik<any>({
+    initialValues: defaultValues ? defaultValues : {},
+    onSubmit: (values) => {
+      onSubmit({ ...values, _type });
     },
-    []
+    enableReinitialize: true,
+  });
+
+  const getDefaultValue = useCallback(
+    (key: string) => {
+      const meta = formik.getFieldMeta(key);
+      if (meta) {
+        return meta.value;
+      }
+      return undefined;
+    },
+    [formik.initialValues]
   );
 
   const generateField = useCallback(
@@ -82,37 +58,25 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         multiple,
         optional,
         parent,
-        onChange = handleChange,
+        onChange = () => {},
         ...rest
       } = field;
+
       const defaultProps: Omit<FieldComponentProps, 'children'> = {
         keyValue: key,
         label: label || key,
         description,
         required: !optional && !core?.optional,
       };
-      let defaultValue = undefined;
+      let defaultValue = getDefaultValue(key);
 
-      if (defaultValues && typeof defaultValues[key] !== 'undefined') {
-        defaultValue = defaultValues[key];
-      } else if (
-        parent &&
-        defaultValues &&
-        typeof defaultValues[parent] !== 'undefined'
-      ) {
-        defaultValue = defaultValues[parent][key];
-      }
-
-      if (parent) {
-        console.log(key, core, defaultValues, parent);
-      }
       if (core === 'string' || core === 'number') {
         return (
           <FieldComponent {...defaultProps}>
             <InputComponent
-              id={key}
+              name={key}
               type={core}
-              onChange={(data) => onChange(core, key, data, parent)}
+              onChange={formik.handleChange}
               defaultValue={defaultValue}
               {...rest}
             />
@@ -175,7 +139,6 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         return (
           <BooleanInput
             onChange={(data) => {
-              console.log(core, key, data, parent);
               onChange(core, key, data, parent);
             }}
             defaultValue={defaultValue}
@@ -221,32 +184,8 @@ const useFormGenerator = (props: FormGeneratorProps) => {
           </FieldComponent>
         );
       }
-      if (Array.isArray(core)) {
-        return (
-          <FieldComponent {...defaultProps}>
-            <Dropdown
-              fluid
-              selection
-              search
-              multiple={multiple}
-              id={key}
-              options={core.map((v) => ({
-                text: v,
-                value: v,
-                key: v,
-              }))}
-              onChange={(_, data) => onChange(core, key, data.value, parent)}
-              defaultValue={defaultValue}
-              {...rest}
-            ></Dropdown>
-          </FieldComponent>
-        );
-      }
 
       if (typeof core === 'object') {
-        if (Array.isArray(core.core)) {
-          return generateField({ ...core, core: core.core, key, parent });
-        }
         if (typeof core.core === 'object' && !core.multiple) {
           return (
             <FieldComponent
@@ -258,7 +197,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               {Object.keys(core.core).map((coreKey) => (
                 <React.Fragment key={`${key}-${coreKey}`}>
                   {generateField({
-                    key: coreKey,
+                    key: `${key}.${coreKey}`,
                     core: core.core[coreKey],
                     parent: key,
                   })}
@@ -280,34 +219,20 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                 core={core.core}
                 required={!core.optional}
                 defaultValue={defaultValue}
-                components={Object.keys(core.core).map((coreKey) => {
-                  return (props: any) => (
-                    <React.Fragment key={`${key}-${core.core[coreKey]}`}>
-                      {generateField({
-                        key: coreKey,
-                        core: core.core[coreKey],
-                        parent: key,
-                        ...props,
-                      })}
-                    </React.Fragment>
-                  );
-                })}
-                onChange={handleChangeMultiple}
+                generateField={generateField}
               />
             </FieldComponent>
           );
         }
-
-        return generateField({ ...core, key, parent });
+        return generateField({ ...core, key });
       }
-
       return <div />;
     },
-    [value, defaultValues]
+    [formik.initialValues]
   );
 
   const FormGeneratedComponent = useMemo(() => {
-    return () => (
+    return (
       <Grid>
         <Grid.Row>
           <Grid.Column>
@@ -325,31 +250,21 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column>
-            <Form
-              onSubmit={() => {
-                if (defaultValues === undefined) {
-                  onSubmit({ ...value, _type });
-                } else {
-                  onSubmit({ ...mergeDeeply(defaultValues, value), _type });
-                }
-              }}
-            >
-              {Object.keys(form).map((key) => (
-                <React.Fragment key={key}>
-                  {generateField({ key, core: form[key] })}
-                </React.Fragment>
-              ))}
-              <Button type="submit">Submit</Button>
+            <Form onSubmit={formik.handleSubmit}>
+              <FormikProvider value={formik}>
+                {Object.keys(form).map((key) => (
+                  <React.Fragment key={key}>
+                    {generateField({ key, core: form[key] })}
+                  </React.Fragment>
+                ))}
+                <Button type="submit">Submit</Button>
+              </FormikProvider>
             </Form>
           </Grid.Column>
         </Grid.Row>
       </Grid>
     );
-  }, [value, defaultValues]);
-
-  useEffect(() => {
-    setValue({});
-  }, [defaultValues]);
+  }, [formik.initialValues]);
 
   return FormGeneratedComponent;
 };
