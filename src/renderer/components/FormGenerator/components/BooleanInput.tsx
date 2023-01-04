@@ -15,6 +15,10 @@ const BooleanInput: React.FC<
     onChange(value);
   }, [value]);
 
+  useEffect(() => {
+    setValue(!!defaultValue);
+  }, [defaultValue]);
+
   return (
     <>
       <Checkbox
