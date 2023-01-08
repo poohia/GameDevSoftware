@@ -9,6 +9,7 @@ import GameObjectPlugin from './GameObjectPlugin';
 import DarkModePlugin from './DarkModePlugin';
 import ScenePlugin from './ScenePlugin';
 import EnvPlugin from './EnvPlugin';
+import WatchPlugin from './WatchPlugin';
 
 type Plugins =
   | 'folderPlugin'
@@ -20,7 +21,8 @@ type Plugins =
   | 'gameObjectPlugin'
   | 'scenePlugin'
   | 'darkModePlugin'
-  | 'envPlugin';
+  | 'envPlugin'
+  | 'watchPlugin';
 
 export default class PluginsContainer {
   private _folderPlugin;
@@ -33,6 +35,7 @@ export default class PluginsContainer {
   private _scenePlugin;
   private _darkModePlugin;
   private _envPlugin;
+  private _watchPlugin;
 
   constructor(mainWindow: BrowserWindow) {
     this._folderPlugin = new FolderPlugin(mainWindow);
@@ -45,6 +48,7 @@ export default class PluginsContainer {
     this._scenePlugin = new ScenePlugin();
     this._darkModePlugin = new DarkModePlugin();
     this._envPlugin = new EnvPlugin();
+    this._watchPlugin = new WatchPlugin(mainWindow);
   }
 
   init() {

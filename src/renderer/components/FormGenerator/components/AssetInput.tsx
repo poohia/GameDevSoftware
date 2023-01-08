@@ -78,9 +78,7 @@ const AssetInput = (props: CustomInputProps) => {
   );
 
   useEffect(() => {
-    if (defaultValue) {
-      setValue(defaultValue);
-    }
+    setValue(defaultValue);
   }, [defaultValue]);
 
   return (

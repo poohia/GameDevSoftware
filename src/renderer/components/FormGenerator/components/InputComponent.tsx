@@ -4,7 +4,7 @@ import { Button } from 'renderer/semantic-ui';
 import ConstantInput from './ConstantInput';
 
 type InputComponentProps = InputProps & {
-  onChange: (value: any) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   children?: ReactFragment | ReactNode;
   defaultValue?: string | number;
   hideConstant?: boolean;

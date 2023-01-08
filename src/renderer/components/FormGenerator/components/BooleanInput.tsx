@@ -12,10 +12,6 @@ const BooleanInput: React.FC<
   const [value, setValue] = useState<boolean>(!!defaultValue);
 
   useEffect(() => {
-    onChange(value);
-  }, [value]);
-
-  useEffect(() => {
     setValue(!!defaultValue);
   }, [defaultValue]);
 
@@ -23,7 +19,10 @@ const BooleanInput: React.FC<
     <>
       <Checkbox
         checked={value}
-        onChange={() => setValue(!value)}
+        onChange={() => {
+          setValue(!value);
+          onChange(!value);
+        }}
         label={label}
       />
     </>

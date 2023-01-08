@@ -78,9 +78,7 @@ const TranslationInput = (props: CustomInputProps) => {
     [value, inputRef]
   );
   useEffect(() => {
-    if (defaultValue) {
-      setValue(defaultValue);
-    }
+    setValue(defaultValue);
   }, [defaultValue]);
   return (
     <>

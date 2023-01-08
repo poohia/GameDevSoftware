@@ -60,10 +60,8 @@ const useConstant = () => {
           value: {
             value: constant ? constant.value : '',
             description: constant?.description || '',
-            editable:
-              typeof constant?.editable === 'undefined'
-                ? true
-                : constant?.editable,
+            // default false
+            editable: !!constant && !!constant.editable,
           },
         },
       });

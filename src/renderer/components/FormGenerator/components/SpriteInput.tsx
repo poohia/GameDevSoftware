@@ -8,7 +8,9 @@ import { Checkbox, Grid, Input } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import { CustomInputProps } from 'types';
 import AssetInput from './AssetInput';
+import BooleanInput from './BooleanInput';
 import FieldComponent from './FieldComponent';
+import InputComponent from './InputComponent';
 
 const SpriteInput: React.FC<
   Omit<CustomInputProps, 'onChange' | 'name'> & {
@@ -34,8 +36,25 @@ const SpriteInput: React.FC<
     null
   );
 
-  const showAnimationHandle = useCallback(() => {
-    if (image !== '' && width && height && maxFrame && timeBeetweenSprite) {
+  useEffect(() => {
+    setImage(defaultValue?.image || '');
+    setWidth(defaultValue?.width);
+    setHeight(defaultValue?.height);
+    setMaxFrame(defaultValue?.maxFrame);
+    setTimeBeetweenSprite(defaultValue?.timeBeetweenSprite);
+    setLoop(defaultValue?.loop);
+    setSpriteProps(null);
+  }, [defaultValue]);
+
+  const toggleAnimationHandle = useCallback(() => {
+    if (
+      image !== '' &&
+      width &&
+      height &&
+      maxFrame &&
+      timeBeetweenSprite &&
+      !spriteProps
+    ) {
       sendMessage('load-asset-base64', image.replace('@a:', ''));
       once('get-asset-information', (data) => {
         setSpriteProps({
@@ -47,8 +66,10 @@ const SpriteInput: React.FC<
           loop,
         });
       });
+    } else {
+      setSpriteProps(null);
     }
-  }, [image, width, height, maxFrame, timeBeetweenSprite, loop]);
+  }, [image, width, height, maxFrame, timeBeetweenSprite, loop, spriteProps]);
 
   useEffect(() => {
     setSpriteProps(null);
@@ -76,9 +97,10 @@ const SpriteInput: React.FC<
       <Grid.Row columns={2}>
         <Grid.Column>
           <FieldComponent label={i18n.t('form_input_sprite_width')}>
-            <Input
+            <InputComponent
               type="number"
-              onChange={(_e, { value }) => {
+              onChange={(e) => {
+                const { value } = e.target;
                 if (value === '') {
                   setWidth(undefined);
                   setHeight(undefined);
@@ -87,17 +109,20 @@ const SpriteInput: React.FC<
                   setHeight(Number(value));
                 }
               }}
+              defaultValue={width}
               value={width}
               label="px"
               labelPosition="right"
+              hideConstant
             />
           </FieldComponent>
         </Grid.Column>
         <Grid.Column>
           <FieldComponent label={i18n.t('form_input_sprite_height')}>
-            <Input
+            <InputComponent
               type="number"
-              onChange={(_e, { value }) => {
+              onChange={(e) => {
+                const { value } = e.target;
                 if (value === '') {
                   setHeight(undefined);
                 } else {
@@ -107,6 +132,7 @@ const SpriteInput: React.FC<
               value={height}
               label="px"
               labelPosition="right"
+              hideConstant
             />
           </FieldComponent>
         </Grid.Column>
@@ -114,9 +140,10 @@ const SpriteInput: React.FC<
       <Grid.Row columns={2}>
         <Grid.Column>
           <FieldComponent label={i18n.t('form_input_sprite_max_frame')}>
-            <Input
+            <InputComponent
               type="number"
-              onChange={(_e, { value }) => {
+              onChange={(e) => {
+                const { value } = e.target;
                 if (value === '') {
                   setMaxFrame(undefined);
                 } else {
@@ -124,6 +151,7 @@ const SpriteInput: React.FC<
                 }
               }}
               value={maxFrame}
+              hideConstant
             />
           </FieldComponent>
         </Grid.Column>
@@ -131,9 +159,10 @@ const SpriteInput: React.FC<
           <FieldComponent
             label={i18n.t('form_input_sprite_time_beetween_sprite')}
           >
-            <Input
+            <InputComponent
               type="number"
-              onChange={(_e, { value }) => {
+              onChange={(e) => {
+                const { value } = e.target;
                 if (value === '') {
                   setTimeBeetweenSprite(undefined);
                 } else {
@@ -141,6 +170,7 @@ const SpriteInput: React.FC<
                 }
               }}
               value={timeBeetweenSprite}
+              hideConstant
             />
           </FieldComponent>
         </Grid.Column>
@@ -151,8 +181,8 @@ const SpriteInput: React.FC<
             label={i18n.t('form_input_sprite_loop')}
             required={false}
           >
-            <Checkbox
-              checked={loop}
+            <BooleanInput
+              defaultValue={loop}
               label={i18n.t('form_input_sprite_loop_activate')}
               onChange={() => setLoop(!loop)}
             />
@@ -160,7 +190,7 @@ const SpriteInput: React.FC<
         </Grid.Column>
         <Grid.Column>
           <Button
-            onClick={showAnimationHandle}
+            onClick={toggleAnimationHandle}
             type="button"
             disabled={
               !(

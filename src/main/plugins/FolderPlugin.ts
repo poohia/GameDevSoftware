@@ -37,7 +37,7 @@ export default class FolderPlugin {
   static directorySounds = `${FolderPlugin.assetsDirectory}/sounds`;
   static directoryJson = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/configurationsFiles`;
   /** env files */
-  static envFolder = `${FolderPlugin.srcDirectory}/envs`;
+  static envFolder = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/envs`;
   static envFiles = ['/env.development.json', '/env.production.json'];
   /** */
   static appImages = [

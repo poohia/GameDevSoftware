@@ -1,10 +1,7 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
-import async from 'async';
 import { ConstantObject, ElectronIpcMainEvent, ModuleArgs } from 'types';
 import FolderPlugin from './FolderPlugin';
-import FileService from '../services/FileService';
-import GameModulesPlugin from './GameModulesPlugin';
 
 export default class ConstantPlugin {
   constructor() {}
