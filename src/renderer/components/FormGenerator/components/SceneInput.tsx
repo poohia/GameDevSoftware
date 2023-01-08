@@ -10,6 +10,7 @@ const ModalSceneInput = (
   props: ModalProps & {
     defaultValue?: string;
     onSubmit: (value: string) => void;
+    onClose: () => void;
   }
 ) => {
   const { open, defaultValue, onClose, onSubmit, ...rest } = props;
@@ -33,8 +34,6 @@ const ModalSceneInput = (
       onClose={onClose}
       onAccepted={() => onSubmit(value)}
       title={<TransComponent id="form_input_modal_assets_title" />}
-      closeOnDimmerClick
-      dimmer={'inverted'}
       disableAccepted={value === ''}
       {...rest}
     >

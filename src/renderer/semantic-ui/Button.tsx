@@ -4,7 +4,7 @@ import { Button as ButtonSemantic, ButtonProps } from 'semantic-ui-react';
 
 const Button = (props: ButtonProps) => {
   const { darkModeActived } = useContext(DarkModeContext);
-  return <ButtonSemantic {...props} inverted={darkModeActived} />;
+  return <ButtonSemantic inverted={darkModeActived} {...props} />;
 };
 
 export default Button;

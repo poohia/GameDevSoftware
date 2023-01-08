@@ -11,6 +11,7 @@ const ModalAsset = (
     type: AssertAcceptedType;
     defaultValue?: string;
     onSubmit: (value: string) => void;
+    onClose: () => void;
   }
 ) => {
   const { open, defaultValue, type, onClose, onSubmit, ...rest } = props;
@@ -34,8 +35,6 @@ const ModalAsset = (
       onClose={onClose}
       onAccepted={() => onSubmit(value)}
       title={<TransComponent id="form_input_modal_assets_title" />}
-      closeOnDimmerClick
-      dimmer={'inverted'}
       disableAccepted={value === ''}
       {...rest}
     >

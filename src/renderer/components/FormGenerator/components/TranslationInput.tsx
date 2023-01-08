@@ -10,6 +10,7 @@ const ModalTranslation = (
   props: ModalProps & {
     defaultValue?: string;
     onSubmit: (value: string) => void;
+    onClose: () => void;
   }
 ) => {
   const { open, defaultValue, onClose, onSubmit, ...rest } = props;
@@ -35,8 +36,6 @@ const ModalTranslation = (
       onClose={onClose}
       onAccepted={() => onSubmit(value)}
       title={<TransComponent id="form_input_modal_translations_title" />}
-      closeOnDimmerClick
-      dimmer={'inverted'}
       disableAccepted={value === ''}
       {...rest}
     >
