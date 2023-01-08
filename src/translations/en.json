@@ -24,6 +24,7 @@
   "form_title_update": "Update",
   "form_title_new_type": "Create {type}",
   "form_title_update_type": "Update {type}",
+  "form_label_editable": "Editable",
   "module_constant_header_append_asset": "Create asset",
   "module_constant_header_append_multiple_asset": "Create mulitple assets",
   "module_application_params_identity_title": "Identity",

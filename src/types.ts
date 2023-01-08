@@ -96,6 +96,7 @@ export type ConstantObject = {
   value: ConstantValue;
   description?: string;
   editable?: boolean;
+  deletable?: boolean;
   module?: string;
 };
 export type TabType = {

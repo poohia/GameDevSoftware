@@ -45,6 +45,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
   const [description, setDescription] = useState<string>(
     defaultValue?.description || ''
   );
+  const [editable, setEditable] = useState<boolean>(!!defaultValue?.editable);
 
   const disableForm = useMemo(
     () => (defaultValue ? !defaultValue.editable : false),
@@ -74,6 +75,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
     if (!defaultValue) {
       setValue('');
       setType('string');
+      setEditable(false);
       return;
     }
     const { value } = defaultValue;
@@ -93,6 +95,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
         setValue(value);
       }
     }, 100);
+    setEditable(!!defaultValue.editable);
   }, [defaultValue]);
 
   useEffect(() => {
@@ -115,6 +118,8 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
         setValue('');
     }
   }, [type]);
+
+  console.log(defaultValue, editable);
 
   return (
     <Container fluid>
@@ -213,6 +218,14 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   onChange={(_: any, data: { value: string }) =>
                     setDescription(data.value)
                   }
+                  disabled={!canEditeDescription || disableForm}
+                />
+              </Form.Field>
+              <Form.Field>
+                <Form.Checkbox
+                  label={i18n.t('form_label_editable')}
+                  checked={editable}
+                  onChange={() => setEditable(!editable)}
                   disabled={!canEditeDescription || disableForm}
                 />
               </Form.Field>
