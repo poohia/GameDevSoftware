@@ -71,14 +71,15 @@ const useFormGenerator = (props: FormGeneratorProps) => {
       const defaultValue = getDefaultValue(key);
       const onChange = formik.handleChange;
 
-      if (core === 'string' || core === 'number') {
+      if (core === 'string' || core === 'number' || core === 'float') {
         return (
           <FieldComponent {...defaultProps}>
             <InputComponent
               name={key}
-              type={core}
               onChange={onChange}
               defaultValue={defaultValue}
+              type={core === 'float' ? 'number' : core}
+              step={core === 'float' ? '.01' : '1'}
               {...rest}
             />
           </FieldComponent>
