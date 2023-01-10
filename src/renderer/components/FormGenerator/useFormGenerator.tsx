@@ -12,12 +12,12 @@ import {
   InputComponent,
   GameObjectInput,
   BooleanInput,
+  ConstantValueInput,
+  AssetInput,
+  SceneInput,
+  SpriteInput,
 } from './components';
-import AssetInput from './components/AssetInput';
 import { FieldComponentProps } from './components/FieldComponent';
-import SceneInput from './components/SceneInput';
-import ConstantValueInput from './components/ConstantValueInput';
-import SpriteInput from './components/SpriteInput';
 
 export type FormGeneratorProps = {
   form: any;
@@ -135,7 +135,11 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               name={key}
               type={core.replace('@go:', '')}
               defaultValue={defaultValue}
-              onChange={onChange}
+              multiple={multiple}
+              optional={optional}
+              onChange={(value) => {
+                formik.setFieldValue(key, value);
+              }}
               {...rest}
             />
           </FieldComponent>
@@ -195,7 +199,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
       }
 
       if (typeof core === 'object') {
-        if (typeof core.core === 'object' && !core.multiple) {
+        if (typeof core.core === 'object' && multiple) {
           return (
             <FieldComponent
               {...defaultProps}
@@ -215,7 +219,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
             </FieldComponent>
           );
         }
-        if (typeof core.core === 'object' && core.multiple) {
+        if (typeof core.core === 'object' && multiple) {
           return (
             <FieldComponent
               {...defaultProps}

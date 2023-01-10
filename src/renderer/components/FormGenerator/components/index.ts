@@ -5,3 +5,7 @@ export { default as TranslationInput } from './TranslationInput';
 export { default as ColorPicker } from './ColorPicker';
 export { default as GameObjectInput } from './GameObjectInput';
 export { default as BooleanInput } from './BooleanInput';
+export { default as ConstantValueInput } from './ConstantValueInput';
+export { default as AssetInput } from './AssetInput';
+export { default as SceneInput } from './SceneInput';
+export { default as SpriteInput } from './SpriteInput';

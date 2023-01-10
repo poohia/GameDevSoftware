@@ -249,6 +249,7 @@ export type CustomInputProps = {
   type?: string | number;
   required?: boolean;
   multiple?: boolean;
+  optional?: boolean;
   onChange: (value: any) => void;
   onBlur?: () => void;
 };

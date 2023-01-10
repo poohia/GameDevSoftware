@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ModalComponent from 'renderer/components/ModalComponent';
 import TransComponent from 'renderer/components/TransComponent';
-import { ModalProps } from 'semantic-ui-react';
+import { Dropdown, DropdownItemProps, ModalProps } from 'semantic-ui-react';
 import { CustomInputProps, GameObject } from 'types';
 import GameObjectContext from 'renderer/contexts/GameObjectContext';
 import GameobjectTableComponent from 'renderer/pages/GameobjectPage/components/GameobjectTableComponent';
@@ -52,11 +52,68 @@ const ModalGameObjectInput = (
   );
 };
 
-const GameObjectInput = (props: CustomInputProps) => {
-  const { defaultValue, type, name, onChange, onBlur } = props;
+const DropDownGameObjectInput = (props: {
+  type: string;
+  defaultValue?: string[];
+  optional?: boolean;
+  onChange: (value: string[]) => void;
+}) => {
+  const { defaultValue, optional = false, type, onChange } = props;
+  const [gameObjects, setGameObjects] = useState<DropdownItemProps[]>([]);
+  const { findGameObjectsByType } = useContext(GameObjectContext);
+  const [value, setValue] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (defaultValue) {
+      setValue(defaultValue);
+    } else {
+      setValue([]);
+    }
+  }, [defaultValue]);
+
+  useEffect(() => {
+    setGameObjects(
+      findGameObjectsByType(type).map((go) => ({
+        text: go._title,
+        value: `@go:${go._id}`,
+        key: `gameobjectinput-go-${go._id}`,
+      }))
+    );
+  }, [type, findGameObjectsByType]);
+
+  return (
+    <Dropdown
+      fluid
+      selection
+      search
+      multiple
+      value={value}
+      options={gameObjects}
+      clearable={optional}
+      onChange={(_e, data) => {
+        setValue(data.value as string[]);
+        onChange(data.value as string[]);
+      }}
+    />
+  );
+};
+
+const GameObjectInput: React.FC<
+  Omit<CustomInputProps, 'onChange' | 'name'> & {
+    type: string;
+    onChange: (value?: string | string[]) => void;
+  }
+> = (props) => {
+  const {
+    defaultValue,
+    type,
+    multiple,
+    optional = false,
+    onChange,
+    onBlur,
+  } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [value, setValue] = useState<string>('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState<string | string[]>(multiple ? [] : '');
 
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -67,27 +124,55 @@ const GameObjectInput = (props: CustomInputProps) => {
     []
   );
   const handleSubmit = useCallback(
-    (value: string) => {
-      setValue(value);
-      setOpenModal(false);
-      if (inputRef.current) {
-        inputRef.current.value = value;
-        onChange({ target: inputRef.current });
+    (v: string) => {
+      if (typeof value === 'string') {
+        setValue(v);
+      } else {
+        setValue(value.concat(v));
       }
+      setOpenModal(false);
+
+      onChange(v);
+
       setTimeout(() => onBlur && onBlur(), 500);
     },
-    [value, inputRef]
+    [value]
   );
 
   useEffect(() => {
-    setValue(defaultValue);
+    if (defaultValue) {
+      setValue(defaultValue);
+    } else {
+      setValue(multiple ? [] : '');
+    }
   }, [defaultValue]);
+
+  if (multiple) {
+    return (
+      <DropDownGameObjectInput
+        onChange={(v) => onChange(v)}
+        optional={optional}
+        type={type}
+        defaultValue={defaultValue}
+      />
+    );
+  }
 
   return (
     <>
       <div className="ui selection dropdown fluid" onClick={handleClick}>
         {value && <span>{value}</span>}
       </div>
+      {optional && value !== '' && (
+        <span
+          onClick={() => {
+            onChange();
+            setValue('');
+          }}
+        >
+          X
+        </span>
+      )}
       <ModalGameObjectInput
         open={openModal}
         defaultValue={defaultValue}
@@ -95,7 +180,6 @@ const GameObjectInput = (props: CustomInputProps) => {
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}
       />
-      <input type="hidden" name={name} ref={inputRef} />
     </>
   );
 };

@@ -87,28 +87,30 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
   useEffect(() => {
     if (!defaultValue) {
       setValue('');
+      setDescription('');
       setType('string');
       setEditable(true);
       setDeletable(true);
       return;
     }
-    const { value } = defaultValue;
-    if (Array.isArray(value) && typeof value[0] === 'number') {
+    const { value: vv } = defaultValue;
+    if (Array.isArray(vv) && typeof vv[0] === 'number') {
       setType('number[]');
-    } else if (Array.isArray(value)) {
+    } else if (Array.isArray(vv)) {
       setType('string[]');
-    } else if (typeof value === 'number') {
+    } else if (typeof vv === 'number') {
       setType('number');
     } else {
       setType('string');
     }
     setTimeout(() => {
-      if (Array.isArray(value) && typeof value[0] === 'number') {
-        setValue(value.map((v) => String(v)));
+      if (Array.isArray(vv) && typeof vv[0] === 'number') {
+        setValue(vv.map((v) => String(v)));
       } else {
-        setValue(value);
+        setValue(vv);
       }
     }, 100);
+    setDescription(defaultValue.description);
     setEditable(!!defaultValue.editable);
     setDeletable(!!defaultValue.deletable);
   }, [defaultValue]);
