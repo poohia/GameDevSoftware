@@ -10,11 +10,10 @@ const useEvents = () => {
       if (module) {
         console.log(`${chanel}-module`);
         //@ts-ignore
-        window.electron.ipcRenderer.sendMessage(`${chanel}-module`, module);
+        sendMessage(`${chanel}-module`, module);
         //@ts-ignore
         return on(`${chanel}-module-${module}`, callback);
       }
-      console.log(chanel);
       sendMessage(chanel);
       return on(chanel, callback);
     },
@@ -23,6 +22,7 @@ const useEvents = () => {
 
   const sendMessage = useCallback(
     (chanel: Channels, args?: any, forceModule?: string) => {
+      window.electron.ipcRenderer.sendMessage('unrefresh');
       if (module || forceModule) {
         console.log(`${chanel}-module`, args);
         //@ts-ignore

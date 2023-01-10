@@ -63,7 +63,8 @@ export type Channels =
   | 'load-env-production-vars'
   | 'write-env-production-vars'
   | 'load-menus-views'
-  | 'set-menu-view';
+  | 'set-menu-view'
+  | 'unrefresh';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -120,11 +121,15 @@ export type AssertFileValueType = {
   fileName: string;
   fileType: AssertAcceptedType;
   content: any | string;
+  editable: boolean;
+  deletable: boolean;
 };
 export type AssetType = {
   type: AssertAcceptedType;
   name: string;
   module?: string;
+  editable: boolean;
+  deletable: boolean;
 };
 export type AssetHeaderComponentProps = {
   onClickAdd: () => void;

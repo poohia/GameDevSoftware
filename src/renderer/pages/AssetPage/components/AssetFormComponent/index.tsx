@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   DropdownAssetTypesComponent,
   DropzoneAssetFileComponent,
@@ -7,6 +7,7 @@ import { Container, Form, Grid, Header } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { AssertFileValueType, AssetType } from 'types';
+import AssetPreviewComponent from '../AssetPreviewComponent';
 
 type AssetFormComponentProps = {
   defaultValue?: AssetType;
@@ -14,11 +15,30 @@ type AssetFormComponentProps = {
 };
 const AssetFormComponent = (props: AssetFormComponentProps) => {
   const { defaultValue, onSubmit } = props;
+
   const [file, setFile] = useState<AssertFileValueType>({
     content: '',
     fileName: '',
     fileType: 'image',
+    editable: defaultValue ? defaultValue.editable : true,
+    deletable: defaultValue ? defaultValue.deletable : true,
   });
+
+  const disableForm = useMemo(
+    () => (defaultValue ? !defaultValue.editable : false),
+    [defaultValue]
+  );
+
+  useEffect(() => {
+    setFile({
+      content: '',
+      fileName: defaultValue ? defaultValue.name : '',
+      fileType: defaultValue ? defaultValue.type : 'image',
+      editable: defaultValue ? defaultValue.editable : true,
+      deletable: defaultValue ? defaultValue.deletable : true,
+    });
+  }, [defaultValue]);
+
   return (
     <Container fluid>
       <Grid className="game-dev-software-form-container">
@@ -35,16 +55,51 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
           <Container fluid>
             <Form>
               <Form.Field required>
-                <label>Type</label>
+                <label>Type (auto detecting)</label>
                 <DropdownAssetTypesComponent value={file.fileType} disabled />
               </Form.Field>
               <Form.Field>
-                <DropzoneAssetFileComponent onChange={setFile} />
+                {defaultValue && <label>{defaultValue.name}</label>}
+                <DropzoneAssetFileComponent
+                  onChange={(value) =>
+                    setFile({
+                      ...file,
+                      content: value.content,
+                      fileName: defaultValue
+                        ? defaultValue.name
+                        : value.fileName,
+                    })
+                  }
+                  disabled={disableForm}
+                />
+              </Form.Field>
+              <Form.Field>
+                <Form.Checkbox
+                  label={i18n.t('form_label_editable')}
+                  checked={file.editable}
+                  onChange={() =>
+                    setFile({ ...file, editable: !file.editable })
+                  }
+                  disabled={disableForm}
+                />
+              </Form.Field>
+              <Form.Field>
+                <Form.Checkbox
+                  label={i18n.t('form_label_deletable')}
+                  checked={file.deletable}
+                  onChange={() =>
+                    setFile({ ...file, deletable: !file.deletable })
+                  }
+                  disabled={
+                    disableForm ||
+                    (defaultValue ? !defaultValue.deletable : false)
+                  }
+                />
               </Form.Field>
               <Button
                 type="submit"
-                disabled={file.fileName === ''}
                 onClick={() => onSubmit(file)}
+                disabled={file.fileName === '' || disableForm}
               >
                 {i18n.t('module_translation_form_field_submit')}
               </Button>
@@ -52,6 +107,7 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
           </Container>
         </Grid.Row>
       </Grid>
+      {defaultValue && <AssetPreviewComponent asset={defaultValue} />}
     </Container>
   );
 };

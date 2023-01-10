@@ -104,13 +104,13 @@ export default class AssetPlugin {
   };
 
   saveAsset = (event: ElectronIpcMainEvent, arg: AssertFileValueType) => {
-    const { fileName, fileType, content } = arg;
+    const { fileName, fileType, content, editable, deletable } = arg;
     const assets = this.readAssetFile();
     // @ts-ignore
     this.writeAssetFile(
       assets
         .filter((asset) => asset.name !== fileName)
-        .concat({ type: fileType, name: fileName }),
+        .concat({ type: fileType, name: fileName, editable, deletable }),
       () => {
         const destinationPath = `${this.directoryFromFileType(
           fileType
@@ -246,7 +246,7 @@ export default class AssetPlugin {
           (filePath, callback) => {
             const type = this.typeFromExtension(path.extname(filePath));
             const name = path.basename(filePath);
-            assets.push({ type, name });
+            assets.push({ type, name, deletable: true, editable: true });
             const destinationPath = `${this.directoryFromFileType(
               type
             )}${name}`;

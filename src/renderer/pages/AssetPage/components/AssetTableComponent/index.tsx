@@ -8,20 +8,13 @@ import { AssertAcceptedType, AssetType } from 'types';
 type AssetTableComponentProps = {
   assets: AssetType[];
   keySelected?: string;
-  canDelete: boolean;
   defaultFilterType?: AssertAcceptedType;
   onClickRow: (name: AssetType) => void;
   onDelete: (name: string) => void;
 };
 const AssetTableComponent = (props: AssetTableComponentProps) => {
-  const {
-    assets,
-    keySelected,
-    canDelete,
-    defaultFilterType,
-    onClickRow,
-    onDelete,
-  } = props;
+  const { assets, keySelected, defaultFilterType, onClickRow, onDelete } =
+    props;
   const [filter, setFilter] = useState<string>('');
   const [filterType, setFilterType] = useState<AssertAcceptedType | string>(
     defaultFilterType || ''
@@ -30,10 +23,12 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
   const formatData = useCallback(() => {
     let _assets = assets.map((asset) => ({
       ...asset,
-      name: asset.name.toLocaleLowerCase(),
+      name: asset.name,
     }));
     if (filter !== '') {
-      _assets = _assets.filter((asset) => asset.name.includes(filter));
+      _assets = _assets.filter((asset) =>
+        asset.name.toLowerCase().includes(filter)
+      );
     }
     if (filterType !== '') {
       _assets = _assets.filter((asset) => asset.type === filterType);
@@ -92,34 +87,38 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {assetsToShow.map(({ name, type, module }) => (
-                <Table.Row
-                  key={name}
-                  onClick={() => onClickRow({ name, type, module })}
-                  active={keySelected === name}
-                >
-                  <Table.Cell width={16}>
-                    <Header as="h3" textAlign="left">
-                      {name}
-                      <Header.Subheader>{type}</Header.Subheader>
-                    </Header>
-                  </Table.Cell>
-                  <Table.Cell textAlign="right">
-                    <Button
-                      basic
-                      icon
-                      color="red"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        canDelete && onDelete(name);
-                      }}
-                      disabled={!canDelete || !!module}
-                    >
-                      <Icon name="trash" />
-                    </Button>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
+              {assetsToShow.map(
+                ({ name, type, module, editable, deletable }) => (
+                  <Table.Row
+                    key={name}
+                    onClick={() =>
+                      onClickRow({ name, type, module, editable, deletable })
+                    }
+                    active={keySelected === name}
+                  >
+                    <Table.Cell width={16}>
+                      <Header as="h3" textAlign="left">
+                        {name}
+                        <Header.Subheader>{type}</Header.Subheader>
+                      </Header>
+                    </Table.Cell>
+                    <Table.Cell textAlign="right">
+                      <Button
+                        basic
+                        icon
+                        color="red"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          deletable && onDelete(name);
+                        }}
+                        disabled={!deletable}
+                      >
+                        <Icon name="trash" />
+                      </Button>
+                    </Table.Cell>
+                  </Table.Row>
+                )
+              )}
             </Table.Body>
             <Table.Footer>
               <Table.Row>

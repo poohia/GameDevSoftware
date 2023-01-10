@@ -30,14 +30,29 @@ const useConstant = () => {
   }, []);
 
   const sendCreateConstant = useCallback(
-    (key: string, value: ConstantValue, description?: string) => {
+    (constant: {
+      key: string;
+      value: ConstantValue;
+      description?: string;
+      editable: boolean;
+      deletable: boolean;
+    }) => {
+      const { key, value, description, editable, deletable } = constant;
       setConstants((_constants) => {
         const constant = _constants.find((c) => c.key === key);
         if (constant) {
           constant.value = value;
           constant.description = description;
+          constant.editable = editable;
+          constant.deletable = deletable;
         } else {
-          _constants = _constants.concat({ key, value, description });
+          _constants = _constants.concat({
+            key,
+            value,
+            description,
+            editable,
+            deletable,
+          });
         }
 
         sendMessage('save-constants', _constants);
@@ -52,7 +67,10 @@ const useConstant = () => {
 
   const updateConstant = useCallback(
     (key: string) => {
-      const constant = constants.find((c) => c.key === key);
+      const constant = constants.find((c) => {
+        return c.key === key;
+      });
+
       dispatch({
         type: 'show-update-form',
         data: {
@@ -60,8 +78,8 @@ const useConstant = () => {
           value: {
             value: constant ? constant.value : '',
             description: constant?.description || '',
-            // default false
-            editable: !!constant && !!constant.editable,
+            editable: constant ? constant.editable : true,
+            deletable: constant ? constant.deletable : true,
           },
         },
       });

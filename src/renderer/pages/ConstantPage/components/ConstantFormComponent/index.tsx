@@ -18,9 +18,16 @@ type ConstantFormComponentProps = {
     value: ConstantValue;
     description: string;
     editable: boolean;
+    deletable: boolean;
   };
   canEditeDescription?: boolean;
-  onSubmit: (key: string, value: ConstantValue, description?: string) => void;
+  onSubmit: (constant: {
+    key: string;
+    value: ConstantValue;
+    description?: string;
+    editable: boolean;
+    deletable: boolean;
+  }) => void;
 };
 const options: DropdownProps['options'] = [
   {
@@ -45,7 +52,12 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
   const [description, setDescription] = useState<string>(
     defaultValue?.description || ''
   );
-  const [editable, setEditable] = useState<boolean>(!!defaultValue?.editable);
+  const [editable, setEditable] = useState<boolean>(
+    defaultValue?.editable || true
+  );
+  const [deletable, setDeletable] = useState<boolean>(
+    defaultValue?.deletable || true
+  );
 
   const disableForm = useMemo(
     () => (defaultValue ? !defaultValue.editable : false),
@@ -54,18 +66,19 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
 
   const handleSubmit = useCallback(() => {
     if (type === 'number[]' && Array.isArray(value)) {
-      onSubmit(
+      onSubmit({
         key,
-        value.map((v) => Number(v)),
-        description
-      );
-      return;
+        value: value.map((v) => Number(v)),
+        description,
+        editable,
+        deletable,
+      });
     } else if (type === 'number') {
-      onSubmit(key, Number(value), description);
+      onSubmit({ key, value: Number(value), description, editable, deletable });
     } else {
-      onSubmit(key, value, description);
+      onSubmit({ key, value, description, editable, deletable });
     }
-  }, [key, value, description]);
+  }, [key, value, description, editable, deletable]);
 
   useEffect(() => {
     setKey(defaultKey);
@@ -75,7 +88,8 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
     if (!defaultValue) {
       setValue('');
       setType('string');
-      setEditable(false);
+      setEditable(true);
+      setDeletable(true);
       return;
     }
     const { value } = defaultValue;
@@ -96,6 +110,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
       }
     }, 100);
     setEditable(!!defaultValue.editable);
+    setDeletable(!!defaultValue.deletable);
   }, [defaultValue]);
 
   useEffect(() => {
@@ -118,8 +133,6 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
         setValue('');
     }
   }, [type]);
-
-  console.log(defaultValue, editable);
 
   return (
     <Container fluid>
@@ -227,6 +240,18 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   checked={editable}
                   onChange={() => setEditable(!editable)}
                   disabled={!canEditeDescription || disableForm}
+                />
+              </Form.Field>
+              <Form.Field>
+                <Form.Checkbox
+                  label={i18n.t('form_label_deletable')}
+                  checked={deletable}
+                  onChange={() => setDeletable(!deletable)}
+                  disabled={
+                    !canEditeDescription ||
+                    disableForm ||
+                    (defaultValue ? !defaultValue.deletable : false)
+                  }
                 />
               </Form.Field>
               <Button

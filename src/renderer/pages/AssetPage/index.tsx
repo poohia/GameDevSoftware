@@ -7,6 +7,7 @@ import {
   AssetPreviewComponent,
 } from './components';
 import useAssetPage from './useAssetPage';
+import { AssetType } from 'types';
 
 const AssetPage = () => {
   const {
@@ -49,20 +50,22 @@ const AssetPage = () => {
                   });
                 }}
                 onDelete={deleteFile}
-                canDelete={!isModuleView}
               />
             </Grid.Row>
           </Grid.Column>
-          {stateForm.show && !stateForm.isEdit && (
+          {stateForm.show && (
             <Grid.Column width={8}>
-              <AssetFormComponent onSubmit={saveFile} />
+              <AssetFormComponent
+                defaultValue={stateForm.value as AssetType}
+                onSubmit={saveFile}
+              />
             </Grid.Column>
           )}
-          {stateForm.show && stateForm.isEdit && (
+          {/* {stateForm.show && stateForm.isEdit && (
             <Grid.Column width={8}>
               <AssetPreviewComponent asset={stateForm.value} />
             </Grid.Column>
-          )}
+          )} */}
         </Grid.Row>
       </Grid>
     </Container>

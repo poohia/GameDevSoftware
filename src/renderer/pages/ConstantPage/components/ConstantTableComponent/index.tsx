@@ -11,7 +11,6 @@ import { ConstantObject, ConstantType } from 'types';
 type ConstantTableComponentProps = {
   constants: ConstantObject[];
   keySelected?: string;
-  canDelete: boolean;
   defaultFilterType?: ConstantType;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
@@ -19,14 +18,8 @@ type ConstantTableComponentProps = {
 const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
   props
 ) => {
-  const {
-    constants,
-    keySelected,
-    canDelete,
-    defaultFilterType,
-    onClickRow,
-    onDelete,
-  } = props;
+  const { constants, keySelected, defaultFilterType, onClickRow, onDelete } =
+    props;
   const [filter, setFilter] = useState<string>('');
   const [filterType, setFilterType] = useState<ConstantType | string>(
     defaultFilterType || ''
@@ -133,7 +126,7 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData.map(({ key, value, description, module }) => (
+              {formatData.map(({ key, value, description, deletable }) => (
                 <Table.Row
                   key={key}
                   active={keySelected === key}
@@ -157,9 +150,9 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
                       color="red"
                       onClick={(event) => {
                         event.stopPropagation();
-                        canDelete && onDelete(key);
+                        deletable && onDelete(key);
                       }}
-                      disabled={!canDelete || !!module}
+                      disabled={!deletable}
                     >
                       <Icon name="trash" />
                     </Button>

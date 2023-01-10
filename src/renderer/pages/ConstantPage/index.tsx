@@ -36,7 +36,6 @@ const ConstantPage = () => {
               <ConstantTableComponent
                 constants={constants}
                 keySelected={stateForm.key}
-                canDelete={!isModuleView}
                 onClickRow={updateConstant}
                 onDelete={deleteConstant}
               />

@@ -33,10 +33,11 @@ const rejectStyle = {
 type FileType = File & { preview: string };
 type DropzoneAssetFileComponentProps = {
   value?: AssertFileValueType;
+  disabled: boolean;
   onChange: (value: AssertFileValueType) => void;
 };
 const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
-  const { value: valueProps, onChange } = props;
+  const { value: valueProps, disabled, onChange } = props;
   const [file, setFile] = useState<FileType | undefined>();
   const [value, setValue] = useState<AssertFileValueType | undefined>(
     valueProps
@@ -64,6 +65,7 @@ const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
         });
       });
     },
+    disabled,
   });
   const style: any = useMemo(
     () => ({
@@ -113,7 +115,7 @@ const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
   return (
     <Container fluid className="game-dev-software-file-preview-container">
       <div {...getRootProps({ style })}>
-        <input {...getInputProps()} />
+        <input {...getInputProps()} disabled={disabled} />
         {/* {isDragAccept && <p>File will be accepted</p>}
         {isDragReject && <p>File will be rejected</p>} */}
         {/* {!isDragActive && <p>Drop file here ...</p>} */}

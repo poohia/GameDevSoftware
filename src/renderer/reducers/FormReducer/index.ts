@@ -30,7 +30,7 @@ const FormReducer = <T = string>(state: State<T>, action: Action): State<T> => {
       show: true,
       isEdit,
       key: data ? data.key : '',
-      value: data ? data.value : '',
+      value: data?.value,
     };
   };
   switch (type) {
