@@ -80,6 +80,7 @@ const useConstant = () => {
             description: constant?.description || '',
             editable: constant ? constant.editable : true,
             deletable: constant ? constant.deletable : true,
+            module,
           },
         },
       });
@@ -112,6 +113,7 @@ const useConstant = () => {
 
   return {
     constants,
+    module,
     stateForm,
     isModuleView,
     createConstant,

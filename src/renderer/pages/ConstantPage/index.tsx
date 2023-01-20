@@ -11,6 +11,7 @@ import useConstant from './useConstant';
 const ConstantPage = () => {
   const {
     constants,
+    module,
     stateForm,
     isModuleView,
     createConstant,
@@ -35,6 +36,7 @@ const ConstantPage = () => {
             <Grid.Row>
               <ConstantTableComponent
                 constants={constants}
+                module={module}
                 keySelected={stateForm.key}
                 onClickRow={updateConstant}
                 onDelete={deleteConstant}
@@ -45,7 +47,6 @@ const ConstantPage = () => {
             <Grid.Column width={8}>
               <ConstantFormComponent
                 defaultKey={stateForm.key}
-                canEditeDescription={!isModuleView}
                 defaultValue={stateForm.value as ConstantValue}
                 onSubmit={sendCreateConstant}
               />

@@ -19,6 +19,7 @@ const useTranslations = () => {
 
   useEffect(() => {
     on('load-all-translations', (args) => {
+      console.log('🚀 ~ file: index.tsx:22 ~ on ~ args', args);
       setTranslations(args);
     });
   }, []);

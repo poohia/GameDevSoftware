@@ -12,14 +12,21 @@ type ConstantTableComponentProps = {
   constants: ConstantObject[];
   keySelected?: string;
   defaultFilterType?: ConstantType;
+  module: string | null;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
 const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
   props
 ) => {
-  const { constants, keySelected, defaultFilterType, onClickRow, onDelete } =
-    props;
+  const {
+    constants,
+    keySelected,
+    defaultFilterType,
+    module,
+    onClickRow,
+    onDelete,
+  } = props;
   const [filter, setFilter] = useState<string>('');
   const [filterType, setFilterType] = useState<ConstantType | string>(
     defaultFilterType || ''
@@ -63,6 +70,9 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
       _constants = _constants.filter(
         (predicate) => typeof predicate.module === 'undefined'
       );
+    }
+    if (module) {
+      _constants = _constants.filter((c) => c.module === module);
     }
     return _constants;
   }, [filter, filterType, filterModule, constants]);
@@ -113,7 +123,8 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
           <Checkbox
             label={i18n.t('table_filter_module')}
             checked={filterModule}
-            onClick={() => setFilterModule(!filterModule)}
+            onClick={() => !module && setFilterModule(!filterModule)}
+            disabled={!!module}
           />
         </Grid.Column>
       </Grid.Row>

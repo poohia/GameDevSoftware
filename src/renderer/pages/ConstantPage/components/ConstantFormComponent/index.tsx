@@ -20,7 +20,6 @@ type ConstantFormComponentProps = {
     editable: boolean;
     deletable: boolean;
   };
-  canEditeDescription?: boolean;
   onSubmit: (constant: {
     key: string;
     value: ConstantValue;
@@ -40,12 +39,7 @@ const options: DropdownProps['options'] = [
   { key: 'number[]', text: 'Array of number', value: 'number[]' },
 ];
 const ConstantFormComponent = (props: ConstantFormComponentProps) => {
-  const {
-    defaultKey,
-    defaultValue,
-    canEditeDescription = true,
-    onSubmit,
-  } = props;
+  const { defaultKey, defaultValue, onSubmit } = props;
   const [key, setKey] = useState<string>(defaultKey);
   const [type, setType] = useState<ConstantType>('string');
   const [value, setValue] = useState<ConstantValue>(defaultValue?.value || '');
@@ -233,7 +227,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   onChange={(_: any, data: { value: string }) =>
                     setDescription(data.value)
                   }
-                  disabled={!canEditeDescription || disableForm}
+                  disabled={disableForm}
                 />
               </Form.Field>
               <Form.Field>
@@ -241,7 +235,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   label={i18n.t('form_label_editable')}
                   checked={editable}
                   onChange={() => setEditable(!editable)}
-                  disabled={!canEditeDescription || disableForm}
+                  disabled={disableForm}
                 />
               </Form.Field>
               <Form.Field>
@@ -250,7 +244,6 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   checked={deletable}
                   onChange={() => setDeletable(!deletable)}
                   disabled={
-                    !canEditeDescription ||
                     disableForm ||
                     (defaultValue ? !defaultValue.deletable : false)
                   }

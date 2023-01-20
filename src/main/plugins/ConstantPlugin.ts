@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
-import { ConstantObject, ElectronIpcMainEvent, ModuleArgs } from 'types';
+import { ConstantObject, ElectronIpcMainEvent } from 'types';
 import FolderPlugin from './FolderPlugin';
 
 export default class ConstantPlugin {

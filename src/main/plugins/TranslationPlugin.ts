@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
 import async from 'async';
-import { ElectronIpcMainEvent, ModuleArgs, TranslationObject } from 'types';
+import { ElectronIpcMainEvent, TranslationObject } from 'types';
 import FolderPlugin from './FolderPlugin';
 import FileService from '../services/FileService';
 import GameModulesPlugin from './GameModulesPlugin';
@@ -40,42 +40,6 @@ export default class TranslationPlugin {
       });
   };
 
-  loadTranslationsModule = (
-    event: ElectronIpcMainEvent,
-    { module }: { module: string }
-  ) => {
-    const translations: any = {};
-    // @ts-ignore
-    const { path } = global;
-    const data = fs.readFileSync(`${path}${FolderPlugin.languageFile}`);
-    // @ts-ignore
-    const languages: { code: string }[] = JSON.parse(data);
-    event.reply('languages-authorized', languages);
-    Promise.all(
-      languages.map(
-        (l) =>
-          new Promise((resolve) => {
-            const { code } = l;
-            fs.readFile(
-              `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${code}.json`,
-              (err, dataTranslation) => {
-                if (err) {
-                  translations[code] = {};
-                } else {
-                  // @ts-ignore
-                  translations[code] = JSON.parse(dataTranslation);
-                }
-                resolve(true);
-              }
-            );
-          })
-      )
-    ).then(() => {
-      // @ts-ignore
-      event.reply(`load-translations-module-${module}`, translations);
-    });
-  };
-
   saveTranslations = (event: ElectronIpcMainEvent, args: TranslationObject) => {
     // @ts-ignore
     const { path } = global;
@@ -85,31 +49,6 @@ export default class TranslationPlugin {
           fs.writeFile(
             `${path}${FolderPlugin.translationDirectory}/${code}.json`,
             JSON.stringify(args[code]),
-            () => {
-              resolve(true);
-            }
-          );
-        });
-      })
-    ).then(() => {
-      this.loadTranslations(event);
-    });
-  };
-
-  saveTranslationsModule = (
-    event: ElectronIpcMainEvent,
-    args: ModuleArgs<TranslationObject>
-  ) => {
-    // @ts-ignore
-    const { path } = global;
-    const { data, module } = args;
-
-    Promise.all(
-      Object.keys(data).map((code) => {
-        new Promise((resolve) => {
-          fs.writeFile(
-            `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${code}.json`,
-            JSON.stringify(data[code]),
             () => {
               resolve(true);
             }
@@ -216,21 +155,6 @@ export default class TranslationPlugin {
               ).then((data) => callback(null, [data]));
             });
         },
-        (callback) => {
-          const dataModules: any[] = [];
-          GameModulesPlugin.loadDynamicModulesName().then((modules) => {
-            async
-              .each(modules, (module, callbackModule) => {
-                FileService.readJsonFile(
-                  `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${this._locale}.json`
-                ).then((data: Object) => {
-                  dataModules.push(data);
-                  callbackModule();
-                });
-              })
-              .then(() => callback(null, dataModules));
-          });
-        },
       ],
       (_err, results) => {
         let finalData: any = {};
@@ -257,17 +181,8 @@ export default class TranslationPlugin {
     ipcMain.on('remove-language', (event: Electron.IpcMainEvent, args) => {
       this.removeLanguage(event as ElectronIpcMainEvent, args);
     });
-    ipcMain.on(
-      'load-translations-module',
-      (event: Electron.IpcMainEvent, args) => {
-        this.loadTranslationsModule(event as ElectronIpcMainEvent, args);
-      }
-    );
     ipcMain.on('load-all-translations', (event, args) => {
       this.loadAllTranslations(event as ElectronIpcMainEvent, args);
     });
-    ipcMain.on('save-translations-module', (event, args) =>
-      this.saveTranslationsModule(event as ElectronIpcMainEvent, args)
-    );
   };
 }
