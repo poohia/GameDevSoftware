@@ -4,7 +4,6 @@ import {
   AssetTableComponent,
   AssetFormComponent,
   AssetHeaderComponent,
-  AssetPreviewComponent,
 } from './components';
 import useAssetPage from './useAssetPage';
 import { AssetType } from 'types';
@@ -12,6 +11,7 @@ import { AssetType } from 'types';
 const AssetPage = () => {
   const {
     assets,
+    module,
     stateForm,
     isModuleView,
     dispatch,
@@ -39,6 +39,7 @@ const AssetPage = () => {
             <Grid.Row>
               <AssetTableComponent
                 assets={assets}
+                module={module}
                 keySelected={stateForm.key}
                 onClickRow={(asset) => {
                   dispatch({
@@ -61,11 +62,6 @@ const AssetPage = () => {
               />
             </Grid.Column>
           )}
-          {/* {stateForm.show && stateForm.isEdit && (
-            <Grid.Column width={8}>
-              <AssetPreviewComponent asset={stateForm.value} />
-            </Grid.Column>
-          )} */}
         </Grid.Row>
       </Grid>
     </Container>

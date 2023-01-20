@@ -22,6 +22,7 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
     fileType: 'image',
     editable: defaultValue ? defaultValue.editable : true,
     deletable: defaultValue ? defaultValue.deletable : true,
+    module: defaultValue?.module,
   });
 
   const disableForm = useMemo(
@@ -36,6 +37,7 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
       fileType: defaultValue ? defaultValue.type : 'image',
       editable: defaultValue ? defaultValue.editable : true,
       deletable: defaultValue ? defaultValue.deletable : true,
+      module: defaultValue?.module,
     });
   }, [defaultValue]);
 

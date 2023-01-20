@@ -27,39 +27,12 @@ export default class ConstantPlugin {
     );
     this.loadConstants(event);
   };
-
-  loadConstantsModule = (event: ElectronIpcMainEvent, arg: string) => {
-    const data = this.loadConstantsFile();
-
-    event.reply(
-      // @ts-ignore
-      `load-constants-module-${arg}`,
-      data.filter((d) => d.module && d.module === arg)
-    );
-  };
-
-  saveConstantsModule = (
-    event: ElectronIpcMainEvent,
-    args: ModuleArgs<ConstantObject[]>
-  ) => {
-    // @ts-ignore
-    const { path } = global;
-    const { data } = args;
-    this.saveConstants(event, data);
-  };
-
   init = () => {
     ipcMain.on('load-constants', (event: Electron.IpcMainEvent) =>
       this.loadConstants(event as ElectronIpcMainEvent)
     );
     ipcMain.on('save-constants', (event: Electron.IpcMainEvent, args) =>
       this.saveConstants(event as ElectronIpcMainEvent, args)
-    );
-    ipcMain.on('load-constants-module', (event: Electron.IpcMainEvent, args) =>
-      this.loadConstantsModule(event as ElectronIpcMainEvent, args)
-    );
-    ipcMain.on('save-constants-module', (event: Electron.IpcMainEvent, args) =>
-      this.saveConstantsModule(event as ElectronIpcMainEvent, args)
     );
   };
 }

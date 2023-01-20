@@ -7,13 +7,13 @@ const useEvents = () => {
 
   const requestMessage = useCallback(
     (chanel: Channels, callback: EventCallback) => {
-      if (module) {
-        console.log(`${chanel}-module`);
-        //@ts-ignore
-        sendMessage(`${chanel}-module`, module);
-        //@ts-ignore
-        return on(`${chanel}-module-${module}`, callback);
-      }
+      // if (module) {
+      //   console.log(`${chanel}-module`);
+      //   //@ts-ignore
+      //   sendMessage(`${chanel}-module`, module);
+      //   //@ts-ignore
+      //   return on(`${chanel}-module-${module}`, callback);
+      // }
       sendMessage(chanel);
       return on(chanel, callback);
     },
@@ -23,15 +23,15 @@ const useEvents = () => {
   const sendMessage = useCallback(
     (chanel: Channels, args?: any, forceModule?: string) => {
       window.electron.ipcRenderer.sendMessage('unrefresh');
-      if (module || forceModule) {
-        console.log(`${chanel}-module`, args);
-        //@ts-ignore
-        window.electron.ipcRenderer.sendMessage(`${chanel}-module`, {
-          data: args,
-          module: module || forceModule,
-        });
-        return;
-      }
+      // if (module || forceModule) {
+      //   console.log(`${chanel}-module`, args);
+      //   //@ts-ignore
+      //   window.electron.ipcRenderer.sendMessage(`${chanel}-module`, {
+      //     data: args,
+      //     module: module || forceModule,
+      //   });
+      //   return;
+      // }
       console.log(chanel, args);
       window.electron.ipcRenderer.sendMessage(chanel, args);
     },

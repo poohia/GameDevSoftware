@@ -9,12 +9,19 @@ type AssetTableComponentProps = {
   assets: AssetType[];
   keySelected?: string;
   defaultFilterType?: AssertAcceptedType;
+  module: string | null;
   onClickRow: (name: AssetType) => void;
   onDelete: (name: string) => void;
 };
 const AssetTableComponent = (props: AssetTableComponentProps) => {
-  const { assets, keySelected, defaultFilterType, onClickRow, onDelete } =
-    props;
+  const {
+    assets,
+    keySelected,
+    defaultFilterType,
+    module,
+    onClickRow,
+    onDelete,
+  } = props;
   const [filter, setFilter] = useState<string>('');
   const [filterType, setFilterType] = useState<AssertAcceptedType | string>(
     defaultFilterType || ''
@@ -38,8 +45,11 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
         (predicate) => typeof predicate.module === 'undefined'
       );
     }
+    if (module) {
+      _assets = _assets.filter((asset) => asset.module === module);
+    }
     return _assets;
-  }, [filter, filterType, filterModule, assets]);
+  }, [filter, filterType, filterModule, assets, module]);
   const assetsToShow = useMemo(() => formatData(), [formatData]);
   const lengthAssets = useMemo(() => assetsToShow.length, [assetsToShow]);
 
@@ -73,7 +83,8 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
           <Checkbox
             label={i18n.t('table_filter_module')}
             checked={filterModule}
-            onClick={() => setFilterModule(!filterModule)}
+            onClick={() => !module && setFilterModule(!filterModule)}
+            disabled={!!module}
           />
         </Grid.Column>
       </Grid.Row>

@@ -34,6 +34,7 @@ const useAssetPage = () => {
     assets,
     stateForm,
     isModuleView,
+    module,
     dispatch,
     saveFile,
     deleteFile,

@@ -16,7 +16,7 @@ const AssetPreviewComponent = (props: AssetPreviewComponentProps) => {
   const [base64, setBase64] = useState<string | undefined>();
 
   useEffect(() => {
-    sendMessage('get-asset-information', { name, type }, module);
+    sendMessage('get-asset-information', { name, type, module });
     once('get-asset-information', (arg: string) => {
       setBase64(formatBase64(type, arg));
     });

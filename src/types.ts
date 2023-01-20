@@ -34,9 +34,9 @@ export type Channels =
   | 'build-platform'
   | 'emulate-platform'
   | 'load-game-modules'
-  | 'load-constants-module'
-  | 'load-translations-module'
-  | 'load-assets-module'
+  | 'load-constants'
+  | 'load-translations'
+  | 'load-assets'
   | 'load-game-object-types'
   | 'load-game-objects'
   | 'remove-game-object'
@@ -123,6 +123,7 @@ export type AssertFileValueType = {
   content: any | string;
   editable: boolean;
   deletable: boolean;
+  module?: string;
 };
 export type AssetType = {
   type: AssertAcceptedType;
