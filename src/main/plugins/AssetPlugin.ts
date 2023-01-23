@@ -6,7 +6,6 @@ import {
   AssertFileValueType,
   AssetType,
   ElectronIpcMainEvent,
-  ModuleArgs,
 } from 'types';
 import path from 'path';
 import FileService from '../services/FileService';
@@ -48,34 +47,11 @@ export default class AssetPlugin {
     }
   };
 
-  private directoryFromFileTypeModule = (
-    fileType: AssertAcceptedType,
-    module: string
-  ) => {
-    // @ts-ignore
-    const { path } = global;
-    switch (fileType) {
-      case 'image':
-        return `${path}${FolderPlugin.assetsDirectory}/${module}/images/`;
-      case 'video':
-        return `${path}${FolderPlugin.assetsDirectory}/${module}/videos/`;
-      case 'sound':
-        return `${path}${FolderPlugin.assetsDirectory}/${module}/sounds/`;
-      case 'json':
-        return `${path}${FolderPlugin.srcDirectory}/${FolderPlugin.gameDevSoftwareDirectory}/modules/${module}/configurationsFiles/`;
-    }
-  };
-
   private readAssetFile = (): AssetType[] => {
     // @ts-ignore
     const { path } = global;
     // @ts-ignore
     return JSON.parse(fs.readFileSync(`${path}${FolderPlugin.assetFile}`));
-  };
-
-  private readAssetFileModule = (module: string): AssetType[] => {
-    const assets = this.readAssetFile();
-    return assets.filter((a) => a.module && a.module === module);
   };
 
   private writeAssetFile = (data: AssetType[], callback: () => void) => {
@@ -146,11 +122,8 @@ export default class AssetPlugin {
   };
 
   getAssetInformation = (event: ElectronIpcMainEvent, arg: AssetType) => {
-    const { name, type, module } = arg;
-    const pathDirectory =
-      module && type !== 'json'
-        ? this.directoryFromFileTypeModule(type, module)
-        : this.directoryFromFileType(type);
+    const { name, type } = arg;
+    const pathDirectory = this.directoryFromFileType(type);
     const path = `${pathDirectory}${name}`;
     if (type === 'json') {
       fs.readFile(path, (err, data) => {
@@ -174,14 +147,7 @@ export default class AssetPlugin {
   getAssetBase64FromAssets = (event: ElectronIpcMainEvent, arg: string) => {
     const data = this.readAssetFile();
     const assetFind = data.find((d) => d.name === arg);
-    if (assetFind && assetFind.module) {
-      this.getAssetInformationModule(event, {
-        data: { name: assetFind.name, type: assetFind.type },
-        module: assetFind.module,
-      });
-    } else if (assetFind) {
-      this.getAssetInformation(event, assetFind);
-    }
+    if (assetFind) this.getAssetInformation(event, assetFind);
   };
 
   selectMultipleFiles = (event: ElectronIpcMainEvent) => {

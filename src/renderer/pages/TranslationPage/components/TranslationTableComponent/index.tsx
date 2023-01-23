@@ -7,13 +7,21 @@ import { Translation } from 'types';
 type TranslationTableComponentProps = {
   translations: Translation[];
   locale: string;
+  canDelete?: boolean;
   keySelected?: string;
   module: string | null;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
 const TranslationTableComponent = (props: TranslationTableComponentProps) => {
-  const { translations, keySelected, module, onClickRow, onDelete } = props;
+  const {
+    translations,
+    keySelected,
+    module,
+    canDelete = true,
+    onClickRow,
+    onDelete,
+  } = props;
   const [filter, setFilter] = useState<string>('');
   const [filterModule, setFilterModule] = useState<boolean>(true);
 
@@ -94,9 +102,9 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
                       color="red"
                       onClick={(event) => {
                         event.stopPropagation();
-                        if (deletable) onDelete(key);
+                        if (deletable && canDelete) onDelete(key);
                       }}
-                      disabled={!deletable}
+                      disabled={!deletable || !canDelete}
                     >
                       <Icon name="trash" />
                     </Button>

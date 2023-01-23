@@ -1,4 +1,11 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import ModalComponent from 'renderer/components/ModalComponent';
 import TransComponent from 'renderer/components/TransComponent';
 import TranslationsContext from 'renderer/contexts/TranslationsContext';
@@ -14,7 +21,13 @@ const ModalTranslation = (
   }
 ) => {
   const { open, defaultValue, onClose, onSubmit, ...rest } = props;
-  const { translations } = useContext(TranslationsContext);
+  const { translations, gameLocale: locale } = useContext(TranslationsContext);
+  const currentTranslations = useMemo(() => {
+    if (translations === undefined || Object.keys(translations).length === 0) {
+      return null;
+    }
+    return translations[locale] || translations[Object.keys(translations)[0]];
+  }, [translations, locale]);
 
   const [value, setValue] = useState<string>('');
 
@@ -39,14 +52,17 @@ const ModalTranslation = (
       disableAccepted={value === ''}
       {...rest}
     >
-      <TranslationTableComponent
-        canDelete={false}
-        locale={'en'}
-        onClickRow={handleClickRow}
-        onDelete={() => {}}
-        translations={translations}
-        keySelected={value.replace('@t:', '')}
-      />
+      {currentTranslations && (
+        <TranslationTableComponent
+          canDelete={false}
+          locale={'en'}
+          onClickRow={handleClickRow}
+          onDelete={() => {}}
+          translations={currentTranslations}
+          module={null}
+          keySelected={value.replace('@t:', '')}
+        />
+      )}
     </ModalComponent>
   );
 };
