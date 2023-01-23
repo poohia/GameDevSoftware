@@ -224,6 +224,9 @@ export default class ApplicationPlugin {
     ipcMain.on('add-platform', (event: Electron.IpcMainEvent, args) =>
       this._platformsPlugin.addPlatform(event as ElectronIpcMainEvent, args)
     );
+    ipcMain.on('projected-started', (event: Electron.IpcMainEvent) => {
+      this._platformsPlugin.checkProjectStarted(event);
+    });
     ipcMain.on('toggle-project', (event: Electron.IpcMainEvent) =>
       this._platformsPlugin.toggleProject(event as ElectronIpcMainEvent)
     );

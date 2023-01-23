@@ -1,6 +1,7 @@
 import { ElectronIpcMainEvent, PlatformsParams } from 'types';
 import async from 'async';
 import fs from 'fs';
+import detect from 'detect-port';
 import FolderPlugin from '../FolderPlugin';
 import CordovaService from '../../services/CordovaService';
 
@@ -65,6 +66,12 @@ export default class ApplicationPlatformsPlugin {
       }
       this.loadPlatforms(event);
     });
+  };
+
+  checkProjectStarted = (event: Electron.IpcMainEvent) => {
+    detect(3333)
+      .then(() => event.reply('projected-started', true))
+      .catch(() => event.reply('projected-started', true));
   };
 
   toggleProject = (_event: ElectronIpcMainEvent) => {

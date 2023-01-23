@@ -1,7 +1,8 @@
 import { PlatformsParams } from 'types';
-import childProcess, { execSync } from 'child_process';
+import childProcess from 'child_process';
 import pathModule from 'path';
 import fs from 'fs';
+import kill from 'kill-port';
 
 import FolderPlugin from '../plugins/FolderPlugin';
 
@@ -9,8 +10,6 @@ const exec = childProcess.exec;
 const spawn = childProcess.spawn;
 
 export default class CordovaService {
-  private _childProcessStart: childProcess.ChildProcessWithoutNullStreams | null =
-    null;
   private _childProcessElectron: childProcess.ChildProcess | null = null;
   private _childProcessBrowser: childProcess.ChildProcess | null = null;
 
@@ -137,23 +136,22 @@ export default class CordovaService {
     if (this._childProcessBrowser) {
       this._childProcessBrowser.kill();
     } else {
-      exec('npm exec kill-port 8000 -y');
+      kill(8000);
     }
   };
 
   toggleProcess = () => {
     // @ts-ignore
     const { mainWindow } = global;
-    exec('npm exec kill-port 3000 -y', () => {
-      if (this._childProcessStart !== null) {
-        this._childProcessStart = null;
+    kill(3333)
+      .then(() => {
         mainWindow.webContents.send('projected-started', false);
-        return;
-      }
-      // @ts-ignore
-      const path = global.path;
-      this._childProcessStart = spawn('npm', ['start'], { cwd: path });
-      mainWindow.webContents.send('projected-started', true);
-    });
+      })
+      .catch(() => {
+        // @ts-ignore
+        const path = global.path;
+        spawn('npm', ['start'], { cwd: path });
+        mainWindow.webContents.send('projected-started', true);
+      });
   };
 }

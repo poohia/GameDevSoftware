@@ -17,6 +17,7 @@ const ButtonStartStopProjectComponent = () => {
   }, [loadingToggleProject, sendMessage]);
 
   useEffect(() => {
+    sendMessage('projected-started');
     on('projected-started', (arg: boolean) => {
       setProjectStarted(arg);
       setLoadingToggleProject(false);
@@ -51,8 +52,8 @@ const ButtonStartStopProjectComponent = () => {
         <Icon name="stop" />
       </Button>
       <p>
-        <a href="http://localhost:3000" target={'_blank'}>
-          http://localhost:3000
+        <a href="http://localhost:3333" target={'_blank'}>
+          http://localhost:3333
         </a>
       </p>
     </>
