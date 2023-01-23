@@ -1,30 +1,28 @@
 import { useEffect, useState } from 'react';
-import { Translation } from 'types';
+import { TranslationObject } from 'types';
 import useDatabase from '../useDatabase';
 import useEvents from '../useEvents';
 
 const useTranslations = () => {
-  const [gameLocale, setGameLocale] = useState<string>('en');
-  const [translations, setTranslations] = useState<Translation>({});
+  const { setItem, getItem } = useDatabase();
+  const [gameLocale, setGameLocale] = useState<string>(
+    getItem('game-locale') || 'en'
+  );
+  const [translations, setTranslations] = useState<TranslationObject>({});
   const { sendMessage, on } = useEvents();
-  const { getItem } = useDatabase();
 
   useEffect(() => {
-    sendMessage('load-all-translations', gameLocale);
+    setItem('game-locale', gameLocale);
+    sendMessage('load-translations', gameLocale);
   }, [gameLocale]);
 
   useEffect(() => {
-    setGameLocale(getItem('game-locale') || 'en');
-  }, [getItem]);
-
-  useEffect(() => {
-    on('load-all-translations', (args) => {
-      console.log('🚀 ~ file: index.tsx:22 ~ on ~ args', args);
+    on('load-translations', (args) => {
       setTranslations(args);
     });
   }, []);
 
-  return { translations, gameLocale, setGameLocale };
+  return { translations, gameLocale, setTranslations, setGameLocale };
 };
 
 export default useTranslations;

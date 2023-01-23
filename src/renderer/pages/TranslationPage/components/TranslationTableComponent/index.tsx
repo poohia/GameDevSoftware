@@ -1,30 +1,43 @@
 import { useMemo, useState } from 'react';
-import { Grid, Header, Icon, Input } from 'semantic-ui-react';
+import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { Translation } from 'types';
 
 type TranslationTableComponentProps = {
-  translations: Translation;
+  translations: Translation[];
   locale: string;
   keySelected?: string;
-  canDelete: boolean;
+  module: string | null;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
 };
 const TranslationTableComponent = (props: TranslationTableComponentProps) => {
-  const { translations, keySelected, canDelete, onClickRow, onDelete } = props;
+  const { translations, keySelected, module, onClickRow, onDelete } = props;
   const [filter, setFilter] = useState<string>('');
+  const [filterModule, setFilterModule] = useState<boolean>(true);
+
   const formatData = useMemo(() => {
+    let _translations = translations;
     if (filter !== '') {
-      return Object.keys(translations).filter(
-        (key) =>
-          key.toLowerCase().includes(filter.toLowerCase()) ||
-          translations[key].toLowerCase().includes(filter.toLowerCase())
+      _translations = _translations.filter(
+        (translation) =>
+          translation.key.toLowerCase().includes(filter.toLowerCase()) ||
+          translation.text.toLowerCase().includes(filter.toLowerCase())
       );
     }
-    return Object.keys(translations);
-  }, [filter, translations]);
+    if (!filterModule) {
+      _translations = _translations.filter(
+        (predicate) => typeof predicate.module === 'undefined'
+      );
+    }
+    if (module) {
+      _translations = _translations.filter(
+        (translation) => translation.module === module
+      );
+    }
+    return _translations;
+  }, [filter, translations, filterModule]);
   const lengthTranslations = useMemo(
     () => Object.keys(formatData).length,
     [formatData]
@@ -33,7 +46,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
   return (
     <Grid className="game-dev-software-table-component">
       <Grid.Row className="game-dev-software-table-component-search">
-        <Grid.Column>
+        <Grid.Column width={16}>
           <Input
             icon="search"
             placeholder="Search..."
@@ -42,6 +55,14 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
             onChange={(_, { value }) =>
               setFilter(value.toLowerCase() as string)
             }
+          />
+        </Grid.Column>
+        <Grid.Column width={16}>
+          <Checkbox
+            label={i18n.t('table_filter_module')}
+            checked={filterModule}
+            onClick={() => !module && setFilterModule(!filterModule)}
+            disabled={!!module}
           />
         </Grid.Column>
       </Grid.Row>
@@ -54,7 +75,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData.map((key) => (
+              {formatData.map(({ key, text, deletable }) => (
                 <Table.Row
                   key={key}
                   active={keySelected === key}
@@ -63,7 +84,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
                   <Table.Cell width={16}>
                     <Header as="h3" textAlign="left">
                       {key}
-                      <Header.Subheader>{translations[key]}</Header.Subheader>
+                      <Header.Subheader>{text}</Header.Subheader>
                     </Header>
                   </Table.Cell>
                   <Table.Cell textAlign="right">
@@ -73,9 +94,9 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
                       color="red"
                       onClick={(event) => {
                         event.stopPropagation();
-                        if (canDelete) onDelete(key);
+                        if (deletable) onDelete(key);
                       }}
-                      disabled={!canDelete}
+                      disabled={!deletable}
                     >
                       <Icon name="trash" />
                     </Button>

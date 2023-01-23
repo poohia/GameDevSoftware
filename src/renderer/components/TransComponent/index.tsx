@@ -18,10 +18,11 @@ const TransComponent = (props: TransComponentProps) => {
   const value = useMemo(() => {
     if (!id) return 'Translation id not found';
     if (id.startsWith('@t:')) {
-      return (
-        translations[id.replace('@t:', '')] ||
-        `Translation not found ${id.replace('@t:', '')}`
-      );
+      console.log("i'm here !!!!!!!");
+      // return (
+      //   translations[id.replace('@t:', '')] ||
+      //   `Translation not found ${id.replace('@t:', '')}`
+      // );
     }
     let v = i18n.t(id, { defaultValue });
     values.forEach(

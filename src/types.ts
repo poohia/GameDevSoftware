@@ -43,7 +43,6 @@ export type Channels =
   | 'get-formulaire-game-object'
   | 'create-game-object'
   | 'get-game-object-value'
-  | 'load-all-translations'
   | 'load-all-assets'
   | 'load-asset-base64'
   | 'load-all-game-objects'
@@ -85,10 +84,14 @@ export type PageProps = {
   ) => void;
 };
 export type Translation = {
-  [key: string]: string;
+  key: string;
+  text: string;
+  editable: boolean;
+  deletable: boolean;
+  module?: string;
 };
 export type TranslationObject = {
-  [key: string]: Translation;
+  [key: string]: Translation[];
 };
 export type ConstantValue = string | number | string[] | number[];
 export type ConstantType = 'string' | 'number' | 'string[]' | 'number[]';

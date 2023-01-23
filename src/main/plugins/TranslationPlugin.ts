@@ -4,11 +4,19 @@ import async from 'async';
 import { ElectronIpcMainEvent, TranslationObject } from 'types';
 import FolderPlugin from './FolderPlugin';
 import FileService from '../services/FileService';
-import GameModulesPlugin from './GameModulesPlugin';
 
 export default class TranslationPlugin {
-  private _locale = 'en';
   constructor() {}
+
+  loadLanguagesAuthorized = (event: ElectronIpcMainEvent) => {
+    // @ts-ignore
+    const { path } = global;
+    FileService.readJsonFile(`${path}${FolderPlugin.languageFile}`).then(
+      (languages) => {
+        event.reply('languages-authorized', languages);
+      }
+    );
+  };
 
   loadTranslations = (event: ElectronIpcMainEvent) => {
     const translations: any = {};
@@ -36,7 +44,6 @@ export default class TranslationPlugin {
       })
       .then(() => {
         event.reply('load-translations', translations);
-        this.loadAllTranslations(event);
       });
   };
 
@@ -60,67 +67,15 @@ export default class TranslationPlugin {
     });
   };
 
-  private setLanguagesModules = (languages: string[]): Promise<void> =>
-    new Promise((resolve) => {
-      // @ts-ignore
-      const { path } = global;
-      async.parallel(
-        [
-          (c) => {
-            GameModulesPlugin.loadDynamicModulesName()
-              .then((modules) => {
-                async.each(modules, (module, callback) => {
-                  async
-                    .each(languages, (language, callbackLanguage) => {
-                      const languageFile = `${path}${FolderPlugin.modulesDirectory}/${module}/translations/${language}.json`;
-                      fs.access(languageFile, (err) => {
-                        if (err) {
-                          fs.writeFile(languageFile, JSON.stringify({}), () =>
-                            callbackLanguage()
-                          );
-                        } else {
-                          callbackLanguage();
-                        }
-                      });
-                    })
-                    .then(() => callback());
-                });
-              })
-              .then(() => c());
-          },
-          (c) => {
-            async
-              .each(languages, (language, callbackLanguage) => {
-                const languageFile = `${path}${FolderPlugin.translationDirectory}/${language}.json`;
-                fs.access(languageFile, (err) => {
-                  if (err) {
-                    fs.writeFile(languageFile, JSON.stringify({}), () =>
-                      callbackLanguage()
-                    );
-                  } else {
-                    callbackLanguage();
-                  }
-                });
-              })
-              .then(() => c());
-          },
-        ],
-        () => {
-          resolve();
-        }
-      );
-    });
-
   setLanguages = (event: ElectronIpcMainEvent, args: string[]) => {
     // @ts-ignore
     const { path } = global;
-    fs.writeFile(
+    FileService.writeJsonFile(
       `${path}${FolderPlugin.languageFile}`,
-      JSON.stringify(args.map((locale) => ({ code: locale }))),
-      () => {
-        this.setLanguagesModules(args).then(() => this.loadTranslations(event));
-      }
-    );
+      args.map((locale) => ({ code: locale }))
+    ).then(() => {
+      this.loadTranslations(event);
+    });
   };
 
   removeLanguage = (
@@ -136,39 +91,10 @@ export default class TranslationPlugin {
     this.setLanguages(event, languages);
   };
 
-  loadAllTranslations = (event: ElectronIpcMainEvent, language?: string) => {
-    if (language) {
-      this._locale = language;
-    }
-    //@ts-ignore
-    const { path } = global;
-    async.parallel(
-      [
-        (callback) => {
-          FileService.readJsonFile(
-            `${path}${FolderPlugin.translationDirectory}/${this._locale}.json`
-          )
-            .then((data) => callback(null, [data]))
-            .catch(() => {
-              FileService.readJsonFile(
-                `${path}${FolderPlugin.translationDirectory}/en.json`
-              ).then((data) => callback(null, [data]));
-            });
-        },
-      ],
-      (_err, results) => {
-        let finalData: any = {};
-        results?.forEach((r: any) => {
-          Object.keys(r).forEach((key) => {
-            finalData = { ...finalData, ...r[key] };
-          });
-        });
-        event.reply('load-all-translations', finalData);
-      }
-    );
-  };
-
   init = () => {
+    ipcMain.on('languages-authorized', (event: Electron.IpcMainEvent) => {
+      this.loadLanguagesAuthorized(event as ElectronIpcMainEvent);
+    });
     ipcMain.on('load-translations', (event: Electron.IpcMainEvent) => {
       this.loadTranslations(event as ElectronIpcMainEvent);
     });
@@ -180,9 +106,6 @@ export default class TranslationPlugin {
     });
     ipcMain.on('remove-language', (event: Electron.IpcMainEvent, args) => {
       this.removeLanguage(event as ElectronIpcMainEvent, args);
-    });
-    ipcMain.on('load-all-translations', (event, args) => {
-      this.loadAllTranslations(event as ElectronIpcMainEvent, args);
     });
   };
 }

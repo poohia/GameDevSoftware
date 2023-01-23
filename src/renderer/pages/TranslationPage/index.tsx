@@ -9,6 +9,7 @@ import useTranslationPage from './useTranslationPage';
 
 const TranslationPage = () => {
   const {
+    module,
     currentTranslations,
     locale,
     languages,
@@ -43,14 +44,16 @@ const TranslationPage = () => {
               </Grid.Row>
             )}
             <Grid.Row>
-              <TranslationTableComponent
-                translations={currentTranslations}
-                locale={locale}
-                keySelected={translationForm?.keyTranslation}
-                canDelete={!isModuleView}
-                onClickRow={updateTranslationKey}
-                onDelete={deleteTranslation}
-              />
+              {currentTranslations && (
+                <TranslationTableComponent
+                  translations={currentTranslations}
+                  locale={locale}
+                  keySelected={translationForm?.keyTranslation}
+                  module={module}
+                  onClickRow={updateTranslationKey}
+                  onDelete={deleteTranslation}
+                />
+              )}
             </Grid.Row>
           </Grid.Column>
           {translationForm && (

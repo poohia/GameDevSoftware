@@ -7,11 +7,13 @@ import { TranslationObject } from 'types';
 export type TranslationFormComponentValue = {
   code: string;
   value: string;
+  editable?: boolean;
+  deletable?: boolean;
 };
 export type TranslationFormComponentProps = {
   keyTranslation?: string;
   values: TranslationFormComponentValue[];
-  onSubmit: (translations: TranslationObject) => void;
+  onSubmit: (translations: any) => void;
 };
 const TranslationFormComponent = (props: TranslationFormComponentProps) => {
   const { keyTranslation, values, onSubmit } = props;
@@ -19,6 +21,8 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
   const [translationsValue, setTranslationsValue] = useState<TranslationObject>(
     {}
   );
+  const [editable, setEditable] = useState<boolean>(true);
+  const [deletable, setDeletable] = useState<boolean>(true);
 
   const handleKeyChange = useCallback((value: string) => {
     setKeyValue(value.toLocaleLowerCase().replace(' ', '_'));
@@ -35,8 +39,19 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
   );
 
   const handleSubmit = useCallback(() => {
-    onSubmit(translationsValue);
-  }, [translationsValue]);
+    const values: any = {};
+    Object.keys(translationsValue).forEach((code) => {
+      const key: any = Object.keys(translationsValue[code])[0];
+      const value = translationsValue[code][key];
+      values[code] = {
+        key,
+        text: value,
+        editable,
+        deletable,
+      };
+    });
+    onSubmit(values);
+  }, [translationsValue, editable, deletable]);
 
   useEffect(() => {
     setKeyValue(keyTranslation || '');
@@ -48,7 +63,12 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
       values.forEach((value) => {
         translations[value.code] = { [keyValue]: value.value };
       });
-
+      setEditable(
+        typeof values[0].editable !== 'undefined' ? values[0].editable : true
+      );
+      setDeletable(
+        typeof values[0].deletable !== 'undefined' ? values[0].deletable : true
+      );
       setTranslationsValue(translations);
     } else {
       setTranslationsValue({});
@@ -69,7 +89,7 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
         </Grid.Row>
         <Grid.Row>
           <Container fluid>
-            <Form>
+            <Form onSubmit={handleSubmit}>
               <Form.Field>
                 <Form.Input
                   disabled={!!keyTranslation}
@@ -97,15 +117,27 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
                     onChange={(_, data) => {
                       handleTranslationValue(data.value, value.code);
                     }}
-                    disabled={keyValue === ''}
+                    disabled={keyValue === '' || !editable}
                   />
                 </Form.Field>
               ))}
-              <Button
-                type="submit"
-                disabled={keyValue === ''}
-                onClick={handleSubmit}
-              >
+              <Form.Field>
+                <Form.Checkbox
+                  label={i18n.t('form_label_editable')}
+                  checked={editable}
+                  onChange={() => setEditable(!editable)}
+                  disabled={!editable}
+                />
+              </Form.Field>
+              <Form.Field>
+                <Form.Checkbox
+                  label={i18n.t('form_label_deletable')}
+                  checked={deletable}
+                  onChange={() => setDeletable(!deletable)}
+                  disabled={!editable}
+                />
+              </Form.Field>
+              <Button type="submit" disabled={keyValue === ''}>
                 {i18n.t('module_translation_form_field_submit')}
               </Button>
             </Form>
