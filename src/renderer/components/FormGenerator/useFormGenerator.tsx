@@ -32,8 +32,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
   const formik = useFormik<any>({
     initialValues: defaultValues ? defaultValues : {},
     onSubmit: (values) => {
-      console.log(values);
-      // onSubmit({ ...values, _type });
+      onSubmit({ ...values, _type });
     },
     enableReinitialize: true,
   });
