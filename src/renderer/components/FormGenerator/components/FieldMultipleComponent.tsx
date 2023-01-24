@@ -3,6 +3,7 @@ import { Grid, Header, Icon } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import { FieldMultipleComponentProps } from 'types';
 import TransComponent from '../../TransComponent';
+import { useFormikContext } from 'formik';
 
 const FieldMultipleComponent: React.FunctionComponent<
   FieldMultipleComponentProps
@@ -17,12 +18,15 @@ const FieldMultipleComponent: React.FunctionComponent<
 
   const [items, setItems] = useState<number[]>([]);
   const [values, setValues] = useState<{ id: Number; value: any }[]>([]);
+  const { setFieldValue } = useFormikContext();
 
   const handleRemove = useCallback(
     (item: number) => {
       const _values = Array.from(values.filter((value) => value.id !== item));
       setItems(Array.from(items.filter((i) => i !== item)));
       setValues(_values);
+      console.log(keyValue, core, item);
+      setFieldValue(`${keyValue}[${item}]`, undefined);
     },
     [items, values]
   );

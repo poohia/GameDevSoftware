@@ -33,7 +33,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
     initialValues: defaultValues ? defaultValues : {},
     onSubmit: (values) => {
       console.log(values);
-      onSubmit({ ...values, _type });
+      // onSubmit({ ...values, _type });
     },
     enableReinitialize: true,
   });
@@ -197,9 +197,8 @@ const useFormGenerator = (props: FormGeneratorProps) => {
           </FieldComponent>
         );
       }
-
       if (typeof core === 'object') {
-        if (typeof core.core === 'object' && multiple) {
+        if (typeof core.core === 'object' && !core.multiple) {
           return (
             <FieldComponent
               {...defaultProps}
@@ -219,7 +218,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
             </FieldComponent>
           );
         }
-        if (typeof core.core === 'object' && multiple) {
+        if (typeof core.core === 'object' && core.multiple) {
           return (
             <FieldComponent
               {...defaultProps}
