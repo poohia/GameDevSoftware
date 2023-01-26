@@ -29,18 +29,23 @@ export default class TranslationPlugin {
     async
       .each(languages, (language, callback) => {
         const { code } = language;
-        fs.readFile(
-          `${path}${FolderPlugin.translationDirectory}/${code}.json`,
-          (err, dataTranslation) => {
-            if (err) {
-              translations[code] = {};
-            } else {
-              // @ts-ignore
-              translations[code] = JSON.parse(dataTranslation);
-            }
+        console.log('======================');
+        console.log(code);
+        FileService.readJsonFile(
+          `${path}${FolderPlugin.translationDirectory}/${code}.json`
+        )
+          .then((dataTranslation) => {
+            translations[code] = dataTranslation;
             callback();
-          }
-        );
+          })
+          .catch(() => {
+            console.warn(
+              `File dosn't exist ${path}${FolderPlugin.translationDirectory}/${code}.json`
+            );
+          })
+          .finally(() => callback());
+
+        console.log('====================');
       })
       .then(() => {
         event.reply('load-translations', translations);
@@ -50,21 +55,16 @@ export default class TranslationPlugin {
   saveTranslations = (event: ElectronIpcMainEvent, args: TranslationObject) => {
     // @ts-ignore
     const { path } = global;
-    Promise.all(
-      Object.keys(args).map((code) => {
-        new Promise((resolve) => {
-          fs.writeFile(
-            `${path}${FolderPlugin.translationDirectory}/${code}.json`,
-            JSON.stringify(args[code]),
-            () => {
-              resolve(true);
-            }
-          );
-        });
+    async
+      .each(Object.keys(args), (code, callback) => {
+        FileService.writeJsonFile(
+          `${path}${FolderPlugin.translationDirectory}/${code}.json`,
+          args[code]
+        ).then(() => callback());
       })
-    ).then(() => {
-      this.loadTranslations(event);
-    });
+      .then(() => {
+        this.loadTranslations(event);
+      });
   };
 
   setLanguages = (event: ElectronIpcMainEvent, args: string[]) => {

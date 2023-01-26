@@ -57,8 +57,6 @@ export default class ApplicationPlugin {
         m['@_content'] = args.description;
       }
     });
-    console.log(xml);
-    console.log(builder.build(xml));
     fs.writeFile(
       `${path}${FolderPlugin.indexHtml}`,
       builder.build(xml),

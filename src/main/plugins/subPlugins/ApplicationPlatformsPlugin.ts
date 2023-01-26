@@ -70,8 +70,16 @@ export default class ApplicationPlatformsPlugin {
 
   checkProjectStarted = (event: Electron.IpcMainEvent) => {
     detect(3333)
-      .then(() => event.reply('projected-started', true))
-      .catch(() => event.reply('projected-started', true));
+      .then((port) => {
+        if (port == 3333) {
+          event.reply('projected-started', false);
+        } else {
+          event.reply('projected-started', true);
+        }
+      })
+      .catch(() => {
+        event.reply('projected-started', false);
+      });
   };
 
   toggleProject = (_event: ElectronIpcMainEvent) => {

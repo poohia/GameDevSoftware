@@ -13,16 +13,16 @@ type TransComponentProps = React.DetailedHTMLProps<
 
 const TransComponent = (props: TransComponentProps) => {
   const { id, defaultValue = id, values = [], ...rest } = props;
-  const { translations } = useContext(TranslationsContext);
+  const { translations, gameLocale } = useContext(TranslationsContext);
 
   const value = useMemo(() => {
     if (!id) return 'Translation id not found';
     if (id.startsWith('@t:')) {
-      console.log("i'm here !!!!!!!");
-      // return (
-      //   translations[id.replace('@t:', '')] ||
-      //   `Translation not found ${id.replace('@t:', '')}`
-      // );
+      return (
+        translations[gameLocale].find(
+          (translation) => translation.key === id.replace('@t:', '')
+        )?.text || `Translation not found ${id.replace('@t:', '')}`
+      );
     }
     let v = i18n.t(id, { defaultValue });
     values.forEach(
