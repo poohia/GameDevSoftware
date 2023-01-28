@@ -7,8 +7,14 @@ import { useEffect, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
 import HomeBuildRowComponent from '../HomeBuildRowComponent';
 import HomeEmulateRowComponent from '../HomeEmulateRowComponent';
+import { PageProps } from 'types';
+import { modulesComponent } from 'renderer/App';
 
-const HomeProjectComponent = () => {
+type HomeProjectComponentProps = Required<Pick<PageProps, 'appendTab'>>;
+
+const HomeProjectComponent: React.FC<HomeProjectComponentProps> = ({
+  appendTab,
+}) => {
   const [pathProject, setPathProject] = useState<string>('');
   const { sendMessage } = useEvents();
 
@@ -43,7 +49,11 @@ const HomeProjectComponent = () => {
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column>
-                  <ButtonStartStopProjectComponent />
+                  <ButtonStartStopProjectComponent
+                    onClickUrl={() => {
+                      appendTab(`module_view`, modulesComponent[`ViewPage`]);
+                    }}
+                  />
                 </Grid.Column>
               </Grid.Row>
               <Grid.Row>

@@ -2,6 +2,7 @@ import { Tab } from 'semantic-ui-react';
 import useApp from 'renderer/useApp';
 import {
   ApplicationPage,
+  ViewPage,
   AssetPage,
   ConstantPage,
   HomePage,
@@ -18,6 +19,7 @@ import GameDevSoftwareProvider from './contexts';
 export const modulesComponent: any = [];
 modulesComponent['HomePage'] = HomePage;
 modulesComponent['ApplicationPage'] = ApplicationPage;
+modulesComponent['ViewPage'] = ViewPage;
 modulesComponent['TranslationPage'] = TranslationPage;
 modulesComponent['ConstantPage'] = ConstantPage;
 modulesComponent['AssetPage'] = AssetPage;

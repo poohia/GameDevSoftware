@@ -21,6 +21,10 @@
   }
 }
 .tab {
-  min-height: 98vh;
+  // min-height: 98vh;
   // height: 100%;
+  // overflow: auto;
+  // height: 100%;
+  overflow: auto;
+  height: 95vh;
 }

@@ -4,7 +4,13 @@ import { Icon } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 
-const ButtonStartStopProjectComponent = () => {
+type ButtonStartStopProjectComponentProps = {
+  onCLickRefresh?: () => void;
+  onClickUrl: () => void;
+};
+const ButtonStartStopProjectComponent: React.FC<
+  ButtonStartStopProjectComponentProps
+> = ({ onCLickRefresh, onClickUrl }) => {
   const [projectStarted, setProjectStarted] = useState<boolean>(false);
   const [loadingToggleProject, setLoadingToggleProject] =
     useState<boolean>(false);
@@ -40,7 +46,29 @@ const ButtonStartStopProjectComponent = () => {
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <p style={{ margin: '0 10px' }}>
+        <a
+          href="http://localhost:3333"
+          onClick={(e) => {
+            e.preventDefault();
+            onClickUrl();
+          }}
+        >
+          http://localhost:3333
+        </a>
+      </p>
+      {onCLickRefresh && (
+        <Button
+          icon
+          labelPosition="right"
+          color="blue"
+          onClick={onCLickRefresh}
+        >
+          {i18n.t('module_application_home_project_refresh')}
+          <Icon name="refresh" />
+        </Button>
+      )}
       <Button
         icon
         labelPosition="right"
@@ -51,12 +79,7 @@ const ButtonStartStopProjectComponent = () => {
         {i18n.t('module_application_home_project_stop')}
         <Icon name="stop" />
       </Button>
-      <p>
-        <a href="http://localhost:3333" target={'_blank'}>
-          http://localhost:3333
-        </a>
-      </p>
-    </>
+    </div>
   );
 };
 

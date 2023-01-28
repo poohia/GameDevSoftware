@@ -1,6 +1,9 @@
 main {
   height: 100vh;
-  > div {
-    height: 100vh;
-  }
+  overflow: hidden;
+  // > div {
+  //   // height: 100vh;
+  //   overflow: auto;
+  //   height: 100%;
+  // }
 }

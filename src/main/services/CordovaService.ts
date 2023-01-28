@@ -5,6 +5,7 @@ import fs from 'fs';
 import kill from 'kill-port';
 
 import FolderPlugin from '../plugins/FolderPlugin';
+import detectPort from 'detect-port';
 
 const exec = childProcess.exec;
 const spawn = childProcess.spawn;
@@ -143,15 +144,20 @@ export default class CordovaService {
   toggleProcess = () => {
     // @ts-ignore
     const { mainWindow } = global;
-    kill(3333)
-      .then(() => {
-        mainWindow.webContents.send('projected-started', false);
-      })
-      .catch(() => {
+    detectPort(3333).then((port) => {
+      if (port == 3333) {
         // @ts-ignore
         const path = global.path;
-        spawn('npm', ['start'], { cwd: path });
+        // spawn('npm', ['start'], { cwd: path });
+        exec('npm start', {
+          cwd: path,
+        });
         mainWindow.webContents.send('projected-started', true);
-      });
+      } else {
+        kill(3333).then(() => {
+          mainWindow.webContents.send('projected-started', false);
+        });
+      }
+    });
   };
 }

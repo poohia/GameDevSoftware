@@ -19,6 +19,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
   const {
     modules = [
       'application',
+      'view',
       'translation',
       'constant',
       'asset',

@@ -21,7 +21,7 @@ const HomePage: React.FC<Required<PageProps>> = ({ appendTab }) => {
       <Grid>
         <Grid.Row>
           <Grid.Column width={16}>
-            <HomeProjectComponent />
+            <HomeProjectComponent appendTab={appendTab} />
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>

@@ -1,6 +1,7 @@
 {
   "home": "Home",
   "module_application": "Application Module",
+  "module_view": "View Module",
   "module_translation": "Translation Module",
   "module_constant": "Constant Module",
   "module_gameobject": "Game Object Module",
@@ -39,6 +40,7 @@
   "module_application_home_game_modules_title": "Game modules",
   "module_application_home_project_start": "Start project",
   "module_application_home_project_stop": "Stop",
+  "module_application_home_project_refresh": "Refresh",
   "module_application_home_project_open_new_project": "Open project",
   "module_application_home_project_build": "Build",
   "module_application_params_home_view": "Home View by modules",
