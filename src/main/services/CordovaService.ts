@@ -125,11 +125,7 @@ export default class CordovaService {
       {
         cwd: path,
       },
-      (err, stdout, stderr) => {
-        console.log(err);
-        console.log(stdout);
-        console.log(stderr);
-      }
+      (err, stdout, stderr) => {}
     );
   };
 

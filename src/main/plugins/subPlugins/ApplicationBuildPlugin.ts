@@ -1,9 +1,9 @@
 import CordovaService from '../../services/CordovaService';
 import { ElectronIpcMainEvent, PlatformsParams } from 'types';
+import detectPort from 'detect-port';
+import killPort from 'kill-port';
 
 export default class ApplicationBuildPlugin {
-  private _browserIsOpenned = false;
-
   preparePlatform = (
     event: ElectronIpcMainEvent,
     arg: keyof PlatformsParams
@@ -43,13 +43,13 @@ export default class ApplicationBuildPlugin {
         cordovaService.openElectron();
         break;
       case 'browser':
-        if (this._browserIsOpenned) {
-          cordovaService.closeBrowser();
-          this._browserIsOpenned = false;
-        } else {
-          cordovaService.openBrowser();
-          this._browserIsOpenned = true;
-        }
+        detectPort(8000).then((port) => {
+          if (port === 8000) {
+            cordovaService.openBrowser();
+          } else {
+            killPort(8000);
+          }
+        });
         break;
     }
   };
