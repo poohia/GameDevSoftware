@@ -22,7 +22,6 @@ const useEvents = () => {
 
   const sendMessage = useCallback(
     (chanel: Channels, args?: any, forceModule?: string) => {
-      window.electron.ipcRenderer.sendMessage('unrefresh');
       // if (module || forceModule) {
       //   console.log(`${chanel}-module`, args);
       //   //@ts-ignore

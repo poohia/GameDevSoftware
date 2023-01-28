@@ -29,8 +29,6 @@ export default class TranslationPlugin {
     async
       .each(languages, (language, callback) => {
         const { code } = language;
-        console.log('======================');
-        console.log(code);
         FileService.readJsonFile(
           `${path}${FolderPlugin.translationDirectory}/${code}.json`
         )
@@ -44,8 +42,6 @@ export default class TranslationPlugin {
             );
           })
           .finally(() => callback());
-
-        console.log('====================');
       })
       .then(() => {
         event.reply('load-translations', translations);
