@@ -9,12 +9,14 @@ import {
 } from 'types';
 import path from 'path';
 import FileService from '../services/FileService';
-
 import FolderPlugin from './FolderPlugin';
-import GameModulesPlugin from './GameModulesPlugin';
+import { OptimizeAssetsPlugin } from './subPlugins';
 
 export default class AssetPlugin {
-  constructor(private mainWindow: BrowserWindow) {}
+  private _optimizeAssetsPlugin;
+  constructor(private mainWindow: BrowserWindow) {
+    this._optimizeAssetsPlugin = new OptimizeAssetsPlugin();
+  }
 
   private typeFromExtension = (ext: string): AssertAcceptedType => {
     if (ext === '.png' || ext === '.jpg' || ext === '.jpeg') {
@@ -204,25 +206,11 @@ export default class AssetPlugin {
   loadAllAssets = (event: ElectronIpcMainEvent) => {
     // @ts-ignore
     const { path } = global;
-    let finalData: any = [];
-    GameModulesPlugin.loadDynamicModulesName().then((modules) => {
-      async
-        .each(modules, (module, callback) => {
-          FileService.readJsonFile(
-            `${path}${FolderPlugin.modulesDirectory}/${module}/assets.json`
-          ).then((data: any) => {
-            finalData = finalData.concat([...data]);
-            callback();
-          });
-        })
-        .then(() => {
-          FileService.readJsonFile(`${path}${FolderPlugin.assetFile}`).then(
-            (data) => {
-              event.reply('load-all-assets', finalData.concat([...data]));
-            }
-          );
-        });
-    });
+    FileService.readJsonFile(`${path}${FolderPlugin.assetFile}`).then(
+      (data) => {
+        event.reply('load-all-assets', data);
+      }
+    );
   };
 
   init = () => {
@@ -248,5 +236,8 @@ export default class AssetPlugin {
     ipcMain.on('load-asset-base64', (event: Electron.IpcMainEvent, arg) =>
       this.getAssetBase64FromAssets(event as ElectronIpcMainEvent, arg)
     );
+    ipcMain.on('optimize-assets', (event: Electron.IpcMainEvent) => {
+      this._optimizeAssetsPlugin.optimize(event as ElectronIpcMainEvent);
+    });
   };
 }

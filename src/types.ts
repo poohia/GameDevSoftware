@@ -62,7 +62,8 @@ export type Channels =
   | 'load-env-production-vars'
   | 'write-env-production-vars'
   | 'load-menus-views'
-  | 'set-menu-view';
+  | 'set-menu-view'
+  | 'optimize-assets';
 export type Tables =
   | 'locale'
   | 'tabs'
