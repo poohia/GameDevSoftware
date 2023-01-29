@@ -51,9 +51,7 @@ const DropdownFirstScene = () => {
           <Form.Dropdown
             fluid
             selection
-            label={
-              <TransComponent id="module_application_home_global_modules_title" />
-            }
+            label={<TransComponent id="form_scene_module_first_scene" />}
             required
             value={firstScene}
             options={options}

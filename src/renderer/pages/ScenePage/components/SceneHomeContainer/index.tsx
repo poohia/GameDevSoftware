@@ -21,7 +21,7 @@ const SceneHomeContainer = ({ appendTab }: PageProps) => {
     <Container>
       <Segment className="game-dev-software-module-application-params-identity-segment">
         <span className="game-dev-software-module-application-params-identity-segment-title">
-          <TransComponent id="module_application_home_global_modules_title" />
+          <TransComponent id="form_scene_module_first_scene" />
         </span>
         <Grid>
           <Grid.Row columns={1}>
@@ -31,7 +31,7 @@ const SceneHomeContainer = ({ appendTab }: PageProps) => {
       </Segment>
       <Segment className="game-dev-software-module-application-params-identity-segment">
         <span className="game-dev-software-module-application-params-identity-segment-title">
-          <TransComponent id="module_gameobject_home_title" />
+          <TransComponent id="module_scene_title" />
         </span>
         <Grid>
           <Grid.Row columns={4} width="equals">

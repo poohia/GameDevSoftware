@@ -6,6 +6,8 @@
   "module_constant": "Constant Module",
   "module_gameobject": "Game Object Module",
   "module_scene": "Scene Module",
+  "form_scene_module_first_scene": "First scene",
+  "module_scene_title": "Scenes",
   "dropdown_languages_placeholder_default": "Select Country",
   "dropdown_languages_placeholder_append_country": "Append language",
   "module_translation_header_button_append_translation": "Create translation",
