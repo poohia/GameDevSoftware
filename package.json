@@ -236,7 +236,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@semantic-ui-react/css-patch": "^1.0.0",
+    "@semantic-ui-react/css-patch": "^1.1.2",
     "async": "^3.2.3",
     "compress-images": "^2.0.5",
     "electron-debug": "^3.2.0",
@@ -254,8 +254,8 @@
     "react-color": "^2.19.3",
     "react-dom": "^18.0.0",
     "react-dropzone": "^13.0.0",
-    "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^2.1.2",
+    "semantic-ui-css": "^2.5.0",
+    "semantic-ui-react": "^2.1.4",
     "title-case": "^3.0.3"
   },
   "devEngines": {
