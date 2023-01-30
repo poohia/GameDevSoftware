@@ -238,7 +238,6 @@
   "dependencies": {
     "@semantic-ui-react/css-patch": "^1.1.2",
     "async": "^3.2.3",
-    "compress-images": "^2.0.5",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.6",
     "electron-updater": "^4.6.5",
