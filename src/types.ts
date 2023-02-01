@@ -192,6 +192,9 @@ export type ApplicationImageParams = {
   favicon: string;
   icon: string;
   splashscreen: string;
+  iconForegroundAndroid: string;
+  iconBackgroundAndroid: string;
+  splashscreenAndroid: string;
 };
 export type PlatformsParams = {
   android: boolean;

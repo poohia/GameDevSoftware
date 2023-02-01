@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, nativeTheme } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -69,11 +69,18 @@ const createWindow = async () => {
   const getAssetPath = (...paths: string[]): string => {
     return path.join(RESOURCES_PATH, ...paths);
   };
+  const displays = screen.getAllDisplays();
+  const externalDisplay = displays.find((display) => {
+    return display.bounds.x !== 0 || display.bounds.y !== 0;
+  });
+  const primaryDisplay = screen.getPrimaryDisplay();
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    x: externalDisplay?.bounds.x,
+    y: externalDisplay?.bounds.y,
+    width: externalDisplay?.size.width || primaryDisplay.size.width,
+    height: externalDisplay?.size.height || primaryDisplay.size.height,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
@@ -81,8 +88,8 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
-
   mainWindow.loadURL(resolveHtmlPath('index.html'));
+  mainWindow.maximize();
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {

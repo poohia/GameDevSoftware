@@ -44,6 +44,9 @@ export default class FolderPlugin {
     `${FolderPlugin.publicDirectory}/favicon.png`,
     `${FolderPlugin.resourcesDirectory}/icon.png`,
     `${FolderPlugin.resourcesDirectory}/splash.png`,
+    `${FolderPlugin.resourcesDirectory}/ic_cdv_splashscreen.png`,
+    `${FolderPlugin.resourcesDirectory}/android/icon-background.png`,
+    `${FolderPlugin.resourcesDirectory}/android/icon-foreground.png`,
   ];
   static appPlatforms = [
     `${FolderPlugin.platformsDirectory}/android`,

@@ -16,14 +16,24 @@ export default class ApplicationImagesPlugin {
       favicon: '',
       icon: '',
       splashscreen: '',
+      iconBackgroundAndroid: '',
+      iconForegroundAndroid: '',
+      splashscreenAndroid: '',
     };
     each(
       FolderPlugin.appImages,
       (image: string, callback: () => void) => {
         FileService.getFileBase64(`${path}${image}`, (base64) => {
           base64 = formatBase64('image', base64);
+
           if (image.endsWith('favicon.png')) {
             imageParams.favicon = base64;
+          } else if (image.endsWith('ic_cdv_splashscreen.png')) {
+            imageParams.splashscreenAndroid = base64;
+          } else if (image.endsWith('icon-background.png')) {
+            imageParams.iconBackgroundAndroid = base64;
+          } else if (image.endsWith('icon-foreground.png')) {
+            imageParams.iconForegroundAndroid = base64;
           } else if (image.endsWith('icon.png')) {
             imageParams.icon = base64;
           } else if (image.endsWith('splash.png')) {
@@ -49,7 +59,7 @@ export default class ApplicationImagesPlugin {
       })
       .then((result) => {
         // @ts-ignore
-        let targetPath = String(global.path);
+        let targetPath = global.path;
         switch (arg) {
           case 'favicon':
             targetPath = `${targetPath}${FolderPlugin.appImages[0]}`;
@@ -59,6 +69,15 @@ export default class ApplicationImagesPlugin {
             break;
           case 'splashscreen':
             targetPath = `${targetPath}${FolderPlugin.appImages[2]}`;
+            break;
+          case 'splashscreenAndroid':
+            targetPath = `${targetPath}${FolderPlugin.appImages[3]}`;
+            break;
+          case 'iconBackgroundAndroid':
+            targetPath = `${targetPath}${FolderPlugin.appImages[4]}`;
+            break;
+          case 'iconForegroundAndroid':
+            targetPath = `${targetPath}${FolderPlugin.appImages[5]}`;
             break;
         }
         fs.copyFile(result.filePaths[0], targetPath, (err) => {
