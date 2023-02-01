@@ -22,8 +22,6 @@ const AdvancedParamsComponent: React.FC = () => {
     });
   }, []);
 
-  console.log(menusView?.find((m) => m.active)?.value);
-
   return (
     <Container>
       <Segment className="game-dev-software-module-application-params-identity-segment">

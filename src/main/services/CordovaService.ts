@@ -8,7 +8,6 @@ import FolderPlugin from '../plugins/FolderPlugin';
 import detectPort from 'detect-port';
 
 const exec = childProcess.exec;
-const spawn = childProcess.spawn;
 
 export default class CordovaService {
   private _childProcessElectron: childProcess.ChildProcess | null = null;
@@ -24,6 +23,7 @@ export default class CordovaService {
       callback(Error(error?.message));
     });
   };
+
   static addPlatform = (
     platform: keyof PlatformsParams,
     callback: (err: Error) => void
