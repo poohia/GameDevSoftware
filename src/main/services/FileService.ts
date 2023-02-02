@@ -1,3 +1,4 @@
+import { dialog } from 'electron';
 import fs from 'fs';
 import { normalize } from 'path';
 
@@ -115,4 +116,23 @@ export default class FileService {
         resolve();
       });
     });
+
+  static replaceFile = (
+    dest: string,
+    browserWindow: Electron.BrowserWindow,
+    options: Electron.OpenDialogOptions
+  ) => {
+    return new Promise<void>((resolve, reject) => {
+      dialog.showOpenDialog(browserWindow, options).then((result) => {
+        fs.copyFile(result.filePaths[0], dest, (err) => {
+          if (err) {
+            console.error(err);
+            reject(err.message);
+            return;
+          }
+          resolve();
+        });
+      });
+    });
+  };
 }

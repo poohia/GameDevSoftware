@@ -10,6 +10,8 @@ const ImagesParamsComponent = () => {
     replaceImage,
     modifySlogan,
     updateSlogan,
+    replaceBrandImage,
+    replacePromotionVideo,
   } = useImagesParamsComponent();
 
   return (
@@ -81,14 +83,14 @@ const ImagesParamsComponent = () => {
             </Grid.Column>
             <Grid.Column width={4}>
               <img
-                onClick={() => replaceImage('iconBackgroundAndroid')}
+                onClick={replaceBrandImage}
                 src={splashscreenInformation?.brandImage}
               />
               <p>Brand Image 128x128 pixels</p>
             </Grid.Column>
             <Grid.Column width={4}>
               <video
-                onClick={() => replaceImage('iconBackgroundAndroid')}
+                onClick={replacePromotionVideo}
                 src={splashscreenInformation?.gamePromotionVideo}
                 autoPlay
                 loop

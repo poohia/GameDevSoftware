@@ -42,6 +42,9 @@ export default class FolderPlugin {
   /** */
   /** */
   static splashscreenFileConfig = `${FolderPlugin.gameDevSoftwareDirectory}/splashscreen.json`;
+  static splashscreenAssetFolder = `${FolderPlugin.assetsDirectory}/splashscreen`;
+  static splashscreenBrandImageFile = `${FolderPlugin.splashscreenAssetFolder}/brand.png`;
+  static splashscreenGamePromotionFile = `${FolderPlugin.splashscreenAssetFolder}/game_promotion.mp4`;
   /** */
   static appImages = [
     `${FolderPlugin.publicDirectory}/favicon.png`,

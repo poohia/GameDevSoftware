@@ -35,6 +35,14 @@ const useImagesParamsComponent = () => {
     }
   }, [splashscreenInformation]);
 
+  const replaceBrandImage = useCallback(() => {
+    sendMessage('splashscreen-replace-brand-image');
+  }, []);
+
+  const replacePromotionVideo = useCallback(() => {
+    sendMessage('splashscreen-replace-promotion-video');
+  }, []);
+
   useEffect(() => {
     requestMessage('load-params-image', (args: ApplicationImageParams) => {
       setImagesParams(args);
@@ -45,11 +53,6 @@ const useImagesParamsComponent = () => {
     requestMessage(
       'load-splashscreen-informations',
       (args: SplashscreenType) => {
-        console.log(
-          '🚀 ~ file: useImagesParamsComponent.tsx:32 ~ useEffect ~ args',
-          args
-        );
-
         setSplashscreenInformation(args);
       }
     );
@@ -61,6 +64,8 @@ const useImagesParamsComponent = () => {
     replaceImage,
     modifySlogan,
     updateSlogan,
+    replaceBrandImage,
+    replacePromotionVideo,
   };
 };
 

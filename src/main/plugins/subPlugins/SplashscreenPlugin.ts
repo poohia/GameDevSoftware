@@ -3,7 +3,9 @@ import { ElectronIpcMainEvent, SplashscreenType } from 'types';
 import FolderPlugin from '../FolderPlugin';
 import { formatBase64 } from '../../../utils';
 
-export default class SplasscreenPlugin {
+export default class SplashscreenPlugin {
+  constructor(private mainWindow: BrowserWindow);
+
   private openFile = () => {
     // @ts-ignore
     const { path } = global;
@@ -46,5 +48,31 @@ export default class SplasscreenPlugin {
       data.brandSlogan = arg;
       this.writeFile(data).then(() => this.openSplashscreenFile(event));
     });
+  };
+
+  replaceBrandImage = (event: ElectronIpcMainEvent) => {
+    // @ts-ignore
+    const { path } = global;
+    FileService.replaceFile(
+      `${path}${FolderPlugin.splashscreenBrandImageFile}`,
+      this.mainWindow,
+      {
+        properties: ['openFile'],
+        filters: [{ extensions: ['.png'], name: 'Image' }],
+      }
+    ).then(() => this.openSplashscreenFile(event));
+  };
+
+  replaceGamePromotionVideo = (event: ElectronIpcMainEvent) => {
+    // @ts-ignore
+    const { path } = global;
+    FileService.replaceFile(
+      `${path}${FolderPlugin.splashscreenGamePromotionFile}`,
+      this.mainWindow,
+      {
+        properties: ['openFile'],
+        filters: [{ extensions: ['.mp4'], name: 'Video' }],
+      }
+    ).then(() => this.openSplashscreenFile(event));
   };
 }

@@ -14,7 +14,7 @@ import {
   ApplicationImagesPlugin,
   ApplicationPlatformsPlugin,
   ApplicationBuildPlugin,
-  SplasscreenPlugin,
+  SplashscreenPlugin,
 } from './subPlugins';
 import VersionSoftwareService from '../services/VersionSoftwareService';
 import GameModulesPlugin from './GameModulesPlugin';
@@ -36,10 +36,10 @@ export default class ApplicationPlugin {
     'cordova',
   ];
   constructor(private mainWindow: BrowserWindow) {
-    this._imagePlugin = new ApplicationImagesPlugin(mainWindow);
+    this._imagePlugin = new ApplicationImagesPlugin(this.mainWindow);
     this._platformsPlugin = new ApplicationPlatformsPlugin();
     this._buildPlugin = new ApplicationBuildPlugin();
-    this._splashscreenPlugin = new SplasscreenPlugin();
+    this._splashscreenPlugin = new SplashscreenPlugin(this.mainWindow);
   }
 
   private writeOnIndexHtml = (
@@ -265,6 +265,22 @@ export default class ApplicationPlugin {
         this._splashscreenPlugin.modifySlogan(
           event as ElectronIpcMainEvent,
           args
+        );
+      }
+    );
+    ipcMain.on(
+      'splashscreen-replace-brand-image',
+      (event: Electron.IpcMainEvent) => {
+        this._splashscreenPlugin.replaceBrandImage(
+          event as ElectronIpcMainEvent
+        );
+      }
+    );
+    ipcMain.on(
+      'splashscreen-replace-promotion-video',
+      (event: Electron.IpcMainEvent) => {
+        this._splashscreenPlugin.replaceGamePromotionVideo(
+          event as ElectronIpcMainEvent
         );
       }
     );

@@ -65,7 +65,9 @@ export type Channels =
   | 'set-menu-view'
   | 'optimize-assets'
   | 'load-splashscreen-informations'
-  | 'splashscreen-modify-slogan';
+  | 'splashscreen-modify-slogan'
+  | 'splashscreen-replace-brand-image'
+  | 'splashscreen-replace-promotion-video';
 export type Tables =
   | 'locale'
   | 'tabs'
