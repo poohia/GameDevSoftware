@@ -1,14 +1,17 @@
-import { Container, Grid, Header, Icon } from 'semantic-ui-react';
+import { Container, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Segment } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import useImagesParamsComponent from './useImagesParamsComponent';
 
 const ImagesParamsComponent = () => {
-  const { imagesParams, replaceImage } = useImagesParamsComponent();
-  console.log(
-    '🚀 ~ file: index.tsx:8 ~ ImagesParamsComponent ~ imagesParams',
-    imagesParams
-  );
+  const {
+    imagesParams,
+    splashscreenInformation,
+    replaceImage,
+    modifySlogan,
+    updateSlogan,
+  } = useImagesParamsComponent();
+
   return (
     <Container>
       <Segment className="game-dev-software-module-application-params-identity-segment">
@@ -38,19 +41,13 @@ const ImagesParamsComponent = () => {
                 <Header.Content>ios</Header.Content>
               </Header>
             </Grid.Column>
-            <Grid.Column width={5}>
+            <Grid.Column width={6}>
               <img
                 onClick={() => replaceImage('icon')}
                 src={imagesParams?.icon}
+                style={{ width: '100%' }}
               />
               <p>Icon 1024x1024 pixels</p>
-            </Grid.Column>
-            <Grid.Column width={5}>
-              <img
-                onClick={() => replaceImage('splashscreen')}
-                src={imagesParams?.splashscreen}
-              />
-              <p>Splashscreen 2732x2732 pixels</p>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
@@ -60,26 +57,58 @@ const ImagesParamsComponent = () => {
                 <Header.Content>Android</Header.Content>
               </Header>
             </Grid.Column>
-            <Grid.Column width={3}>
+            <Grid.Column width={4}>
               <img
                 onClick={() => replaceImage('iconForegroundAndroid')}
                 src={imagesParams?.iconForegroundAndroid}
               />
               <p>Icon Foreground 1024x1024 pixels</p>
             </Grid.Column>
-            <Grid.Column width={3}>
+            <Grid.Column width={4}>
               <img
                 onClick={() => replaceImage('iconBackgroundAndroid')}
                 src={imagesParams?.iconBackgroundAndroid}
               />
               <p>Icon Background 1024x1024 pixels</p>
             </Grid.Column>
-            <Grid.Column width={6}>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={4}>
+              <Header as="h3">
+                <Icon name="image outline" />
+                <Header.Content>Splashscreen</Header.Content>
+              </Header>
+            </Grid.Column>
+            <Grid.Column width={4}>
               <img
-                onClick={() => replaceImage('splashscreenAndroid')}
-                src={imagesParams?.splashscreenAndroid}
+                onClick={() => replaceImage('iconBackgroundAndroid')}
+                src={splashscreenInformation?.brandImage}
               />
-              <p>Splashscreen 512x512 pixels</p>
+              <p>Brand Image 128x128 pixels</p>
+            </Grid.Column>
+            <Grid.Column width={4}>
+              <video
+                onClick={() => replaceImage('iconBackgroundAndroid')}
+                src={splashscreenInformation?.gamePromotionVideo}
+                autoPlay
+                loop
+                width="100%"
+                height="100%"
+              />
+              <p>Video promotion mp4</p>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={4}></Grid.Column>
+            <Grid.Column width={6}>
+              <Input
+                label="Slogan"
+                labelPosition="right"
+                fluid
+                value={splashscreenInformation?.brandSlogan}
+                onChange={(_, { value }) => modifySlogan(value)}
+                onBlur={updateSlogan}
+              />
             </Grid.Column>
           </Grid.Row>
         </Grid>

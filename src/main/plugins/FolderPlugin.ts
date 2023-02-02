@@ -6,25 +6,25 @@ export default class FolderPlugin {
   constructor(private mainWindow: BrowserWindow) {}
   static srcDirectory = '/src';
   static publicDirectory = '/public';
-  static gameDevSoftwareDirectory = '/GameDevSoftware';
   static resourcesDirectory = '/resources';
   static platformsDirectory = '/platforms';
-  static modulesDirectory = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/modules`;
+  static gameDevSoftwareDirectory = `${FolderPlugin.srcDirectory}/GameDevSoftware`;
+  static modulesDirectory = `${FolderPlugin.gameDevSoftwareDirectory}/modules`;
 
   static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
-  static languageFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
-  static constantFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/constants.json`;
-  static assetFile = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/assets.json`;
+  static languageFile = `${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
+  static constantFile = `${FolderPlugin.gameDevSoftwareDirectory}/constants.json`;
+  static assetFile = `${FolderPlugin.gameDevSoftwareDirectory}/assets.json`;
   /** Menu and Parameters */
   static menuPath = '/pages/Home';
-  static menuConfig = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/homecomponent.json`;
+  static menuConfig = `${FolderPlugin.gameDevSoftwareDirectory}/homecomponent.json`;
   /** Game Objects */
   static gameObjectTypesDirectory = `/gameobjectTypes`;
-  static gameObjectDirectory = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/gameObjects`;
+  static gameObjectDirectory = `${FolderPlugin.gameDevSoftwareDirectory}/gameObjects`;
   static gameObjectFile = `${FolderPlugin.gameObjectDirectory}/index.json`;
   /* Scenes  */
   static sceneTypesDirectory = `/scenesTypes`;
-  static sceneDirectory = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/scenes`;
+  static sceneDirectory = `${FolderPlugin.gameDevSoftwareDirectory}/scenes`;
   static sceneFile = `${FolderPlugin.sceneDirectory}/index.json`;
   /** */
   static configFile = `/config.xml`;
@@ -35,10 +35,13 @@ export default class FolderPlugin {
   static directoryImages = `${FolderPlugin.assetsDirectory}/images`;
   static directoryVideos = `${FolderPlugin.assetsDirectory}/videos`;
   static directorySounds = `${FolderPlugin.assetsDirectory}/sounds`;
-  static directoryJson = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/configurationsFiles`;
+  static directoryJson = `${FolderPlugin.gameDevSoftwareDirectory}/configurationsFiles`;
   /** env files */
-  static envFolder = `${FolderPlugin.srcDirectory}${FolderPlugin.gameDevSoftwareDirectory}/envs`;
+  static envFolder = `${FolderPlugin.gameDevSoftwareDirectory}/envs`;
   static envFiles = ['/env.development.json', '/env.production.json'];
+  /** */
+  /** */
+  static splashscreenFileConfig = `${FolderPlugin.gameDevSoftwareDirectory}/splashscreen.json`;
   /** */
   static appImages = [
     `${FolderPlugin.publicDirectory}/favicon.png`,

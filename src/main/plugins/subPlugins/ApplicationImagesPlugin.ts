@@ -15,10 +15,8 @@ export default class ApplicationImagesPlugin {
     const imageParams: ApplicationImageParams = {
       favicon: '',
       icon: '',
-      splashscreen: '',
       iconBackgroundAndroid: '',
       iconForegroundAndroid: '',
-      splashscreenAndroid: '',
     };
     each(
       FolderPlugin.appImages,
@@ -28,16 +26,13 @@ export default class ApplicationImagesPlugin {
 
           if (image.endsWith('favicon.png')) {
             imageParams.favicon = base64;
-          } else if (image.endsWith('ic_cdv_splashscreen.png')) {
-            imageParams.splashscreenAndroid = base64;
-          } else if (image.endsWith('icon-background.png')) {
+          }
+          if (image.endsWith('icon-background.png')) {
             imageParams.iconBackgroundAndroid = base64;
           } else if (image.endsWith('icon-foreground.png')) {
             imageParams.iconForegroundAndroid = base64;
           } else if (image.endsWith('icon.png')) {
             imageParams.icon = base64;
-          } else if (image.endsWith('splash.png')) {
-            imageParams.splashscreen = base64;
           }
           callback();
         });
@@ -66,12 +61,6 @@ export default class ApplicationImagesPlugin {
             break;
           case 'icon':
             targetPath = `${targetPath}${FolderPlugin.appImages[1]}`;
-            break;
-          case 'splashscreen':
-            targetPath = `${targetPath}${FolderPlugin.appImages[2]}`;
-            break;
-          case 'splashscreenAndroid':
-            targetPath = `${targetPath}${FolderPlugin.appImages[3]}`;
             break;
           case 'iconBackgroundAndroid':
             targetPath = `${targetPath}${FolderPlugin.appImages[4]}`;

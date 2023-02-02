@@ -14,6 +14,7 @@ import {
   ApplicationImagesPlugin,
   ApplicationPlatformsPlugin,
   ApplicationBuildPlugin,
+  SplasscreenPlugin,
 } from './subPlugins';
 import VersionSoftwareService from '../services/VersionSoftwareService';
 import GameModulesPlugin from './GameModulesPlugin';
@@ -27,6 +28,7 @@ export default class ApplicationPlugin {
   private _imagePlugin;
   private _platformsPlugin;
   private _buildPlugin;
+  private _splashscreenPlugin;
   private _softwaresToCheck: Array<keyof SoftwaresInfo> = [
     'git',
     'node',
@@ -37,6 +39,7 @@ export default class ApplicationPlugin {
     this._imagePlugin = new ApplicationImagesPlugin(mainWindow);
     this._platformsPlugin = new ApplicationPlatformsPlugin();
     this._buildPlugin = new ApplicationBuildPlugin();
+    this._splashscreenPlugin = new SplasscreenPlugin();
   }
 
   private writeOnIndexHtml = (
@@ -247,6 +250,23 @@ export default class ApplicationPlugin {
     );
     ipcMain.on('emulate-platform', (event: Electron.IpcMainEvent, args) =>
       this._buildPlugin.emulatePlatform(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on(
+      'load-splashscreen-informations',
+      (event: Electron.IpcMainEvent) => {
+        this._splashscreenPlugin.openSplashscreenFile(
+          event as ElectronIpcMainEvent
+        );
+      }
+    );
+    ipcMain.on(
+      'splashscreen-modify-slogan',
+      (event: Electron.IpcMainEvent, args) => {
+        this._splashscreenPlugin.modifySlogan(
+          event as ElectronIpcMainEvent,
+          args
+        );
+      }
     );
   };
 }

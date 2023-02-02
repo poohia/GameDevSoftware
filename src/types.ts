@@ -63,7 +63,9 @@ export type Channels =
   | 'write-env-production-vars'
   | 'load-menus-views'
   | 'set-menu-view'
-  | 'optimize-assets';
+  | 'optimize-assets'
+  | 'load-splashscreen-informations'
+  | 'splashscreen-modify-slogan';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -191,10 +193,8 @@ export type ApplicationIdentityParams = {
 export type ApplicationImageParams = {
   favicon: string;
   icon: string;
-  splashscreen: string;
   iconForegroundAndroid: string;
   iconBackgroundAndroid: string;
-  splashscreenAndroid: string;
 };
 export type PlatformsParams = {
   android: boolean;
@@ -290,3 +290,9 @@ export type EnvObject = {
   [key: string]: string;
 };
 export type MenusViewsType = { module: string; path: string; used: boolean };
+
+export type SplashscreenType = {
+  brandImage: string;
+  gamePromotionVideo: string;
+  brandSlogan: string;
+};
