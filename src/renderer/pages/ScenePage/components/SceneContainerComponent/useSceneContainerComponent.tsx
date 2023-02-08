@@ -65,7 +65,7 @@ const useSceneContainerComponent = (props: PageProps) => {
     sendMessage('load-scenes', sceneType);
     sendMessage('get-formulaire-scene', sceneType);
     // @ts-ignore
-    on(`load-scene-${sceneType}`, (args) => {
+    on(`load-scenes-${sceneType}`, (args) => {
       setScenes(args);
     });
     // @ts-ignore

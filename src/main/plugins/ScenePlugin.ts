@@ -58,9 +58,9 @@ export default class ScenePlugin {
           });
           if (sceneType) {
             // @ts-ignore
-            event.reply(`load-scene-${sceneType}`, sceneValue);
+            event.reply(`load-scenes-${sceneType}`, sceneValue);
           } else {
-            event.reply(`load-scene`, sceneValue);
+            event.reply(`load-scenes`, sceneValue);
           }
         });
     });
@@ -94,7 +94,7 @@ export default class ScenePlugin {
           });
         })
         .then(() => {
-          event.reply('load-scene-types', scenes);
+          event.reply('load-scenes-types', scenes);
         });
     });
   };
@@ -251,7 +251,7 @@ export default class ScenePlugin {
   };
 
   init = () => {
-    ipcMain.on('load-scene-types', (event: Electron.IpcMainEvent) =>
+    ipcMain.on('load-scenes-types', (event: Electron.IpcMainEvent) =>
       this.loadSceneTypes(event as ElectronIpcMainEvent)
     );
     ipcMain.on('load-scenes', (event: Electron.IpcMainEvent, args) =>
@@ -268,9 +268,6 @@ export default class ScenePlugin {
     });
     ipcMain.on('get-scene-value', (event, args) => {
       this.getSceneValue(event as ElectronIpcMainEvent, args);
-    });
-    ipcMain.on('load-all-scene', (event) => {
-      this.loadScenes(event as ElectronIpcMainEvent);
     });
     ipcMain.on('load-first-scene', (event) => {
       this.loadFirstScene(event as ElectronIpcMainEvent);

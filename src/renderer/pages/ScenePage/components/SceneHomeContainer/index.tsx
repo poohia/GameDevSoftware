@@ -12,7 +12,7 @@ const SceneHomeContainer = ({ appendTab }: PageProps) => {
   const { requestMessage } = useEvents();
 
   useEffect(() => {
-    requestMessage('load-scene-types', (args) => {
+    requestMessage('load-scenes-types', (args) => {
       setScenesType(args);
     });
   }, []);
