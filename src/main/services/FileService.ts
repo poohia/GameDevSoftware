@@ -9,7 +9,7 @@ export default class FileService {
     callback: () => void
   ) => {
     const binaryData = Buffer.from(
-      base64.replace(/^data:([A-Za-z-+/]+);base64,/, ''),
+      base64.replace(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,/, ''),
       'base64'
     );
     fs.writeFile(normalize(path), binaryData, (err) => {

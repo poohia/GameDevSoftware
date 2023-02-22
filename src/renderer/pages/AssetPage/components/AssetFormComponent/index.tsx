@@ -70,6 +70,7 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
                       fileName: defaultValue
                         ? defaultValue.name
                         : value.fileName,
+                      fileType: value.fileType,
                     })
                   }
                   disabled={disableForm}
