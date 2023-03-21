@@ -64,14 +64,14 @@ const ImagesParamsComponent = () => {
                 onClick={() => replaceImage('iconForegroundAndroid')}
                 src={imagesParams?.iconForegroundAndroid}
               />
-              <p>Icon Foreground 1024x1024 pixels</p>
+              <p>Icon Foreground 432×432 pixels</p>
             </Grid.Column>
             <Grid.Column width={4}>
               <img
                 onClick={() => replaceImage('iconBackgroundAndroid')}
                 src={imagesParams?.iconBackgroundAndroid}
               />
-              <p>Icon Background 1024x1024 pixels</p>
+              <p>Icon Background 432×432 pixels</p>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
