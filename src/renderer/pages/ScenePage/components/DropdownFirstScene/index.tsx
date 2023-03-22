@@ -14,7 +14,6 @@ import ScenesContext from 'renderer/contexts/ScenesContext';
 const DropdownFirstScene = () => {
   const [firstScene, setFirstScene] = useState<number>();
   const { scenes } = useContext(ScenesContext);
-  console.log('🚀 ~ file: index.tsx:17 ~ DropdownFirstScene ~ scenes', scenes);
   const options = useMemo(
     () =>
       scenes.map((scene) => ({

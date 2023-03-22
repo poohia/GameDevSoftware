@@ -5,12 +5,17 @@
   > div {
     &:nth-child(1) {
       height: 5vh;
+      display: flex;
     }
     &:nth-child(2) {
       height: 85vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       iframe {
-        width: 100%;
-        height: 100%;
+        // width: 100%;
+        // height: 100%;
+        border: none;
       }
     }
   }
