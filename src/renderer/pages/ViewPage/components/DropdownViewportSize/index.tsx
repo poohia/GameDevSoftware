@@ -4,6 +4,7 @@ import { Dropdown, DropdownItemProps } from 'semantic-ui-react';
 
 const typesViewportSize: DropdownItemProps[] = [
   { text: 'iPhone SE', value: 'iphoneSE', key: 'iphoneSe' },
+  { text: 'One plus 8t', value: 'oneplus8t', key: 'oneplus8t' },
   { text: 'Pixel 5', value: 'pixel5', key: 'pixel5' },
   { text: 'iPhone XR', value: 'iphoneXR', key: 'iphoneXR' },
   { text: 'iPad Mini', value: 'ipadMini', key: 'ipadMini' },
@@ -28,6 +29,9 @@ const DropdownViewportSize: React.FC<DropdownViewportSizeProps> = ({
     switch (value) {
       case 'iphoneSE':
         onChange('667px', '375px');
+        break;
+      case 'oneplus8t':
+        onChange('800px', '360px');
         break;
       case 'pixel5':
         onChange('851px', '393px');
