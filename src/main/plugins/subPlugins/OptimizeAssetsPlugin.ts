@@ -1,8 +1,8 @@
 import pathModule from 'path';
 import { app, shell } from 'electron';
-import { execFile } from 'node:child_process';
-import pngquant from 'pngquant-bin';
-import async from 'async';
+// import { execFile } from 'node:child_process';
+// import pngquant from 'pngquant-bin';
+// import async from 'async';
 
 import { AssetType, ElectronIpcMainEvent } from 'types';
 import FolderPlugin from '../FolderPlugin';
@@ -48,31 +48,31 @@ export default class OptimizeAssetsPlugin {
       //     resolve();
       //   }
       // );
-      async.each(
-        this.assets.filter(
-          (asset) =>
-            asset.type === 'image' && asset.name.toLowerCase().includes('png')
-        ),
-        (asset: AssetType, callback) => {
-          execFile(
-            pngquant,
-            [
-              '--quality=90-100',
-              '-o',
-              pathModule.normalize(
-                `${this.pathTempImagesFolderOptimize}/${asset.name}`
-              ),
-              `${path}${FolderPlugin.directoryImages}/${asset.name}`,
-            ],
-            () => {
-              callback();
-            }
-          );
-        },
-        () => {
-          resolve();
-        }
-      );
+      // async.each(
+      //   this.assets.filter(
+      //     (asset) =>
+      //       asset.type === 'image' && asset.name.toLowerCase().includes('png')
+      //   ),
+      //   (asset: AssetType, callback) => {
+      //     execFile(
+      //       pngquant,
+      //       [
+      //         '--quality=90-100',
+      //         '-o',
+      //         pathModule.normalize(
+      //           `${this.pathTempImagesFolderOptimize}/${asset.name}`
+      //         ),
+      //         `${path}${FolderPlugin.directoryImages}/${asset.name}`,
+      //       ],
+      //       () => {
+      //         callback();
+      //       }
+      //     );
+      //   },
+      //   () => {
+      //     resolve();
+      //   }
+      // );
     });
 
   optimize = (event: ElectronIpcMainEvent) => {
