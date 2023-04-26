@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { ButtonStartStopProjectComponent } from 'renderer/components';
-import { DropdownViewportSize } from './components';
+import { DropdownSaves, DropdownViewportSize } from './components';
 
 const ViewPage: React.FC = () => {
   const [viewPortSize, setViewPortSize] = useState<[string, string]>([
@@ -16,13 +16,10 @@ const ViewPage: React.FC = () => {
           <ButtonStartStopProjectComponent
             onCLickRefresh={() => {
               if (refIframe.current) {
-                console.log(refIframe.current);
                 refIframe.current.src = refIframe.current.src;
               }
             }}
-            onClickUrl={() => {
-              window.open('http://localhost:3333', '_blank');
-            }}
+            onClickUrl={() => window.open('http://localhost:3333', '_blank')}
           />
         </div>
         <div>
@@ -30,6 +27,16 @@ const ViewPage: React.FC = () => {
             onChange={(width, height) => setViewPortSize([width, height])}
           />
         </div>
+        {refIframe.current && (
+          <DropdownSaves
+            refIframe={refIframe.current}
+            onLoadSave={() => {
+              if (refIframe.current) {
+                refIframe.current.src = refIframe.current.src;
+              }
+            }}
+          />
+        )}
       </div>
       <div>
         <iframe
@@ -37,6 +44,9 @@ const ViewPage: React.FC = () => {
           height={viewPortSize[1]}
           ref={refIframe}
           src="http://localhost:3333"
+          onKeyDown={() => {
+            console.log('hello worllld');
+          }}
         />
       </div>
     </div>

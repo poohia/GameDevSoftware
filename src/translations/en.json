@@ -69,5 +69,8 @@
   "form_input_sprite_time_beetween_sprite": "Time beetween sprite",
   "form_input_sprite_loop": "Loop",
   "form_input_sprite_loop_activate": "Activate",
-  "assets_action_optimize": "Optimize assets"
+  "assets_action_optimize": "Optimize assets",
+  "module_view_save_input_placeholder": "Saves",
+  "module_view_save_modal_title": "New Save",
+  "module_view_save_modal_input_label": "Title of save"
 }
