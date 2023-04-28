@@ -9,6 +9,7 @@ import {
 } from 'types';
 import path from 'path';
 import FileService from '../services/FileService';
+import UtilsService from '../services/UtilsService';
 import FolderPlugin from './FolderPlugin';
 import { OptimizeAssetsPlugin } from './subPlugins';
 
@@ -71,14 +72,13 @@ export default class AssetPlugin {
 
   loadAssets = (event: ElectronIpcMainEvent) => {
     const data = this.readAssetFile();
-    // @ts-ignore
+    UtilsService.SortAssets(data);
     event.reply('load-assets', data);
   };
 
   saveAsset = (event: ElectronIpcMainEvent, arg: AssertFileValueType) => {
     const { fileName, fileType, content, ...rest } = arg;
     const assets = this.readAssetFile();
-    // @ts-ignore
     this.writeAssetFile(
       assets
         .filter((asset) => asset.name !== fileName)
