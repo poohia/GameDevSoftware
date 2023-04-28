@@ -77,6 +77,10 @@ const useEnv = () => {
     [productionEnvs, developmentEnvs]
   );
 
+  const setDefaultValues = useCallback(() => {
+    sendMessage('set-env-default-values');
+  }, []);
+
   useEffect(() => {
     requestMessage('load-env-development-vars', (envs: EnvObject) => {
       setDevelopmentEnvs(envs);
@@ -94,6 +98,7 @@ const useEnv = () => {
     updateEnv,
     deleteEnv,
     sendCreateEnv,
+    setDefaultValues,
   };
 };
 

@@ -59,6 +59,7 @@ export type Channels =
   | 'write-env-development-vars'
   | 'load-env-production-vars'
   | 'write-env-production-vars'
+  | 'set-env-default-values'
   | 'load-menus-views'
   | 'set-menu-view'
   | 'optimize-assets'

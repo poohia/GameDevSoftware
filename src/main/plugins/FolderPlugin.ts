@@ -38,7 +38,11 @@ export default class FolderPlugin {
   static directoryJson = `${FolderPlugin.gameDevSoftwareDirectory}/configurationsFiles`;
   /** env files */
   static envFolder = `${FolderPlugin.gameDevSoftwareDirectory}/envs`;
-  static envFiles = ['/env.development.json', '/env.production.json'];
+  static envFiles = [
+    '/env.development.json',
+    '/env.production.json',
+    '/env.default.json',
+  ];
   /** */
   /** */
   static splashscreenFileConfig = `${FolderPlugin.gameDevSoftwareDirectory}/splashscreen.json`;

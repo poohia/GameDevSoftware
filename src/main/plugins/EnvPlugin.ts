@@ -55,6 +55,21 @@ export default class EnvPlugin {
     });
   };
 
+  setDefaultValues = (event: ElectronIpcMainEvent) => {
+    // @ts-ignore
+    const { path } = global;
+    FileService.readJsonFile(
+      `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[2]}`
+    ).then((envs) => {
+      console.log(
+        '🚀 ~ file: EnvPlugin.ts:64 ~ EnvPlugin ~ ).then ~ envs:',
+        envs
+      );
+      this.writeEnvProductionVars(event, envs);
+      this.writeEnvDevelopmentVars(event, envs);
+    });
+  };
+
   init = () => {
     ipcMain.on('load-env-development-vars', (event: Electron.IpcMainEvent) =>
       this.loadEnvDevelopmentVars(event as ElectronIpcMainEvent)
@@ -71,6 +86,9 @@ export default class EnvPlugin {
       'write-env-production-vars',
       (event: Electron.IpcMainEvent, args: any[]) =>
         this.writeEnvProductionVars(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('set-env-default-values', (event: Electron.IpcMainEvent) =>
+      this.setDefaultValues(event as ElectronIpcMainEvent)
     );
   };
 }

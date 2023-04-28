@@ -1,7 +1,8 @@
-import { Container, Grid, Header, Icon, Button } from 'semantic-ui-react';
+import { Container, Grid, Header, Icon } from 'semantic-ui-react';
 import { TransComponent } from 'renderer/components';
 import { EnvsFormComponent, EnvsTableComponent } from './components';
 import useEnv from './useEnv';
+import { Button } from 'renderer/semantic-ui';
 
 const EnvPage: React.FC = () => {
   const {
@@ -12,6 +13,7 @@ const EnvPage: React.FC = () => {
     updateEnv,
     deleteEnv,
     sendCreateEnv,
+    setDefaultValues,
   } = useEnv();
 
   return (
@@ -33,6 +35,15 @@ const EnvPage: React.FC = () => {
               >
                 <TransComponent id="module_env_append_var" />
                 <Icon name="add" />
+              </Button>
+              <Button
+                icon
+                color="teal"
+                labelPosition="right"
+                onClick={setDefaultValues}
+              >
+                <TransComponent id="module_env_set_default_var" />
+                <Icon name="save" />
               </Button>
             </Grid.Row>
             <Grid.Row>
