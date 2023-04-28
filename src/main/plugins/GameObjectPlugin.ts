@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import fs from 'fs';
 import async from 'async';
 import FileService from '../services/FileService';
+import UtilsService from '../services/UtilsService';
 import { ElectronIpcMainEvent, GameObject, ObjectGameTypeJSON } from 'types';
 import FolderPlugin from './FolderPlugin';
 
@@ -53,11 +54,7 @@ export default class GameObjectPlugin {
           }
         )
         .then(() => {
-          gameObjectsValue.sort(({ _id: _idA }, { _id: _idB }) => {
-            if (_idA < _idB) return -1;
-            if (_idA > _idB) return 1;
-            return 0;
-          });
+          UtilsService.ArrayOrderByObjectID(gameObjectsValue);
           if (objectType) {
             // @ts-ignore
             event.reply(`load-game-objects-${objectType}`, gameObjectsValue);

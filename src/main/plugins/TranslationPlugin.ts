@@ -34,7 +34,6 @@ export default class TranslationPlugin {
         )
           .then((dataTranslation) => {
             translations[code] = dataTranslation;
-            callback();
           })
           .catch(() => {
             console.warn(

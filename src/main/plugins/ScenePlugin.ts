@@ -52,12 +52,7 @@ export default class ScenePlugin {
           }
         )
         .then(() => {
-          // UtilsService.ArrayOrderByObjectID(sceneValue);
-          sceneValue.sort(({ _id: _idA }, { _id: _idB }) => {
-            if (_idA < _idB) return -1;
-            if (_idA > _idB) return 1;
-            return 0;
-          });
+          UtilsService.ArrayOrderByObjectID(sceneValue);
           if (sceneType) {
             // @ts-ignore
             event.reply(`load-scenes-${sceneType}`, sceneValue);
