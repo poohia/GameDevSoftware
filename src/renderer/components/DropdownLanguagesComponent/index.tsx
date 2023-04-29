@@ -274,13 +274,13 @@ const DropdownLanguagesComponent = (props: DropdownLanguagesComponentProps) => {
 
   return (
     <Dropdown
+      {...rest}
       placeholder={placeholder}
       fluid
       selection
       search
       options={countries}
       onChange={onChange}
-      {...rest}
     />
   );
 };

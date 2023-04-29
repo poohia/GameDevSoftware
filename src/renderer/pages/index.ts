@@ -8,3 +8,4 @@ export { default as GameobjectPage } from './GameobjectPage';
 export { default as ScenePage } from './ScenePage';
 export { default as EnvPage } from './EnvPage';
 export { default as ViewPage } from './ViewPage';
+export { default as FontPage } from './FontPage';

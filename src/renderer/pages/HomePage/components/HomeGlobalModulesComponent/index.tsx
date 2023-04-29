@@ -26,6 +26,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
       'env',
       'gameobject',
       'scene',
+      'font',
     ],
     onChangeLocale,
     appendTab,

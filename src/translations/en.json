@@ -73,5 +73,6 @@
   "assets_action_optimize": "Optimize assets",
   "module_view_save_input_placeholder": "Saves",
   "module_view_save_modal_title": "New Save",
-  "module_view_save_modal_input_label": "Title of save"
+  "module_view_save_modal_input_label": "Title of save",
+  "module_font": "Font Module"
 }

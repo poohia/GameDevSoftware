@@ -11,6 +11,7 @@ import {
   GameobjectPage,
   ScenePage,
   EnvPage,
+  FontPage,
 } from 'renderer/pages';
 import { GameobjectContainerComponent } from './pages/GameobjectPage/components';
 import { SceneContainerComponent } from './pages/ScenePage/components';
@@ -29,6 +30,7 @@ modulesComponent['GameobjectPage'] = GameobjectPage;
 modulesComponent['GameobjectContainerComponent'] = GameobjectContainerComponent;
 modulesComponent['ScenePage'] = ScenePage;
 modulesComponent['SceneContainerComponent'] = SceneContainerComponent;
+modulesComponent['FontPage'] = FontPage;
 
 export default function App() {
   const { path, tabs, tabActive, onTabChange } = useApp();
