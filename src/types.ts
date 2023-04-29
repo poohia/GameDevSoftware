@@ -66,7 +66,10 @@ export type Channels =
   | 'load-splashscreen-informations'
   | 'splashscreen-modify-slogan'
   | 'splashscreen-replace-brand-image'
-  | 'splashscreen-replace-promotion-video';
+  | 'splashscreen-replace-promotion-video'
+  | 'load-fonts'
+  | 'load-fonts-data'
+  | 'append-fonts';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -296,4 +299,13 @@ export type SplashscreenType = {
   brandImage: string;
   gamePromotionVideo: string;
   brandSlogan: string;
+};
+
+export type FontObject = {
+  key: string;
+  file: string;
+  format: string;
+};
+export type FontDataObject = FontObject & {
+  data: string;
 };

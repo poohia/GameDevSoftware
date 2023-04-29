@@ -135,4 +135,15 @@ export default class FileService {
       });
     });
   };
+
+  static copyFile = (src: string, dest: string): Promise<string> =>
+    new Promise((resolve, reject) => {
+      fs.copyFile(src, dest, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(dest);
+        }
+      });
+    });
 }

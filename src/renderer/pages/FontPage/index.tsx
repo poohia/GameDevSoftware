@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { DropDownFontsComponent, TransComponent } from 'renderer/components';
+import { useEvents } from 'renderer/hooks';
 import { Button } from 'renderer/semantic-ui';
 import { Container, Grid, Header, Icon } from 'semantic-ui-react';
 
 const FontPage: React.FC = () => {
-  const [fontFamily, setFontFamily] = useState<string>('sans-serif');
+  const [fontFamily, setFontFamily] = useState<string | undefined>(undefined);
+  const { sendMessage } = useEvents();
+
   return (
     <Container className="game-dev-software-module-font-home" fluid>
       <Grid>
@@ -17,21 +20,17 @@ const FontPage: React.FC = () => {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column width={12}>
-            <Button color="green" icon labelPosition="right">
-              <TransComponent id="module_translation_header_button_append_translation" />
+            <Button
+              color="green"
+              icon
+              labelPosition="right"
+              onClick={() => sendMessage('append-fonts')}
+            >
+              <TransComponent id="module_font_append_font" />
               <Icon name="add" />
             </Button>
           </Grid.Column>
         </Grid.Row>
-        <Grid.Row>
-          <Grid.Column width={4}>
-            <DropDownFontsComponent
-              value={fontFamily}
-              onChange={(_, data) => setFontFamily(data.value as string)}
-            />
-          </Grid.Column>
-        </Grid.Row>
-
         <Grid.Row
           className="game-dev-software-module-font-home-alphabet"
           style={{ fontFamily }}
@@ -40,6 +39,14 @@ const FontPage: React.FC = () => {
             ABCDEFGHIJKLMNOPQRSTUVWXYZ <br />
             abcdefghijklmnopqrstuvwxyz <br />
             0123456789 <br />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <DropDownFontsComponent
+              value={fontFamily}
+              onChange={(_, data) => setFontFamily(data.value as string)}
+            />
           </Grid.Column>
         </Grid.Row>
       </Grid>

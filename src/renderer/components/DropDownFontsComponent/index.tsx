@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { Dropdown, DropdownProps } from 'semantic-ui-react';
+import { useEffect, useMemo, useState } from 'react';
+import { useEvents } from 'renderer/hooks';
+import { Button } from 'renderer/semantic-ui';
+import { Dropdown, DropdownProps, Grid, Icon } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 
 type DefaultFonts =
@@ -18,36 +20,66 @@ type DefaultFonts =
   | 'ui-serif';
 
 type DropdownLanguagesComponentProps = DropdownProps;
-
+const defaultFonts = [
+  'cursive',
+  'emoji',
+  'fangsong',
+  'fantasy',
+  'math',
+  'monospace',
+  'sans-serif',
+  'serif',
+  'system-ui',
+];
 const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
   props
 ) => {
-  const [fonts, setFonts] = useState<string[]>([
-    'cursive',
-    'emoji',
-    'fangsong',
-    'fantasy',
-    'math',
-    'monospace',
-    'sans-serif',
-    'serif',
-    'system-ui',
-  ]);
-  const [value, setValue] = useState<string>('sans-serif');
+  const { value, ...rest } = props;
+  const [fonts, setFonts] = useState<string[]>([]);
+
+  const { requestMessage } = useEvents();
+
+  const defaultValue = useMemo(() => fonts[0], [fonts]);
+  const finalValue = useMemo(
+    () => value ?? defaultValue,
+    [defaultValue, value]
+  );
+
+  useEffect(() => {
+    requestMessage('load-fonts', (data) => {
+      setFonts(data);
+    });
+  }, []);
 
   return (
-    <Dropdown
-      {...props}
-      search
-      fluid
-      selection
-      options={fonts.map((font) => ({
-        text: font,
-        value: font,
-        key: font,
-      }))}
-      // value={value}
-    />
+    <Grid>
+      <Grid.Row columns={2}>
+        <Grid.Column width={14}>
+          <Dropdown
+            {...rest}
+            search
+            fluid
+            selection
+            defaultValue={defaultValue}
+            value={finalValue}
+            options={[...fonts, ...defaultFonts].map((font) => ({
+              text: font,
+              value: font,
+              key: font,
+            }))}
+          />
+        </Grid.Column>
+        <Grid.Column width={2}>
+          <Button
+            icon
+            color="red"
+            disabled={finalValue ? !fonts.includes(finalValue as string) : true}
+          >
+            <Icon name="trash" />
+          </Button>
+        </Grid.Column>
+      </Grid.Row>
+    </Grid>
   );
 };
 

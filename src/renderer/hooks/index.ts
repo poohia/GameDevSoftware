@@ -7,3 +7,4 @@ export { default as useAssets } from './useAssets';
 export { default as useGameObjects } from './useGameObjects';
 export { default as useScenes } from './useScenes';
 export { default as useDarkMode } from './useDarkMode';
+export { default as useFonts } from './useFonts';

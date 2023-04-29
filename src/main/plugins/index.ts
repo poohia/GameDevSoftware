@@ -10,6 +10,7 @@ import DarkModePlugin from './DarkModePlugin';
 import ScenePlugin from './ScenePlugin';
 import EnvPlugin from './EnvPlugin';
 import WatchPlugin from './WatchPlugin';
+import FontPlugin from './FontPlugin';
 
 type Plugins =
   | 'folderPlugin'
@@ -22,7 +23,8 @@ type Plugins =
   | 'scenePlugin'
   | 'darkModePlugin'
   | 'envPlugin'
-  | 'watchPlugin';
+  | 'watchPlugin'
+  | 'fontPlugin';
 
 export default class PluginsContainer {
   private _folderPlugin;
@@ -36,6 +38,7 @@ export default class PluginsContainer {
   private _darkModePlugin;
   private _envPlugin;
   private _watchPlugin;
+  private _fontPlugin;
 
   constructor(mainWindow: BrowserWindow) {
     this._folderPlugin = new FolderPlugin(mainWindow);
@@ -49,6 +52,7 @@ export default class PluginsContainer {
     this._darkModePlugin = new DarkModePlugin();
     this._envPlugin = new EnvPlugin();
     this._watchPlugin = new WatchPlugin(mainWindow);
+    this._fontPlugin = new FontPlugin(mainWindow);
   }
 
   init() {

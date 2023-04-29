@@ -64,6 +64,9 @@ export default class FolderPlugin {
     `${FolderPlugin.platformsDirectory}/electron`,
     `${FolderPlugin.platformsDirectory}/browser`,
   ];
+  /** fonts */
+  static fontFile = `${FolderPlugin.gameDevSoftwareDirectory}/fonts.json`;
+  static directoryFonts = `${FolderPlugin.assetsDirectory}/fonts`;
 
   static validePath(path: string) {
     let isValid = true;
@@ -76,6 +79,8 @@ export default class FolderPlugin {
     } else if (!fs.existsSync(`${path}${FolderPlugin.constantFile}`)) {
       isValid = false;
     } else if (!fs.existsSync(`${path}${FolderPlugin.assetFile}`)) {
+      isValid = false;
+    } else if (!fs.existsSync(`${path}${FolderPlugin.fontFile}`)) {
       isValid = false;
     }
 

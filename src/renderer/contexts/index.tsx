@@ -6,6 +6,7 @@ import {
   useGameObjects,
   useScenes,
   useDarkMode,
+  useFonts,
 } from 'renderer/hooks';
 import TranslationsContext from './TranslationsContext';
 import ConstantsContext from './ConstantsContext';
@@ -26,6 +27,7 @@ const GameDevSoftwareProvider: React.FunctionComponent<
   const constants = useConstants();
   const assets = useAssets();
   const scenes = useScenes();
+  useFonts();
   const { gameObjects, findGameObjectsByType } = useGameObjects();
   const { darkModeActived, toggleDarkMode } = useDarkMode();
 

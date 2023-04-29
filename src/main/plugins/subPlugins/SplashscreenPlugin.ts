@@ -71,7 +71,7 @@ export default class SplashscreenPlugin {
       this.mainWindow,
       {
         properties: ['openFile'],
-        filters: [{ extensions: ['.mp4'], name: 'Video' }],
+        filters: [{ extensions: ['mp4'], name: 'Video' }],
       }
     ).then(() => this.openSplashscreenFile(event));
   };

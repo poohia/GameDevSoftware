@@ -74,5 +74,6 @@
   "module_view_save_input_placeholder": "Saves",
   "module_view_save_modal_title": "New Save",
   "module_view_save_modal_input_label": "Title of save",
-  "module_font": "Font Module"
+  "module_font": "Font Module",
+  "module_font_append_font": "Append a new Fonts"
 }
