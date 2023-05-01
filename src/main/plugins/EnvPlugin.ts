@@ -11,8 +11,8 @@ export default class EnvPlugin {
       `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[0]}`
     ).then((envs) => {
       event.reply('load-env-development-vars', {
-        ...envs,
         ENV: 'development',
+        ...envs,
       });
     });
   };
@@ -38,8 +38,8 @@ export default class EnvPlugin {
       `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[1]}`
     ).then((envs) => {
       event.reply('load-env-production-vars', {
-        ...envs,
         ENV: 'production',
+        ...envs,
       });
     });
   };
@@ -61,10 +61,6 @@ export default class EnvPlugin {
     FileService.readJsonFile(
       `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[2]}`
     ).then((envs) => {
-      console.log(
-        '🚀 ~ file: EnvPlugin.ts:64 ~ EnvPlugin ~ ).then ~ envs:',
-        envs
-      );
       this.writeEnvProductionVars(event, envs);
       this.writeEnvDevelopmentVars(event, envs);
     });

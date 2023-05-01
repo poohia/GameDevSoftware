@@ -23,7 +23,6 @@ const useFonts = () => {
         }
       `)
       );
-      console.log('🚀 ~ file: index.ts:9 ~ requestMessage ~ data:', data);
       style.innerHTML = finalStyle;
     });
   }, []);

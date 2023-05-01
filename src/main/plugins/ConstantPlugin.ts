@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
+import UtilsService from '../services/UtilsService';
 import { ConstantObject, ElectronIpcMainEvent } from 'types';
 import FolderPlugin from './FolderPlugin';
 
@@ -15,6 +16,7 @@ export default class ConstantPlugin {
 
   loadConstants = (event: ElectronIpcMainEvent) => {
     const data = this.loadConstantsFile();
+    UtilsService.OrderByKeyASC(data);
     event.reply('load-constants', data);
   };
 

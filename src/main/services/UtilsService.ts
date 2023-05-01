@@ -9,6 +9,14 @@ export default class UtilsService {
     });
   };
 
+  static OrderByKeyASC = (obj: { key: string }[]) => {
+    obj.sort(({ key: keyA }, { key: keyB }) => {
+      if (keyA < keyB) return -1;
+      if (keyA > keyB) return 1;
+      return 0;
+    });
+  };
+
   static SortAssets = (assets: AssetType[]) => {
     assets.sort((a, b) => {
       if (a.type < b.type) {

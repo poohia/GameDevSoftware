@@ -91,6 +91,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
                       modulesComponent[`${titleCase(module)}Page`]
                     )
                   }
+                  fluid
                 >
                   <TransComponent id={`module_${module}`} />
                 </Button>
