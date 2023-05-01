@@ -12,14 +12,12 @@ const FontPage: React.FC = () => {
     <Container className="game-dev-software-module-font-home" fluid>
       <Grid>
         <Grid.Row>
-          <Grid.Column width={8}>
+          <Grid.Column width={2}>
             <Header as="h1">
               <TransComponent id="module_font" />
             </Header>
           </Grid.Column>
-        </Grid.Row>
-        <Grid.Row>
-          <Grid.Column width={12}>
+          <Grid.Column width={4}>
             <Button
               color="green"
               icon
@@ -39,6 +37,10 @@ const FontPage: React.FC = () => {
             ABCDEFGHIJKLMNOPQRSTUVWXYZ <br />
             abcdefghijklmnopqrstuvwxyz <br />
             0123456789 <br />
+            <b>Lorem ipsum dolor sit amet consectetur adipisicing elit.</b>
+            <br />
+            <i>Lorem ipsum dolor sit amet consectetur adipisicing elit.</i>
+            <br />
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>

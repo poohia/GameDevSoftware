@@ -37,7 +37,7 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
   const { value, ...rest } = props;
   const [fonts, setFonts] = useState<string[]>([]);
 
-  const { requestMessage } = useEvents();
+  const { requestMessage, sendMessage } = useEvents();
 
   const defaultValue = useMemo(() => fonts[0], [fonts]);
   const finalValue = useMemo(
@@ -74,6 +74,7 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
             icon
             color="red"
             disabled={finalValue ? !fonts.includes(finalValue as string) : true}
+            onClick={() => sendMessage('remove-font', finalValue)}
           >
             <Icon name="trash" />
           </Button>

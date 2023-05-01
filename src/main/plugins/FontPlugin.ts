@@ -23,6 +23,12 @@ export default class FontPlugin {
     );
   };
 
+  private writeFontsFile = (data: FontObject[]) => {
+    // @ts-ignore
+    const { path } = global;
+    return FileService.writeJsonFile(`${path}${FolderPlugin.fontFile}`, data);
+  };
+
   loadFonts = (event: ElectronIpcMainEvent) => {
     this.loadFontsFile().then((fonts) => {
       event.reply(
@@ -95,16 +101,32 @@ export default class FontPlugin {
               ).finally(callback);
             })
             .then(() => {
-              FileService.writeJsonFile(
-                `${path}${FolderPlugin.fontFile}`,
-                fonts
-              ).then(() => {
+              this.writeFontsFile(fonts).then(() => {
                 this.loadFontsData(event);
-                this.loadFontsData(event);
+                this.loadFonts(event);
               });
             });
         });
       });
+  };
+
+  removeFont = (event: ElectronIpcMainEvent, key: string) => {
+    // @ts-ignore
+    const { path } = global;
+    this.loadFontsFile().then((fonts) => {
+      const font = fonts.find((f) => f.key === key);
+      if (!font) return;
+      FileService.removeFile(
+        `${path}${FolderPlugin.directoryFonts}/${font.file}`
+      ).then(() => {
+        this.writeFontsFile(fonts.filter((font) => font.key !== key)).then(
+          () => {
+            this.loadFontsData(event);
+            this.loadFonts(event);
+          }
+        );
+      });
+    });
   };
 
   init = () => {
@@ -114,9 +136,11 @@ export default class FontPlugin {
     ipcMain.on('load-fonts-data', (event: Electron.IpcMainEvent) =>
       this.loadFontsData(event as ElectronIpcMainEvent)
     );
-
     ipcMain.on('append-fonts', (event: Electron.IpcMainEvent) =>
       this.appendNewFonts(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('remove-font', (event: Electron.IpcMainEvent, args) =>
+      this.removeFont(event as ElectronIpcMainEvent, args)
     );
   };
 }

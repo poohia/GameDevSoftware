@@ -69,7 +69,8 @@ export type Channels =
   | 'splashscreen-replace-promotion-video'
   | 'load-fonts'
   | 'load-fonts-data'
-  | 'append-fonts';
+  | 'append-fonts'
+  | 'remove-font';
 export type Tables =
   | 'locale'
   | 'tabs'

@@ -146,4 +146,15 @@ export default class FileService {
         }
       });
     });
+
+  static removeFile = (src: string): Promise<string> =>
+    new Promise((resolve, reject) => {
+      fs.unlink(src, (err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(src);
+      });
+    });
 }
