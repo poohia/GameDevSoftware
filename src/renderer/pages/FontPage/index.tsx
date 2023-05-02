@@ -41,6 +41,7 @@ const FontPage: React.FC = () => {
             <br />
             <i>Lorem ipsum dolor sit amet consectetur adipisicing elit.</i>
             <br />
+            Font family: {fontFamily}
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>

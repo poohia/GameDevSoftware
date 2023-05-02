@@ -34,7 +34,7 @@ const defaultFonts = [
 const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
   props
 ) => {
-  const { value, ...rest } = props;
+  const { value, onChange, ...rest } = props;
   const [fonts, setFonts] = useState<string[]>([]);
 
   const { requestMessage, sendMessage } = useEvents();
@@ -50,6 +50,13 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
       setFonts(data);
     });
   }, []);
+
+  useEffect(() => {
+    if (value === undefined && onChange) {
+      // @ts-ignore
+      onChange(null, { value: finalValue });
+    }
+  }, [value, finalValue]);
 
   return (
     <Grid>
@@ -67,6 +74,7 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
               value: font,
               key: font,
             }))}
+            onChange={onChange}
           />
         </Grid.Column>
         <Grid.Column width={2}>
