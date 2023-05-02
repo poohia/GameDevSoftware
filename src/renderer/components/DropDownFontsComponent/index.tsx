@@ -82,7 +82,11 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
             icon
             color="red"
             disabled={finalValue ? !fonts.includes(finalValue as string) : true}
-            onClick={() => sendMessage('remove-font', finalValue)}
+            onClick={() => {
+              sendMessage('remove-font', finalValue);
+              // @ts-ignore
+              onChange(null, { value: undefined });
+            }}
           >
             <Icon name="trash" />
           </Button>
