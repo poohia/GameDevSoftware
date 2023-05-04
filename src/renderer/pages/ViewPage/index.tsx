@@ -1,6 +1,10 @@
 import { useRef, useState } from 'react';
 import { ButtonStartStopProjectComponent } from 'renderer/components';
-import { DropdownSaves, DropdownViewportSize } from './components';
+import {
+  DropdownSaves,
+  DropdownViewportSize,
+  RouteInformationComponent,
+} from './components';
 
 const ViewPage: React.FC = () => {
   const [viewPortSize, setViewPortSize] = useState<[string, string]>([
@@ -27,6 +31,9 @@ const ViewPage: React.FC = () => {
             onChange={(width, height) => setViewPortSize([width, height])}
           />
         </div>
+        {refIframe.current && (
+          <RouteInformationComponent refIframe={refIframe.current} />
+        )}
         {refIframe.current && (
           <DropdownSaves
             refIframe={refIframe.current}

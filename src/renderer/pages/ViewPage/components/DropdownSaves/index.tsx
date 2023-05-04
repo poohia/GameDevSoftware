@@ -4,6 +4,7 @@ import { useDatabase } from 'renderer/hooks';
 import { Button } from 'renderer/semantic-ui';
 import { Dropdown, DropdownItemProps, Form, Icon } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
+import useMessages from '../../useMessages';
 
 type DropdownSavesProps = {
   refIframe: HTMLIFrameElement;
@@ -16,6 +17,7 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
 }) => {
   /** */
   const { getItem, setItem } = useDatabase();
+  const { sendMessage } = useMessages(refIframe);
   /** */
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
@@ -35,19 +37,6 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
     [saves]
   );
 
-  const sendMessage = useCallback(
-    (title: 'getSaveData' | 'setSaveData', data?: any) => {
-      refIframe.contentWindow?.postMessage(
-        {
-          title,
-          data,
-        },
-        '*'
-      );
-    },
-    []
-  );
-
   const loadSaves = useCallback(() => {
     setSaves(getItem('view-saves') || []);
   }, []);
@@ -56,17 +45,14 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
     if (title === '') {
       return;
     }
-    const receiveMessage = (env: MessageEvent<any>) => {
-      window.removeEventListener('message', receiveMessage, false);
-      if (env.data.message.title === 'getSaveData') {
-        setItem('view-saves', saves.concat({ title, data: env.data.data }));
+    sendMessage('getSaveData', null, (data) => {
+      if (data.message.title === 'getSaveData') {
+        setItem('view-saves', saves.concat({ title, data: data.data }));
       }
       setTitle('');
       setOpenModal(false);
       loadSaves();
-    };
-    window.addEventListener('message', receiveMessage, false);
-    sendMessage('getSaveData');
+    });
   }, [title]);
 
   const removeSave = useCallback(
