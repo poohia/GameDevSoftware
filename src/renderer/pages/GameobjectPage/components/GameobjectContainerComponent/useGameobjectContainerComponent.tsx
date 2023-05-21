@@ -4,6 +4,7 @@ import { defaultStateFormReducer, FormReducer } from 'renderer/reducers';
 import { GameObject, GameObjectForm, PageProps } from 'types';
 
 const useGameobjectContainerComponent = (props: PageProps) => {
+  const [loadingForm, setLoadingForm] = useState<boolean>(false);
   const [gameObjects, setGameObjects] = useState<GameObject[]>([]);
   const [gameObjectForm, setGameObjectForm] = useState<
     GameObjectForm | undefined
@@ -49,7 +50,7 @@ const useGameobjectContainerComponent = (props: PageProps) => {
   );
 
   const sendCreateGameobject = useCallback((data: any) => {
-    dispatch({ type: 'hide-form' });
+    setLoadingForm(true);
     sendMessage('create-game-object', data);
   }, []);
 
@@ -66,14 +67,22 @@ const useGameobjectContainerComponent = (props: PageProps) => {
     });
   }, [gameObjectType]);
 
+  useEffect(() => {
+    if (loadingForm) {
+      setTimeout(() => setLoadingForm(false), 500);
+    }
+  }, [loadingForm]);
+
   return {
     gameObjects,
     gameObjectForm,
     stateForm,
+    loadingForm,
     removeGameObject,
     createGameobject,
     updateGameobject,
     sendCreateGameobject,
+    closeForm: () => dispatch({ type: 'hide-form' }),
   };
 };
 

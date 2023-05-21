@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { FormikProvider, useFormik } from 'formik';
-import { Form, Grid, Header } from 'semantic-ui-react';
+import { Form, Grid, Header, Icon } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import { FormField } from 'types';
 import TransComponent from '../TransComponent';
@@ -23,11 +23,20 @@ export type FormGeneratorProps = {
   form: any;
   type: string;
   defaultValues?: any;
+  loading?: boolean;
   onSubmit: (data: any) => void;
+  onClose: () => void;
 };
 
 const useFormGenerator = (props: FormGeneratorProps) => {
-  const { form = [], type: _type, defaultValues, onSubmit } = props;
+  const {
+    form = [],
+    type: _type,
+    defaultValues,
+    loading,
+    onSubmit,
+    onClose,
+  } = props;
 
   const formik = useFormik<any>({
     initialValues: defaultValues ? defaultValues : {},
@@ -262,20 +271,33 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         <Grid.Row>
           <Grid.Column>
             <Form onSubmit={formik.handleSubmit}>
+              <Icon
+                name="close"
+                size="big"
+                style={{
+                  float: 'right',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  bottom: '20px',
+                }}
+                onClick={onClose}
+              />
               <FormikProvider value={formik}>
                 {Object.keys(form).map((key) => (
                   <React.Fragment key={key}>
                     {generateField({ key, core: form[key] })}
                   </React.Fragment>
                 ))}
-                <Button type="submit">Submit</Button>
+                <Button type="submit" loading={loading}>
+                  Submit
+                </Button>
               </FormikProvider>
             </Form>
           </Grid.Column>
         </Grid.Row>
       </Grid>
     );
-  }, [formik.initialValues]);
+  }, [formik.initialValues, loading]);
 
   return FormGeneratedComponent;
 };

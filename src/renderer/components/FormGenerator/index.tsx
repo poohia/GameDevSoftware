@@ -1,12 +1,7 @@
-import useFormGenerator from './useFormGenerator';
+import useFormGenerator, { FormGeneratorProps } from './useFormGenerator';
 
-const FormGenerator = ({ type, form, defaultValues, onSubmit }: any) => {
-  const Form = useFormGenerator({
-    type,
-    form,
-    defaultValues,
-    onSubmit,
-  });
+const FormGenerator = (props: FormGeneratorProps) => {
+  const Form = useFormGenerator(props);
 
   return Form;
 };
