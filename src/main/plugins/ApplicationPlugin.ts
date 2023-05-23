@@ -170,7 +170,10 @@ export default class ApplicationPlugin {
               if (fs.existsSync(pathHomeModule)) {
                 menusView.push({
                   module,
-                  path: `.${FolderPlugin.gameDevSoftwareDirectory}/modules/${module}${FolderPlugin.menuPath}`,
+                  path: `.${FolderPlugin.gameDevSoftwareDirectory.replace(
+                    'src/',
+                    ''
+                  )}/modules/${module}${FolderPlugin.menuPath}`,
                   used: false,
                 });
               }

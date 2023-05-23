@@ -11,6 +11,8 @@ const AdvancedParamsComponent: React.FC = () => {
 
   useEffect(() => {
     requestMessage('load-menus-views', (paths: MenusViewsType[]) => {
+      console.log('🚀 ~ file: index.tsx:14 ~ requestMessage ~ paths:', paths);
+
       setMenusViews(
         paths.map((path) => ({
           key: path.module,
