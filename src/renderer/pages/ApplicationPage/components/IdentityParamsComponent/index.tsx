@@ -39,7 +39,26 @@ const IdentityParamsComponent = () => {
             <Form.Group widths="equal">
               {Object.keys(params).map(
                 (key, i) =>
-                  i > 3 && (
+                  i > 3 &&
+                  i < 7 && (
+                    <Form.Field key={key}>
+                      <label htmlFor={`identity-${key}`}>{key}</label>
+                      <Form.Input
+                        id={`identity-${key}`}
+                        value={params[key]}
+                        onChange={(_: any, { value }: any) =>
+                          setParam(key, value)
+                        }
+                        onBlur={onSubmit}
+                      />
+                    </Form.Field>
+                  )
+              )}
+            </Form.Group>
+            <Form.Group widths="equal">
+              {Object.keys(params).map(
+                (key, i) =>
+                  i > 7 && (
                     <Form.Field key={key}>
                       <label htmlFor={`identity-${key}`}>{key}</label>
                       <Form.Input

@@ -95,6 +95,8 @@ export default class ApplicationPlugin {
       authorName: json.author?.name || '',
       authorEmail: json.author?.email || '',
       authorWebSite: json.author?.link || '',
+      appStore: json.appStore || '',
+      playStore: json.playStore || '',
     };
     event.reply('load-params-identity', data);
   };
@@ -123,6 +125,8 @@ export default class ApplicationPlugin {
         link: args.authorWebSite,
         name: args.authorName,
       },
+      appStore: args.appStore,
+      playStore: args.playStore,
     };
     this.writeConfigFile(json);
     this.loadParamsIdentity(event);

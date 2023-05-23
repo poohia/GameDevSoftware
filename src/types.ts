@@ -184,6 +184,8 @@ export type ApplicationConfigJson = {
     fadeSplashscreenDuration?: number;
   };
   description?: string;
+  playStore: string;
+  appStore: string;
 };
 export type ApplicationIdentityParams = {
   package: string;
@@ -194,6 +196,8 @@ export type ApplicationIdentityParams = {
   authorEmail: string;
   authorName: string;
   authorWebSite: string;
+  playStore: string;
+  appStore: string;
 };
 export type ApplicationImageParams = {
   favicon: string;
