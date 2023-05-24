@@ -13,10 +13,12 @@ const typesViewportSize: DropdownItemProps[] = [
 ];
 
 type DropdownViewportSizeProps = {
+  orientation: 'landscape' | 'portrait';
   onChange: (width: string, height: string) => void;
 };
 
 const DropdownViewportSize: React.FC<DropdownViewportSizeProps> = ({
+  orientation,
   onChange,
 }) => {
   const { setItem, getItem } = useDatabase();
@@ -28,29 +30,41 @@ const DropdownViewportSize: React.FC<DropdownViewportSizeProps> = ({
   useEffect(() => {
     switch (value) {
       case 'iphoneSE':
-        onChange('667px', '375px');
+        orientation === 'landscape'
+          ? onChange('667px', '375px')
+          : onChange('375px', '667px');
         break;
       case 'oneplus8t':
-        onChange('800px', '360px');
+        orientation === 'landscape'
+          ? onChange('800px', '360px')
+          : onChange('360px', '800px');
         break;
       case 'pixel5':
-        onChange('851px', '393px');
+        orientation === 'landscape'
+          ? onChange('851px', '393px')
+          : onChange('393px', '851px');
         break;
       case 'iphoneXR':
-        onChange('896px', '424px');
+        orientation === 'landscape'
+          ? onChange('896px', '424px')
+          : onChange('424px', '896px');
         break;
       case 'ipadMini':
-        onChange('1024px', '768px');
+        orientation === 'landscape'
+          ? onChange('1024px', '768px')
+          : onChange('768px', '1024px');
         break;
       case 'ipadAir':
-        onChange('1180px', '820px');
+        orientation === 'landscape'
+          ? onChange('1180px', '820px')
+          : onChange('820px', '1180px');
         break;
       case 'full':
       default:
-        onChange('100%', '100%');
+        onChange('100%', '85vh');
     }
     setItem('dropdown.viewportsize', value);
-  }, [value]);
+  }, [value, orientation]);
 
   return (
     <Dropdown
