@@ -70,7 +70,8 @@ export type Channels =
   | 'load-fonts'
   | 'load-fonts-data'
   | 'append-fonts'
-  | 'remove-font';
+  | 'remove-font'
+  | 'load-current-orientation';
 export type Tables =
   | 'locale'
   | 'tabs'

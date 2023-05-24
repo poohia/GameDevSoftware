@@ -6,7 +6,6 @@ import {
   ApplicationConfigJson,
   ApplicationIdentityParams,
   ElectronIpcMainEvent,
-  MenusViewsType,
   SoftwaresInfo,
 } from 'types';
 import FolderPlugin from './FolderPlugin';
@@ -17,8 +16,8 @@ import {
   SplashscreenPlugin,
 } from './subPlugins';
 import VersionSoftwareService from '../services/VersionSoftwareService';
-import GameModulesPlugin from './GameModulesPlugin';
 import FileService from '../services/FileService';
+import ApplicationAdvancedPlugin from './subPlugins/ApplicationAdvancedPlugin';
 
 const options = { ignoreAttributes: false, format: true };
 const parser = new XMLParser(options);
@@ -35,11 +34,14 @@ export default class ApplicationPlugin {
     'npm',
     'cordova',
   ];
+  private _advancedPlugin: ApplicationAdvancedPlugin;
+
   constructor(private mainWindow: BrowserWindow) {
     this._imagePlugin = new ApplicationImagesPlugin(this.mainWindow);
     this._platformsPlugin = new ApplicationPlatformsPlugin();
     this._buildPlugin = new ApplicationBuildPlugin();
     this._splashscreenPlugin = new SplashscreenPlugin(this.mainWindow);
+    this._advancedPlugin = new ApplicationAdvancedPlugin();
   }
 
   private writeOnIndexHtml = (
@@ -154,61 +156,13 @@ export default class ApplicationPlugin {
     );
   };
 
-  loadMenusView = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
-    const { path } = global;
-    const menusView: MenusViewsType[] = [
-      { module: 'home', path: './pages/Home', used: false },
-    ];
-    let currentMenuView: MenusViewsType | null = null;
-    async.parallel(
-      [
-        (callback) => {
-          GameModulesPlugin.loadDynamicModulesName().then((modules) => {
-            modules.forEach((module) => {
-              const pathHomeModule = `${path}${FolderPlugin.modulesDirectory}/${module}${FolderPlugin.menuPath}.tsx`;
-              if (fs.existsSync(pathHomeModule)) {
-                menusView.push({
-                  module,
-                  path: `.${FolderPlugin.gameDevSoftwareDirectory.replace(
-                    'src/',
-                    ''
-                  )}/modules/${module}${FolderPlugin.menuPath}`,
-                  used: false,
-                });
-              }
-            });
-            callback();
-          });
-        },
-        (callback) => {
-          FileService.readJsonFile(`${path}${FolderPlugin.menuConfig}`).then(
-            (data) => {
-              currentMenuView = data;
-              callback();
-            }
-          );
-        },
-      ],
-      () => {
-        const viewFind = menusView.find(
-          (m) => m.path === currentMenuView?.path
-        );
-        if (viewFind) {
-          viewFind.used = true;
-        }
-        event.reply('load-menus-views', menusView);
-      }
-    );
-  };
-
   setMenuView = (event: ElectronIpcMainEvent, arg: string) => {
     // @ts-ignore
     const { path } = global;
     FileService.writeJsonFile(`${path}${FolderPlugin.menuConfig}`, {
       path: arg,
     }).then(() => {
-      this.loadMenusView(event);
+      this._advancedPlugin.loadMenusView(event);
     });
   };
 
@@ -244,7 +198,7 @@ export default class ApplicationPlugin {
       this.getSoftwaresInfo(event as ElectronIpcMainEvent)
     );
     ipcMain.on('load-menus-views', (event: Electron.IpcMainEvent) =>
-      this.loadMenusView(event as ElectronIpcMainEvent)
+      this._advancedPlugin.loadMenusView(event as ElectronIpcMainEvent)
     );
     ipcMain.on('set-menu-view', (event: Electron.IpcMainEvent, args) =>
       this.setMenuView(event as ElectronIpcMainEvent, args)
@@ -291,5 +245,11 @@ export default class ApplicationPlugin {
         );
       }
     );
+    ipcMain.on('load-current-orientation', (event: Electron.IpcMainEvent) => {
+      this._advancedPlugin.loadCurrentOrientation(
+        event as ElectronIpcMainEvent,
+        this.openConfigFile
+      );
+    });
   };
 }

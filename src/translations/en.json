@@ -46,6 +46,7 @@
   "module_application_home_project_open_new_project": "Open project",
   "module_application_home_project_build": "Build",
   "module_application_params_home_view": "Home View by modules",
+  "module_application_params_orientation_title": "App orientation",
   "module_gameobject_home_title": "All Game Objects",
   "form_button_add": "Add",
   "modal_component_btn_close": "Cancel",
