@@ -65,4 +65,14 @@ export default class ApplicationAdvancedPlugin {
   ) => {
     event.reply('load-current-orientation', openConfigFile().screenOrientation);
   };
+
+  setCurrentOrientation = (
+    event: ElectronIpcMainEvent,
+    orientation: ApplicationConfigJson['screenOrientation'],
+    openConfigFile: () => ApplicationConfigJson,
+    writeConfigFile: (config: Partial<ApplicationConfigJson>) => void
+  ) => {
+    writeConfigFile({ screenOrientation: orientation });
+    this.loadCurrentOrientation(event, openConfigFile);
+  };
 }

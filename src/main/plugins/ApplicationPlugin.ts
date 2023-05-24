@@ -69,6 +69,26 @@ export default class ApplicationPlugin {
     );
   };
 
+  private mergeObjects = (obj1: any, obj2: any) => {
+    const merged = { ...obj1 };
+
+    for (let key in obj2) {
+      if (obj2.hasOwnProperty(key)) {
+        if (
+          typeof obj2[key] === 'object' &&
+          obj1.hasOwnProperty(key) &&
+          typeof obj1[key] === 'object'
+        ) {
+          merged[key] = this.mergeObjects(obj1[key], obj2[key]); // Appel récursif pour les objets imbriqués
+        } else {
+          merged[key] = obj2[key];
+        }
+      }
+    }
+
+    return merged;
+  };
+
   private openConfigFile = (): ApplicationConfigJson => {
     // @ts-ignore
     const { path } = global;
@@ -77,12 +97,14 @@ export default class ApplicationPlugin {
     return JSON.parse(data);
   };
 
-  private writeConfigFile = (json: ApplicationConfigJson) => {
+  private writeConfigFile = (json: Partial<ApplicationConfigJson>) => {
+    let data = this.openConfigFile();
+    const finalJSON = this.mergeObjects(data, json);
     // @ts-ignore
     const { path } = global;
     fs.writeFileSync(
       `${path}${FolderPlugin.configFileJson}`,
-      JSON.stringify(json)
+      JSON.stringify(finalJSON)
     );
   };
 
@@ -251,5 +273,16 @@ export default class ApplicationPlugin {
         this.openConfigFile
       );
     });
+    ipcMain.on(
+      'set-current-orientation',
+      (event: Electron.IpcMainEvent, args) => {
+        this._advancedPlugin.setCurrentOrientation(
+          event as ElectronIpcMainEvent,
+          args,
+          this.openConfigFile,
+          this.writeConfigFile
+        );
+      }
+    );
   };
 }

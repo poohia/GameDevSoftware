@@ -93,7 +93,7 @@ const AdvancedParamsComponent: React.FC = () => {
                 value={valueScreenOrientation}
                 options={orientations}
                 onChange={(_, { value }) => {
-                  // sendMessage('set-menu-view', value);
+                  sendMessage('set-current-orientation', value);
                 }}
                 required
               />
