@@ -1,4 +1,5 @@
 import { BrowserWindow, ipcMain } from 'electron';
+import childProcess from 'child_process';
 import fs from 'fs';
 import async from 'async';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
@@ -19,6 +20,7 @@ import VersionSoftwareService from '../services/VersionSoftwareService';
 import FileService from '../services/FileService';
 import ApplicationAdvancedPlugin from './subPlugins/ApplicationAdvancedPlugin';
 
+const exec = childProcess.exec;
 const options = { ignoreAttributes: false, format: true };
 const parser = new XMLParser(options);
 const builder = new XMLBuilder(options);
@@ -43,6 +45,14 @@ export default class ApplicationPlugin {
     this._splashscreenPlugin = new SplashscreenPlugin(this.mainWindow);
     this._advancedPlugin = new ApplicationAdvancedPlugin();
   }
+
+  static refreshConfigFileToSrc = (callback?: (err: Error) => void) => {
+    // @ts-ignore
+    const path = global.path;
+    exec(`node ./hooks/exec_edit_config.js`, { cwd: path }, (error) => {
+      callback && callback(Error(error?.message));
+    });
+  };
 
   private writeOnIndexHtml = (
     args: Pick<ApplicationIdentityParams, 'name' | 'description'>
@@ -155,6 +165,7 @@ export default class ApplicationPlugin {
     this.writeConfigFile(json);
     this.loadParamsIdentity(event);
     this.writeOnIndexHtml({ name: args.name, description: args.description });
+    ApplicationPlugin.refreshConfigFileToSrc();
   };
 
   getSoftwaresInfo = (event: ElectronIpcMainEvent) => {

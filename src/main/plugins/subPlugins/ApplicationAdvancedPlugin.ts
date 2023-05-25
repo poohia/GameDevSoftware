@@ -9,6 +9,7 @@ import FileService from '../../services/FileService';
 import FolderPlugin from '../FolderPlugin';
 
 import GameModulesPlugin from '../GameModulesPlugin';
+import ApplicationPlugin from '../ApplicationPlugin';
 
 export default class ApplicationAdvancedPlugin {
   loadMenusView = (event: ElectronIpcMainEvent) => {
@@ -74,5 +75,6 @@ export default class ApplicationAdvancedPlugin {
   ) => {
     writeConfigFile({ screenOrientation: orientation });
     this.loadCurrentOrientation(event, openConfigFile);
+    ApplicationPlugin.refreshConfigFileToSrc();
   };
 }
