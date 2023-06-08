@@ -1,4 +1,4 @@
-import { ipcMain, dialog, BrowserWindow } from 'electron';
+import { ipcMain, dialog, BrowserWindow, shell } from 'electron';
 import fs from 'fs';
 import async from 'async';
 import {
@@ -6,8 +6,9 @@ import {
   AssertFileValueType,
   AssetType,
   ElectronIpcMainEvent,
+  typeAssetToOpen,
 } from 'types';
-import path from 'path';
+import pathModule from 'path';
 import FileService from '../services/FileService';
 import UtilsService from '../services/UtilsService';
 import FolderPlugin from './FolderPlugin';
@@ -157,22 +158,14 @@ export default class AssetPlugin {
       .showOpenDialog(this.mainWindow, {
         properties: ['openFile', 'multiSelections'],
         filters: [
-          { extensions: ['.jpg', '.jpeg', '.png'], name: 'Image' },
-          { extensions: ['.mp3'], name: 'Sound' },
-          { extensions: ['.mp4', '.mkv'], name: 'Video' },
-          { extensions: ['.json'], name: 'Json' },
           {
-            extensions: [
-              '.jpg',
-              '.jpeg',
-              '.png',
-              '.mp3',
-              '.mp4',
-              '.mkv',
-              '.json',
-            ],
+            extensions: ['jpg', 'jpeg', 'png', 'mp3', 'mp4', 'mkv', 'json'],
             name: 'All',
           },
+          { extensions: ['jpg', 'jpeg', 'png'], name: 'Image' },
+          { extensions: ['mp3'], name: 'Sound' },
+          { extensions: ['mp4', 'mkv'], name: 'Video' },
+          { extensions: ['json'], name: 'Json' },
         ],
       })
       .then((result) => {
@@ -180,8 +173,8 @@ export default class AssetPlugin {
         async.each(
           result.filePaths,
           (filePath, callback) => {
-            const type = this.typeFromExtension(path.extname(filePath));
-            const name = path.basename(filePath);
+            const type = this.typeFromExtension(pathModule.extname(filePath));
+            const name = pathModule.basename(filePath);
             assets.push({ type, name, deletable: true, editable: true });
             const destinationPath = `${this.directoryFromFileType(
               type
@@ -213,6 +206,36 @@ export default class AssetPlugin {
     );
   };
 
+  openAssetsFolder = (
+    _event: ElectronIpcMainEvent,
+    arg: {
+      type: typeAssetToOpen;
+      fileName?: string;
+    }
+  ) => {
+    // @ts-ignore
+    const { path } = global;
+    let finalPath = '';
+    switch (arg.type) {
+      case 'image':
+        finalPath = `${path}${FolderPlugin.directoryImages}/${arg.fileName}`;
+        break;
+      case 'video':
+        finalPath = `${path}${FolderPlugin.directoryVideos}/${arg.fileName}`;
+        break;
+      case 'sound':
+        finalPath = `${path}${FolderPlugin.directorySounds}/${arg.fileName}`;
+        break;
+      case 'json':
+        finalPath = `${path}${FolderPlugin.directoryJson}/${arg.fileName}`;
+        break;
+      case 'root':
+      default:
+        finalPath = `${path}${FolderPlugin.assetsDirectory}`;
+    }
+    shell.openPath(pathModule.normalize(finalPath));
+  };
+
   init = () => {
     ipcMain.on('load-assets', (event: Electron.IpcMainEvent) =>
       this.loadAssets(event as ElectronIpcMainEvent)
@@ -239,5 +262,8 @@ export default class AssetPlugin {
     ipcMain.on('optimize-assets', (event: Electron.IpcMainEvent) => {
       this._optimizeAssetsPlugin.optimize(event as ElectronIpcMainEvent);
     });
+    ipcMain.on('open-assets-folder', (event, arg) =>
+      this.openAssetsFolder(event as ElectronIpcMainEvent, arg)
+    );
   };
 }

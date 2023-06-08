@@ -72,7 +72,8 @@ export type Channels =
   | 'append-fonts'
   | 'remove-font'
   | 'load-current-orientation'
-  | 'set-current-orientation';
+  | 'set-current-orientation'
+  | 'open-assets-folder';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -316,3 +317,5 @@ export type FontObject = {
 export type FontDataObject = FontObject & {
   data: string;
 };
+
+export type typeAssetToOpen = 'root' | 'image' | 'video' | 'sound' | 'json';

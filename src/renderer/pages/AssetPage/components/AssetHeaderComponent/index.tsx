@@ -1,27 +1,25 @@
 import { Grid, Icon } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
-import i18n from 'translations/i18n';
 import { AssetHeaderComponentProps } from 'types';
 import { TransComponent } from 'renderer/components';
 import { useEvents } from 'renderer/hooks';
-import { useState } from 'react';
 
 const AssetHeaderComponent = (
   props: AssetHeaderComponentProps & {
     onClickMultipleAdd: () => void;
   }
 ) => {
-  const [loadingOptimize, setLoadingOptimize] = useState<boolean>(false);
+  // const [loadingOptimize, setLoadingOptimize] = useState<boolean>(false);
   const { onClickAdd, onClickMultipleAdd } = props;
-  const { sendMessage, once } = useEvents();
-  const optimizeAssets = () => {
-    if (loadingOptimize) return;
-    setLoadingOptimize(true);
-    sendMessage('optimize-assets');
-    once('optimize-assets', () => {
-      setLoadingOptimize(false);
-    });
-  };
+  const { sendMessage } = useEvents();
+  // const optimizeAssets = () => {
+  //   if (loadingOptimize) return;
+  //   setLoadingOptimize(true);
+  //   sendMessage('optimize-assets');
+  //   once('optimize-assets', () => {
+  //     setLoadingOptimize(false);
+  //   });
+  // };
   return (
     <Grid.Column width={16}>
       <Grid.Row>
@@ -43,10 +41,9 @@ const AssetHeaderComponent = (
             icon
             color="olive"
             labelPosition="right"
-            onClick={optimizeAssets}
-            loading={loadingOptimize}
+            onClick={() => sendMessage('open-assets-folder', { type: 'root' })}
           >
-            <TransComponent id="assets_action_optimize" />
+            <TransComponent id="assets_action_open_folder" />
             <Icon name="zip" />
           </Button>
         </Grid.Column>

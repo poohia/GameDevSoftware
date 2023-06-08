@@ -8,6 +8,7 @@ import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { AssertFileValueType, AssetType } from 'types';
 import AssetPreviewComponent from '../AssetPreviewComponent';
+import { useEvents } from 'renderer/hooks';
 
 type AssetFormComponentProps = {
   defaultValue?: AssetType;
@@ -15,6 +16,7 @@ type AssetFormComponentProps = {
 };
 const AssetFormComponent = (props: AssetFormComponentProps) => {
   const { defaultValue, onSubmit } = props;
+  const { sendMessage } = useEvents();
 
   const [file, setFile] = useState<AssertFileValueType>({
     content: '',
@@ -106,6 +108,20 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
               >
                 {i18n.t('module_translation_form_field_submit')}
               </Button>
+              {defaultValue && (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    sendMessage('open-assets-folder', {
+                      type: file.fileType,
+                      fileName: file.fileName,
+                    });
+                  }}
+                  color={'brown'}
+                >
+                  {i18n.t('module_translation_form_field_acton_open_file')}
+                </Button>
+              )}
             </Form>
           </Container>
         </Grid.Row>
