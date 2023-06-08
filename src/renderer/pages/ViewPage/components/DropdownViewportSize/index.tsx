@@ -61,7 +61,7 @@ const DropdownViewportSize: React.FC<DropdownViewportSizeProps> = ({
         break;
       case 'full':
       default:
-        onChange('100%', '79vh');
+        onChange('100%', '76vh');
     }
     setItem('dropdown.viewportsize', value);
   }, [value, orientation]);

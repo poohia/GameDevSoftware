@@ -1,8 +1,19 @@
 import { useCallback } from 'react';
 
-type Messages = 'getSaveData' | 'setSaveData' | 'changePath';
+export type useMessagesProps = {
+  refIframe: HTMLIFrameElement;
+};
+type Messages =
+  | 'getSaveData'
+  | 'setSaveData'
+  | 'changePath'
+  | 'goHome'
+  | 'currentLocale'
+  | 'setCurrentLocale'
+  | 'currentSound'
+  | 'setCurrentSound';
 
-const useMessages = (refIframe: HTMLIFrameElement) => {
+const useMessages = (refIframe: useMessagesProps['refIframe']) => {
   const sendMessage = useCallback(
     (title: Messages, data?: any, callback?: (data: any) => void) => {
       if (callback) {
@@ -26,7 +37,7 @@ const useMessages = (refIframe: HTMLIFrameElement) => {
   );
 
   const listenMessage = useCallback(
-    (title: Messages, callback: (data: any) => void) => {
+    <T = any>(title: Messages, callback: (response: { data: T }) => void) => {
       const receiveMessage = (env: MessageEvent<any>) => {
         if (env.data.message?.title === title) {
           callback(env.data);

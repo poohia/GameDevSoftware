@@ -4,7 +4,10 @@ import { useDatabase } from 'renderer/hooks';
 import { Button } from 'renderer/semantic-ui';
 import { Icon } from 'semantic-ui-react';
 import {
+  BtnHome,
+  DropdownLocale,
   DropdownSaves,
+  DropdownSound,
   DropdownViewportSize,
   RouteInformationComponent,
 } from './components';
@@ -54,23 +57,26 @@ const ViewPage: React.FC = () => {
           >
             <Icon name="redo" />
           </Button>
-          <br />{' '}
+          <br />
           <span>
             {viewPortSize[0]} - {viewPortSize[1]}
           </span>
         </div>
         {refIframe.current && (
-          <RouteInformationComponent refIframe={refIframe.current} />
-        )}
-        {refIframe.current && (
-          <DropdownSaves
-            refIframe={refIframe.current}
-            onLoadSave={() => {
-              if (refIframe.current) {
-                refIframe.current.src = refIframe.current.src;
-              }
-            }}
-          />
+          <>
+            <RouteInformationComponent refIframe={refIframe.current} />
+            <DropdownSaves
+              refIframe={refIframe.current}
+              onLoadSave={() => {
+                if (refIframe.current) {
+                  refIframe.current.src = refIframe.current.src;
+                }
+              }}
+            />
+            <BtnHome refIframe={refIframe.current} />
+            <DropdownLocale refIframe={refIframe.current} />
+            <DropdownSound refIframe={refIframe.current} />
+          </>
         )}
       </div>
       <div>

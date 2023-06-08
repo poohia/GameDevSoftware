@@ -68,6 +68,7 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
                     'dropdown_languages_placeholder_append_country'
                   )}
                   clearable
+                  fluid
                 />
               </Grid.Column>
               <Grid.Column width={3}>

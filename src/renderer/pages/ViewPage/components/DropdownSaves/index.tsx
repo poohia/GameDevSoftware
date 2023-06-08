@@ -4,10 +4,9 @@ import { useDatabase } from 'renderer/hooks';
 import { Button } from 'renderer/semantic-ui';
 import { Dropdown, DropdownItemProps, Form, Icon } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
-import useMessages from '../../useMessages';
+import useMessages, { useMessagesProps } from '../../useMessages';
 
-type DropdownSavesProps = {
-  refIframe: HTMLIFrameElement;
+type DropdownSavesProps = useMessagesProps & {
   onLoadSave: () => void;
 };
 

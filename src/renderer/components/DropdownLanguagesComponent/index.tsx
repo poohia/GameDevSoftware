@@ -257,6 +257,8 @@ const DropdownLanguagesComponent = (props: DropdownLanguagesComponentProps) => {
     languagesFilters = [],
     placeholder = i18n.t('dropdown_languages_placeholder_default'),
     options,
+    fluid,
+    search = true,
     onChange,
     ...rest
   } = props;
@@ -276,9 +278,9 @@ const DropdownLanguagesComponent = (props: DropdownLanguagesComponentProps) => {
     <Dropdown
       {...rest}
       placeholder={placeholder}
-      fluid
+      fluid={fluid}
       selection
-      search
+      search={search}
       options={countries}
       onChange={onChange}
     />
