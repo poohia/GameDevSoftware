@@ -62,6 +62,11 @@ const useSceneContainerComponent = (props: PageProps) => {
     [sceneObjectForm]
   );
 
+  const openFile = useCallback(
+    () => sendMessage('open-scene-file', stateForm.key),
+    [stateForm]
+  );
+
   useEffect(() => {
     sendMessage('load-scenes', sceneType);
     sendMessage('get-formulaire-scene', sceneType);
@@ -91,6 +96,7 @@ const useSceneContainerComponent = (props: PageProps) => {
     updateGameobject,
     sendCreateGameobject,
     closeForm: () => dispatch({ type: 'hide-form' }),
+    openFile,
   };
 };
 

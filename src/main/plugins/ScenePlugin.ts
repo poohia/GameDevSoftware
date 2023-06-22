@@ -1,6 +1,7 @@
-import { ipcMain } from 'electron';
+import { ipcMain, shell } from 'electron';
 import fs from 'fs';
 import async from 'async';
+import pathModule from 'path';
 import FileService from '../services/FileService';
 import UtilsService from '../services/UtilsService';
 import { ElectronIpcMainEvent, SceneObject, SceneTypeJSON } from 'types';
@@ -247,6 +248,14 @@ export default class ScenePlugin {
     });
   };
 
+  openSceneFile = (_event: ElectronIpcMainEvent, arg: string) => {
+    // @ts-ignore
+    const { path } = global;
+    shell.openPath(
+      pathModule.normalize(`${path}${FolderPlugin.sceneDirectory}/${arg}.json`)
+    );
+  };
+
   init = () => {
     ipcMain.on('load-scenes-types', (event: Electron.IpcMainEvent) =>
       this.loadSceneTypes(event as ElectronIpcMainEvent)
@@ -271,6 +280,9 @@ export default class ScenePlugin {
     });
     ipcMain.on('set-first-scene', (event, args) => {
       this.setFirstScene(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('open-scene-file', (event, args) => {
+      this.openSceneFile(event as ElectronIpcMainEvent, args);
     });
   };
 }

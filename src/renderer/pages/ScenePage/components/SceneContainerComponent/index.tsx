@@ -16,6 +16,7 @@ const SceneContainerComponent = (props: PageProps) => {
     updateGameobject,
     sendCreateGameobject,
     closeForm,
+    openFile,
   } = useSceneContainerComponent(props);
 
   return (
@@ -51,6 +52,7 @@ const SceneContainerComponent = (props: PageProps) => {
               loading={loadingForm}
               onSubmit={sendCreateGameobject}
               onClose={closeForm}
+              onOpenFileClick={openFile}
             />
           </Grid.Column>
         )}

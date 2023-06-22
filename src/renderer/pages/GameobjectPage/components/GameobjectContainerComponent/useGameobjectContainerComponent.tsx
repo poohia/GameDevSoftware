@@ -54,6 +54,11 @@ const useGameobjectContainerComponent = (props: PageProps) => {
     sendMessage('create-game-object', data);
   }, []);
 
+  const openFile = useCallback(
+    () => sendMessage('open-gameobject-file', stateForm.key),
+    [stateForm]
+  );
+
   useEffect(() => {
     sendMessage('load-game-objects', gameObjectType);
     sendMessage('get-formulaire-game-object', gameObjectType);
@@ -83,6 +88,7 @@ const useGameobjectContainerComponent = (props: PageProps) => {
     updateGameobject,
     sendCreateGameobject,
     closeForm: () => dispatch({ type: 'hide-form' }),
+    openFile,
   };
 };
 

@@ -73,7 +73,9 @@ export type Channels =
   | 'remove-font'
   | 'load-current-orientation'
   | 'set-current-orientation'
-  | 'open-assets-folder';
+  | 'open-assets-folder'
+  | 'open-scene-file'
+  | 'open-gameobject-file';
 export type Tables =
   | 'locale'
   | 'tabs'

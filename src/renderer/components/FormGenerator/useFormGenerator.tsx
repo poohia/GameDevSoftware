@@ -26,6 +26,7 @@ export type FormGeneratorProps = {
   loading?: boolean;
   onSubmit: (data: any) => void;
   onClose: () => void;
+  onOpenFileClick?: () => void;
 };
 
 const useFormGenerator = (props: FormGeneratorProps) => {
@@ -36,6 +37,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
     loading,
     onSubmit,
     onClose,
+    onOpenFileClick,
   } = props;
 
   const formik = useFormik<any>({
@@ -271,17 +273,32 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         <Grid.Row>
           <Grid.Column>
             <Form onSubmit={formik.handleSubmit}>
+              <Button type="submit" loading={loading}>
+                <TransComponent id="form_action_submit" />
+              </Button>
+              {defaultValues !== undefined && onOpenFileClick && (
+                <Button
+                  type="button"
+                  loading={loading}
+                  color={'brown'}
+                  onClick={onOpenFileClick}
+                >
+                  <TransComponent id="module_translation_form_field_acton_open_file" />
+                </Button>
+              )}
               <Icon
                 name="close"
                 size="big"
                 style={{
                   float: 'right',
                   cursor: 'pointer',
-                  position: 'relative',
-                  bottom: '20px',
+                  // position: 'relative',
+                  // bottom: '20px',
+                  marginBottom: '20px',
                 }}
                 onClick={onClose}
               />
+              <br />
               <FormikProvider value={formik}>
                 {Object.keys(form).map((key) => (
                   <React.Fragment key={key}>
@@ -289,8 +306,18 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                   </React.Fragment>
                 ))}
                 <Button type="submit" loading={loading}>
-                  Submit
+                  <TransComponent id="form_action_submit" />
                 </Button>
+                {defaultValues !== undefined && onOpenFileClick && (
+                  <Button
+                    type="button"
+                    loading={loading}
+                    color={'brown'}
+                    onClick={onOpenFileClick}
+                  >
+                    <TransComponent id="module_translation_form_field_acton_open_file" />
+                  </Button>
+                )}
               </FormikProvider>
             </Form>
           </Grid.Column>

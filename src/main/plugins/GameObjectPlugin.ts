@@ -1,6 +1,7 @@
-import { ipcMain } from 'electron';
+import { ipcMain, shell } from 'electron';
 import fs from 'fs';
 import async from 'async';
+import pathModule from 'path';
 import FileService from '../services/FileService';
 import UtilsService from '../services/UtilsService';
 import { ElectronIpcMainEvent, GameObject, ObjectGameTypeJSON } from 'types';
@@ -199,6 +200,16 @@ export default class GameObjectPlugin {
     });
   };
 
+  openGameObjectFile = (_event: ElectronIpcMainEvent, arg: string) => {
+    // @ts-ignore
+    const { path } = global;
+    shell.openPath(
+      pathModule.normalize(
+        `${path}${FolderPlugin.gameObjectDirectory}/${arg}.json`
+      )
+    );
+  };
+
   init = () => {
     ipcMain.on('load-game-object-types', (event: Electron.IpcMainEvent) =>
       this.loadGameObjectTypes(event as ElectronIpcMainEvent)
@@ -220,6 +231,9 @@ export default class GameObjectPlugin {
     });
     ipcMain.on('load-all-game-objects', (event) => {
       this.loadGameObjectTypes(event as ElectronIpcMainEvent);
+    });
+    ipcMain.on('open-gameobject-file', (event, args) => {
+      this.openGameObjectFile(event as ElectronIpcMainEvent, args);
     });
   };
 }
