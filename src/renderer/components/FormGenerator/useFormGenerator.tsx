@@ -18,6 +18,7 @@ import {
   SpriteInput,
 } from './components';
 import { FieldComponentProps } from './components/FieldComponent';
+import DropDownFontsComponent from '../DropDownFontsComponent';
 
 export type FormGeneratorProps = {
   form: any;
@@ -133,6 +134,18 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               name={key}
               defaultValue={defaultValue}
               onChange={onChange}
+              {...rest}
+            />
+          </FieldComponent>
+        );
+      }
+      if (core === 'font') {
+        console.log(field, defaultProps, defaultValue);
+        return (
+          <FieldComponent {...defaultProps}>
+            <DropDownFontsComponent
+              defaultValue={defaultValue}
+              onChange={(_e, { value }) => formik.setFieldValue(key, value)}
               {...rest}
             />
           </FieldComponent>

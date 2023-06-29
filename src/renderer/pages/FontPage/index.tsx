@@ -49,6 +49,7 @@ const FontPage: React.FC = () => {
             <DropDownFontsComponent
               value={fontFamily}
               onChange={(_, data) => setFontFamily(data.value as string)}
+              canDelete
             />
           </Grid.Column>
         </Grid.Row>

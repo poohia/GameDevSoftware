@@ -19,7 +19,7 @@ type DefaultFonts =
   | 'ui-sans-serif'
   | 'ui-serif';
 
-type DropdownLanguagesComponentProps = DropdownProps;
+type DropdownLanguagesComponentProps = DropdownProps & { canDelete?: boolean };
 const defaultFonts = [
   'cursive',
   'emoji',
@@ -34,12 +34,19 @@ const defaultFonts = [
 const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
   props
 ) => {
-  const { value, onChange, ...rest } = props;
+  const {
+    value: valueProps,
+    defaultValue: defaultValueProps,
+    canDelete = false,
+    onChange,
+    ...rest
+  } = props;
+  const [value, setValue] = useState<DropdownProps['value']>(valueProps);
   const [fonts, setFonts] = useState<string[]>([]);
 
   const { requestMessage, sendMessage } = useEvents();
 
-  const defaultValue = useMemo(() => fonts[0], [fonts]);
+  const defaultValue = useMemo(() => defaultValueProps || fonts[0], [fonts]);
   const finalValue = useMemo(
     () => value ?? defaultValue,
     [defaultValue, value]
@@ -52,16 +59,16 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
   }, []);
 
   useEffect(() => {
-    if (value === undefined && onChange) {
-      // @ts-ignore
+    if (onChange) {
+      //@ts-ignore
       onChange(null, { value: finalValue });
     }
-  }, [value, finalValue]);
+  }, [finalValue, onChange]);
 
   return (
     <Grid>
       <Grid.Row columns={2}>
-        <Grid.Column width={14}>
+        <Grid.Column width={canDelete ? 15 : 16}>
           <Dropdown
             {...rest}
             search
@@ -74,23 +81,28 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
               value: font,
               key: font,
             }))}
-            onChange={onChange}
+            // onChange={onChange}
+            onChange={(_e, data) => setValue(data.value)}
           />
         </Grid.Column>
-        <Grid.Column width={2}>
-          <Button
-            icon
-            color="red"
-            disabled={finalValue ? !fonts.includes(finalValue as string) : true}
-            onClick={() => {
-              sendMessage('remove-font', finalValue);
-              // @ts-ignore
-              onChange(null, { value: undefined });
-            }}
-          >
-            <Icon name="trash" />
-          </Button>
-        </Grid.Column>
+        {canDelete && (
+          <Grid.Column width={1}>
+            <Button
+              icon
+              color="red"
+              disabled={
+                finalValue ? !fonts.includes(finalValue as string) : true
+              }
+              onClick={() => {
+                sendMessage('remove-font', finalValue);
+                // @ts-ignore
+                onChange(null, { value: undefined });
+              }}
+            >
+              <Icon name="trash" />
+            </Button>
+          </Grid.Column>
+        )}
       </Grid.Row>
     </Grid>
   );
