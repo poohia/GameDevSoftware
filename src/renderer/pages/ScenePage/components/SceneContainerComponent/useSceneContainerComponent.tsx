@@ -76,6 +76,29 @@ const useSceneContainerComponent = (props: PageProps) => {
     });
     // @ts-ignore
     once(`get-formulaire-scene-${sceneType}`, (args) => {
+      args.core = {
+        _title: {
+          label: 'Label of scene',
+          core: 'string',
+        },
+        ...args.core,
+        _actions: {
+          multiple: true,
+          label: 'Actions',
+          core: {
+            _scene: 'scene',
+          },
+        },
+        _font: {
+          label: 'Primary Font',
+          core: 'font',
+        },
+        _music: {
+          label: 'Primary music',
+          core: 'sound',
+        },
+      };
+
       setSceneObjectForm(args);
     });
   }, [sceneType]);

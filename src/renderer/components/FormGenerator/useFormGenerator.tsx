@@ -140,7 +140,6 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         );
       }
       if (core === 'font') {
-        console.log(field, defaultProps, defaultValue);
         return (
           <FieldComponent {...defaultProps}>
             <DropDownFontsComponent

@@ -104,7 +104,6 @@ const FieldMultipleComponent: React.FunctionComponent<
                 icon
                 labelPosition="right"
                 onClick={() => {
-                  console.log(defaultValue);
                   appendItem();
                   if (
                     defaultValue &&
