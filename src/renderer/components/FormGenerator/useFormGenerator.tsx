@@ -169,14 +169,16 @@ const useFormGenerator = (props: FormGeneratorProps) => {
       }
       if (core === 'boolean') {
         return (
-          <BooleanInput
-            onChange={(value) => {
-              formik.setFieldValue(key, value);
-            }}
-            defaultValue={defaultValue}
-            label={defaultProps.label}
-            {...rest}
-          />
+          <FieldComponent {...defaultProps} label="" required={false}>
+            <BooleanInput
+              onChange={(value) => {
+                formik.setFieldValue(key, value);
+              }}
+              defaultValue={defaultValue}
+              label={defaultProps.label}
+              {...rest}
+            />
+          </FieldComponent>
         );
       }
       if (core === 'sprite') {

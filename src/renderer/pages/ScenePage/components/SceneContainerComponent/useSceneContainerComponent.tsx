@@ -97,6 +97,10 @@ const useSceneContainerComponent = (props: PageProps) => {
           label: 'Primary music',
           core: 'sound',
         },
+        _canPrevScene: {
+          label: 'Can prev Scene',
+          core: 'boolean',
+        },
       };
 
       setSceneObjectForm(args);
