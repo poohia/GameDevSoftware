@@ -191,6 +191,7 @@ export type ApplicationConfigJson = {
   description?: string;
   playStore: string;
   appStore: string;
+  webStore: string;
 };
 export type ApplicationIdentityParams = {
   package: string;
@@ -203,6 +204,7 @@ export type ApplicationIdentityParams = {
   authorWebSite: string;
   playStore: string;
   appStore: string;
+  webStore: string;
 };
 export type ApplicationImageParams = {
   favicon: string;

@@ -131,6 +131,7 @@ export default class ApplicationPlugin {
       authorWebSite: json.author?.link || '',
       appStore: json.appStore || '',
       playStore: json.playStore || '',
+      webStore: json.webStore || '',
     };
     event.reply('load-params-identity', data);
   };
@@ -140,6 +141,7 @@ export default class ApplicationPlugin {
     args: ApplicationIdentityParams
   ) => {
     let json = this.openConfigFile();
+
     json = {
       ...json,
       name: args.name,
@@ -161,6 +163,7 @@ export default class ApplicationPlugin {
       },
       appStore: args.appStore,
       playStore: args.playStore,
+      webStore: args.webStore,
     };
     this.writeConfigFile(json);
     this.loadParamsIdentity(event);

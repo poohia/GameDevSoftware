@@ -18,7 +18,6 @@ const useIdentityParams = () => {
   );
 
   const onSubmit = () => {
-    console.log(params);
     sendMessage('set-params-identity', params);
   };
 
