@@ -97,6 +97,10 @@ const useSceneContainerComponent = (props: PageProps) => {
           label: 'Primary music',
           core: 'sound',
         },
+        _background: {
+          label: 'Background of scene',
+          core: 'image',
+        },
         _canPrevScene: {
           label: 'Can prev Scene',
           core: 'boolean',
