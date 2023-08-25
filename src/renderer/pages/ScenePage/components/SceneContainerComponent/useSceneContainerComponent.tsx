@@ -101,10 +101,6 @@ const useSceneContainerComponent = (props: PageProps) => {
           label: 'Background of scene',
           core: 'image',
         },
-        _canPrevScene: {
-          label: 'Can prev Scene',
-          core: 'boolean',
-        },
       };
 
       setSceneObjectForm(args);
