@@ -7,14 +7,14 @@ import { Segment } from 'renderer/semantic-ui';
 const ChatGPTPage: React.FC = () => {
   const {
     apiKeyState,
-    extratPromptState,
+    extraPromptState,
     models,
     model,
     setApiKeyState,
-    setExtratPromptState,
+    setextraPromptState,
     updateApiKey,
     updateModel,
-    updateExtratPrompt,
+    updateextraPrompt,
   } = useChatGPTPage();
   return (
     <Container fluid>
@@ -53,12 +53,12 @@ const ChatGPTPage: React.FC = () => {
                       )} (English)`}
                       type={'text'}
                       focus
-                      value={extratPromptState}
+                      value={extraPromptState}
                       onBlur={(event: any) => {
-                        updateExtratPrompt(event.target.value);
+                        updateextraPrompt(event.target.value);
                       }}
                       onChange={(event) =>
-                        setExtratPromptState(event.target.value)
+                        setextraPromptState(event.target.value)
                       }
                     />
                   </Form.Field>

@@ -1,9 +1,19 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Container, Flag, Form, Grid, Header, Input } from 'semantic-ui-react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import {
+  Container,
+  Flag,
+  Form,
+  Grid,
+  Header,
+  Icon,
+  Input,
+} from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
-import { Translation } from 'types';
+import { ChatGPTType, Translation, TranslationObject } from 'types';
 import { countryOptions } from 'renderer/components/DropdownLanguagesComponent';
+import ChatGPTContext from 'renderer/contexts/ChatGPTContext';
+import { useEvents } from 'renderer/hooks';
 
 export type TranslationFormComponentValue = {
   code: string;
@@ -18,14 +28,76 @@ export type TranslationFormComponentProps = {
   values: TranslationFormComponentValue[];
   onSubmit: (translations: { [key: string]: Translation }) => void;
 };
-const TranslationFormComponent = (props: TranslationFormComponentProps) => {
-  const { keyTranslation, values, onSubmit } = props;
+
+const TranslationFormButtonsComponent: React.FC<{
+  keyValue: string;
+  loading: boolean;
+  showAdvanced: boolean;
+  setShowAdvanced: (showAdvanced: boolean) => void;
+  disableAutoTranslate?: boolean;
+  handleAutoTranslate: () => void;
+}> = (props) => {
+  const {
+    keyValue,
+    loading,
+    setShowAdvanced,
+    showAdvanced,
+    disableAutoTranslate,
+    handleAutoTranslate,
+  } = props;
+  return (
+    <>
+      <Button
+        type="submit"
+        disabled={keyValue === '' || loading}
+        loading={loading}
+      >
+        {i18n.t('module_translation_form_field_submit')}
+      </Button>
+      <Button
+        type="button"
+        color="brown"
+        onClick={() => setShowAdvanced(!showAdvanced)}
+        basic={!showAdvanced}
+        loading={loading}
+        disabled={loading}
+      >
+        {i18n.t('module_application_params_advanced_title')}
+      </Button>
+      <Button
+        type="button"
+        color="yellow"
+        // disabled={!chatGPTInfos?.apiKey || loading || !keyTranslation}
+        disabled={disableAutoTranslate}
+        labelPosition="right"
+        icon
+        loading={loading}
+        onClick={handleAutoTranslate}
+      >
+        {i18n.t('module_translation_form_field_button_auto_translate')}
+        <Icon name="user secret" />
+      </Button>
+    </>
+  );
+};
+
+const TranslationFormComponent = (
+  props: TranslationFormComponentProps & { gameLocale: string }
+) => {
+  const { keyTranslation, values, gameLocale, onSubmit } = props;
+  const { chatGPTInfos } = useContext(ChatGPTContext);
+  const { sendMessage, once } = useEvents();
 
   const [keyValue, setKeyValue] = useState<string>(keyTranslation || '');
   const [translationsValue, setTranslationsValue] = useState(values);
   const [editable, setEditable] = useState<boolean>(true);
   const [deletable, setDeletable] = useState<boolean>(true);
-  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(
+    !!values.find((v) => v.valueComputer || v.valueMobile)
+  );
+  const [loading, setLoading] = useState<boolean>(false);
+  const [disableAutoTranslate, setDisableAutoTranslate] =
+    useState<boolean>(true);
 
   const handleKeyChange = useCallback((value: string) => {
     setKeyValue(value.toLocaleLowerCase().replace(' ', '_'));
@@ -43,6 +115,7 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
       valueMobile?: string;
       code: string;
     }) => {
+      setDisableAutoTranslate(true);
       setTranslationsValue((_translationValue) => {
         const translationFind = _translationValue.find((t) => t.code === code);
         if (translationFind) {
@@ -62,6 +135,43 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
     },
     [keyValue]
   );
+
+  const handleAutoTranslate = useCallback(() => {
+    if (!keyTranslation) return;
+    setLoading(true);
+    sendMessage('chatgpt-auto-translate', {
+      key: keyTranslation,
+      locale: gameLocale,
+    });
+    once('chatgpt-auto-translate', (data: TranslationObject | null) => {
+      if (data === null) {
+        setLoading(false);
+        return;
+      }
+      setTranslationsValue((_translationValue) => {
+        Object.keys(data).forEach((code) => {
+          const translationFind = _translationValue.find(
+            (t) => t.code === code
+          );
+          const d: Translation = data[code] as any;
+          if (translationFind) {
+            translationFind.value =
+              d.text !== undefined ? d.text : translationFind.value;
+            translationFind.valueComputer =
+              d.textComputer !== undefined
+                ? d.textComputer
+                : translationFind.valueComputer;
+            translationFind.valueMobile =
+              d.textMobile !== undefined
+                ? d.textMobile
+                : translationFind.valueMobile;
+          }
+        });
+        setLoading(false);
+        return JSON.parse(JSON.stringify(_translationValue));
+      });
+    });
+  }, []);
 
   const handleSubmit = useCallback(() => {
     const values: { [key: string]: Translation } = {};
@@ -111,6 +221,18 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
     }
   }, [values, keyValue]);
 
+  useEffect(() => {
+    if (!keyTranslation || values.length === 0) {
+      setDisableAutoTranslate(true);
+    } else if (!!values.find((v) => v.code === gameLocale && !v.value)) {
+      setDisableAutoTranslate(true);
+    } else {
+      setDisableAutoTranslate(
+        !chatGPTInfos?.apiKey || loading || !keyTranslation
+      );
+    }
+  }, [values, chatGPTInfos, loading, keyTranslation, gameLocale]);
+
   return (
     <Container fluid>
       <Grid className="game-dev-software-form-container">
@@ -126,9 +248,19 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
         <Grid.Row>
           <Container fluid>
             <Form onSubmit={handleSubmit}>
+              <TranslationFormButtonsComponent
+                keyValue={keyValue}
+                keyTranslation={keyTranslation}
+                handleAutoTranslate={handleAutoTranslate}
+                loading={loading}
+                setShowAdvanced={setShowAdvanced}
+                showAdvanced={showAdvanced}
+                disableAutoTranslate={disableAutoTranslate}
+              />
+              <br /> <br />
               <Form.Field>
                 <Form.Input
-                  disabled={!!keyTranslation}
+                  disabled={!!keyTranslation || loading}
                   label={i18n.t('module_translation_form_field_key_label')}
                   value={keyValue}
                   onChange={(_: any, data: { value: string }) => {
@@ -159,7 +291,7 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
                           code: value.code,
                         });
                       }}
-                      disabled={keyValue === '' || !editable}
+                      disabled={keyValue === '' || !editable || loading}
                     />
                   </Form.Field>
                   {showAdvanced && (
@@ -177,7 +309,7 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
                             });
                           }}
                           type={'text'}
-                          disabled={keyValue === '' || !editable}
+                          disabled={keyValue === '' || !editable || loading}
                         />
                       </Form.Field>
                       <Form.Field>
@@ -193,7 +325,7 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
                           }}
                           value={value.valueMobile}
                           type={'text'}
-                          disabled={keyValue === '' || !editable}
+                          disabled={keyValue === '' || !editable || loading}
                         />
                       </Form.Field>
                     </>
@@ -205,6 +337,7 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
                   label={i18n.t('form_label_editable')}
                   checked={editable}
                   onChange={() => setEditable(!editable)}
+                  disabled={loading}
                 />
               </Form.Field>
               <Form.Field>
@@ -212,19 +345,17 @@ const TranslationFormComponent = (props: TranslationFormComponentProps) => {
                   label={i18n.t('form_label_deletable')}
                   checked={deletable}
                   onChange={() => setDeletable(!deletable)}
+                  disabled={loading}
                 />
               </Form.Field>
-              <Button type="submit" disabled={keyValue === ''}>
-                {i18n.t('module_translation_form_field_submit')}
-              </Button>
-              <Button
-                type="button"
-                color="brown"
-                onClick={() => setShowAdvanced(!showAdvanced)}
-                basic={!showAdvanced}
-              >
-                {i18n.t('module_application_params_advanced_title')}
-              </Button>
+              <TranslationFormButtonsComponent
+                keyValue={keyValue}
+                handleAutoTranslate={handleAutoTranslate}
+                loading={loading}
+                setShowAdvanced={setShowAdvanced}
+                showAdvanced={showAdvanced}
+                disableAutoTranslate={disableAutoTranslate}
+              />
             </Form>
           </Container>
         </Grid.Row>

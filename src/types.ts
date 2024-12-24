@@ -78,7 +78,8 @@ export type Channels =
   | 'open-gameobject-file'
   | 'load-chatgpt-infos'
   | 'save-chatgpt-infos'
-  | 'load-chatgpt-models';
+  | 'load-chatgpt-models'
+  | 'chatgpt-auto-translate';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -332,5 +333,5 @@ export type typeAssetToOpen = 'root' | 'image' | 'video' | 'sound' | 'json';
 export type ChatGPTType = {
   apiKey: string;
   model: string;
-  extratPrompt?: string;
+  extraPrompt?: string;
 };

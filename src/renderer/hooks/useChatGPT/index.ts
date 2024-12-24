@@ -22,9 +22,9 @@ const useChatGPT = () => {
     });
   }, []);
 
-  const updateExtratPrompt = useCallback((extratPrompt: string) => {
+  const updateextraPrompt = useCallback((extraPrompt: string) => {
     sendMessage('save-chatgpt-infos', {
-      extratPrompt,
+      extraPrompt,
     });
   }, []);
 
@@ -42,7 +42,7 @@ const useChatGPT = () => {
     models,
     updateApiKey,
     updateModel,
-    updateExtratPrompt,
+    updateextraPrompt,
   };
 };
 

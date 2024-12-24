@@ -2,18 +2,13 @@ import { useContext, useEffect, useState } from 'react';
 import ChatGPTContext from 'renderer/contexts/ChatGPTContext';
 
 const useChatGPTPage = () => {
-  const {
-    chatGPTInfos,
-    models,
-    updateApiKey,
-    updateModel,
-    updateExtratPrompt,
-  } = useContext(ChatGPTContext);
+  const { chatGPTInfos, models, updateApiKey, updateModel, updateextraPrompt } =
+    useContext(ChatGPTContext);
   const [apiKeyState, setApiKeyState] = useState<string>(
     chatGPTInfos?.apiKey || ''
   );
-  const [extratPromptState, setExtratPromptState] = useState<string>(
-    chatGPTInfos?.extratPrompt || ''
+  const [extraPromptState, setextraPromptState] = useState<string>(
+    chatGPTInfos?.extraPrompt || ''
   );
 
   useEffect(() => {
@@ -22,10 +17,10 @@ const useChatGPTPage = () => {
         ? apiKeyState
         : chatGPTInfos.apiKey
     );
-    setExtratPromptState(
-      typeof chatGPTInfos?.extratPrompt === 'undefined'
-        ? extratPromptState
-        : chatGPTInfos.extratPrompt
+    setextraPromptState(
+      typeof chatGPTInfos?.extraPrompt === 'undefined'
+        ? extraPromptState
+        : chatGPTInfos.extraPrompt
     );
   }, [chatGPTInfos]);
 
@@ -33,12 +28,12 @@ const useChatGPTPage = () => {
     ...chatGPTInfos,
     models,
     apiKeyState,
-    extratPromptState,
+    extraPromptState,
     setApiKeyState,
-    setExtratPromptState,
+    setextraPromptState,
     updateApiKey,
     updateModel,
-    updateExtratPrompt,
+    updateextraPrompt,
   };
 };
 

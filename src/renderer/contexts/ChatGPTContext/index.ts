@@ -7,13 +7,13 @@ type ChatGPTContextType = {
   models?: DropdownItemProps[];
   updateApiKey: (apiKey: string) => void;
   updateModel: (model: string) => void;
-  updateExtratPrompt: (extratPrompt: string) => void;
+  updateextraPrompt: (extraPrompt: string) => void;
 };
 
 const ChatGPTContext = createContext<ChatGPTContextType>({
   updateApiKey: () => {},
   updateModel: () => {},
-  updateExtratPrompt: () => {},
+  updateextraPrompt: () => {},
 });
 
 export default ChatGPTContext;

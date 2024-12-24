@@ -60,6 +60,7 @@ const TranslationPage = () => {
             <Grid.Column width={8}>
               <TranslationFormComponent
                 {...translationForm}
+                gameLocale={locale}
                 onSubmit={appendTranslation}
               />
             </Grid.Column>
