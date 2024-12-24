@@ -98,6 +98,8 @@ export type PageProps = {
 export type Translation = {
   key: string;
   text: string;
+  textComputer?: string;
+  textMobile?: string;
   editable: boolean;
   deletable: boolean;
   module?: string;

@@ -11,6 +11,8 @@ import { useEvents } from 'renderer/hooks';
 import TranslationFromReducer, { defaultState } from './TranslationFromReducer';
 import GameModuleContext from 'renderer/contexts/GameModuleContext';
 import TranslationsContext from 'renderer/contexts/TranslationsContext';
+import { TranslationFormComponentValue } from './components/TranslationFormComponent';
+import { Translation } from 'types';
 
 const useTranslationPage = () => {
   const { module } = useContext(GameModuleContext);
@@ -92,12 +94,7 @@ const useTranslationPage = () => {
   const updateTranslationKey = useCallback(
     (key: string) => {
       const formatValues = () => {
-        const values: {
-          code: string;
-          value: string;
-          editable?: boolean;
-          deletable?: boolean;
-        }[] = [];
+        const values: TranslationFormComponentValue[] = [];
         languages.forEach((code) => {
           const translation = translations[code].find(
             (translation) => translation.key === key
@@ -105,6 +102,8 @@ const useTranslationPage = () => {
           values.push({
             code,
             value: translation?.text || '',
+            valueComputer: translation?.textComputer || '',
+            valueMobile: translation?.textMobile || '',
             editable: translation?.editable,
             deletable: translation?.deletable,
           });
@@ -126,27 +125,33 @@ const useTranslationPage = () => {
     [translations, languages]
   );
 
-  const appendTranslation = useCallback((createTranslations: any) => {
-    setTranslations((_translations) => {
-      Object.keys(createTranslations).forEach((code) => {
-        const tt = _translations[code];
-        const key = createTranslations[code].key;
-        let value = tt.find((ttt) => ttt.key === key);
-        if (value) {
-          const { text, editable, deletable } = createTranslations[code];
-          value.text = text;
-          value.editable = editable;
-          value.deletable = deletable;
-        } else {
-          _translations[code].push({ ...createTranslations[code] });
-        }
-      });
+  const appendTranslation = useCallback(
+    (createTranslations: { [key: string]: Translation }) => {
+      setTranslations((_translations) => {
+        Object.keys(createTranslations).forEach((code) => {
+          const tt = _translations[code];
+          const key = createTranslations[code].key;
+          let value = tt.find((ttt) => ttt.key === key);
+          if (value) {
+            const { text, textComputer, textMobile, editable, deletable } =
+              createTranslations[code];
+            value.text = text;
+            (value.textComputer = textComputer),
+              (value.textMobile = textMobile),
+              (value.editable = editable);
+            value.deletable = deletable;
+          } else {
+            _translations[code].push({ ...createTranslations[code] });
+          }
+        });
 
-      dispatch({ type: 'hide-form' });
-      sendMessage('save-translations', _translations);
-      return JSON.parse(JSON.stringify(_translations));
-    });
-  }, []);
+        dispatch({ type: 'hide-form' });
+        sendMessage('save-translations', _translations);
+        return JSON.parse(JSON.stringify(_translations));
+      });
+    },
+    []
+  );
   useEffect(() => {
     sendMessage('languages-authorized');
     on('languages-authorized', (args: { code: string }[]) => {

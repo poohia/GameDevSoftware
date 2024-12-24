@@ -34,13 +34,8 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
                   fluid
                   selection
                   search
+                  languagesToShow={languages || []}
                   value={locale}
-                  options={languages.map((language) => ({
-                    key: language,
-                    value: language,
-                    flag: language === 'en' ? 'gb eng' : language,
-                    text: language,
-                  }))}
                   onChange={(_, { value }) => onChangeLocale(value as string)}
                 />
               </Grid.Column>

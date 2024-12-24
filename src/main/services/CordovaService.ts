@@ -28,10 +28,15 @@ export default class CordovaService {
     platform: keyof PlatformsParams,
     callback: (err: Error) => void
   ) => {
-    platform = platform === 'electron' ? 'cordova-electron' : platform;
+    let finalPlatform: string = platform;
+    if (platform === 'electron') {
+      finalPlatform = 'cordova-electron';
+    } else if (platform === 'android') {
+      finalPlatform = 'android@12';
+    }
     // @ts-ignore
     const path = global.path;
-    exec(`cordova platform add ${platform}`, { cwd: path }, (error) => {
+    exec(`cordova platform add ${finalPlatform}`, { cwd: path }, (error) => {
       callback(Error(error?.message));
     });
   };

@@ -16,6 +16,8 @@
   "module_translation_form_field_key_label": "Key",
   "module_translation_form_field_submit": "Save",
   "module_translation_form_field_acton_open_file": "Open file",
+  "module_translation_form_field_mobile_text": "Text for Mobile",
+  "module_translation_form_field_computer_text": "Text for Computer",
   "module_table_count": "Count",
   "module_constant_header_append_constant": "Create constant",
   "module_constant_form_title_new": "Create constant",

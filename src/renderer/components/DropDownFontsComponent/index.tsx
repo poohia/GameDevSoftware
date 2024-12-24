@@ -19,7 +19,10 @@ type DefaultFonts =
   | 'ui-sans-serif'
   | 'ui-serif';
 
-type DropdownLanguagesComponentProps = DropdownProps & { canDelete?: boolean };
+type DropdownLanguagesComponentProps = DropdownProps & {
+  forceFirstValue?: boolean;
+  canDelete?: boolean;
+};
 const defaultFonts = [
   'cursive',
   'emoji',
@@ -37,6 +40,7 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
   const {
     value: valueProps,
     defaultValue: defaultValueProps,
+    forceFirstValue = false,
     canDelete = false,
     onChange,
     ...rest
@@ -46,7 +50,15 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
 
   const { requestMessage, sendMessage } = useEvents();
 
-  const defaultValue = useMemo(() => defaultValueProps || fonts[0], [fonts]);
+  const defaultValue = useMemo(() => {
+    if (defaultValueProps) {
+      return defaultValueProps;
+    }
+    if (forceFirstValue) {
+      return fonts[0];
+    }
+    return;
+  }, [fonts]);
   const finalValue = useMemo(
     () => value ?? defaultValue,
     [defaultValue, value]

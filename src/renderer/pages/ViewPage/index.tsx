@@ -59,7 +59,7 @@ const ViewPage: React.FC = () => {
           </Button>
           <br />
           <span>
-            {viewPortSize[0]} - {viewPortSize[1]}
+            w: {viewPortSize[0]}, h: {viewPortSize[1]}
           </span>
         </div>
         {refIframe.current && (
@@ -81,7 +81,11 @@ const ViewPage: React.FC = () => {
       </div>
       <div>
         <iframe
-          style={{ width: viewPortSize[0], height: viewPortSize[1] }}
+          style={{
+            width: viewPortSize[0],
+            height: viewPortSize[1],
+            borderRadius: 10,
+          }}
           ref={refIframe}
           src="http://localhost:3333"
           onKeyDown={() => {

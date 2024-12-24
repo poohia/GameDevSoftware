@@ -12,11 +12,11 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import Store from 'electron-store';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import PluginsContainer from './plugins';
 import ServiceContainer from './services';
-
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -26,6 +26,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+const store = new Store();
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -69,18 +70,14 @@ const createWindow = async () => {
   const getAssetPath = (...paths: string[]): string => {
     return path.join(RESOURCES_PATH, ...paths);
   };
-  const displays = screen.getAllDisplays();
-  const externalDisplay = displays.find((display) => {
-    return display.bounds.x !== 0 || display.bounds.y !== 0;
-  });
+
   const primaryDisplay = screen.getPrimaryDisplay();
+  const { width, height } = primaryDisplay.workAreaSize;
 
   mainWindow = new BrowserWindow({
     show: false,
-    x: externalDisplay?.bounds.x,
-    y: externalDisplay?.bounds.y,
-    width: externalDisplay?.size.width || primaryDisplay.size.width,
-    height: externalDisplay?.size.height || primaryDisplay.size.height,
+    width,
+    height,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
@@ -88,8 +85,18 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
+  // store.set('bounds', mainWindow.getBounds());
+  const bounds = store.get<any, any>('bounds');
+  console.log('🚀 ~ createWindow ~ bounds:', bounds);
+  if (!!bounds) {
+    const { width: widthBounds, height: heightBounds } = bounds;
+    if (widthBounds <= width && heightBounds <= height) {
+      mainWindow.setBounds(bounds);
+    }
+  } else {
+    mainWindow.maximize();
+  }
   mainWindow.loadURL(resolveHtmlPath('index.html'));
-  mainWindow.maximize();
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
@@ -102,6 +109,9 @@ const createWindow = async () => {
     }
   });
 
+  mainWindow.on('close', () => {
+    store.set('bounds', mainWindow!.getBounds());
+  });
   mainWindow.on('closed', () => {
     mainWindow = null;
   });

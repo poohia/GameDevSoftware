@@ -50,6 +50,7 @@ const FontPage: React.FC = () => {
               value={fontFamily}
               onChange={(_, data) => setFontFamily(data.value as string)}
               canDelete
+              forceFirstValue
             />
           </Grid.Column>
         </Grid.Row>
