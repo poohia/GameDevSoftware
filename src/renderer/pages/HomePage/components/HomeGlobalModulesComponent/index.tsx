@@ -27,6 +27,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
       'gameobject',
       'scene',
       'font',
+      'chatgpt',
     ],
     onChangeLocale,
     appendTab,

@@ -26,7 +26,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-const store = new Store();
+export const store = new Store();
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;

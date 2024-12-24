@@ -75,7 +75,10 @@ export type Channels =
   | 'set-current-orientation'
   | 'open-assets-folder'
   | 'open-scene-file'
-  | 'open-gameobject-file';
+  | 'open-gameobject-file'
+  | 'load-chatgpt-infos'
+  | 'save-chatgpt-infos'
+  | 'load-chatgpt-models';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -325,3 +328,9 @@ export type FontDataObject = FontObject & {
 };
 
 export type typeAssetToOpen = 'root' | 'image' | 'video' | 'sound' | 'json';
+
+export type ChatGPTType = {
+  apiKey: string;
+  model: string;
+  extratPrompt?: string;
+};

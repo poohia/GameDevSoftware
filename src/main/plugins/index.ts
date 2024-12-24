@@ -11,6 +11,7 @@ import ScenePlugin from './ScenePlugin';
 import EnvPlugin from './EnvPlugin';
 import WatchPlugin from './WatchPlugin';
 import FontPlugin from './FontPlugin';
+import ChatGPTPlugin from './ChatGPTPlugin';
 
 type Plugins =
   | 'folderPlugin'
@@ -24,7 +25,8 @@ type Plugins =
   | 'darkModePlugin'
   | 'envPlugin'
   | 'watchPlugin'
-  | 'fontPlugin';
+  | 'fontPlugin'
+  | 'chatgptPlugin';
 
 export default class PluginsContainer {
   private _folderPlugin;
@@ -39,6 +41,7 @@ export default class PluginsContainer {
   private _envPlugin;
   private _watchPlugin;
   private _fontPlugin;
+  private _chatgptPlugin;
 
   constructor(mainWindow: BrowserWindow) {
     this._folderPlugin = new FolderPlugin(mainWindow);
@@ -53,6 +56,7 @@ export default class PluginsContainer {
     this._envPlugin = new EnvPlugin();
     this._watchPlugin = new WatchPlugin(mainWindow);
     this._fontPlugin = new FontPlugin(mainWindow);
+    this._chatgptPlugin = new ChatGPTPlugin();
   }
 
   init() {

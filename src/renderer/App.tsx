@@ -12,6 +12,7 @@ import {
   ScenePage,
   EnvPage,
   FontPage,
+  ChatGPTPage,
 } from 'renderer/pages';
 import { GameobjectContainerComponent } from './pages/GameobjectPage/components';
 import { SceneContainerComponent } from './pages/ScenePage/components';
@@ -31,6 +32,7 @@ modulesComponent['GameobjectContainerComponent'] = GameobjectContainerComponent;
 modulesComponent['ScenePage'] = ScenePage;
 modulesComponent['SceneContainerComponent'] = SceneContainerComponent;
 modulesComponent['FontPage'] = FontPage;
+modulesComponent['ChatgptPage'] = ChatGPTPage;
 
 export default function App() {
   const { path, tabs, tabActive, onTabChange } = useApp();

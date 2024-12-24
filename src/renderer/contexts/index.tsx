@@ -7,6 +7,7 @@ import {
   useScenes,
   useDarkMode,
   useFonts,
+  useChatGPT,
 } from 'renderer/hooks';
 import TranslationsContext from './TranslationsContext';
 import ConstantsContext from './ConstantsContext';
@@ -14,6 +15,7 @@ import AssetsContext from './AssetsContext';
 import GameObjectContext from './GameObjectContext';
 import ScenesContext from './ScenesContext';
 import DarkModeContext from './DarkModeContext';
+import ChatGPTContext from './ChatGPTContext';
 
 type GameDevSoftwareProviderProps = {
   children: ReactNode;
@@ -27,6 +29,7 @@ const GameDevSoftwareProvider: React.FunctionComponent<
   const constants = useConstants();
   const assets = useAssets();
   const scenes = useScenes();
+  const chatGPT = useChatGPT();
   useFonts();
   const { gameObjects, findGameObjectsByType } = useGameObjects();
   const { darkModeActived, toggleDarkMode } = useDarkMode();
@@ -40,7 +43,9 @@ const GameDevSoftwareProvider: React.FunctionComponent<
               value={{ gameObjects, findGameObjectsByType }}
             >
               <ScenesContext.Provider value={{ scenes }}>
-                {children}
+                <ChatGPTContext.Provider value={{ ...chatGPT }}>
+                  {children}
+                </ChatGPTContext.Provider>
               </ScenesContext.Provider>
             </GameObjectContext.Provider>
           </AssetsContext.Provider>
