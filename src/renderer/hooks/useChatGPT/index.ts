@@ -10,23 +10,12 @@ const useChatGPT = () => {
   const [models, setModels] = useState<DropdownItemProps[]>([]);
   const { requestMessage, sendMessage } = useEvents();
 
-  const updateApiKey = useCallback((apiKey: string) => {
-    sendMessage('save-chatgpt-infos', {
-      apiKey,
-    });
-  }, []);
-
-  const updateModel = useCallback((model: string) => {
-    sendMessage('save-chatgpt-infos', {
-      model,
-    });
-  }, []);
-
-  const updateextraPrompt = useCallback((extraPrompt: string) => {
-    sendMessage('save-chatgpt-infos', {
-      extraPrompt,
-    });
-  }, []);
+  const updateChatGPTInfos = useCallback(
+    (chatGPTInfos: Partial<ChatGPTType>) => {
+      sendMessage('save-chatgpt-infos', chatGPTInfos);
+    },
+    []
+  );
 
   useEffect(() => {
     requestMessage('load-chatgpt-infos', (args) => {
@@ -40,9 +29,7 @@ const useChatGPT = () => {
   return {
     chatGPTInfos,
     models,
-    updateApiKey,
-    updateModel,
-    updateextraPrompt,
+    updateChatGPTInfos,
   };
 };
 

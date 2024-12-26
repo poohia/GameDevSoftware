@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { DropdownLanguagesComponent } from 'renderer/components';
-import { Grid, Icon } from 'semantic-ui-react';
+import { Grid, Icon, Form } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
+import ChatGPTContext from 'renderer/contexts/ChatGPTContext';
 
 type TranslationHeaderComponentProps = {
   locale: string;
   languages: string[];
   onChangeLocale: (locale: string) => void;
-  onAppendLocale: (locale: string) => void;
+  onAppendLocale: (locale: string, autoTranslate: boolean) => void;
   onRemoveLocale: (locale: string) => void;
   onAppendTranslation: () => void;
 };
@@ -21,7 +22,22 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
     onRemoveLocale,
     onAppendTranslation,
   } = props;
+  const { chatGPTInfos } = useContext(ChatGPTContext);
   const [value, setValue] = useState<string | null>(null);
+  const [autoTranslate, setAutotranslate] = useState<boolean>(true);
+  const [disableAutoTranslate, setDisableAutoTranslate] =
+    useState<boolean>(true);
+
+  useEffect(() => {
+    if (chatGPTInfos?.apiKey && chatGPTInfos.model) {
+      setDisableAutoTranslate(false);
+      setAutotranslate(true);
+    } else {
+      setAutotranslate(false);
+      setDisableAutoTranslate(true);
+    }
+  }, [chatGPTInfos]);
+
   return (
     <Grid className="game-dev-software-module-translation-header">
       <Grid.Row>
@@ -66,16 +82,29 @@ const TranslationHeaderComponent = (props: TranslationHeaderComponentProps) => {
                   fluid
                 />
               </Grid.Column>
+
               <Grid.Column width={3}>
                 <Button
                   icon
-                  onClick={() => value !== null && onAppendLocale(value)}
+                  onClick={() =>
+                    value !== null && onAppendLocale(value, autoTranslate)
+                  }
                 >
                   <Icon name="add" />
                 </Button>
               </Grid.Column>
             </Grid.Row>
           </Grid>
+        </Grid.Column>
+        <Grid.Column width={13}>
+          <Form.Field>
+            <Form.Checkbox
+              label={i18n.t('module_translation_label_translate_file')}
+              disabled={disableAutoTranslate}
+              checked={autoTranslate}
+              onChange={() => setAutotranslate(!autoTranslate)}
+            />
+          </Form.Field>
         </Grid.Column>
         <Grid.Column width={12}>
           <Button

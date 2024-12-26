@@ -1,4 +1,11 @@
-import { Container, Grid, Header } from 'semantic-ui-react';
+import {
+  Container,
+  Grid,
+  Header,
+  Modal,
+  ModalContent,
+  ModalDescription,
+} from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import {
   TranslationTableComponent,
@@ -6,6 +13,8 @@ import {
   TranslationFormComponent,
 } from './components';
 import useTranslationPage from './useTranslationPage';
+import { Segment } from 'renderer/semantic-ui';
+import { TransComponent } from 'renderer/components';
 
 const TranslationPage = () => {
   const {
@@ -15,6 +24,7 @@ const TranslationPage = () => {
     languages,
     translationForm,
     isModuleView,
+    showModalCreationNewLanguage,
     appendLocale,
     changeGameCurrentLocale,
     deleteTranslation,
@@ -67,6 +77,13 @@ const TranslationPage = () => {
           )}
         </Grid.Row>
       </Grid>
+      <Modal open={showModalCreationNewLanguage}>
+        <ModalContent>
+          <Segment>
+            <TransComponent id="module_chatgpt_creating_translate_file" />
+          </Segment>
+        </ModalContent>
+      </Modal>
     </Container>
   );
 };

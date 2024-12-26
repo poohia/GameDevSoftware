@@ -17,6 +17,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import PluginsContainer from './plugins';
 import ServiceContainer from './services';
+import LogService from './services/LogService';
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -27,11 +28,6 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 export const store = new Store();
-
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  event.reply('ipc-example', msgTemplate('pong'));
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

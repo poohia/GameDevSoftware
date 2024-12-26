@@ -1,12 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useEvents, useDatabase } from 'renderer/hooks';
 import i18n from 'translations/i18n';
 import useTabs, { UseTabsProps } from './hooks/useTabs';
+import { toast, ToastContent, ToastOptions } from 'react-toastify';
+import DarkModeContext from './contexts/DarkModeContext';
 
 const useApp = () => {
   const [path, setPath] = useState<string | null | undefined>();
   const { on, sendMessage } = useEvents();
   const { setItem, getItem } = useDatabase();
+
+  const { darkModeActived } = useContext(DarkModeContext);
 
   const tabOptions: UseTabsProps = useMemo(() => {
     return {
@@ -51,6 +55,28 @@ const useApp = () => {
       sendMessage('select-path');
     }
   }, [path]);
+
+  useEffect(() => {
+    on('send-log', (args) => {
+      console.log('send-log', args);
+    });
+  }, []);
+
+  useEffect(() => {
+    on(
+      'send-notification',
+      (args: {
+        content: ToastContent<string>;
+        options?: ToastOptions<any>;
+      }) => {
+        const { content, options } = args;
+        toast(i18n.t(content as string), {
+          ...options,
+          theme: darkModeActived ? 'dark' : 'light',
+        });
+      }
+    );
+  }, []);
 
   // useEffect(() => {
   //   const uis = document.getElementsByClassName('ui');

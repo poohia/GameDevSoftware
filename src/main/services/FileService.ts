@@ -80,8 +80,13 @@ export default class FileService {
           reject(err.message);
           return;
         }
-        // @ts-ignore
-        resolve(JSON.parse(data));
+        try {
+          // @ts-ignore
+          resolve(JSON.parse(data));
+        } catch (e) {
+          console.error(`Error load JSON File ${path} with data ${data}`);
+          console.error(e);
+        }
       });
     });
 
@@ -92,7 +97,7 @@ export default class FileService {
           console.error(err);
           reject(err.message);
         }
-        resolve();
+        setTimeout(() => resolve(), 100);
       });
     });
 

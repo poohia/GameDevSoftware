@@ -25,8 +25,10 @@ const useTranslationPage = () => {
   const isModuleView = useMemo(() => !!module, [module]);
   /**  */
   const [languages, setLanguages] = useState<string[]>([]);
+  const [showModalCreationNewLanguage, setShowModalCreationNewLanguage] =
+    useState<boolean>(false);
   /**  */
-  const { sendMessage, on } = useEvents();
+  const { sendMessage, on, once } = useEvents();
   const [state, dispatch] = useReducer(TranslationFromReducer, defaultState);
   const { translationForm } = state;
   const currentTranslations = useMemo(() => {
@@ -38,13 +40,13 @@ const useTranslationPage = () => {
   /** */
 
   const appendLocale = useCallback(
-    (locale: string) => {
-      if (locale === '') return;
-      sendMessage('set-languages', [...languages, locale]);
+    (localeToAppend: string, autoTranslate: boolean) => {
+      if (localeToAppend === '') return;
+      sendMessage('set-languages', [...languages, localeToAppend]);
       setTranslations((_translations: any) => {
-        _translations[locale] = [];
+        _translations[localeToAppend] = [];
         currentTranslations?.forEach(({ key, deletable, editable }) => {
-          _translations[locale].push({
+          _translations[localeToAppend].push({
             key,
             text: '',
             editable: deletable || false,
@@ -55,6 +57,15 @@ const useTranslationPage = () => {
         return JSON.parse(JSON.stringify(_translations));
       });
       dispatch({ type: 'hide-form' });
+      if (autoTranslate) {
+        setShowModalCreationNewLanguage(true);
+        once('load-translations', () => {
+          sendMessage('chatgpt-translate-file', {
+            gameLocale: locale,
+            targetLocale: localeToAppend,
+          });
+        });
+      }
     },
     [currentTranslations, languages]
   );
@@ -163,6 +174,19 @@ const useTranslationPage = () => {
     dispatch({ type: 'hide-form' });
   }, [locale]);
 
+  useEffect(() => {
+    on('chatgpt-translate-file', (data) => {
+      if (!data) {
+        setTimeout(() => {
+          setShowModalCreationNewLanguage(false);
+        }, 3000);
+      } else {
+        setShowModalCreationNewLanguage(false);
+      }
+      sendMessage('load-translations');
+    });
+  }, []);
+
   return {
     module,
     locale,
@@ -170,6 +194,7 @@ const useTranslationPage = () => {
     languages,
     translationForm,
     isModuleView,
+    showModalCreationNewLanguage,
     appendLocale,
     deleteTranslation,
     removeLocale,

@@ -17,6 +17,7 @@ import {
 import { GameobjectContainerComponent } from './pages/GameobjectPage/components';
 import { SceneContainerComponent } from './pages/ScenePage/components';
 import GameDevSoftwareProvider from './contexts';
+import { ToastContainer } from 'react-toastify';
 
 export const modulesComponent: any = [];
 modulesComponent['HomePage'] = HomePage;
@@ -62,6 +63,7 @@ export default function App() {
           activeIndex={tabActive.index}
         />
       </main>
+      <ToastContainer />
     </GameDevSoftwareProvider>
   );
 }

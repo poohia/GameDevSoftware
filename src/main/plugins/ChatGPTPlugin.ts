@@ -1,20 +1,19 @@
 import { ipcMain } from 'electron';
-import pathModule from 'path';
-import fs from 'fs';
 import OpenAI from 'openai';
-import { ChatCompletionMessageParam } from 'openai/resources';
 import { store } from '../main';
 import { ChatGPTType, ElectronIpcMainEvent } from 'types';
-import FolderPlugin from './FolderPlugin';
-import FileService from '../services/FileService';
+import ChatGPTTranslationPlugin from './subPlugins/ChatGPTTranslationPlugin';
 
 export let openAI: OpenAI | null = null;
 
 export default class ChatGPTPlugin {
+  translateSubPlugin: ChatGPTTranslationPlugin = new ChatGPTTranslationPlugin();
+
   saveChatGPTInfos = (
     event: ElectronIpcMainEvent,
     args: Partial<ChatGPTType>
   ) => {
+    console.log('🚀 ~ ChatGPTPlugin ~ args:', args);
     const values = this.getChatGPTInfos();
     const infos: Partial<ChatGPTType> = {
       apiKey: typeof args.apiKey == 'undefined' ? values?.apiKey : args.apiKey,
@@ -23,6 +22,12 @@ export default class ChatGPTPlugin {
           ? values?.extraPrompt
           : args.extraPrompt,
       model: args.model || values?.model,
+      translation: {
+        languageFileSplit:
+          typeof args.translation?.languageFileSplit === 'undefined'
+            ? values?.translation?.languageFileSplit
+            : args.translation.languageFileSplit,
+      },
     };
     this.setChatGPTInfos(infos);
     this.loadChatGPTInfos(event);
@@ -67,86 +72,6 @@ export default class ChatGPTPlugin {
     return store.set('chatGPTInfos', infos);
   };
 
-  autoTranslate = (
-    event: ElectronIpcMainEvent,
-    data: { key: string; locale: string }
-  ) => {
-    const { key, locale } = data;
-    const chatGPTInfos = this.getChatGPTInfos();
-    // @ts-ignore
-    const { path } = global;
-    const fileTranslate = pathModule.join(
-      path,
-      FolderPlugin.translationDirectory,
-      `${locale}.json`
-    );
-
-    if (
-      !openAI ||
-      !fs.existsSync(fileTranslate) ||
-      !chatGPTInfos ||
-      !chatGPTInfos.model
-    ) {
-      event.reply('chatgpt-auto-translate', null);
-      return;
-    }
-    const languagesFilePath = pathModule.join(path, FolderPlugin.languageFile);
-    FileService.readJsonFile(languagesFilePath).then(
-      (languages: { code: string }[]) => {
-        FileService.readJsonFile(fileTranslate).then((dataTranslation) => {
-          const translateFind = dataTranslation.find((d: any) => d.key === key);
-          if (!translateFind) {
-            event.reply('chatgpt-auto-translate', null);
-            return;
-          }
-          const messages: ChatCompletionMessageParam[] = [
-            {
-              role: 'system',
-              content: `You are a helpful assistant that translates a i18n locale object content. Only translate a i18n locale json content from '${locale}' to ${languages
-                .filter((l) => l.code !== locale)
-                .map((l) => `'${l.code}'`)
-                .join(', ')}.\n
-                              It's a key:value structure, don't modify the key. Answer with json content only, don't send me markdown.\n`,
-            },
-          ];
-          if (chatGPTInfos?.extraPrompt) {
-            messages.push({
-              role: 'user',
-              content: `Other tips for translation: ${chatGPTInfos.extraPrompt}\n`,
-            });
-          }
-          messages.push({
-            role: 'user',
-            content: JSON.stringify({ [locale]: translateFind }),
-          });
-          openAI!.chat.completions
-            .create({
-              temperature: 1,
-              model: chatGPTInfos.model,
-              messages: messages,
-            })
-            .then((completion) => {
-              if (completion.choices[0].finish_reason !== 'stop') {
-                throw new Error(
-                  `Error:: finish reason '${completion.choices[0].finish_reason}'`
-                );
-              }
-              return completion;
-            })
-            .then((completion) => {
-              return JSON.parse(completion.choices[0].message?.content || '[]');
-            })
-            .then((completionJSON) => {
-              event.reply('chatgpt-auto-translate', completionJSON);
-            })
-            .catch(() => {
-              event.reply('chatgpt-auto-translate', null);
-            });
-        });
-      }
-    );
-  };
-
   init = () => {
     ipcMain.on('load-chatgpt-infos', (event: Electron.IpcMainEvent) =>
       this.loadChatGPTInfos(event as ElectronIpcMainEvent)
@@ -158,7 +83,18 @@ export default class ChatGPTPlugin {
       this.saveChatGPTInfos(event as ElectronIpcMainEvent, args)
     );
     ipcMain.on('chatgpt-auto-translate', (event: Electron.IpcMainEvent, args) =>
-      this.autoTranslate(event as ElectronIpcMainEvent, args)
+      this.translateSubPlugin.autoTranslate(
+        event as ElectronIpcMainEvent,
+        args,
+        this.getChatGPTInfos()
+      )
+    );
+    ipcMain.on('chatgpt-translate-file', (event: Electron.IpcMainEvent, args) =>
+      this.translateSubPlugin.translateFile(
+        event as ElectronIpcMainEvent,
+        args,
+        this.getChatGPTInfos()
+      )
     );
   };
 }

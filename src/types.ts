@@ -79,7 +79,10 @@ export type Channels =
   | 'load-chatgpt-infos'
   | 'save-chatgpt-infos'
   | 'load-chatgpt-models'
-  | 'chatgpt-auto-translate';
+  | 'chatgpt-auto-translate'
+  | 'chatgpt-translate-file'
+  | 'send-log'
+  | 'send-notification';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -334,4 +337,7 @@ export type ChatGPTType = {
   apiKey: string;
   model: string;
   extraPrompt?: string;
+  translation?: {
+    languageFileSplit?: number;
+  };
 };

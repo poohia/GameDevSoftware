@@ -3,17 +3,13 @@ import { DropdownItemProps } from 'semantic-ui-react';
 import { ChatGPTType } from 'types';
 
 type ChatGPTContextType = {
-  chatGPTInfos?: ChatGPTType;
+  chatGPTInfos?: Partial<ChatGPTType>;
   models?: DropdownItemProps[];
-  updateApiKey: (apiKey: string) => void;
-  updateModel: (model: string) => void;
-  updateextraPrompt: (extraPrompt: string) => void;
+  updateChatGPTInfos: (chatGPTInfos: Partial<ChatGPTType>) => void;
 };
 
 const ChatGPTContext = createContext<ChatGPTContextType>({
-  updateApiKey: () => {},
-  updateModel: () => {},
-  updateextraPrompt: () => {},
+  updateChatGPTInfos: () => {},
 });
 
 export default ChatGPTContext;

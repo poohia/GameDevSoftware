@@ -2,12 +2,12 @@ import { useContext, useEffect, useState } from 'react';
 import ChatGPTContext from 'renderer/contexts/ChatGPTContext';
 
 const useChatGPTPage = () => {
-  const { chatGPTInfos, models, updateApiKey, updateModel, updateextraPrompt } =
+  const { chatGPTInfos, models, updateChatGPTInfos } =
     useContext(ChatGPTContext);
   const [apiKeyState, setApiKeyState] = useState<string>(
     chatGPTInfos?.apiKey || ''
   );
-  const [extraPromptState, setextraPromptState] = useState<string>(
+  const [extraPromptState, setExtraPromptState] = useState<string>(
     chatGPTInfos?.extraPrompt || ''
   );
 
@@ -17,7 +17,7 @@ const useChatGPTPage = () => {
         ? apiKeyState
         : chatGPTInfos.apiKey
     );
-    setextraPromptState(
+    setExtraPromptState(
       typeof chatGPTInfos?.extraPrompt === 'undefined'
         ? extraPromptState
         : chatGPTInfos.extraPrompt
@@ -30,10 +30,8 @@ const useChatGPTPage = () => {
     apiKeyState,
     extraPromptState,
     setApiKeyState,
-    setextraPromptState,
-    updateApiKey,
-    updateModel,
-    updateextraPrompt,
+    setExtraPromptState,
+    updateChatGPTInfos,
   };
 };
 

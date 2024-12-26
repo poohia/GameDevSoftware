@@ -29,9 +29,11 @@ export default class TranslationPlugin {
     async
       .each(languages, (language, callback) => {
         const { code } = language;
-        FileService.readJsonFile(
-          `${path}${FolderPlugin.translationDirectory}/${code}.json`
-        )
+        const translateFile = `${path}${FolderPlugin.translationDirectory}/${code}.json`;
+        if (!fs.existsSync(translateFile)) {
+          fs.writeFileSync(translateFile, '[]');
+        }
+        FileService.readJsonFile(translateFile)
           .then((dataTranslation) => {
             translations[code] = dataTranslation;
           })

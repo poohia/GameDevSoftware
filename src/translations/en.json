@@ -20,6 +20,7 @@
   "module_translation_form_field_mobile_text": "Text for Mobile",
   "module_translation_form_field_computer_text": "Text for Computer",
   "module_translation_form_field_button_auto_translate": "Translate with ChatGPT",
+  "module_translation_label_translate_file": "Automatically translate the new language",
   "module_table_count": "Count",
   "module_constant_header_append_constant": "Create constant",
   "module_constant_form_title_new": "Create constant",
@@ -87,5 +88,8 @@
   "module_chatgpt_form_field_api_key_label": "API Key",
   "module_chatgpt_form_field_extrat_prompt_label": "Customized Prompt",
   "module_chatgpt_form_field_model_label": "Model",
-  "module_chatgpt_section_global_information": "Global information"
+  "module_chatgpt_section_global_information": "Global information",
+  "module_chatgpt_form_field_translation_split_label": "The translation file is often too large in terms of tokens. You have the option to split the file into multiple parts. Please specify the number of splits for the file",
+  "module_chatgpt_creating_translate_file": "Creation of translation....",
+  "notification.message.file.translated": "File translated with success"
 }
