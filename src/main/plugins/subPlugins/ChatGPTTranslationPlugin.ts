@@ -47,7 +47,7 @@ export default class ChatGPTTranslationPlugin {
                 .filter((l) => l.code !== locale)
                 .map((l) => `'${l.code}'`)
                 .join(', ')}.\n
-                              It's a key:value structure, don't modify the key. Answer with json content only, don't send me markdown.\n`,
+                              It's a {locale: {key:value}} structure, don't modify the key. Answer with json content only, don't send me markdown.\n`,
             },
           ];
           if (chatGPTInfos?.extraPrompt) {
@@ -56,6 +56,7 @@ export default class ChatGPTTranslationPlugin {
               content: `Other tips for translation: ${chatGPTInfos.extraPrompt}\n`,
             });
           }
+          console.log({ [locale]: translateFind });
           messages.push({
             role: 'user',
             content: JSON.stringify({ [locale]: translateFind }),

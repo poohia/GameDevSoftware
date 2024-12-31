@@ -12,8 +12,19 @@ export default class TranslationPlugin {
     // @ts-ignore
     const { path } = global;
     FileService.readJsonFile(`${path}${FolderPlugin.languageFile}`).then(
-      (languages) => {
-        event.reply('languages-authorized', languages);
+      (languages: { code: string; default?: boolean }[]) => {
+        event.reply(
+          'languages-authorized',
+          languages.sort((a, b) => {
+            // Les langues avec `default: true` doivent être en premier
+            if (a.default && !b.default) {
+              return -1;
+            } else if (!a.default && b.default) {
+              return 1;
+            }
+            return 0;
+          })
+        );
       }
     );
   };
@@ -24,8 +35,19 @@ export default class TranslationPlugin {
     const { path } = global;
     const data = fs.readFileSync(`${path}${FolderPlugin.languageFile}`);
     // @ts-ignore
-    const languages: { code: string }[] = JSON.parse(data);
-    event.reply('languages-authorized', languages);
+    const languages: { code: string; default?: boolean }[] = JSON.parse(data);
+    event.reply(
+      'languages-authorized',
+      languages.sort((a, b) => {
+        // Les langues avec `default: true` doivent être en premier
+        if (a.default && !b.default) {
+          return -1;
+        } else if (!a.default && b.default) {
+          return 1;
+        }
+        return 0;
+      })
+    );
     async
       .each(languages, (language, callback) => {
         const { code } = language;
@@ -86,13 +108,48 @@ export default class TranslationPlugin {
       `${path}${FolderPlugin.translationDirectory}/${language}.json`
     );
     this.setLanguages(event, languages);
+    this.loadLocaleGame(event);
+  };
+
+  setLocaleGame = (event: ElectronIpcMainEvent, locale: string) => {
+    // @ts-ignore
+    const { path } = global;
+    FileService.readJsonFile(`${path}${FolderPlugin.languageFile}`).then(
+      (languages: { code: string; default?: boolean }[]) => {
+        languages.forEach((l) => {
+          if (l.code === locale) {
+            l.default = true;
+          } else {
+            l.default = false;
+          }
+        });
+        FileService.writeJsonFile(
+          `${path}${FolderPlugin.languageFile}`,
+          languages
+        );
+        this.loadLocaleGame(event);
+      }
+    );
+  };
+
+  loadLocaleGame = (event: ElectronIpcMainEvent) => {
+    // @ts-ignore
+    const { path } = global;
+    FileService.readJsonFile(`${path}${FolderPlugin.languageFile}`).then(
+      (languages: { code: string; default?: boolean }[]) => {
+        event.reply(
+          'load-game-locale',
+          languages.find((l) => l.default)?.code || 'en'
+        );
+      }
+    );
   };
 
   init = () => {
     ipcMain.on('languages-authorized', (event: Electron.IpcMainEvent) => {
       this.loadLanguagesAuthorized(event as ElectronIpcMainEvent);
     });
-    ipcMain.on('load-translations', (event: Electron.IpcMainEvent) => {
+    ipcMain.on('load-translations', (event: Electron.IpcMainEvent, args) => {
       this.loadTranslations(event as ElectronIpcMainEvent);
     });
     ipcMain.on('save-translations', (event: Electron.IpcMainEvent, args) => {
@@ -103,6 +160,12 @@ export default class TranslationPlugin {
     });
     ipcMain.on('remove-language', (event: Electron.IpcMainEvent, args) => {
       this.removeLanguage(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('set-game-locale', (event: Electron.IpcMainEvent, args) => {
+      this.setLocaleGame(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('load-game-locale', (event: Electron.IpcMainEvent) => {
+      this.loadLocaleGame(event as ElectronIpcMainEvent);
     });
   };
 }

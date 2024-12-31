@@ -12,3 +12,19 @@ export const formatBase64 = (type: AssertAcceptedType, base64: string) => {
       return base64;
   }
 };
+
+export const reorderByLanguage = (
+  obj: Record<string, any[]>,
+  locale: string
+): Record<string, any[]> => {
+  if (obj[locale]) {
+    const reordered: Record<string, any[]> = { [locale]: obj[locale] };
+    for (const key in obj) {
+      if (key !== locale) {
+        reordered[key] = obj[key];
+      }
+    }
+    return reordered;
+  }
+  return obj;
+};

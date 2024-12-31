@@ -224,7 +224,15 @@ const TranslationFormComponent = (
   useEffect(() => {
     if (!keyTranslation || values.length === 0) {
       setDisableAutoTranslate(true);
-    } else if (!!values.find((v) => v.code === gameLocale && !v.value)) {
+    } else if (
+      !!values.find(
+        (v) =>
+          v.code === gameLocale &&
+          !v.value &&
+          !v.valueComputer &&
+          !v.valueMobile
+      )
+    ) {
       setDisableAutoTranslate(true);
     } else {
       setDisableAutoTranslate(

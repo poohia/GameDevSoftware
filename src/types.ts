@@ -36,6 +36,8 @@ export type Channels =
   | 'load-game-modules'
   | 'load-constants'
   | 'load-translations'
+  | 'set-game-locale'
+  | 'load-game-locale'
   | 'load-assets'
   | 'load-game-object-types'
   | 'load-game-objects'

@@ -13,7 +13,6 @@ export default class ChatGPTPlugin {
     event: ElectronIpcMainEvent,
     args: Partial<ChatGPTType>
   ) => {
-    console.log('🚀 ~ ChatGPTPlugin ~ args:', args);
     const values = this.getChatGPTInfos();
     const infos: Partial<ChatGPTType> = {
       apiKey: typeof args.apiKey == 'undefined' ? values?.apiKey : args.apiKey,

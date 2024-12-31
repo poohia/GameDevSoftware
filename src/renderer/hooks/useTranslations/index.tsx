@@ -1,24 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TranslationObject } from 'types';
-import useDatabase from '../useDatabase';
 import useEvents from '../useEvents';
+import { reorderByLanguage } from 'utils';
 
 const useTranslations = () => {
-  const { setItem, getItem } = useDatabase();
-  const [gameLocale, setGameLocale] = useState<string>(
-    getItem('game-locale') || 'en'
-  );
+  const [gameLocale, setGameLocaleState] = useState<string>('en');
   const [translations, setTranslations] = useState<TranslationObject>({});
-  const { sendMessage, on } = useEvents();
+  const [gameLocaleCharged, setGameLocalCharged] = useState<boolean>(false);
+  const { sendMessage, on, requestMessage } = useEvents();
+
+  const setGameLocale = useCallback((locale: string) => {
+    setGameLocaleState(locale);
+    sendMessage('set-game-locale', locale);
+  }, []);
 
   useEffect(() => {
-    setItem('game-locale', gameLocale);
-    sendMessage('load-translations', gameLocale);
-  }, [gameLocale]);
+    if (gameLocaleCharged) {
+      sendMessage('load-translations', gameLocale);
+    }
+  }, [gameLocale, gameLocaleCharged]);
 
   useEffect(() => {
     on('load-translations', (args) => {
-      setTranslations(args);
+      setGameLocaleState((locale) => {
+        setTranslations(reorderByLanguage(args, locale));
+        return locale;
+      });
+    });
+    requestMessage('load-game-locale', (args) => {
+      setGameLocaleState(args);
+      setGameLocalCharged(true);
     });
   }, []);
 
