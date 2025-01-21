@@ -114,7 +114,7 @@ export default class ApplicationPlugin {
     const { path } = global;
     fs.writeFileSync(
       `${path}${FolderPlugin.configFileJson}`,
-      JSON.stringify(finalJSON)
+      JSON.stringify(finalJSON, null, 4)
     );
   };
 

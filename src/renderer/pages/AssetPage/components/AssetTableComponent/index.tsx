@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DropdownAssetTypesComponent } from 'renderer/components';
 import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { AssertAcceptedType, AssetType } from 'types';
+import { useDatabase } from 'renderer/hooks';
 
 type AssetTableComponentProps = {
   assets: AssetType[];
@@ -22,7 +23,10 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
     onClickRow,
     onDelete,
   } = props;
-  const [filter, setFilter] = useState<string>('');
+  const { setItem, getItem } = useDatabase();
+  const [filter, setFilter] = useState<string>(() => {
+    return getItem('asset-filter') || '';
+  });
   const [filterType, setFilterType] = useState<AssertAcceptedType | string>(
     defaultFilterType || ''
   );
@@ -52,6 +56,10 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
   }, [filter, filterType, filterModule, assets, module]);
   const assetsToShow = useMemo(() => formatData(), [formatData]);
   const lengthAssets = useMemo(() => assetsToShow.length, [assetsToShow]);
+
+  useEffect(() => {
+    setItem('asset-filter', filter);
+  }, [filter]);
 
   return (
     <Grid className="game-dev-software-table-component">

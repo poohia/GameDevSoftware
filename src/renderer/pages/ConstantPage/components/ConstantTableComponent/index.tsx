@@ -7,6 +7,7 @@ import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { ConstantObject, ConstantType } from 'types';
+import { useDatabase } from 'renderer/hooks';
 
 type ConstantTableComponentProps = {
   constants: ConstantObject[];
@@ -27,7 +28,10 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
     onClickRow,
     onDelete,
   } = props;
-  const [filter, setFilter] = useState<string>('');
+  const { setItem, getItem } = useDatabase();
+  const [filter, setFilter] = useState<string>(() => {
+    return getItem('constant-filter') || '';
+  });
   const [filterType, setFilterType] = useState<ConstantType | string>(
     defaultFilterType || ''
   );
@@ -93,7 +97,7 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
   );
 
   useEffect(() => {
-    setFilter(filter.toLocaleLowerCase().replace(' ', '_'));
+    setItem('constant-filter', filter);
   }, [filter]);
 
   return (
@@ -106,7 +110,7 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
             value={filter}
             fluid
             onChange={(_, { value }) =>
-              setFilter(value.toLowerCase() as string)
+              setFilter(value.toLocaleLowerCase().replace(' ', '_'))
             }
           />
         </Grid.Column>

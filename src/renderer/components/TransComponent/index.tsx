@@ -19,7 +19,7 @@ const TransComponent = (props: TransComponentProps) => {
     if (!id) return 'Translation id not found';
     if (id.startsWith('@t:')) {
       return (
-        translations[gameLocale].find(
+        translations[gameLocale]?.find(
           (translation) => translation.key === id.replace('@t:', '')
         )?.text || `Translation not found ${id.replace('@t:', '')}`
       );
@@ -29,7 +29,7 @@ const TransComponent = (props: TransComponentProps) => {
       (_value) => (v = v.replace(`{${_value.key}}`, _value.value))
     );
     return v;
-  }, [props]);
+  }, [props, gameLocale]);
   return <span {...rest}>{value}</span>;
 };
 

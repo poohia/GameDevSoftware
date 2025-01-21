@@ -31,15 +31,21 @@ const useConstant = () => {
 
   const sendCreateConstant = useCallback(
     (constant: ConstantObject) => {
-      const { key, value, valueMobile, description, editable, deletable } =
-        constant;
-      console.log('🚀 ~ useConstant ~ valueMobile:', valueMobile);
+      const {
+        key,
+        value,
+        valueMobile = null,
+        description,
+        editable,
+        deletable,
+      } = constant;
 
       setConstants((_constants) => {
         const constant = _constants.find((c) => c.key === key);
+
         if (constant) {
           constant.value = value;
-          constant.valueMobile = valueMobile;
+          constant.valueMobile = valueMobile || null;
           constant.description = description;
           constant.editable = editable;
           constant.deletable = deletable;
@@ -47,7 +53,7 @@ const useConstant = () => {
           _constants = _constants.concat({
             key,
             value,
-            valueMobile,
+            valueMobile: valueMobile || null,
             description,
             editable,
             deletable,
@@ -69,7 +75,6 @@ const useConstant = () => {
       const constant = constants.find((c) => {
         return c.key === key;
       });
-      console.log('🚀 ~ constant ~ constants:', constants);
 
       dispatch({
         type: 'show-update-form',

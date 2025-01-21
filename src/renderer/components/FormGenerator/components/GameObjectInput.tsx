@@ -46,6 +46,7 @@ const ModalGameObjectInput = (
       <GameobjectTableComponent
         gameObjects={gameObjects}
         keySelected={Number(value.replace('@go:', ''))}
+        title="gameobjectinput"
         onClickRow={handleClickRow}
       />
     </ModalComponent>

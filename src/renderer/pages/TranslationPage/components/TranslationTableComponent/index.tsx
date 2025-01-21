@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { Translation } from 'types';
+import { useDatabase } from 'renderer/hooks';
 
 type TranslationTableComponentProps = {
   translations: Translation[];
@@ -22,7 +23,10 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
     onClickRow,
     onDelete,
   } = props;
-  const [filter, setFilter] = useState<string>('');
+  const { setItem, getItem } = useDatabase();
+  const [filter, setFilter] = useState<string>(() => {
+    return getItem('translation-filter') || '';
+  });
   const [filterModule, setFilterModule] = useState<boolean>(true);
 
   const formatData = useMemo(() => {
@@ -50,6 +54,10 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
     () => Object.keys(formatData).length,
     [formatData]
   );
+
+  useEffect(() => {
+    setItem('translation-filter', filter);
+  }, [filter]);
 
   return (
     <Grid className="game-dev-software-table-component">

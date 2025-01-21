@@ -29,7 +29,6 @@ const options: DropdownProps['options'] = [
 ];
 const ConstantFormComponent = (props: ConstantFormComponentProps) => {
   const { defaultKey, defaultValue, onSubmit } = props;
-  console.log('🚀 ~ ConstantFormComponent ~ defaultValue:', defaultValue);
   const [key, setKey] = useState<string>(defaultKey);
   const [type, setType] = useState<ConstantType>('string');
   const [value, setValue] = useState<ConstantValue>(defaultValue?.value || '');

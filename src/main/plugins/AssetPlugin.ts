@@ -63,7 +63,7 @@ export default class AssetPlugin {
     const { path } = global;
     fs.writeFile(
       `${path}${FolderPlugin.assetFile}`,
-      JSON.stringify(data),
+      JSON.stringify(data, null, 4),
       (err) => {
         if (err) return;
         callback();
@@ -91,7 +91,7 @@ export default class AssetPlugin {
         if (fileType === 'json') {
           fs.writeFile(
             destinationPath,
-            JSON.stringify(JSON.parse(content)),
+            JSON.stringify(JSON.parse(content, null, 4)),
             (err) => {
               if (err) return;
               this.loadAssets(event);
@@ -137,7 +137,7 @@ export default class AssetPlugin {
         event.reply(
           'get-asset-information',
           // @ts-ignore
-          JSON.stringify(JSON.parse(data))
+          JSON.stringify(JSON.parse(data, null, 4))
         );
       });
     } else {

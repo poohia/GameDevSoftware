@@ -25,7 +25,7 @@ export default class ConstantPlugin {
     const { path } = global;
     fs.writeFileSync(
       `${path}${FolderPlugin.constantFile}`,
-      JSON.stringify(args)
+      JSON.stringify(args, null, 4)
     );
     this.loadConstants(event);
   };

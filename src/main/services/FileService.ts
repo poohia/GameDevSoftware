@@ -92,7 +92,7 @@ export default class FileService {
 
   static writeJsonFile = <T = Object>(path: string, data: T): Promise<void> =>
     new Promise((resolve, reject) => {
-      fs.writeFile(normalize(path), JSON.stringify(data), (err) => {
+      fs.writeFile(normalize(path), JSON.stringify(data, null, 4), (err) => {
         if (err) {
           console.error(err);
           reject(err.message);

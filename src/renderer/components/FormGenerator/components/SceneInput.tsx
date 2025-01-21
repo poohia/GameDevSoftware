@@ -40,6 +40,7 @@ const ModalSceneInput = (
       <GameobjectTableComponent
         gameObjects={scenes}
         keySelected={Number(value.replace('@s:', ''))}
+        title="gameobjectssceneinput"
         onClickRow={handleClickRow}
       />
     </ModalComponent>

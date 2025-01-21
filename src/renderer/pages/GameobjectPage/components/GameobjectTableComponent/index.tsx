@@ -1,19 +1,24 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TransComponent } from 'renderer/components';
 import { Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import { GameObject } from 'types';
+import { useDatabase } from 'renderer/hooks';
 
 type GameobjectTableComponentProps = {
   gameObjects: GameObject[];
   keySelected?: number;
+  title: string;
   onClickRow: (id: number) => void;
   onDelete?: (id: number) => void;
 };
 
 const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
-  const { gameObjects, keySelected, onClickRow, onDelete } = props;
-  const [filter, setFilter] = useState<string>('');
+  const { gameObjects, keySelected, title, onClickRow, onDelete } = props;
+  const { setItem, getItem } = useDatabase();
+  const [filter, setFilter] = useState<string>(() => {
+    return getItem(`gameobject-${title}-filter`) || '';
+  });
   const formatData = useMemo(() => {
     if (filter !== '') {
       return gameObjects.filter(
@@ -26,6 +31,10 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
     return gameObjects;
   }, [gameObjects, filter]);
   const lengthGameObjects = useMemo(() => formatData.length, [formatData]);
+
+  useEffect(() => {
+    setItem(`gameobject-${title}-filter`, filter);
+  }, [filter]);
 
   return (
     <Grid className="game-dev-software-table-component">
