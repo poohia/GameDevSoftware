@@ -9,24 +9,13 @@ import {
 } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
-import { ConstantType, ConstantValue } from 'types';
+import { ConstantObject, ConstantType, ConstantValue } from 'types';
 import { TransComponent } from 'renderer/components';
 
 type ConstantFormComponentProps = {
   defaultKey: string;
-  defaultValue?: {
-    value: ConstantValue;
-    description: string;
-    editable: boolean;
-    deletable: boolean;
-  };
-  onSubmit: (constant: {
-    key: string;
-    value: ConstantValue;
-    description?: string;
-    editable: boolean;
-    deletable: boolean;
-  }) => void;
+  defaultValue?: ConstantObject;
+  onSubmit: (constant: ConstantObject) => void;
 };
 const options: DropdownProps['options'] = [
   {
@@ -40,9 +29,13 @@ const options: DropdownProps['options'] = [
 ];
 const ConstantFormComponent = (props: ConstantFormComponentProps) => {
   const { defaultKey, defaultValue, onSubmit } = props;
+  console.log('🚀 ~ ConstantFormComponent ~ defaultValue:', defaultValue);
   const [key, setKey] = useState<string>(defaultKey);
   const [type, setType] = useState<ConstantType>('string');
   const [value, setValue] = useState<ConstantValue>(defaultValue?.value || '');
+  const [valueMobile, setValueMobile] = useState<ConstantValue | undefined>(
+    defaultValue?.valueMobile || undefined
+  );
   const [description, setDescription] = useState<string>(
     defaultValue?.description || ''
   );
@@ -51,6 +44,9 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
   );
   const [deletable, setDeletable] = useState<boolean>(
     defaultValue?.deletable || true
+  );
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(
+    !!defaultValue?.valueMobile
   );
 
   const disableForm = useMemo(
@@ -63,16 +59,32 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
       onSubmit({
         key,
         value: value.map((v) => Number(v)),
+        // @ts-ignore
+        valueMobile: valueMobile?.map((v) => Number(v)),
         description,
         editable,
         deletable,
       });
     } else if (type === 'number') {
-      onSubmit({ key, value: Number(value), description, editable, deletable });
+      onSubmit({
+        key,
+        value: Number(value),
+        valueMobile: !!valueMobile ? Number(valueMobile) : undefined,
+        description,
+        editable,
+        deletable,
+      });
     } else {
-      onSubmit({ key, value, description, editable, deletable });
+      onSubmit({
+        key,
+        value,
+        valueMobile: !!valueMobile ? valueMobile : undefined,
+        description,
+        editable,
+        deletable,
+      });
     }
-  }, [key, value, description, editable, deletable]);
+  }, [key, value, valueMobile, description, editable, deletable]);
 
   useEffect(() => {
     setKey(defaultKey);
@@ -87,7 +99,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
       setDeletable(true);
       return;
     }
-    const { value: vv } = defaultValue;
+    const { value: vv, valueMobile: vm } = defaultValue;
     if (Array.isArray(vv) && typeof vv[0] === 'number') {
       setType('number[]');
     } else if (Array.isArray(vv)) {
@@ -100,8 +112,11 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
     setTimeout(() => {
       if (Array.isArray(vv) && typeof vv[0] === 'number') {
         setValue(vv.map((v) => String(v)));
+        if (Array.isArray(vm) && typeof vm[0] === 'number')
+          setValueMobile(vm.map((v) => String(v)));
       } else {
         setValue(vv);
+        if (vm) setValueMobile(vm);
       }
     }, 100);
     setDescription(defaultValue.description);
@@ -117,18 +132,43 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
     switch (type) {
       case 'string':
         setValue('');
+        setValueMobile('');
         break;
       case 'number':
         setValue(0);
+        setValueMobile(0);
         break;
       case 'string[]':
       case 'number[]':
         setValue([]);
+        setValueMobile([]);
         break;
       default:
         setValue('');
+        setValueMobile('');
     }
   }, [type]);
+
+  useEffect(() => {
+    if (!showAdvanced) {
+      setValueMobile(undefined);
+    } else {
+      switch (type) {
+        case 'string':
+          setValueMobile('');
+          break;
+        case 'number':
+          setValueMobile(0);
+          break;
+        case 'string[]':
+        case 'number[]':
+          setValueMobile([]);
+          break;
+        default:
+          setValueMobile('');
+      }
+    }
+  }, [showAdvanced]);
 
   return (
     <Container fluid>
@@ -218,6 +258,62 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   />
                 )}
               </Form.Field>
+              {showAdvanced && (
+                <Form.Field>
+                  <label>
+                    {i18n.t('module_constant_form_field_type_of_value_mobile')}
+                  </label>
+                  {type === 'string' && (
+                    <Form.Input
+                      value={valueMobile}
+                      onChange={(_: any, data: { value: string }) =>
+                        setValueMobile(data.value)
+                      }
+                      disabled={disableForm}
+                    />
+                  )}
+                  {type === 'number' && (
+                    <Form.Input
+                      value={valueMobile}
+                      onChange={(_: any, data: { value: string }) =>
+                        setValueMobile(data.value)
+                      }
+                      type={'number'}
+                      disabled={disableForm}
+                    />
+                  )}
+                  {Array.isArray(valueMobile) && (
+                    <Dropdown
+                      value={valueMobile}
+                      options={valueMobile.map((v) => ({
+                        key: v,
+                        text: v,
+                        value: v,
+                      }))}
+                      fluid
+                      search
+                      multiple
+                      allowAdditions
+                      selection
+                      disabled={disableForm}
+                      onAddItem={(_, data) => {
+                        if (type === 'number[]' && isNaN(Number(data.value))) {
+                          setValueMobile(
+                            JSON.parse(JSON.stringify(valueMobile))
+                          );
+                          return;
+                        }
+                        setValueMobile(
+                          Array.from((valueMobile || []).concat(data.value))
+                        );
+                      }}
+                      onChange={(_, { value }) => {
+                        setValueMobile(value);
+                      }}
+                    />
+                  )}
+                </Form.Field>
+              )}
               <Form.Field>
                 <Form.Input
                   label={i18n.t(
@@ -249,6 +345,14 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   }
                 />
               </Form.Field>
+              <Button
+                type="button"
+                color="brown"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                basic={!showAdvanced}
+              >
+                {i18n.t('module_application_params_advanced_title')}
+              </Button>
               <Button
                 type="submit"
                 disabled={

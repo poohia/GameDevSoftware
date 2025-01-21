@@ -27,6 +27,7 @@
   "module_constant_form_title_update": "Update constant",
   "module_constant_form_field_type_of_constant": "Type of constant",
   "module_constant_form_field_type_of_value": "Value",
+  "module_constant_form_field_type_of_value_mobile": "Value mobile",
   "module_translation_form_field_description_label": "Description",
   "module_asset": "Asset module",
   "form_title_new": "Create",

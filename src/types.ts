@@ -121,6 +121,7 @@ export type ConstantType = 'string' | 'number' | 'string[]' | 'number[]';
 export type ConstantObject = {
   key: string;
   value: ConstantValue;
+  valueMobile?: ConstantValue;
   description?: string;
   editable?: boolean;
   deletable?: boolean;

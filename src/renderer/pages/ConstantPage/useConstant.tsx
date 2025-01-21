@@ -30,18 +30,16 @@ const useConstant = () => {
   }, []);
 
   const sendCreateConstant = useCallback(
-    (constant: {
-      key: string;
-      value: ConstantValue;
-      description?: string;
-      editable: boolean;
-      deletable: boolean;
-    }) => {
-      const { key, value, description, editable, deletable } = constant;
+    (constant: ConstantObject) => {
+      const { key, value, valueMobile, description, editable, deletable } =
+        constant;
+      console.log('🚀 ~ useConstant ~ valueMobile:', valueMobile);
+
       setConstants((_constants) => {
         const constant = _constants.find((c) => c.key === key);
         if (constant) {
           constant.value = value;
+          constant.valueMobile = valueMobile;
           constant.description = description;
           constant.editable = editable;
           constant.deletable = deletable;
@@ -49,6 +47,7 @@ const useConstant = () => {
           _constants = _constants.concat({
             key,
             value,
+            valueMobile,
             description,
             editable,
             deletable,
@@ -58,9 +57,9 @@ const useConstant = () => {
         sendMessage('save-constants', _constants);
         return JSON.parse(JSON.stringify(_constants));
       });
-      dispatch({
-        type: 'hide-form',
-      });
+      // dispatch({
+      //   type: 'hide-form',
+      // });
     },
     [constants]
   );
@@ -70,6 +69,7 @@ const useConstant = () => {
       const constant = constants.find((c) => {
         return c.key === key;
       });
+      console.log('🚀 ~ constant ~ constants:', constants);
 
       dispatch({
         type: 'show-update-form',
@@ -77,6 +77,9 @@ const useConstant = () => {
           key,
           value: {
             value: constant ? constant.value : '',
+            valueMobile: constant?.valueMobile
+              ? constant.valueMobile
+              : undefined,
             description: constant?.description || '',
             editable: constant ? constant.editable : true,
             deletable: constant ? constant.deletable : true,
