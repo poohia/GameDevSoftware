@@ -16,7 +16,7 @@ export default class ApplicationAdvancedPlugin {
     // @ts-ignore
     const { path } = global;
     const menusView: MenusViewsType[] = [
-      { module: 'home', path: './pages/Home', used: false },
+      { module: 'home', path: 'pages/Home', used: false },
     ];
     let currentMenuView: MenusViewsType | null = null;
     async.parallel(
@@ -28,8 +28,8 @@ export default class ApplicationAdvancedPlugin {
               if (fs.existsSync(pathHomeModule)) {
                 menusView.push({
                   module,
-                  path: `.${FolderPlugin.gameDevSoftwareDirectory.replace(
-                    'src/',
+                  path: `${FolderPlugin.gameDevSoftwareDirectory.replace(
+                    '/src/',
                     ''
                   )}/modules/${module}${FolderPlugin.menuPath}`,
                   used: false,

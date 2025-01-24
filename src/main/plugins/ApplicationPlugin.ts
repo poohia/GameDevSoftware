@@ -46,13 +46,14 @@ export default class ApplicationPlugin {
     this._advancedPlugin = new ApplicationAdvancedPlugin();
   }
 
-  static refreshConfigFileToSrc = (callback?: (err: Error) => void) => {
-    // @ts-ignore
-    const path = global.path;
-    exec(`node ./hooks/exec_edit_config.js`, { cwd: path }, (error) => {
-      callback && callback(Error(error?.message));
-    });
-  };
+  // static refreshConfigFileToSrc = (callback?: (err?: Error) => void) => {
+  //   // @ts-ignore
+  //   const path = global.path;
+  //   // exec(`node ./hooks/exec_edit_config.js`, { cwd: path }, (error) => {
+  //   //   callback && callback(Error(error?.message));
+  //   // });
+  //   callback();
+  // };
 
   private writeOnIndexHtml = (
     args: Pick<ApplicationIdentityParams, 'name' | 'description'>
@@ -168,7 +169,7 @@ export default class ApplicationPlugin {
     this.writeConfigFile(json);
     this.loadParamsIdentity(event);
     this.writeOnIndexHtml({ name: args.name, description: args.description });
-    ApplicationPlugin.refreshConfigFileToSrc();
+    // ApplicationPlugin.refreshConfigFileToSrc();
   };
 
   getSoftwaresInfo = (event: ElectronIpcMainEvent) => {

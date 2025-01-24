@@ -1,14 +1,12 @@
-import CordovaService from '../../services/CordovaService';
+import CapacitorService from '../../services/CapacitorService';
 import { ElectronIpcMainEvent, PlatformsParams } from 'types';
-import detectPort from 'detect-port';
-import killPort from 'kill-port';
 
 export default class ApplicationBuildPlugin {
   preparePlatform = (
     event: ElectronIpcMainEvent,
     arg: keyof PlatformsParams
   ) => {
-    CordovaService.preparePlatform(arg, (err) => {
+    CapacitorService.preparePlatform(arg, (err) => {
       if (err) {
         event.reply('prepare-platform', false);
       }
@@ -17,7 +15,7 @@ export default class ApplicationBuildPlugin {
   };
 
   buildPlatform = (event: ElectronIpcMainEvent, arg: keyof PlatformsParams) => {
-    CordovaService.buildPlatform(arg, (err) => {
+    CapacitorService.buildPlatform(arg, (err) => {
       if (err) {
         event.reply('build-platform', false);
       }
@@ -29,27 +27,21 @@ export default class ApplicationBuildPlugin {
     _event: ElectronIpcMainEvent,
     arg: keyof PlatformsParams
   ) => {
-    const cordovaService: CordovaService =
+    const capacitorService: CapacitorService =
       // @ts-ignore
-      global.serviceContainer.get('cordovaService');
+      global.serviceContainer.get('capacitorService');
     switch (arg) {
       case 'android':
-        CordovaService.openAndroidStudio();
+        CapacitorService.openAndroidStudio();
         break;
       case 'ios':
-        CordovaService.openXcode();
+        CapacitorService.openXcode();
         break;
       case 'electron':
-        cordovaService.openElectron();
+        capacitorService.openElectron();
         break;
       case 'browser':
-        detectPort(8000).then((port) => {
-          if (port === 8000) {
-            cordovaService.openBrowser();
-          } else {
-            killPort(8000);
-          }
-        });
+        capacitorService.openBrowser();
         break;
     }
   };

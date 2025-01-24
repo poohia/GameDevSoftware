@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
+import { app, BrowserWindow, shell, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import Store from 'electron-store';
@@ -17,7 +17,6 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import PluginsContainer from './plugins';
 import ServiceContainer from './services';
-import LogService from './services/LogService';
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -83,7 +82,6 @@ const createWindow = async () => {
   });
   // store.set('bounds', mainWindow.getBounds());
   const bounds = store.get<any, any>('bounds');
-  console.log('🚀 ~ createWindow ~ bounds:', bounds);
   if (!!bounds) {
     const { width: widthBounds, height: heightBounds } = bounds;
     if (widthBounds <= width && heightBounds <= height) {
@@ -135,7 +133,7 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 };
 
 /**

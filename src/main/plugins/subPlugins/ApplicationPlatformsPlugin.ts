@@ -1,9 +1,9 @@
 import { ElectronIpcMainEvent, PlatformsParams } from 'types';
 import async from 'async';
 import fs from 'fs';
-import detect from 'detect-port';
+import portfinder from 'portfinder';
 import FolderPlugin from '../FolderPlugin';
-import CordovaService from '../../services/CordovaService';
+import CapacitorService from '../../services/CapacitorService';
 
 export default class ApplicationPlatformsPlugin {
   loadPlatforms = (event: ElectronIpcMainEvent) => {
@@ -26,10 +26,9 @@ export default class ApplicationPlatformsPlugin {
           if (platformDirectory.endsWith('android'))
             _platforms.android = isExist;
           if (platformDirectory.endsWith('ios')) _platforms.ios = isExist;
-          if (platformDirectory.endsWith('electron'))
-            _platforms.electron = isExist;
-          if (platformDirectory.endsWith('browser'))
-            _platforms.browser = isExist;
+          // if (platformDirectory.endsWith('electron'))
+          //   _platforms.electron = isExist;
+          if (platformDirectory.endsWith('build')) _platforms.browser = isExist;
           callback();
         });
       },
@@ -43,7 +42,7 @@ export default class ApplicationPlatformsPlugin {
     event: ElectronIpcMainEvent,
     platform: keyof PlatformsParams
   ) => {
-    CordovaService.removePlatform(platform, (err) => {
+    CapacitorService.removePlatform(platform, (err) => {
       if (err) {
         console.error(err);
         // throw new Error(err.message);
@@ -59,7 +58,7 @@ export default class ApplicationPlatformsPlugin {
     if (process.platform !== 'darwin' && platform === 'ios') {
       return;
     }
-    CordovaService.addPlatform(platform, (err) => {
+    CapacitorService.addPlatform(platform, (err) => {
       if (err) {
         console.error(err);
         // throw new Error(err.message);
@@ -69,9 +68,10 @@ export default class ApplicationPlatformsPlugin {
   };
 
   checkProjectStarted = (event: Electron.IpcMainEvent) => {
-    detect(3333)
+    portfinder
+      .getPortPromise({ port: 3333 })
       .then((port) => {
-        if (port == 3333) {
+        if (port === 3333) {
           event.reply('projected-started', false);
         } else {
           event.reply('projected-started', true);
@@ -83,9 +83,9 @@ export default class ApplicationPlatformsPlugin {
   };
 
   toggleProject = (_event: ElectronIpcMainEvent) => {
-    const _cordovaService: CordovaService =
+    const _capacitorService: CapacitorService =
       // @ts-ignore
-      global.serviceContainer.get('cordovaService');
-    _cordovaService.toggleProcess();
+      global.serviceContainer.get('capacitorService');
+    _capacitorService.toggleProcess();
   };
 }

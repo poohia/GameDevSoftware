@@ -27,8 +27,8 @@ export default class FolderPlugin {
   static sceneDirectory = `${FolderPlugin.gameDevSoftwareDirectory}/scenes`;
   static sceneFile = `${FolderPlugin.sceneDirectory}/index.json`;
   /** */
-  static configFile = `/config.xml`;
-  static configFileJson = '/config.json';
+  static configFile = `/capacitor.config.ts`;
+  static configFileJson = '/src/config.json';
   static indexHtml = `${FolderPlugin.publicDirectory}/index.html`;
   /** directories */
   static assetsDirectory = `${FolderPlugin.publicDirectory}/assets`;
@@ -59,10 +59,10 @@ export default class FolderPlugin {
     `${FolderPlugin.resourcesDirectory}/android/icon-foreground.png`,
   ];
   static appPlatforms = [
-    `${FolderPlugin.platformsDirectory}/android`,
-    `${FolderPlugin.platformsDirectory}/ios`,
+    `/android`,
+    `/ios`,
     `${FolderPlugin.platformsDirectory}/electron`,
-    `${FolderPlugin.platformsDirectory}/browser`,
+    `/build`,
   ];
   /** fonts */
   static fontFile = `${FolderPlugin.gameDevSoftwareDirectory}/fonts.json`;
