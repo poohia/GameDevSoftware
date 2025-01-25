@@ -63,15 +63,8 @@ export default class CapacitorService {
   ) => {
     // @ts-ignore
     const path = global.path;
-    exec(`yarn build`, { cwd: path }, (error) => {
-      if (error) {
-        callback(Error(error?.message));
-        return;
-      }
-      exec(`yarn cap sync`, { cwd: path }, (error, stdout) => {
-        console.log(stdout);
-        callback(Error(error?.message));
-      });
+    exec(`NODE_ENV=production yarn build`, { cwd: path }, (error, stdout) => {
+      callback(Error(error?.message));
     });
   };
 
@@ -88,15 +81,8 @@ export default class CapacitorService {
   ) => {
     // @ts-ignore
     const path = global.path;
-    exec(`yarn build`, { cwd: path }, (error) => {
-      if (error) {
-        callback(Error(error?.message));
-        return;
-      }
-      exec(`yarn cap sync`, { cwd: path }, (error, stdout) => {
-        console.log(stdout);
-        callback(Error(error?.message));
-      });
+    exec(`NODE_ENV=production yarn build`, { cwd: path }, (error, stdout) => {
+      callback(Error(error?.message));
     });
   };
 

@@ -52,11 +52,11 @@ export default class FolderPlugin {
   /** */
   static appImages = [
     `${FolderPlugin.publicDirectory}/favicon.png`,
-    `${FolderPlugin.resourcesDirectory}/icon.png`,
+    `${FolderPlugin.resourcesDirectory}/icon-only.png`,
     `${FolderPlugin.resourcesDirectory}/splash.png`,
-    `${FolderPlugin.resourcesDirectory}/ic_cdv_splashscreen.png`,
-    `${FolderPlugin.resourcesDirectory}/android/icon-background.png`,
-    `${FolderPlugin.resourcesDirectory}/android/icon-foreground.png`,
+    `${FolderPlugin.resourcesDirectory}/splash.png`,
+    `${FolderPlugin.resourcesDirectory}/icon-background.png`,
+    `${FolderPlugin.resourcesDirectory}/icon-foreground.png`,
   ];
   static appPlatforms = [
     `/android`,
