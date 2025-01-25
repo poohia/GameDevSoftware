@@ -14,8 +14,8 @@ export default class ApplicationBuildPlugin {
     });
   };
 
-  buildPlatform = (event: ElectronIpcMainEvent, arg: keyof PlatformsParams) => {
-    CapacitorService.buildPlatform(arg, (err) => {
+  buildPlatform = (event: ElectronIpcMainEvent) => {
+    CapacitorService.buildPlatform((err) => {
       if (err) {
         event.reply('build-platform', false);
       }

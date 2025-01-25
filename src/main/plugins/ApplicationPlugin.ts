@@ -240,8 +240,8 @@ export default class ApplicationPlugin {
     ipcMain.on('set-menu-view', (event: Electron.IpcMainEvent, args) =>
       this.setMenuView(event as ElectronIpcMainEvent, args)
     );
-    ipcMain.on('build-platform', (event: Electron.IpcMainEvent, args) =>
-      this._buildPlugin.buildPlatform(event as ElectronIpcMainEvent, args)
+    ipcMain.on('build-platform', (event: Electron.IpcMainEvent) =>
+      this._buildPlugin.buildPlatform(event as ElectronIpcMainEvent)
     );
     ipcMain.on('prepare-platform', (event: Electron.IpcMainEvent, args) =>
       this._buildPlugin.preparePlatform(event as ElectronIpcMainEvent, args)

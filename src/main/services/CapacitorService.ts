@@ -75,14 +75,12 @@ export default class CapacitorService {
    *
    * same function prepare
    */
-  static buildPlatform = (
-    _platform: keyof PlatformsParams,
-    callback: (err: Error) => void
-  ) => {
+  static buildPlatform = (callback: (err: Error) => void) => {
     // @ts-ignore
     const path = global.path;
-    exec(`NODE_ENV=production yarn build`, { cwd: path }, (error, stdout) => {
+    exec(`yarn build`, { cwd: path }, (error, stdout) => {
       callback(Error(error?.message));
+      console.log('🚀 ~ CapacitorService ~ exec ~ stdout:', stdout);
     });
   };
 
