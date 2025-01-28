@@ -31,6 +31,7 @@ const IdentityParamsComponent = () => {
                           setParam(key, value)
                         }
                         onBlur={onSubmit}
+                        type={key === 'buildVersion' ? 'number' : 'text'}
                       />
                     </Form.Field>
                   )

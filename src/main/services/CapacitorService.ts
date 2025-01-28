@@ -8,9 +8,6 @@ import portfinder from 'portfinder';
 const exec = childProcess.exec;
 
 export default class CapacitorService {
-  private _childProcessElectron: childProcess.ChildProcess | null = null;
-  private _childProcessBrowser: childProcess.ChildProcess | null = null;
-
   static removePlatform = (
     platform: keyof PlatformsParams,
     callback: (err: Error) => void

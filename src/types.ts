@@ -235,7 +235,7 @@ export type SoftwaresInfo = {
   git: string | null;
   node: string | null;
   npm: string | null;
-  cordova: string | null;
+  capacitor: string | null;
 };
 export type ModuleArgs<T = any> = {
   data: T;

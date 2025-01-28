@@ -29,7 +29,7 @@ export default class FolderPlugin {
   /** */
   static configFile = `/capacitor.config.ts`;
   static configFileJson = '/src/config.json';
-  static indexHtml = `${FolderPlugin.publicDirectory}/index.html`;
+  static indexHtml = `/index.html`;
   /** directories */
   static assetsDirectory = `${FolderPlugin.publicDirectory}/assets`;
   static directoryImages = `${FolderPlugin.assetsDirectory}/images`;
@@ -67,6 +67,9 @@ export default class FolderPlugin {
   /** fonts */
   static fontFile = `${FolderPlugin.gameDevSoftwareDirectory}/fonts.json`;
   static directoryFonts = `${FolderPlugin.assetsDirectory}/fonts`;
+
+  static packageJSONFile = '/package.json';
+  static trapezeFile = '/app.yaml';
 
   static validePath(path: string) {
     let isValid = true;

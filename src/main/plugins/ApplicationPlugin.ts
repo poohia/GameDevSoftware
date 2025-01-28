@@ -1,5 +1,4 @@
 import { BrowserWindow, ipcMain } from 'electron';
-import childProcess from 'child_process';
 import fs from 'fs';
 import async from 'async';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
@@ -19,9 +18,13 @@ import {
 import VersionSoftwareService from '../services/VersionSoftwareService';
 import FileService from '../services/FileService';
 import ApplicationAdvancedPlugin from './subPlugins/ApplicationAdvancedPlugin';
+import PackageJSONService from '../services/PackageJSONService';
 
-const exec = childProcess.exec;
-const options = { ignoreAttributes: false, format: true };
+const options = {
+  ignoreAttributes: false,
+  format: true,
+  suppressEmptyNode: true,
+};
 const parser = new XMLParser(options);
 const builder = new XMLBuilder(options);
 
@@ -34,7 +37,7 @@ export default class ApplicationPlugin {
     'git',
     'node',
     'npm',
-    'cordova',
+    'capacitor',
   ];
   private _advancedPlugin: ApplicationAdvancedPlugin;
 
@@ -141,34 +144,49 @@ export default class ApplicationPlugin {
     event: ElectronIpcMainEvent,
     args: ApplicationIdentityParams
   ) => {
-    let json = this.openConfigFile();
+    async.parallel([
+      () => {
+        let json = this.openConfigFile();
 
-    json = {
-      ...json,
-      name: args.name,
-      build: {
-        version: args.version,
-        id: args.package,
-        android: {
-          versionCode: args.buildVersion,
-        },
-        ios: {
-          CFBundleVersion: args.buildVersion,
-        },
+        json = {
+          ...json,
+          name: args.name,
+          build: {
+            version: args.version,
+            id: args.package,
+            android: {
+              versionCode: args.buildVersion,
+            },
+            ios: {
+              CFBundleVersion: args.buildVersion,
+            },
+          },
+          description: args.description || '',
+          author: {
+            email: args.authorEmail,
+            link: args.authorWebSite,
+            name: args.authorName,
+          },
+          appStore: args.appStore,
+          playStore: args.playStore,
+          webStore: args.webStore,
+        };
+        this.writeConfigFile(json);
+        this.loadParamsIdentity(event);
       },
-      description: args.description || '',
-      author: {
-        email: args.authorEmail,
-        link: args.authorWebSite,
-        name: args.authorName,
+      () => {
+        this.writeOnIndexHtml({
+          name: args.name,
+          description: args.description,
+        });
       },
-      appStore: args.appStore,
-      playStore: args.playStore,
-      webStore: args.webStore,
-    };
-    this.writeConfigFile(json);
-    this.loadParamsIdentity(event);
-    this.writeOnIndexHtml({ name: args.name, description: args.description });
+      () => {
+        this._advancedPlugin.updateIdentityForMobile(args);
+      },
+      () => {
+        PackageJSONService.updateVersion(args.version);
+      },
+    ]);
     // ApplicationPlugin.refreshConfigFileToSrc();
   };
 
@@ -177,7 +195,7 @@ export default class ApplicationPlugin {
       git: null,
       node: null,
       npm: null,
-      cordova: null,
+      capacitor: null,
     };
     async.each(
       this._softwaresToCheck,

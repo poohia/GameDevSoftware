@@ -8,11 +8,12 @@ const HomeSoftwaresInfoComponent = () => {
     git: null,
     node: null,
     npm: null,
-    cordova: null,
+    capacitor: null,
   });
   const { requestMessage } = useEvents();
   useEffect(() => {
     requestMessage('get-softwares-info', (arg) => {
+      console.log('🚀 ~ requestMessage ~ arg:', arg);
       setSoftwareInfo(arg);
     });
   }, []);

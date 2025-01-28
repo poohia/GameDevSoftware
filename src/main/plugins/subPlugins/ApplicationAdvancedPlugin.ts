@@ -2,6 +2,7 @@ import fs from 'fs';
 import async from 'async';
 import {
   ApplicationConfigJson,
+  ApplicationIdentityParams,
   ElectronIpcMainEvent,
   MenusViewsType,
 } from 'types';
@@ -10,8 +11,18 @@ import FolderPlugin from '../FolderPlugin';
 
 import GameModulesPlugin from '../GameModulesPlugin';
 import ApplicationPlugin from '../ApplicationPlugin';
+import TrapezeService from '../../services/TrapezeService';
 
 export default class ApplicationAdvancedPlugin {
+  updateIdentityForMobile = (
+    identity: Pick<
+      ApplicationIdentityParams,
+      'version' | 'buildVersion' | 'name' | 'package'
+    >
+  ) => {
+    TrapezeService.updateIdentity(identity);
+  };
+
   loadMenusView = (event: ElectronIpcMainEvent) => {
     // @ts-ignore
     const { path } = global;
@@ -75,6 +86,6 @@ export default class ApplicationAdvancedPlugin {
   ) => {
     writeConfigFile({ screenOrientation: orientation });
     this.loadCurrentOrientation(event, openConfigFile);
-    ApplicationPlugin.refreshConfigFileToSrc();
+    // ApplicationPlugin.refreshConfigFileToSrc();
   };
 }
