@@ -4,7 +4,12 @@ import async from 'async';
 import pathModule from 'path';
 import FileService from '../services/FileService';
 import UtilsService from '../services/UtilsService';
-import { ElectronIpcMainEvent, GameObject, ObjectGameTypeJSON } from 'types';
+import {
+  ElectronIpcMainEvent,
+  GameObject,
+  GameObjectForm,
+  ObjectGameTypeJSON,
+} from 'types';
 import FolderPlugin from './FolderPlugin';
 
 export default class GameObjectPlugin {
@@ -69,25 +74,46 @@ export default class GameObjectPlugin {
   loadGameObjectTypes = (event: ElectronIpcMainEvent) => {
     //@ts-ignore
     const { path } = global;
-    const gameObjects: any[] = [];
+    const gameObjects: (GameObjectForm & { typeId: string })[] = [];
     FileService.readdir(
       `${path}${FolderPlugin.modulesDirectory}`,
       'directory'
     ).then((names) => {
       async
         .each(names, (name: string, callback: () => void) => {
-          const moduleDirectory = `${path}${FolderPlugin.modulesDirectory}/${name}${FolderPlugin.gameObjectTypesDirectory}`;
+          const moduleDirectory = pathModule.join(
+            path,
+            FolderPlugin.modulesDirectory,
+            name,
+            FolderPlugin.gameObjectTypesDirectory
+          );
           FileService.readdir(moduleDirectory, 'file').then((filesName) => {
             async
               .each(filesName, (fileName: string, callbackFile: () => void) => {
-                gameObjects.push(fileName.replace('.json', ''));
-                callbackFile();
+                FileService.readJsonFile(
+                  pathModule.join(
+                    path,
+                    FolderPlugin.modulesDirectory,
+                    name,
+                    FolderPlugin.gameObjectTypesDirectory,
+                    fileName
+                  )
+                ).then((data) => {
+                  gameObjects.push({
+                    ...data,
+                    typeId: fileName.replace('.json', ''),
+                  });
+                  callbackFile();
+                });
               })
               .then(() => callback());
           });
         })
         .then(() => {
-          event.reply('load-game-object-types', gameObjects);
+          event.reply(
+            'load-game-object-types',
+            gameObjects.sort((a, b) => a.typeId.localeCompare(b.typeId))
+          );
         });
     });
   };

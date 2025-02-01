@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { TransComponent } from 'renderer/components';
-import { Container, Grid } from 'semantic-ui-react';
+import { Container, Grid, Popup } from 'semantic-ui-react';
 import { Button, Segment } from 'renderer/semantic-ui';
 import { useEvents } from 'renderer/hooks';
-import { PageProps } from 'types';
+import { PageProps, SceneObjectForm } from 'types';
 import SceneContainerComponent from '../SceneContainerComponent';
 import DropdownFirstScene from '../DropdownFirstScene';
 
 const SceneHomeContainer = ({ appendTab }: PageProps) => {
-  const [scenesType, setScenesType] = useState<string[]>([]);
+  const [scenesType, setScenesType] = useState<
+    (SceneObjectForm & { typeId: string })[]
+  >([]);
   const { requestMessage } = useEvents();
 
   useEffect(() => {
@@ -36,19 +38,27 @@ const SceneHomeContainer = ({ appendTab }: PageProps) => {
         <Grid>
           <Grid.Row columns={4} width="equals">
             {scenesType.map((sceneType) => (
-              <Grid.Column key={sceneType}>
-                <Button
-                  onClick={() =>
-                    appendTab(
-                      sceneType,
-                      SceneContainerComponent,
-                      true,
-                      'SceneContainerComponent'
-                    )
+              <Grid.Column key={sceneType.typeId}>
+                <Popup
+                  position="bottom center"
+                  trigger={
+                    <Button
+                      onClick={() =>
+                        appendTab(
+                          sceneType.typeId,
+                          SceneContainerComponent,
+                          true,
+                          'SceneContainerComponent'
+                        )
+                      }
+                      fluid
+                    >
+                      {sceneType.name}
+                    </Button>
                   }
-                >
-                  {sceneType}
-                </Button>
+                  content={sceneType.description}
+                  disabled={!sceneType.description}
+                />
               </Grid.Column>
             ))}
           </Grid.Row>

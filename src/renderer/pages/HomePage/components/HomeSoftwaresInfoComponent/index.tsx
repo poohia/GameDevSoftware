@@ -13,7 +13,6 @@ const HomeSoftwaresInfoComponent = () => {
   const { requestMessage } = useEvents();
   useEffect(() => {
     requestMessage('get-softwares-info', (arg) => {
-      console.log('🚀 ~ requestMessage ~ arg:', arg);
       setSoftwareInfo(arg);
     });
   }, []);

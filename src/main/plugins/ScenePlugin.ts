@@ -4,7 +4,12 @@ import async from 'async';
 import pathModule from 'path';
 import FileService from '../services/FileService';
 import UtilsService from '../services/UtilsService';
-import { ElectronIpcMainEvent, SceneObject, SceneTypeJSON } from 'types';
+import {
+  ElectronIpcMainEvent,
+  SceneObject,
+  SceneObjectForm,
+  SceneTypeJSON,
+} from 'types';
 import FolderPlugin from './FolderPlugin';
 
 export default class ScenePlugin {
@@ -67,32 +72,46 @@ export default class ScenePlugin {
   loadSceneTypes = (event: ElectronIpcMainEvent) => {
     //@ts-ignore
     const { path } = global;
-    const scenes: string[] = [];
+    const scenes: (SceneObjectForm & { typeId: string })[] = [];
     FileService.readdir(
       `${path}${FolderPlugin.modulesDirectory}`,
       'directory'
     ).then((names) => {
       async
         .each(names, (name: string, callback: () => void) => {
-          const moduleDirectory = `${path}${FolderPlugin.modulesDirectory}/${name}${FolderPlugin.sceneTypesDirectory}`;
+          const moduleDirectory = pathModule.join(
+            path,
+            FolderPlugin.modulesDirectory,
+            name,
+            FolderPlugin.sceneTypesDirectory
+          );
           FileService.readdir(moduleDirectory, 'file').then((filesName) => {
             async
               .each(filesName, (fileName: string, callbackFile: () => void) => {
-                // FileService.readJsonFile(`${moduleDirectory}/${fileName}`).then(
-                //   (data) => {
-                //     scenes.push(data.label || data.type);
-                //     callbackFile();
-                //   }
-                // );
-
-                scenes.push(fileName.replace('.json', ''));
-                callbackFile();
+                FileService.readJsonFile(
+                  pathModule.join(
+                    path,
+                    FolderPlugin.modulesDirectory,
+                    name,
+                    FolderPlugin.sceneTypesDirectory,
+                    fileName
+                  )
+                ).then((data) => {
+                  scenes.push({
+                    ...data,
+                    typeId: fileName.replace('.json', ''),
+                  });
+                  callbackFile();
+                });
               })
               .then(() => callback());
           });
         })
         .then(() => {
-          event.reply('load-scenes-types', scenes);
+          event.reply(
+            'load-scenes-types',
+            scenes.sort((a, b) => a.typeId.localeCompare(b.typeId))
+          );
         });
     });
   };

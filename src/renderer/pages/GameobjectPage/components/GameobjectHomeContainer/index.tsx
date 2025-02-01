@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
 import { TransComponent } from 'renderer/components';
-import { Container, Grid } from 'semantic-ui-react';
+import { Container, Grid, Popup } from 'semantic-ui-react';
 import { Button, Segment } from 'renderer/semantic-ui';
 import { useEvents } from 'renderer/hooks';
-import { PageProps } from 'types';
+import { GameObjectForm, PageProps } from 'types';
 import GameobjectContainerComponent from '../GameobjectContainerComponent';
 
 const GameobjectHomeContainer = ({ appendTab }: PageProps) => {
-  const [gamesObjectType, setGameObjectType] = useState<any[]>([]);
+  const [gamesObjectType, setGameObjectType] = useState<
+    (GameObjectForm & { typeId: string })[]
+  >([]);
   const { requestMessage } = useEvents();
 
   useEffect(() => {
     requestMessage('load-game-object-types', (args) => {
+      console.log('🚀 ~ requestMessage ~ args:', args);
       setGameObjectType(args);
     });
   }, []);
@@ -24,19 +27,27 @@ const GameobjectHomeContainer = ({ appendTab }: PageProps) => {
         <Grid>
           <Grid.Row columns={4} width="equals">
             {gamesObjectType.map((objectType) => (
-              <Grid.Column key={objectType}>
-                <Button
-                  onClick={() =>
-                    appendTab(
-                      objectType,
-                      GameobjectContainerComponent,
-                      true,
-                      'GameobjectContainerComponent'
-                    )
+              <Grid.Column key={objectType.typeId}>
+                <Popup
+                  position="bottom center"
+                  trigger={
+                    <Button
+                      onClick={() =>
+                        appendTab(
+                          objectType.typeId,
+                          GameobjectContainerComponent,
+                          true,
+                          'GameobjectContainerComponent'
+                        )
+                      }
+                      fluid
+                    >
+                      {objectType.name}
+                    </Button>
                   }
-                >
-                  {objectType}
-                </Button>
+                  content={objectType.description}
+                  disabled={!objectType.description}
+                />
               </Grid.Column>
             ))}
           </Grid.Row>
