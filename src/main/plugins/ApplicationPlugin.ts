@@ -19,6 +19,7 @@ import VersionSoftwareService from '../services/VersionSoftwareService';
 import FileService from '../services/FileService';
 import ApplicationAdvancedPlugin from './subPlugins/ApplicationAdvancedPlugin';
 import PackageJSONService from '../services/PackageJSONService';
+import CapacitorService from '../services/CapacitorService';
 
 const options = {
   ignoreAttributes: false,
@@ -182,6 +183,9 @@ export default class ApplicationPlugin {
       },
       () => {
         this._advancedPlugin.updateIdentityForMobile(args);
+      },
+      () => {
+        CapacitorService.writeCapacitorConfig(args.package, args.name);
       },
       () => {
         PackageJSONService.updateVersion(args.version);

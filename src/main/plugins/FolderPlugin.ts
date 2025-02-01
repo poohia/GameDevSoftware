@@ -27,7 +27,7 @@ export default class FolderPlugin {
   static sceneDirectory = `${FolderPlugin.gameDevSoftwareDirectory}/scenes`;
   static sceneFile = `${FolderPlugin.sceneDirectory}/index.json`;
   /** */
-  static configFile = `/capacitor.config.ts`;
+  static configFile = `/capacitor.config.json`;
   static configFileJson = '/src/config.json';
   static indexHtml = `/index.html`;
   /** directories */

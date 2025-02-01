@@ -4,6 +4,8 @@ import pathModule from 'path';
 import fs from 'fs';
 import kill from 'kill-port';
 import portfinder from 'portfinder';
+import FileService from './FileService';
+import FolderPlugin from '../plugins/FolderPlugin';
 
 const exec = childProcess.exec;
 
@@ -131,6 +133,24 @@ export default class CapacitorService {
           mainWindow.webContents.send('projected-started', false);
         });
       }
+    });
+  };
+
+  static writeCapacitorConfig = (appId: string, appName: string) => {
+    return new Promise((resolve) => {
+      // @ts-ignore
+      const path = global.path;
+      FileService.readJsonFile(
+        pathModule.join(path, FolderPlugin.configFile)
+      ).then((data) => {
+        data.appId = appId;
+        data.appName = appName;
+        FileService.writeJsonFile(
+          pathModule.join(path, FolderPlugin.configFile),
+          data
+        );
+        resolve(data);
+      });
     });
   };
 }

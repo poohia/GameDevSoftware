@@ -84,8 +84,11 @@ export default class ApplicationAdvancedPlugin {
     openConfigFile: () => ApplicationConfigJson,
     writeConfigFile: (config: Partial<ApplicationConfigJson>) => void
   ) => {
-    writeConfigFile({ screenOrientation: orientation });
-    this.loadCurrentOrientation(event, openConfigFile);
+    TrapezeService.updateOrientation(orientation).then(() => {
+      writeConfigFile({ screenOrientation: orientation });
+      this.loadCurrentOrientation(event, openConfigFile);
+    });
+
     // ApplicationPlugin.refreshConfigFileToSrc();
   };
 }
