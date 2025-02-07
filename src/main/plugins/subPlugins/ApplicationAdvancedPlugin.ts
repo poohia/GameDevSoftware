@@ -10,7 +10,6 @@ import FileService from '../../services/FileService';
 import FolderPlugin from '../FolderPlugin';
 
 import GameModulesPlugin from '../GameModulesPlugin';
-import ApplicationPlugin from '../ApplicationPlugin';
 import TrapezeService from '../../services/TrapezeService';
 
 export default class ApplicationAdvancedPlugin {
@@ -88,7 +87,39 @@ export default class ApplicationAdvancedPlugin {
       writeConfigFile({ screenOrientation: orientation });
       this.loadCurrentOrientation(event, openConfigFile);
     });
+  };
 
-    // ApplicationPlugin.refreshConfigFileToSrc();
+  loadFontFamily = (
+    event: ElectronIpcMainEvent,
+    openConfigFile: () => ApplicationConfigJson
+  ) => {
+    event.reply('load-fontFamily', openConfigFile().fontFamily);
+  };
+
+  setFontFamily = (
+    event: ElectronIpcMainEvent,
+    fontFamily: string,
+    openConfigFile: () => ApplicationConfigJson,
+    writeConfigFile: (config: Partial<ApplicationConfigJson>) => void
+  ) => {
+    writeConfigFile({ fontFamily });
+    this.loadCurrentOrientation(event, openConfigFile);
+  };
+
+  loadBackground = (
+    event: ElectronIpcMainEvent,
+    openConfigFile: () => ApplicationConfigJson
+  ) => {
+    event.reply('load-background', openConfigFile().background);
+  };
+
+  setBackground = (
+    event: ElectronIpcMainEvent,
+    background: string,
+    openConfigFile: () => ApplicationConfigJson,
+    writeConfigFile: (config: Partial<ApplicationConfigJson>) => void
+  ) => {
+    writeConfigFile({ background });
+    this.loadCurrentOrientation(event, openConfigFile);
   };
 }

@@ -321,5 +321,34 @@ export default class ApplicationPlugin {
         );
       }
     );
+    ipcMain.on('load-fontFamily', (event: Electron.IpcMainEvent) => {
+      this._advancedPlugin.loadFontFamily(
+        event as ElectronIpcMainEvent,
+        this.openConfigFile
+      );
+    });
+    ipcMain.on('set-fontFamily', (event: Electron.IpcMainEvent, args) => {
+      this._advancedPlugin.setFontFamily(
+        event as ElectronIpcMainEvent,
+        args,
+        this.openConfigFile,
+        this.writeConfigFile
+      );
+    });
+
+    ipcMain.on('load-background', (event: Electron.IpcMainEvent) => {
+      this._advancedPlugin.loadBackground(
+        event as ElectronIpcMainEvent,
+        this.openConfigFile
+      );
+    });
+    ipcMain.on('set-background', (event: Electron.IpcMainEvent, args) => {
+      this._advancedPlugin.setBackground(
+        event as ElectronIpcMainEvent,
+        args,
+        this.openConfigFile,
+        this.writeConfigFile
+      );
+    });
   };
 }

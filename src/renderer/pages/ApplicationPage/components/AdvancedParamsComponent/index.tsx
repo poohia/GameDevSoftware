@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { TransComponent } from 'renderer/components';
+import { DropDownFontsComponent, TransComponent } from 'renderer/components';
+import { AssetInput } from 'renderer/components/FormGenerator/components';
 import { useEvents } from 'renderer/hooks';
 import { Segment } from 'renderer/semantic-ui';
 import { Container, Dropdown, DropdownProps, Grid } from 'semantic-ui-react';
@@ -10,6 +11,12 @@ const AdvancedParamsComponent: React.FC = () => {
   const [valueScreenOrientation, setValueScreenOrientation] = useState<
     string | undefined
   >();
+  const [fontFamilyValue, setFontFamilyValue] = useState<string | undefined>(
+    undefined
+  );
+  const [backgroundValue, setBackgroundValue] = useState<string | undefined>(
+    undefined
+  );
   const { requestMessage, sendMessage } = useEvents();
 
   const orientations = useMemo(
@@ -55,7 +62,6 @@ const AdvancedParamsComponent: React.FC = () => {
 
   useEffect(() => {
     requestMessage('load-menus-views', (paths: MenusViewsType[]) => {
-      console.log('paths', paths);
       setMenusViews(
         paths.map((path) => ({
           key: path.module,
@@ -70,6 +76,18 @@ const AdvancedParamsComponent: React.FC = () => {
   useEffect(() => {
     requestMessage('load-current-orientation', (orientation: string) => {
       setValueScreenOrientation(orientation);
+    });
+  });
+
+  useEffect(() => {
+    requestMessage('load-fontFamily', (fontFamily: string) => {
+      setFontFamilyValue(fontFamily);
+    });
+  });
+
+  useEffect(() => {
+    requestMessage('load-background', (fontFamily: string) => {
+      setBackgroundValue(fontFamily);
     });
   });
 
@@ -111,6 +129,34 @@ const AdvancedParamsComponent: React.FC = () => {
                   sendMessage('set-menu-view', value);
                 }}
                 required
+              />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={8}>
+              <label>
+                <TransComponent id="module_application_params_background" />
+              </label>
+              <AssetInput
+                type={'image'}
+                name="background"
+                defaultValue={backgroundValue}
+                onChange={(value) => {
+                  sendMessage('set-background', value.target.value);
+                }}
+              />
+            </Grid.Column>
+            <Grid.Column width={8}>
+              <label>
+                <TransComponent id="module_application_params_fontFamily" />
+              </label>
+              <DropDownFontsComponent
+                value={fontFamilyValue}
+                onChange={(_, data) => {
+                  if (!!data?.value) {
+                    sendMessage('set-fontFamily', data.value);
+                  }
+                }}
               />
             </Grid.Column>
           </Grid.Row>

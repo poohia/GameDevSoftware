@@ -75,6 +75,10 @@ export type Channels =
   | 'remove-font'
   | 'load-current-orientation'
   | 'set-current-orientation'
+  | 'load-fontFamily'
+  | 'set-fontFamily'
+  | 'load-background'
+  | 'set-background'
   | 'open-assets-folder'
   | 'open-scene-file'
   | 'open-gameobject-file'
@@ -204,6 +208,8 @@ export type ApplicationConfigJson = {
   playStore: string;
   appStore: string;
   webStore: string;
+  background?: string;
+  fontFamily?: string;
 };
 export type ApplicationIdentityParams = {
   package: string;

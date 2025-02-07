@@ -51,6 +51,9 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
   const { requestMessage, sendMessage } = useEvents();
 
   const defaultValue = useMemo(() => {
+    if (valueProps) {
+      return valueProps;
+    }
     if (defaultValueProps) {
       return defaultValueProps;
     }

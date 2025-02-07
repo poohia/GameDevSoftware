@@ -89,19 +89,9 @@ const useSceneContainerComponent = (props: PageProps) => {
             _scene: 'scene',
           },
         },
-        _font: {
-          label: 'Primary Font',
-          core: 'font',
-          optional: true,
-        },
         _music: {
           label: 'Primary music',
           core: 'sound',
-          optional: true,
-        },
-        _background: {
-          label: 'Background of scene',
-          core: 'image',
           optional: true,
         },
       };
