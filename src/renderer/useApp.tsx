@@ -70,10 +70,15 @@ const useApp = () => {
         options?: ToastOptions<any>;
       }) => {
         const { content, options } = args;
-        toast(i18n.t(content as string), {
-          ...options,
-          theme: darkModeActived ? 'dark' : 'light',
-        });
+        toast(
+          i18n.t(content as string, {
+            defaultValue: content as string,
+          }),
+          {
+            ...options,
+            theme: darkModeActived ? 'dark' : 'light',
+          }
+        );
       }
     );
   }, []);

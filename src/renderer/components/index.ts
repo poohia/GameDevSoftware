@@ -6,3 +6,4 @@ export { default as ButtonStartStopProjectComponent } from './ButtonStartStopPro
 export { default as DropdownPlatformsComponent } from './DropdownPlatformsComponent';
 export { default as DropdownConstantTypesComponent } from './DropdownConstantTypesComponent';
 export { default as DropDownFontsComponent } from './DropDownFontsComponent';
+export { default as TerminalComponent } from './TerminalComponent';

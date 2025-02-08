@@ -1,11 +1,10 @@
-import childProcess, { ExecException } from 'child_process';
 import yaml from 'js-yaml';
 import pathModule from 'path';
 import FileService from './FileService';
 import FolderPlugin from '../plugins/FolderPlugin';
 import { ApplicationConfigJson, ApplicationIdentityParams } from 'types';
-
-const exec = childProcess.exec;
+import { ExecException } from 'child_process';
+import { exec } from '../util';
 
 type TrapezeAppDoc = {
   vars: {

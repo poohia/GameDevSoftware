@@ -1,0 +1,13 @@
+.game-dev-software-terminal {
+  background-color: black;
+  color: white;
+  padding: 10px;
+  border-radius: 7px;
+  white-space: pre-wrap;
+  max-height: 50vh;
+  min-height: 20vh;
+  overflow-y: auto;
+  p {
+    margin: 4px 0;
+  }
+}

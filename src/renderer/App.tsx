@@ -18,6 +18,7 @@ import { GameobjectContainerComponent } from './pages/GameobjectPage/components'
 import { SceneContainerComponent } from './pages/ScenePage/components';
 import GameDevSoftwareProvider from './contexts';
 import { ToastContainer } from 'react-toastify';
+import { TerminalComponent } from './components';
 
 export const modulesComponent: any = [];
 modulesComponent['HomePage'] = HomePage;
@@ -64,6 +65,7 @@ export default function App() {
         />
       </main>
       <ToastContainer />
+      <TerminalComponent />
     </GameDevSoftwareProvider>
   );
 }

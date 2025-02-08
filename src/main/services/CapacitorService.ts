@@ -1,13 +1,11 @@
 import { PlatformsParams } from 'types';
-import childProcess from 'child_process';
 import pathModule from 'path';
 import fs from 'fs';
 import kill from 'kill-port';
 import portfinder from 'portfinder';
 import FileService from './FileService';
 import FolderPlugin from '../plugins/FolderPlugin';
-
-const exec = childProcess.exec;
+import { exec } from '../util';
 
 export default class CapacitorService {
   static removePlatform = (
@@ -79,7 +77,6 @@ export default class CapacitorService {
     const path = global.path;
     exec(`yarn build`, { cwd: path }, (error, stdout) => {
       callback(Error(error?.message));
-      console.log('🚀 ~ CapacitorService ~ exec ~ stdout:', stdout);
     });
   };
 

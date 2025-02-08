@@ -88,7 +88,8 @@ export type Channels =
   | 'chatgpt-auto-translate'
   | 'chatgpt-translate-file'
   | 'send-log'
-  | 'send-notification';
+  | 'send-notification'
+  | 'send-terminal';
 export type Tables =
   | 'locale'
   | 'tabs'

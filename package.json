@@ -175,6 +175,7 @@
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^17.0.14",
     "@types/react-test-renderer": "^17.0.1",
+    "@types/strip-ansi": "^3.0.0",
     "@types/terser-webpack-plugin": "^5.0.4",
     "@types/webpack-bundle-analyzer": "^4.4.1",
     "@types/webpack-env": "^1.16.3",
@@ -258,6 +259,7 @@
     "react-toastify": "^11.0.2",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
+    "strip-ansi": "^7.1.0",
     "title-case": "^3.0.3"
   },
   "devEngines": {
