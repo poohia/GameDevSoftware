@@ -1,35 +1,57 @@
 import { useEffect, useMemo, useState } from 'react';
-import { TransComponent } from 'renderer/components';
+import {
+  DropdownShortcutsFoldersComponent,
+  TransComponent,
+} from 'renderer/components';
 import { Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
-import { GameObject } from 'types';
+import { GameObject, ShortcutsFolder } from 'types';
 import { useDatabase } from 'renderer/hooks';
 
 type GameobjectTableComponentProps = {
   gameObjects: GameObject[];
   keySelected?: number;
   title: string;
+  isOnInput?: boolean;
   onClickRow: (id: number) => void;
   onDelete?: (id: number) => void;
 };
 
 const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
-  const { gameObjects, keySelected, title, onClickRow, onDelete } = props;
+  const {
+    gameObjects,
+    keySelected,
+    title,
+    isOnInput = false,
+    onClickRow,
+    onDelete,
+  } = props;
   const { setItem, getItem } = useDatabase();
   const [filter, setFilter] = useState<string>(() => {
     return getItem(`gameobject-${title}-filter`) || '';
   });
+  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder | null>(
+    null
+  );
   const formatData = useMemo(() => {
+    let results: GameObject[] = gameObjects;
     if (filter !== '') {
-      return gameObjects.filter(
+      results = results.filter(
         (gameObject) =>
           gameObject._id === Number(filter) ||
           gameObject._type.includes(filter) ||
           gameObject._title.toLowerCase().includes(filter)
       );
     }
-    return gameObjects;
-  }, [gameObjects, filter]);
+    if (isOnInput && folderFilter) {
+      results = results.filter((gameObject) =>
+        folderFilter.gameObjects && folderFilter.gameObjects.length > 0
+          ? folderFilter.gameObjects.includes(gameObject._id)
+          : false
+      );
+    }
+    return results;
+  }, [gameObjects, filter, isOnInput, folderFilter]);
   const lengthGameObjects = useMemo(() => formatData.length, [formatData]);
 
   useEffect(() => {
@@ -39,7 +61,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
   return (
     <Grid className="game-dev-software-table-component">
       <Grid.Row className="game-dev-software-table-component-search">
-        <Grid.Column>
+        <Grid.Column width={16}>
           <Input
             icon="search"
             placeholder="Search..."
@@ -50,6 +72,11 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
             }
           />
         </Grid.Column>
+        {isOnInput && (
+          <Grid.Column width={16}>
+            <DropdownShortcutsFoldersComponent onChange={setFilterFolder} />
+          </Grid.Column>
+        )}
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>

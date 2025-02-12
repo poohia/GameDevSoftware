@@ -362,6 +362,7 @@ export interface ShortcutsFolder {
   translations?: string[];
   assets?: string[];
   constants?: string[];
+  gameObjects?: number[];
   editable?: boolean;
   deletable?: boolean;
 }

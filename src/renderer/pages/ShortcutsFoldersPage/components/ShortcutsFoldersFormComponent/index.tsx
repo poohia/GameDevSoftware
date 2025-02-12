@@ -1,8 +1,8 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { TransComponent } from 'renderer/components';
-import { TranslationInput } from 'renderer/components/FormGenerator/components';
 import AssetsContext from 'renderer/contexts/AssetsContext';
 import ConstantsContext from 'renderer/contexts/ConstantsContext';
+import GameObjectContext from 'renderer/contexts/GameObjectContext';
 import TranslationsContext from 'renderer/contexts/TranslationsContext';
 import { Button } from 'renderer/semantic-ui';
 import {
@@ -37,6 +37,9 @@ const ShortcutsFoldersFormComponent: React.FC<
   const [constants, setConstants] = useState<string[]>(
     defaultValue?.constants || []
   );
+  const [gameObjects, setGameObjects] = useState<number[]>(
+    defaultValue?.gameObjects || []
+  );
   const [editable, setEditable] = useState<boolean>(() => {
     if (defaultValue?.editable !== undefined) {
       return defaultValue.editable;
@@ -59,6 +62,9 @@ const ShortcutsFoldersFormComponent: React.FC<
   const [constantsDropdown, setConstantsDropdowns] = useState<
     DropdownItemProps[]
   >([]);
+  const [gameObjectsDropdown, setGameObjectsDropdowns] = useState<
+    DropdownItemProps[]
+  >([]);
   /** */
 
   const id = useMemo(() => defaultValue?.id, [defaultValue]);
@@ -71,6 +77,7 @@ const ShortcutsFoldersFormComponent: React.FC<
   const { currentTranslations } = useContext(TranslationsContext);
   const { assets: currentAssets } = useContext(AssetsContext);
   const { constants: currentConstants } = useContext(ConstantsContext);
+  const { gameObjects: currentGameObjects } = useContext(GameObjectContext);
   /** */
 
   const handleSubmit = useCallback(() => {
@@ -80,11 +87,21 @@ const ShortcutsFoldersFormComponent: React.FC<
       translations,
       assets,
       constants,
+      gameObjects,
       editable,
       deletable,
     });
     setLoading(true);
-  }, [id, folderName, translations, assets, constants, editable, deletable]);
+  }, [
+    id,
+    folderName,
+    translations,
+    assets,
+    constants,
+    gameObjects,
+    editable,
+    deletable,
+  ]);
 
   useEffect(() => {
     if (loading) {
@@ -120,6 +137,15 @@ const ShortcutsFoldersFormComponent: React.FC<
       }))
     );
   }, [currentConstants]);
+
+  useEffect(() => {
+    setGameObjectsDropdowns(
+      currentGameObjects.map((gameObject) => ({
+        text: gameObject._title,
+        value: gameObject._id,
+      }))
+    );
+  }, [gameObjects]);
 
   return (
     <Container fluid>
@@ -197,6 +223,23 @@ const ShortcutsFoldersFormComponent: React.FC<
                   multiple
                   onChange={(_e, data) => {
                     setConstants(data.value as string[]);
+                  }}
+                  clearable
+                />
+              </Form.Field>
+              <Form.Field>
+                <label>
+                  <TransComponent id="module_gameobject_home_title" />
+                </label>
+                <Dropdown
+                  fluid
+                  selection
+                  search
+                  defaultValue={gameObjects}
+                  options={gameObjectsDropdown}
+                  multiple
+                  onChange={(_e, data) => {
+                    setGameObjects(data.value as number[]);
                   }}
                   clearable
                 />

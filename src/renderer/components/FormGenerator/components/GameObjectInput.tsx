@@ -39,7 +39,7 @@ const ModalGameObjectInput = (
       open={open}
       onClose={onClose}
       onAccepted={() => onSubmit(value)}
-      title={<TransComponent id="form_input_modal_assets_title" />}
+      title={<TransComponent id="module_gameobject_home_title" />}
       disableAccepted={value === ''}
       {...rest}
     >
@@ -47,6 +47,7 @@ const ModalGameObjectInput = (
         gameObjects={gameObjects}
         keySelected={Number(value.replace('@go:', ''))}
         title="gameobjectinput"
+        isOnInput
         onClickRow={handleClickRow}
       />
     </ModalComponent>
