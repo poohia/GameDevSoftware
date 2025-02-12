@@ -20,6 +20,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
     modules = [
       'application',
       'view',
+      'shortcutsfolders',
       'translation',
       'constant',
       'asset',
@@ -28,7 +29,6 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
       'scene',
       'font',
       'chatgpt',
-      'shortcutsfolders',
     ],
     onChangeLocale,
     appendTab,

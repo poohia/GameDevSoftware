@@ -104,7 +104,7 @@ const createWindow = async () => {
       mainWindow.show();
     }
     const devToolsOpenned = store.get<any, any>('devToolsOpenned');
-    console.log('🚀 ~ mainWindow.on ~ devToolsOpenned:', devToolsOpenned);
+
     if (devToolsOpenned) {
       mainWindow.webContents.openDevTools();
     } else {

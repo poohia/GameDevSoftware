@@ -128,13 +128,11 @@ export default class MenuBuilder {
                 label: 'Toggle &Developer Tools',
                 accelerator: isMac ? 'Command+G' : 'Ctrl+G',
                 click: () => {
+                  store.set(
+                    'devToolsOpenned',
+                    !this.mainWindow.webContents.isDevToolsOpened()
+                  );
                   this.mainWindow.webContents.toggleDevTools();
-                  setTimeout(() => {
-                    store.set(
-                      'devToolsOpenned',
-                      this.mainWindow.webContents.isDevToolsOpened()
-                    );
-                  }, 400);
                 },
               },
             ]
