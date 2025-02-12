@@ -21,13 +21,7 @@ const ModalTranslation = (
   }
 ) => {
   const { open, defaultValue, onClose, onSubmit, ...rest } = props;
-  const { translations, gameLocale: locale } = useContext(TranslationsContext);
-  const currentTranslations = useMemo(() => {
-    if (translations === undefined || Object.keys(translations).length === 0) {
-      return null;
-    }
-    return translations[locale] || translations[Object.keys(translations)[0]];
-  }, [translations, locale]);
+  const { translations, currentTranslations } = useContext(TranslationsContext);
 
   const [value, setValue] = useState<string>('');
 

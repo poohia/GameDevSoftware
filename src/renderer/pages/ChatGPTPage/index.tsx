@@ -1,23 +1,9 @@
-import { Container, Grid, Header, Form, Dropdown } from 'semantic-ui-react';
+import { Container, Grid, Header } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
-import useChatGPTPage from './useChatGPTPage';
-import { TransComponent } from 'renderer/components';
-import { Segment } from 'renderer/semantic-ui';
 import GlobalInformationComponent from './components/GlobalInformationComponent';
 import TranslationSectionComponent from './components/TranslationSectionComponent';
 
 const ChatGPTPage: React.FC = () => {
-  // const {
-  //   apiKeyState,
-  //   extraPromptState,
-  //   models,
-  //   model,
-  //   setApiKeyState,
-  //   setExtraPromptState,
-  //   updateApiKey,
-  //   updateModel,
-  //   updateExtraPrompt,
-  // } = useChatGPTPage();
   return (
     <Container fluid>
       <Grid columns={2} divided>

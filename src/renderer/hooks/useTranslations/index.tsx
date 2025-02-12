@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TranslationObject } from 'types';
 import useEvents from '../useEvents';
 import { reorderByLanguage } from 'utils';
@@ -8,6 +8,15 @@ const useTranslations = () => {
   const [translations, setTranslations] = useState<TranslationObject>({});
   const [gameLocaleCharged, setGameLocalCharged] = useState<boolean>(false);
   const { sendMessage, on, requestMessage } = useEvents();
+
+  const currentTranslations = useMemo(() => {
+    if (translations === undefined || Object.keys(translations).length === 0) {
+      return [];
+    }
+    return (
+      translations[gameLocale] || translations[Object.keys(translations)[0]]
+    );
+  }, [translations, gameLocale]);
 
   const setGameLocale = useCallback((locale: string) => {
     setGameLocaleState(locale);
@@ -33,7 +42,13 @@ const useTranslations = () => {
     });
   }, []);
 
-  return { translations, gameLocale, setTranslations, setGameLocale };
+  return {
+    translations,
+    gameLocale,
+    currentTranslations,
+    setTranslations,
+    setGameLocale,
+  };
 };
 
 export default useTranslations;

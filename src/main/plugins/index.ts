@@ -12,6 +12,7 @@ import EnvPlugin from './EnvPlugin';
 import WatchPlugin from './WatchPlugin';
 import FontPlugin from './FontPlugin';
 import ChatGPTPlugin from './ChatGPTPlugin';
+import ShortcutsFoldersPlugin from './ShortcutsFoldersPlugin';
 
 type Plugins =
   | 'folderPlugin'
@@ -26,7 +27,8 @@ type Plugins =
   | 'envPlugin'
   | 'watchPlugin'
   | 'fontPlugin'
-  | 'chatgptPlugin';
+  | 'chatgptPlugin'
+  | 'shortcutsFoldersPlugin';
 
 export default class PluginsContainer {
   private _folderPlugin;
@@ -42,6 +44,7 @@ export default class PluginsContainer {
   private _watchPlugin;
   private _fontPlugin;
   private _chatgptPlugin;
+  private _shortcutsFoldersPlugin;
 
   constructor(mainWindow: BrowserWindow) {
     this._folderPlugin = new FolderPlugin(mainWindow);
@@ -57,6 +60,7 @@ export default class PluginsContainer {
     this._watchPlugin = new WatchPlugin(mainWindow);
     this._fontPlugin = new FontPlugin(mainWindow);
     this._chatgptPlugin = new ChatGPTPlugin();
+    this._shortcutsFoldersPlugin = new ShortcutsFoldersPlugin();
   }
 
   init() {

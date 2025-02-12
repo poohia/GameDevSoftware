@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   DropdownConstantTypesComponent,
+  DropdownShortcutsFoldersComponent,
   TransComponent,
 } from 'renderer/components';
 import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
-import { ConstantObject, ConstantType } from 'types';
+import { ConstantObject, ConstantType, ShortcutsFolder } from 'types';
 import { useDatabase } from 'renderer/hooks';
 
 type ConstantTableComponentProps = {
@@ -34,6 +35,9 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
   });
   const [filterType, setFilterType] = useState<ConstantType | string>(
     defaultFilterType || ''
+  );
+  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder | null>(
+    null
   );
   const [filterModule, setFilterModule] = useState<boolean>(true);
   const formatData = useMemo(() => {
@@ -78,8 +82,16 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
     if (module) {
       _constants = _constants.filter((c) => c.module === module);
     }
+
+    if (folderFilter) {
+      _constants = _constants.filter((constant) =>
+        folderFilter.constants && folderFilter.constants.length > 0
+          ? folderFilter.constants.includes(constant.key)
+          : false
+      );
+    }
     return _constants;
-  }, [filter, filterType, filterModule, constants]);
+  }, [filter, filterType, filterModule, constants, folderFilter]);
   const formatString = useCallback(
     (value: number | number[] | string | string[]) => {
       if (Array.isArray(value)) {
@@ -123,7 +135,10 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
             disabled={!!defaultFilterType}
           />
         </Grid.Column>
-        <Grid.Column width={16}>
+        <Grid.Column width={10}>
+          <DropdownShortcutsFoldersComponent onChange={setFilterFolder} />
+        </Grid.Column>
+        <Grid.Column width={6}>
           <Checkbox
             label={i18n.t('table_filter_module')}
             checked={filterModule}

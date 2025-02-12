@@ -80,8 +80,10 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
+
   // store.set('bounds', mainWindow.getBounds());
   const bounds = store.get<any, any>('bounds');
+
   if (!!bounds) {
     const { width: widthBounds, height: heightBounds } = bounds;
     if (widthBounds <= width && heightBounds <= height) {
@@ -101,10 +103,18 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+    const devToolsOpenned = store.get<any, any>('devToolsOpenned');
+    console.log('🚀 ~ mainWindow.on ~ devToolsOpenned:', devToolsOpenned);
+    if (devToolsOpenned) {
+      mainWindow.webContents.openDevTools();
+    } else {
+      mainWindow.webContents.closeDevTools();
+    }
   });
 
   mainWindow.on('close', () => {
-    store.set('bounds', mainWindow!.getBounds());
+    store.set('bounds', mainWindow?.getBounds());
+    store.set('devToolsOpenned', mainWindow?.webContents.isDevToolsOpened());
   });
   mainWindow.on('closed', () => {
     mainWindow = null;

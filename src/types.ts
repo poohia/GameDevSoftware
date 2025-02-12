@@ -89,7 +89,11 @@ export type Channels =
   | 'chatgpt-translate-file'
   | 'send-log'
   | 'send-notification'
-  | 'send-terminal';
+  | 'send-terminal'
+  | 'load-shortcutsfolder'
+  | 'add-shortcutsfolder'
+  | 'update-shortcutsfolder'
+  | 'remove-shortcutsfolder';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -351,3 +355,16 @@ export type ChatGPTType = {
     languageFileSplit?: number;
   };
 };
+
+export interface ShortcutsFolder {
+  folderName: string;
+  translations?: string[];
+  assets?: string[];
+  constants?: string[];
+  editable?: boolean;
+  deletable?: boolean;
+}
+
+export interface ShortcutsFolder {
+  id: number;
+}

@@ -1,5 +1,6 @@
 import { Menu, shell, BrowserWindow, dialog } from 'electron';
 import { FolderPlugin } from './plugins';
+import { store } from './main';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -97,6 +98,11 @@ export default class MenuBuilder {
                 label: '&Reload',
                 accelerator: 'Ctrl+R',
                 click: () => {
+                  store.set('bounds', this.mainWindow.getBounds());
+                  store.set(
+                    'devToolsOpenned',
+                    this.mainWindow.webContents.isDevToolsOpened()
+                  );
                   this.mainWindow.webContents.reload();
                 },
               },
@@ -111,9 +117,16 @@ export default class MenuBuilder {
               },
               {
                 label: 'Toggle &Developer Tools',
-                accelerator: 'Alt+Ctrl+I',
+                accelerator:
+                  process.platform === 'darwin' ? 'Command+G' : 'Ctrl+G',
                 click: () => {
                   this.mainWindow.webContents.toggleDevTools();
+                  setTimeout(() => {
+                    store.set(
+                      'devToolsOpenned',
+                      this.mainWindow.webContents.isDevToolsOpened()
+                    );
+                  }, 400);
                 },
               },
             ]

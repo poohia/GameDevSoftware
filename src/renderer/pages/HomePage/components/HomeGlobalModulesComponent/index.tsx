@@ -28,6 +28,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
       'scene',
       'font',
       'chatgpt',
+      'shortcutsfolders',
     ],
     onChangeLocale,
     appendTab,
@@ -86,12 +87,13 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
             {modules.map((module) => (
               <Grid.Column key={module}>
                 <Button
-                  onClick={() =>
+                  onClick={() => {
+                    console.log('Open tab', `${titleCase(module)}Page`);
                     appendTab(
                       `module_${module}`,
                       modulesComponent[`${titleCase(module)}Page`]
-                    )
-                  }
+                    );
+                  }}
                   fluid
                 >
                   <TransComponent id={`module_${module}`} />

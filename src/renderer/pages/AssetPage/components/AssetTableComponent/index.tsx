@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { DropdownAssetTypesComponent } from 'renderer/components';
+import {
+  DropdownAssetTypesComponent,
+  DropdownShortcutsFoldersComponent,
+} from 'renderer/components';
 import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
-import { AssertAcceptedType, AssetType } from 'types';
+import { AssertAcceptedType, AssetType, ShortcutsFolder } from 'types';
 import { useDatabase } from 'renderer/hooks';
 
 type AssetTableComponentProps = {
@@ -30,6 +33,9 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
   const [filterType, setFilterType] = useState<AssertAcceptedType | string>(
     defaultFilterType || ''
   );
+  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder | null>(
+    null
+  );
   const [filterModule, setFilterModule] = useState<boolean>(true);
   const formatData = useCallback(() => {
     let _assets = assets.map((asset) => ({
@@ -52,8 +58,15 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
     if (module) {
       _assets = _assets.filter((asset) => asset.module === module);
     }
+    if (folderFilter) {
+      _assets = _assets.filter((asset) =>
+        folderFilter.assets && folderFilter.assets.length > 0
+          ? folderFilter.assets.includes(asset.name)
+          : false
+      );
+    }
     return _assets;
-  }, [filter, filterType, filterModule, assets, module]);
+  }, [filter, filterType, filterModule, assets, module, folderFilter]);
   const assetsToShow = useMemo(() => formatData(), [formatData]);
   const lengthAssets = useMemo(() => assetsToShow.length, [assetsToShow]);
 
@@ -87,7 +100,10 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
             defaultValue={defaultFilterType}
           />
         </Grid.Column>
-        <Grid.Column width={16}>
+        <Grid.Column width={10}>
+          <DropdownShortcutsFoldersComponent onChange={setFilterFolder} />
+        </Grid.Column>
+        <Grid.Column width={6}>
           <Checkbox
             label={i18n.t('table_filter_module')}
             checked={filterModule}

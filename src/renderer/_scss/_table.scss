@@ -13,11 +13,12 @@
   .game-dev-software-table-component-search {
     > div {
       width: 100%;
+      margin-bottom: 10px !important;
     }
   }
 }
 .game-dev-software-table-component-unscroll {
-  margin-top: 30px !important;
+  margin-top: 20px !important;
   table.ui.table {
     tbody {
       tr {

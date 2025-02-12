@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
-import { Translation } from 'types';
+import { ShortcutsFolder, Translation } from 'types';
 import { useDatabase } from 'renderer/hooks';
+import { DropdownShortcutsFoldersComponent } from 'renderer/components';
 
 type TranslationTableComponentProps = {
   translations: Translation[];
@@ -27,6 +28,9 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
   const [filter, setFilter] = useState<string>(() => {
     return getItem('translation-filter') || '';
   });
+  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder | null>(
+    null
+  );
   const [filterModule, setFilterModule] = useState<boolean>(true);
 
   const formatData = useMemo(() => {
@@ -48,8 +52,16 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
         (translation) => translation.module === module
       );
     }
+    if (folderFilter) {
+      _translations = _translations.filter((translation) =>
+        folderFilter.translations && folderFilter.translations.length > 0
+          ? folderFilter.translations.includes(translation.key)
+          : false
+      );
+    }
     return _translations;
-  }, [filter, translations, filterModule]);
+  }, [filter, translations, filterModule, folderFilter]);
+
   const lengthTranslations = useMemo(
     () => Object.keys(formatData).length,
     [formatData]
@@ -73,7 +85,10 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
             }
           />
         </Grid.Column>
-        <Grid.Column width={16}>
+        <Grid.Column width={10}>
+          <DropdownShortcutsFoldersComponent onChange={setFilterFolder} />
+        </Grid.Column>
+        <Grid.Column width={6}>
           <Checkbox
             label={i18n.t('table_filter_module')}
             checked={filterModule}

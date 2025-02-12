@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow } from 'electron';
 import fs from 'fs';
 import FolderPlugin from './FolderPlugin';
 import GameModulesPlugin from './GameModulesPlugin';
@@ -10,7 +10,6 @@ export default class WatchPlugin {
 
   private watch(path: string) {
     fs.watch(path, { recursive: true }, () => {
-      console.log(path, 'REFRESSSH');
       this.refresh = false;
       if (this.timeOut) return;
       this.timeOut = setInterval(() => {

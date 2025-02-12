@@ -9,3 +9,4 @@ export { default as useScenes } from './useScenes';
 export { default as useDarkMode } from './useDarkMode';
 export { default as useFonts } from './useFonts';
 export { default as useChatGPT } from './useChatGPT';
+export { default as useShortcutsFolders } from './useShortcutsFolders';

@@ -1,10 +1,10 @@
 import { ToastContent, ToastOptions } from 'react-toastify';
 
 export default class LogService {
-  static Log(message: any) {
+  static Log(message: any, timeOut = 0) {
     // @ts-ignore
     const mainWindow = global.mainWindow;
-    mainWindow.webContents.send('send-log', message);
+    setTimeout(() => mainWindow.webContents.send('send-log', message), timeOut);
   }
 
   static Notify(content: ToastContent<string>, options?: ToastOptions<any>) {

@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import { useEvents } from 'renderer/hooks';
-import { ConstantObject, ConstantValue } from 'types';
+import { ConstantObject } from 'types';
 import { FormReducer, defaultStateFormReducer } from 'renderer/reducers';
 import GameModuleContext from 'renderer/contexts/GameModuleContext';
 

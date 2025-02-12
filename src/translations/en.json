@@ -95,5 +95,9 @@
   "module_chatgpt_form_field_translation_split_label": "The translation file is often too large in terms of tokens. You have the option to split the file into multiple parts. Please specify the number of splits for the file",
   "module_chatgpt_creating_translate_file": "Creation of translation....",
   "notification.message.file.translated": "File translated with success",
-  "terminal_component_modal_title": "Terminal"
+  "terminal_component_modal_title": "Terminal",
+  "module_shortcutsfolders": "Shortcuts Folders Module",
+  "module_shortcutsfolders_create": "Create Folder",
+  "module_shortcutsfolders_update": "Modify Folder",
+  "module_shortcutsfolders_form_name": "Folder name"
 }
