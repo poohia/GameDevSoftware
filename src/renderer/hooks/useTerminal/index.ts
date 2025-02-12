@@ -5,7 +5,7 @@ import useEvents from '../useEvents';
 const useTerminal = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [openTerminal, setOpenTerminal] = useState<boolean>(false);
-  const { requestMessage } = useEvents();
+  const { requestMessage, on } = useEvents();
 
   const formatMessage = (message: string) => {
     const cleaned = stripAnsi(message);
@@ -30,6 +30,15 @@ const useTerminal = () => {
 
   useEffect(() => {
     requestMessage('send-terminal', (message) => appendMessage(message));
+  }, []);
+
+  useEffect(() => {
+    on('open-terminal', () => {
+      setOpenTerminal((o) => {
+        if (!o) return true;
+        return o;
+      });
+    });
   }, []);
 
   return {

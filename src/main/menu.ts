@@ -2,6 +2,8 @@ import { Menu, shell, BrowserWindow, dialog } from 'electron';
 import { FolderPlugin } from './plugins';
 import { store } from './main';
 
+export const isMac = process.platform === 'darwin';
+
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 
@@ -116,9 +118,15 @@ export default class MenuBuilder {
                 },
               },
               {
+                label: 'Open Terminal',
+                accelerator: isMac ? 'Command+T' : 'Ctrl+T',
+                click: () => {
+                  this.mainWindow.webContents.send('open-terminal');
+                },
+              },
+              {
                 label: 'Toggle &Developer Tools',
-                accelerator:
-                  process.platform === 'darwin' ? 'Command+G' : 'Ctrl+G',
+                accelerator: isMac ? 'Command+G' : 'Ctrl+G',
                 click: () => {
                   this.mainWindow.webContents.toggleDevTools();
                   setTimeout(() => {

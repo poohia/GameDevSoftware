@@ -89,6 +89,7 @@ export type Channels =
   | 'chatgpt-translate-file'
   | 'send-log'
   | 'send-notification'
+  | 'open-terminal'
   | 'send-terminal'
   | 'load-shortcutsfolder'
   | 'add-shortcutsfolder'

@@ -24,21 +24,6 @@ const TerminalComponent: React.FC = () => {
     scrollDiv();
   }, [openTerminal]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: any) => {
-      if (event.key.toLowerCase() === 't' && (event.ctrlKey || event.metaKey)) {
-        event.preventDefault(); // Optionnel : empêcher l'action par défaut du navigateur (par ex. ouvrir un nouvel onglet)
-        setOpenTerminal(true);
-        // Vous pouvez appeler ici la fonction souhaitée.
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
-
   return (
     <ModalComponent
       open={openTerminal}
