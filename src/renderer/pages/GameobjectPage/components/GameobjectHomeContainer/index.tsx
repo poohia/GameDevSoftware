@@ -14,7 +14,6 @@ const GameobjectHomeContainer = ({ appendTab }: PageProps) => {
 
   useEffect(() => {
     requestMessage('load-game-object-types', (args) => {
-      console.log('🚀 ~ requestMessage ~ args:', args);
       setGameObjectType(args);
     });
   }, []);

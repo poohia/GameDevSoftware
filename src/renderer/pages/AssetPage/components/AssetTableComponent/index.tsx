@@ -123,11 +123,18 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
             </Table.Header>
             <Table.Body>
               {assetsToShow.map(
-                ({ name, type, module, editable, deletable }) => (
+                ({ name, type, module, editable, deletable, ...rest }) => (
                   <Table.Row
                     key={name}
                     onClick={() =>
-                      onClickRow({ name, type, module, editable, deletable })
+                      onClickRow({
+                        name,
+                        type,
+                        module,
+                        editable,
+                        deletable,
+                        ...rest,
+                      })
                     }
                     active={keySelected === name}
                   >

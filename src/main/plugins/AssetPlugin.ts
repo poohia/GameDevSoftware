@@ -78,17 +78,17 @@ export default class AssetPlugin {
   };
 
   saveAsset = (event: ElectronIpcMainEvent, arg: AssertFileValueType) => {
-    const { fileName, fileType, content, ...rest } = arg;
+    const { fileName, fileType, fileAlt, content, ...rest } = arg;
     const assets = this.readAssetFile();
     this.writeAssetFile(
       assets
         .filter((asset) => asset.name !== fileName)
-        .concat({ type: fileType, name: fileName, ...rest }),
+        .concat({ type: fileType, name: fileName, alt: fileAlt, ...rest }),
       () => {
         const destinationPath = `${this.directoryFromFileType(
           fileType
         )}${fileName}`;
-        if (fileType === 'json') {
+        if (fileType === 'json' && content) {
           fs.writeFile(
             destinationPath,
             JSON.stringify(JSON.parse(content, null, 4)),
@@ -97,10 +97,12 @@ export default class AssetPlugin {
               this.loadAssets(event);
             }
           );
-        } else {
+        } else if (content) {
           FileService.saveFileFromBase64(content, destinationPath, () =>
             this.loadAssets(event)
           );
+        } else {
+          this.loadAssets(event);
         }
       }
     );

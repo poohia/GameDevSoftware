@@ -157,6 +157,7 @@ export type AssertAcceptedType = 'image' | 'sound' | 'video' | 'json';
 export type AssertFileValueType = {
   fileName: string;
   fileType: AssertAcceptedType;
+  fileAlt?: string;
   content: any | string;
   editable: boolean;
   deletable: boolean;
@@ -166,6 +167,7 @@ export type AssetType = {
   type: AssertAcceptedType;
   name: string;
   module?: string;
+  alt?: string;
   editable: boolean;
   deletable: boolean;
 };

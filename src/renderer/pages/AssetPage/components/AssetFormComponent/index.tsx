@@ -9,6 +9,7 @@ import i18n from 'translations/i18n';
 import { AssertFileValueType, AssetType } from 'types';
 import AssetPreviewComponent from '../AssetPreviewComponent';
 import { useEvents } from 'renderer/hooks';
+import { TranslationInput } from 'renderer/components/FormGenerator/components';
 
 type AssetFormComponentProps = {
   defaultValue?: AssetType;
@@ -37,6 +38,7 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
       content: '',
       fileName: defaultValue ? defaultValue.name : '',
       fileType: defaultValue ? defaultValue.type : 'image',
+      fileAlt: defaultValue ? defaultValue.alt : '',
       editable: defaultValue ? defaultValue.editable : true,
       deletable: defaultValue ? defaultValue.deletable : true,
       module: defaultValue?.module,
@@ -78,6 +80,21 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
                   disabled={disableForm}
                 />
               </Form.Field>
+              {file.fileType === 'image' && (
+                <Form.Field disabled={disableForm}>
+                  <label>Alt</label>
+                  <TranslationInput
+                    name=""
+                    onChange={(data) => {
+                      setFile({
+                        ...file,
+                        fileAlt: data.target.value,
+                      });
+                    }}
+                    defaultValue={file.fileAlt}
+                  />
+                </Form.Field>
+              )}
               <Form.Field>
                 <Form.Checkbox
                   label={i18n.t('form_label_editable')}
@@ -85,7 +102,6 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
                   onChange={() =>
                     setFile({ ...file, editable: !file.editable })
                   }
-                  disabled={disableForm}
                 />
               </Form.Field>
               <Form.Field>
@@ -95,16 +111,13 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
                   onChange={() =>
                     setFile({ ...file, deletable: !file.deletable })
                   }
-                  disabled={
-                    disableForm ||
-                    (defaultValue ? !defaultValue.deletable : false)
-                  }
+                  disabled={disableForm}
                 />
               </Form.Field>
               <Button
                 type="submit"
                 onClick={() => onSubmit(file)}
-                disabled={file.fileName === '' || disableForm}
+                disabled={file.fileName === ''}
               >
                 {i18n.t('module_translation_form_field_submit')}
               </Button>

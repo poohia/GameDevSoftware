@@ -88,7 +88,9 @@ const TranslationFormComponent = (
   const { chatGPTInfos } = useContext(ChatGPTContext);
   const { sendMessage, once } = useEvents();
 
-  const [keyValue, setKeyValue] = useState<string>(keyTranslation || '');
+  const [keyValue, setKeyValue] = useState<string>(
+    keyTranslation || `message_${new Date().getTime()}`
+  );
   const [translationsValue, setTranslationsValue] = useState(values);
   const [editable, setEditable] = useState<boolean>(true);
   const [deletable, setDeletable] = useState<boolean>(true);
@@ -200,7 +202,7 @@ const TranslationFormComponent = (
   }, [translationsValue, editable, deletable]);
 
   useEffect(() => {
-    setKeyValue(keyTranslation || '');
+    setKeyValue(keyTranslation || `message_${new Date().getTime()}`);
   }, [keyTranslation]);
 
   useEffect(() => {
