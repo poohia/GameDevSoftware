@@ -330,7 +330,6 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   label={i18n.t('form_label_editable')}
                   checked={editable}
                   onChange={() => setEditable(!editable)}
-                  disabled={disableForm}
                 />
               </Form.Field>
               <Form.Field>
@@ -357,8 +356,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                 disabled={
                   key === '' ||
                   value === '' ||
-                  (Array.isArray(value) && value.length === 0) ||
-                  disableForm
+                  (Array.isArray(value) && value.length === 0)
                 }
               >
                 {i18n.t('module_translation_form_field_submit')}
