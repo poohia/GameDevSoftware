@@ -36,6 +36,7 @@ const AssetPreviewComponent = (props: AssetPreviewComponentProps) => {
   }, [base64]);
 
   const updateInformations = useCallback(() => {
+    console.log("i' mhere 000");
     if (content instanceof HTMLImageElement) {
       setWidth(content.naturalWidth);
       setHeight(content.naturalHeight);
@@ -61,23 +62,6 @@ const AssetPreviewComponent = (props: AssetPreviewComponentProps) => {
     });
   }, [asset]);
 
-  useEffect(() => {
-    if (content instanceof HTMLImageElement) {
-      content.addEventListener('load', updateInformations, false);
-      return () => {
-        content.removeEventListener('load', updateInformations, false);
-      };
-    } else if (content instanceof HTMLVideoElement) {
-      content.addEventListener('loadeddata', updateInformations, false);
-      return () => {
-        content.removeEventListener('loadeddata', updateInformations, false);
-      };
-    } else {
-      setWidth(0);
-      setHeight(0);
-    }
-  }, [content, props]);
-
   return (
     <Container fluid>
       <Grid className="game-dev-software-form-container">
@@ -95,10 +79,18 @@ const AssetPreviewComponent = (props: AssetPreviewComponentProps) => {
           {length > 0 && <Grid.Column>length: {length} ko</Grid.Column>}
         </Grid.Row>
         <Grid.Row className="game-dev-software-file-preview-content">
-          {type === 'image' && base64 && <img src={base64} />}
+          {type === 'image' && base64 && (
+            <img src={base64} onLoad={updateInformations} />
+          )}
           {type === 'sound' && base64 && <audio src={base64} controls />}
           {type === 'video' && base64 && (
-            <video width="320" height="240" controls src={base64} />
+            <video
+              width="320"
+              height="240"
+              controls
+              src={base64}
+              onLoadedData={updateInformations}
+            />
           )}
           {type === 'json' && base64 && <code>{base64}</code>}
         </Grid.Row>

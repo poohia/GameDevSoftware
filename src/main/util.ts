@@ -34,6 +34,7 @@ export const exec = (
     setTimeout(() => LogService.TerminalMessage(stderr.toString('utf-8')));
 
     if (error) {
+      console.log('command error', command, options);
       LogService.Notify(error?.message, {
         type: 'error',
         autoClose: 10000,

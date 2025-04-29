@@ -126,17 +126,14 @@ export default class ScenePlugin {
       ScenePlugin.writeIndexFile(
         data.filter((d) => d.file !== `${id}.json`)
       ).then(() => {
-        fs.unlink(
-          `${path}/${FolderPlugin.sceneDirectory}/${id}.json`,
-          (err) => {
-            if (err) {
-              console.error(err);
-              throw new Error(err.message);
-            }
-            this.loadScenes(event, sceneType);
-            this.loadScenes(event);
+        fs.unlink(`${path}${FolderPlugin.sceneDirectory}/${id}.json`, (err) => {
+          if (err) {
+            console.error(err);
+            throw new Error(err.message);
           }
-        );
+          this.loadScenes(event, sceneType);
+          this.loadScenes(event);
+        });
       });
     });
   };

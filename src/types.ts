@@ -327,6 +327,7 @@ export type SceneObject = {
   _title: string;
   _module: string;
   _actions: ActionOfScene[];
+  _music?: string;
 };
 export type EnvObject = {
   [key: string]: string;

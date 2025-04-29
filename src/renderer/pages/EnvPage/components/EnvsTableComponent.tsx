@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { TransComponent } from 'renderer/components';
 import { Button, Table } from 'renderer/semantic-ui';
 import { Grid, Icon } from 'semantic-ui-react';
@@ -12,6 +13,15 @@ type EnvsTableComponentProps = {
 
 const EnvsTableComponent: React.FC<EnvsTableComponentProps> = (props) => {
   const { productionEnvs, developmentEnvs, onClickRow, onDelete } = props;
+  const keyUndelatable = useMemo(
+    () => [
+      'ENV',
+      'IGNORE_SPLASHSCREEN',
+      'IGNORE_ORIENTATION',
+      'FORCE_SHOW_APP_BANNER',
+    ],
+    []
+  );
 
   return (
     <Grid className="game-dev-software-table-component-unscroll">
@@ -51,7 +61,7 @@ const EnvsTableComponent: React.FC<EnvsTableComponentProps> = (props) => {
                         event.stopPropagation();
                         onDelete(key);
                       }}
-                      disabled={key === 'ENV'}
+                      disabled={keyUndelatable.includes(key)}
                     >
                       <Icon name="trash" />
                     </Button>

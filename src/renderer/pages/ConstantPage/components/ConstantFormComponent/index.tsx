@@ -231,6 +231,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                       setValue(data.value)
                     }
                     type={'number'}
+                    step="0.01"
                     disabled={disableForm}
                   />
                 )}
@@ -278,6 +279,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                         setValueMobile(data.value)
                       }
                       type={'number'}
+                      step="0.01"
                       disabled={disableForm}
                     />
                   )}
@@ -337,10 +339,6 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
                   label={i18n.t('form_label_deletable')}
                   checked={deletable}
                   onChange={() => setDeletable(!deletable)}
-                  disabled={
-                    disableForm ||
-                    (defaultValue ? !defaultValue.deletable : false)
-                  }
                 />
               </Form.Field>
               <Button
