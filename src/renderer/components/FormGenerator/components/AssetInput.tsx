@@ -51,7 +51,7 @@ const ModalAsset = (
 };
 
 const AssetInput = (props: CustomInputProps) => {
-  const { defaultValue, type, name, onChange, onBlur } = props;
+  const { defaultValue, type, name, multiple, onChange, onBlur } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -90,6 +90,7 @@ const AssetInput = (props: CustomInputProps) => {
         open={openModal}
         defaultValue={defaultValue}
         type={type as AssertAcceptedType}
+        multiple={multiple}
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}
       />

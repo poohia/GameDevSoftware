@@ -15,3 +15,9 @@
     margin-bottom: 10px !important;
   }
 }
+
+table.ui.table {
+  td.action {
+    display: flex;
+  }
+}

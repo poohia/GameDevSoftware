@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  DialogShortcutsFoldersComponent,
   DropdownAssetTypesComponent,
   DropdownShortcutsFoldersComponent,
 } from 'renderer/components';
@@ -37,6 +38,9 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
     null
   );
   const [filterModule, setFilterModule] = useState<boolean>(true);
+  const [openIdShortcutsFolder, setOpenIdShortcutsFolder] = useState<
+    string | null
+  >(null);
   const formatData = useCallback(() => {
     let _assets = assets.map((asset) => ({
       ...asset,
@@ -144,7 +148,18 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
                         <Header.Subheader>{type}</Header.Subheader>
                       </Header>
                     </Table.Cell>
-                    <Table.Cell textAlign="right">
+                    <Table.Cell textAlign="right" className="action">
+                      <Button
+                        basic
+                        icon
+                        color="teal"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setOpenIdShortcutsFolder(name);
+                        }}
+                      >
+                        <Icon name="folder" />
+                      </Button>
                       <Button
                         basic
                         icon
@@ -173,6 +188,16 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
           </Table>
         </Grid.Column>
       </Grid.Row>
+      {openIdShortcutsFolder !== null && (
+        <DialogShortcutsFoldersComponent
+          id={openIdShortcutsFolder}
+          typeTarget={'assets'}
+          multiple
+          onClose={() => {
+            setOpenIdShortcutsFolder(null);
+          }}
+        />
+      )}
     </Grid>
   );
 };

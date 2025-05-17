@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  DialogShortcutsFoldersComponent,
   DropdownConstantTypesComponent,
   DropdownShortcutsFoldersComponent,
   TransComponent,
@@ -40,6 +41,10 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
     null
   );
   const [filterModule, setFilterModule] = useState<boolean>(true);
+  const [openIdShortcutsFolder, setOpenIdShortcutsFolder] = useState<
+    string | null
+  >(null);
+
   const formatData = useMemo(() => {
     let _constants = constants.map((constant) => ({
       ...constant,
@@ -173,7 +178,18 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
                       </p>
                     )}
                   </Table.Cell>
-                  <Table.Cell textAlign="right">
+                  <Table.Cell textAlign="right" className="action">
+                    <Button
+                      basic
+                      icon
+                      color="teal"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setOpenIdShortcutsFolder(key);
+                      }}
+                    >
+                      <Icon name="folder" />
+                    </Button>
                     <Button
                       basic
                       icon
@@ -202,6 +218,16 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
           </Table>
         </Grid.Column>
       </Grid.Row>
+      {openIdShortcutsFolder !== null && (
+        <DialogShortcutsFoldersComponent
+          id={openIdShortcutsFolder}
+          typeTarget={'constants'}
+          multiple
+          onClose={() => {
+            setOpenIdShortcutsFolder(null);
+          }}
+        />
+      )}
     </Grid>
   );
 };

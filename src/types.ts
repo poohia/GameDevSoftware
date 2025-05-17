@@ -93,6 +93,8 @@ export type Channels =
   | 'send-terminal'
   | 'load-shortcutsfolder'
   | 'add-shortcutsfolder'
+  | 'get-shortcutsfolder-typetarget'
+  | 'add-typetarget-shortcutsfolder'
   | 'update-shortcutsfolder'
   | 'remove-shortcutsfolder';
 export type Tables =
@@ -328,6 +330,7 @@ export type SceneObject = {
   _module: string;
   _actions: ActionOfScene[];
   _music?: string;
+  _release_sounds?: string[];
 };
 export type EnvObject = {
   [key: string]: string;
@@ -372,4 +375,8 @@ export interface ShortcutsFolder {
 
 export interface ShortcutsFolder {
   id: number;
+}
+export interface ShortcutsFolderTargetType {
+  id: any;
+  typeTarget: 'translations' | 'constants' | 'assets' | 'gameObjects';
 }

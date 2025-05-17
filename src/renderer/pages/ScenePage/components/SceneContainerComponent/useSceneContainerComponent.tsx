@@ -94,6 +94,12 @@ const useSceneContainerComponent = (props: PageProps) => {
           core: 'sound',
           optional: true,
         },
+        _release_sounds: {
+          label: 'Release sound',
+          core: 'sound',
+          optional: true,
+          multiple: true,
+        },
       };
 
       setSceneObjectForm(args);

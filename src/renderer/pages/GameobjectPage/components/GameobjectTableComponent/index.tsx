@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  DialogShortcutsFoldersComponent,
   DropdownShortcutsFoldersComponent,
   TransComponent,
 } from 'renderer/components';
@@ -33,6 +34,9 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
   const [folderFilter, setFilterFolder] = useState<ShortcutsFolder | null>(
     null
   );
+  const [openIdShortcutsFolder, setOpenIdShortcutsFolder] = useState<
+    string | null
+  >(null);
   const formatData = useMemo(() => {
     let results: GameObject[] = gameObjects;
     if (filter !== '') {
@@ -102,7 +106,18 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
                       </p>
                     </Header>
                   </Table.Cell>
-                  <Table.Cell textAlign="right">
+                  <Table.Cell textAlign="right" className="action">
+                    <Button
+                      basic
+                      icon
+                      color="teal"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setOpenIdShortcutsFolder(_id);
+                      }}
+                    >
+                      <Icon name="folder" />
+                    </Button>
                     <Button
                       basic
                       icon
@@ -131,6 +146,16 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
           </Table>
         </Grid.Column>
       </Grid.Row>
+      {openIdShortcutsFolder !== null && (
+        <DialogShortcutsFoldersComponent
+          id={openIdShortcutsFolder}
+          typeTarget={'gameObjects'}
+          multiple
+          onClose={() => {
+            setOpenIdShortcutsFolder(null);
+          }}
+        />
+      )}
     </Grid>
   );
 };

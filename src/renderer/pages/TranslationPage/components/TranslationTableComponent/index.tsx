@@ -4,7 +4,10 @@ import { Button, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { ShortcutsFolder, Translation } from 'types';
 import { useDatabase } from 'renderer/hooks';
-import { DropdownShortcutsFoldersComponent } from 'renderer/components';
+import {
+  DialogShortcutsFoldersComponent,
+  DropdownShortcutsFoldersComponent,
+} from 'renderer/components';
 
 type TranslationTableComponentProps = {
   translations: Translation[];
@@ -32,6 +35,9 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
     null
   );
   const [filterModule, setFilterModule] = useState<boolean>(true);
+  const [openIdShortcutsFolder, setOpenIdShortcutsFolder] = useState<
+    string | null
+  >(null);
 
   const formatData = useMemo(() => {
     let _translations = translations;
@@ -118,7 +124,18 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
                       <Header.Subheader>{text}</Header.Subheader>
                     </Header>
                   </Table.Cell>
-                  <Table.Cell textAlign="right">
+                  <Table.Cell textAlign="right" className="action">
+                    <Button
+                      basic
+                      icon
+                      color="teal"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setOpenIdShortcutsFolder(key);
+                      }}
+                    >
+                      <Icon name="folder" />
+                    </Button>
                     <Button
                       basic
                       icon
@@ -146,6 +163,16 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
           </Table>
         </Grid.Column>
       </Grid.Row>
+      {openIdShortcutsFolder !== null && (
+        <DialogShortcutsFoldersComponent
+          id={openIdShortcutsFolder}
+          typeTarget={'translations'}
+          multiple
+          onClose={() => {
+            setOpenIdShortcutsFolder(null);
+          }}
+        />
+      )}
     </Grid>
   );
 };

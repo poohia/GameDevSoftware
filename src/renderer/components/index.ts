@@ -8,3 +8,4 @@ export { default as DropdownConstantTypesComponent } from './DropdownConstantTyp
 export { default as DropDownFontsComponent } from './DropDownFontsComponent';
 export { default as TerminalComponent } from './TerminalComponent';
 export { default as DropdownShortcutsFoldersComponent } from './DropdownShortcutsFoldersComponent';
+export { default as DialogShortcutsFoldersComponent } from './DialogShortcutsFoldersComponent';
