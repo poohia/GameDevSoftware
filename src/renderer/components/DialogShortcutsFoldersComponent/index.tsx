@@ -65,7 +65,6 @@ const DialogShortcutsFoldersComponent: React.FC<
         multiple={multiple}
         options={shortcutsFoldersDropdown}
         onChange={(_, data) => {
-          console.log('🚀 ~ data:', data);
           setValues((data.value || []) as number[]);
         }}
         placeholder={i18n.t('module_shortcutsfolders_form_name')}

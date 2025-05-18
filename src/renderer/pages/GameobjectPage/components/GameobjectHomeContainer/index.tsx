@@ -5,6 +5,8 @@ import { Button, Segment } from 'renderer/semantic-ui';
 import { useEvents } from 'renderer/hooks';
 import { GameObjectForm, PageProps } from 'types';
 import GameobjectContainerComponent from '../GameobjectContainerComponent';
+import AllGameobjectContainerComponent from '../AllGameobjectContainerComponent';
+import i18n from 'translations/i18n';
 
 const GameobjectHomeContainer = ({ appendTab }: PageProps) => {
   const [gamesObjectType, setGameObjectType] = useState<
@@ -25,6 +27,21 @@ const GameobjectHomeContainer = ({ appendTab }: PageProps) => {
         </span>
         <Grid>
           <Grid.Row columns={4} width="equals">
+            <Grid.Column>
+              <Button
+                onClick={() =>
+                  appendTab(
+                    'all',
+                    AllGameobjectContainerComponent,
+                    true,
+                    'AllGameobjectContainerComponent'
+                  )
+                }
+                fluid
+              >
+                <TransComponent id="module_gameobject_home_title" />
+              </Button>
+            </Grid.Column>
             {gamesObjectType.map((objectType) => (
               <Grid.Column key={objectType.typeId}>
                 <Popup

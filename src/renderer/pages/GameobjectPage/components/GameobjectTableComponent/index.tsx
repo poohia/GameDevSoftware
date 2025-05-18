@@ -14,6 +14,7 @@ type GameobjectTableComponentProps = {
   keySelected?: number;
   title: string;
   isOnInput?: boolean;
+  isOnAll?: boolean;
   onClickRow: (id: number) => void;
   onDelete?: (id: number) => void;
 };
@@ -24,6 +25,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
     keySelected,
     title,
     isOnInput = false,
+    isOnAll = false,
     onClickRow,
     onDelete,
   } = props;
@@ -47,7 +49,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
           gameObject._title.toLowerCase().includes(filter)
       );
     }
-    if (isOnInput && folderFilter) {
+    if ((isOnInput || isOnAll) && folderFilter) {
       results = results.filter((gameObject) =>
         folderFilter.gameObjects && folderFilter.gameObjects.length > 0
           ? folderFilter.gameObjects.includes(gameObject._id)
@@ -76,7 +78,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
             }
           />
         </Grid.Column>
-        {isOnInput && (
+        {(isOnInput || isOnAll) && (
           <Grid.Column width={16}>
             <DropdownShortcutsFoldersComponent onChange={setFilterFolder} />
           </Grid.Column>

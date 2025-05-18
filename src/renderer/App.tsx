@@ -15,7 +15,10 @@ import {
   ChatGPTPage,
   ShortcutsFoldersPage,
 } from 'renderer/pages';
-import { GameobjectContainerComponent } from './pages/GameobjectPage/components';
+import {
+  AllGameobjectContainerComponent,
+  GameobjectContainerComponent,
+} from './pages/GameobjectPage/components';
 import { SceneContainerComponent } from './pages/ScenePage/components';
 import GameDevSoftwareProvider from './contexts';
 import { ToastContainer } from 'react-toastify';
@@ -32,6 +35,8 @@ modulesComponent['EnvPage'] = EnvPage;
 modulesComponent['GameModulePage'] = GameModulePage;
 modulesComponent['GameobjectPage'] = GameobjectPage;
 modulesComponent['GameobjectContainerComponent'] = GameobjectContainerComponent;
+modulesComponent['AllGameobjectContainerComponent'] =
+  AllGameobjectContainerComponent;
 modulesComponent['ScenePage'] = ScenePage;
 modulesComponent['SceneContainerComponent'] = SceneContainerComponent;
 modulesComponent['FontPage'] = FontPage;

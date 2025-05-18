@@ -48,7 +48,9 @@ export default class GameObjectPlugin {
       async
         .each(
           data.filter((objectTypeFile) =>
-            objectType ? objectTypeFile.type === objectType : true
+            objectType && objectType !== 'all'
+              ? objectTypeFile.type === objectType
+              : true
           ),
           (objectTypeFile: ObjectGameTypeJSON, callback: () => void) => {
             FileService.readJsonFile(
@@ -61,9 +63,11 @@ export default class GameObjectPlugin {
         )
         .then(() => {
           UtilsService.ArrayOrderByObjectID(gameObjectsValue);
-          if (objectType) {
+          if (objectType && objectType !== 'all') {
             // @ts-ignore
             event.reply(`load-game-objects-${objectType}`, gameObjectsValue);
+          } else if (objectType === 'all') {
+            event.reply(`load-game-objects-all`, gameObjectsValue);
           } else {
             event.reply(`load-game-objects`, gameObjectsValue);
           }
@@ -127,7 +131,14 @@ export default class GameObjectPlugin {
     GameObjectPlugin.readIndexFile().then((data) => {
       GameObjectPlugin.writeIndexFile(
         data.filter((d) => d.file !== `${id}.json`)
-      ).then(() => {
+      ).then(async () => {
+        let originalObjectType = null;
+        if (objectType === 'all') {
+          const dataFile = await FileService.readJsonFile(
+            `${path}/${FolderPlugin.gameObjectDirectory}/${id}.json`
+          );
+          originalObjectType = dataFile?._type ?? null;
+        }
         fs.unlink(
           `${path}/${FolderPlugin.gameObjectDirectory}/${id}.json`,
           (err) => {
@@ -137,25 +148,25 @@ export default class GameObjectPlugin {
             }
             this.loadGameObjects(event, objectType);
             this.loadGameObjects(event);
+            if (originalObjectType) {
+              this.loadGameObjects(event, originalObjectType);
+            }
           }
         );
       });
     });
   };
 
-  getFormulaireGameObject = (
-    event: ElectronIpcMainEvent,
-    objectType: string
-  ) => {
+  private getFormulaireGameObjectType = (objectType: string) => {
     //@ts-ignore
     const { path } = global;
     let gameObjectType: string = '';
-    FileService.readdir(
+    return FileService.readdir(
       `${path}${FolderPlugin.modulesDirectory}`,
       'directory'
-    ).then((names) => {
-      async
-        .each(names, (name: string, callback: () => void) => {
+    )
+      .then((names) => {
+        return async.each(names, (name: string, callback: () => void) => {
           const moduleDirectory = `${path}${FolderPlugin.modulesDirectory}/${name}${FolderPlugin.gameObjectTypesDirectory}`;
           FileService.readdir(moduleDirectory, 'file').then((filesName) => {
             async
@@ -167,13 +178,27 @@ export default class GameObjectPlugin {
               })
               .then(() => callback());
           });
-        })
-        .then(() => {
-          FileService.readJsonFile(gameObjectType).then((data) => {
-            // @ts-ignore
-            event.reply(`get-formulaire-game-object-${objectType}`, data);
-          });
         });
+      })
+      .then(() => FileService.readJsonFile(gameObjectType));
+  };
+
+  getFormulaireGameObject = (
+    event: ElectronIpcMainEvent,
+    objectType: string
+  ) => {
+    this.getFormulaireGameObjectType(objectType).then((data) => {
+      // @ts-ignore
+      event.reply(`get-formulaire-game-object-${objectType}`, data);
+    });
+  };
+
+  getFormulaireGameObjectFromAll = (
+    event: ElectronIpcMainEvent,
+    objectType: string
+  ) => {
+    this.getFormulaireGameObjectType(objectType).then((data) => {
+      event.reply('get-formulaire-game-object-all', data);
     });
   };
 
@@ -248,6 +273,9 @@ export default class GameObjectPlugin {
     });
     ipcMain.on('get-formulaire-game-object', (event, args) => {
       this.getFormulaireGameObject(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('get-formulaire-game-object-all', (event, args) => {
+      this.getFormulaireGameObjectFromAll(event as ElectronIpcMainEvent, args);
     });
     ipcMain.on('create-game-object', (event, args) => {
       this.createGameObject(event as ElectronIpcMainEvent, args);
