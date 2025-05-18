@@ -372,6 +372,7 @@ export interface ShortcutsFolder {
   assets?: string[];
   constants?: string[];
   gameObjects?: number[];
+  scenes?: number[];
   editable?: boolean;
   deletable?: boolean;
 }
@@ -381,5 +382,10 @@ export interface ShortcutsFolder {
 }
 export interface ShortcutsFolderTargetType {
   id: any;
-  typeTarget: 'translations' | 'constants' | 'assets' | 'gameObjects';
+  typeTarget:
+    | 'translations'
+    | 'constants'
+    | 'assets'
+    | 'gameObjects'
+    | 'scenes';
 }

@@ -13,6 +13,7 @@ type GameobjectTableComponentProps = {
   gameObjects: GameObject[];
   keySelected?: number;
   title: string;
+  typeTarget: 'scenes' | 'gameObjects';
   isOnInput?: boolean;
   isOnAll?: boolean;
   onClickRow: (id: number) => void;
@@ -26,6 +27,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
     title,
     isOnInput = false,
     isOnAll = false,
+    typeTarget,
     onClickRow,
     onDelete,
   } = props;
@@ -49,10 +51,21 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
           gameObject._title.toLowerCase().includes(filter)
       );
     }
-    if ((isOnInput || isOnAll) && folderFilter) {
+    if (
+      (isOnInput || isOnAll) &&
+      folderFilter &&
+      typeTarget === 'gameObjects'
+    ) {
       results = results.filter((gameObject) =>
         folderFilter.gameObjects && folderFilter.gameObjects.length > 0
           ? folderFilter.gameObjects.includes(gameObject._id)
+          : false
+      );
+    }
+    if ((isOnInput || isOnAll) && folderFilter && typeTarget === 'scenes') {
+      results = results.filter((gameObject) =>
+        folderFilter.scenes && folderFilter.scenes.length > 0
+          ? folderFilter.scenes?.includes(gameObject._id)
           : false
       );
     }
@@ -151,7 +164,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
       {openIdShortcutsFolder !== null && (
         <DialogShortcutsFoldersComponent
           id={openIdShortcutsFolder}
-          typeTarget={'gameObjects'}
+          typeTarget={typeTarget}
           multiple
           onClose={() => {
             setOpenIdShortcutsFolder(null);

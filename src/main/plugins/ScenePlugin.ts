@@ -127,7 +127,14 @@ export default class ScenePlugin {
     ScenePlugin.readIndexFile().then((data) => {
       ScenePlugin.writeIndexFile(
         data.filter((d) => d.file !== `${id}.json`)
-      ).then(() => {
+      ).then(async () => {
+        let originalObjectType = null;
+        if (sceneType === 'all') {
+          const dataFile = await FileService.readJsonFile(
+            `${path}/${FolderPlugin.gameObjectDirectory}/${id}.json`
+          );
+          originalObjectType = dataFile?._type ?? null;
+        }
         fs.unlink(`${path}${FolderPlugin.sceneDirectory}/${id}.json`, (err) => {
           if (err) {
             console.error(err);
@@ -135,6 +142,9 @@ export default class ScenePlugin {
           }
           this.loadScenes(event, sceneType);
           this.loadScenes(event);
+          if (originalObjectType) {
+            this.loadScenes(event, originalObjectType);
+          }
         });
       });
     });
@@ -173,11 +183,43 @@ export default class ScenePlugin {
       .then(() => {
         return FileService.readJsonFile(sceneType.value);
       })
-      .then((data) => ({ ...data, ...sceneType }));
+      .then((data) => ({
+        ...data,
+        ...sceneType,
+        core: {
+          _title: {
+            label: 'Label of scene',
+            core: 'string',
+          },
+          ...data.core,
+          _actions: {
+            multiple: true,
+            label: 'Actions',
+            core: {
+              _scene: 'scene',
+            },
+          },
+          _music: {
+            label: 'Primary music',
+            core: 'sound',
+            optional: true,
+          },
+          _release_sounds: {
+            label: 'Release sound',
+            core: 'sound',
+            optional: true,
+            multiple: true,
+          },
+        },
+      }));
   };
 
   getFormulaireScene = (event: ElectronIpcMainEvent, sType: string) => {
     this.getFormulaireSceneTypes(sType).then((data) => {
+      console.log(
+        '🚀 ~ ScenePlugin ~ this.getFormulaireSceneTypes ~ data:',
+        data
+      );
       // @ts-ignore
       event.reply(`get-formulaire-scene-${sType}`, {
         ...data,

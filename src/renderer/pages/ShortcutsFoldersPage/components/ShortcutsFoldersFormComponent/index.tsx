@@ -3,6 +3,7 @@ import { TransComponent } from 'renderer/components';
 import AssetsContext from 'renderer/contexts/AssetsContext';
 import ConstantsContext from 'renderer/contexts/ConstantsContext';
 import GameObjectContext from 'renderer/contexts/GameObjectContext';
+import ScenesContext from 'renderer/contexts/ScenesContext';
 import TranslationsContext from 'renderer/contexts/TranslationsContext';
 import { Button } from 'renderer/semantic-ui';
 import {
@@ -40,6 +41,7 @@ const ShortcutsFoldersFormComponent: React.FC<
   const [gameObjects, setGameObjects] = useState<number[]>(
     defaultValue?.gameObjects || []
   );
+  const [scenes, setScenes] = useState<number[]>(defaultValue?.scenes || []);
   const [editable, setEditable] = useState<boolean>(() => {
     if (defaultValue?.editable !== undefined) {
       return defaultValue.editable;
@@ -65,6 +67,9 @@ const ShortcutsFoldersFormComponent: React.FC<
   const [gameObjectsDropdown, setGameObjectsDropdowns] = useState<
     DropdownItemProps[]
   >([]);
+  const [scenesDropdown, setScenesDropdowns] = useState<DropdownItemProps[]>(
+    []
+  );
   /** */
 
   const id = useMemo(() => defaultValue?.id, [defaultValue]);
@@ -78,6 +83,8 @@ const ShortcutsFoldersFormComponent: React.FC<
   const { assets: currentAssets } = useContext(AssetsContext);
   const { constants: currentConstants } = useContext(ConstantsContext);
   const { gameObjects: currentGameObjects } = useContext(GameObjectContext);
+  const { scenes: currentScenes } = useContext(ScenesContext);
+
   /** */
 
   const handleSubmit = useCallback(() => {
@@ -88,6 +95,7 @@ const ShortcutsFoldersFormComponent: React.FC<
       assets,
       constants,
       gameObjects,
+      scenes,
       editable,
       deletable,
     });
@@ -99,6 +107,7 @@ const ShortcutsFoldersFormComponent: React.FC<
     assets,
     constants,
     gameObjects,
+    scenes,
     editable,
     deletable,
   ]);
@@ -145,7 +154,16 @@ const ShortcutsFoldersFormComponent: React.FC<
         value: gameObject._id,
       }))
     );
-  }, [gameObjects]);
+  }, [currentGameObjects]);
+
+  useEffect(() => {
+    setScenesDropdowns(
+      currentScenes.map((scene) => ({
+        text: scene._title,
+        value: scene._id,
+      }))
+    );
+  }, [currentScenes]);
 
   return (
     <Container fluid>
@@ -240,6 +258,23 @@ const ShortcutsFoldersFormComponent: React.FC<
                   multiple
                   onChange={(_e, data) => {
                     setGameObjects(data.value as number[]);
+                  }}
+                  clearable
+                />
+              </Form.Field>
+              <Form.Field>
+                <label>
+                  <TransComponent id="module_scene_home_title" />
+                </label>
+                <Dropdown
+                  fluid
+                  selection
+                  search
+                  defaultValue={scenes}
+                  options={scenesDropdown}
+                  multiple
+                  onChange={(_e, data) => {
+                    setScenes(data.value as number[]);
                   }}
                   clearable
                 />

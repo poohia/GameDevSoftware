@@ -76,32 +76,6 @@ const useSceneContainerComponent = (props: PageProps) => {
     });
     // @ts-ignore
     once(`get-formulaire-scene-${sceneType}`, (args) => {
-      args.core = {
-        _title: {
-          label: 'Label of scene',
-          core: 'string',
-        },
-        ...args.core,
-        _actions: {
-          multiple: true,
-          label: 'Actions',
-          core: {
-            _scene: 'scene',
-          },
-        },
-        _music: {
-          label: 'Primary music',
-          core: 'sound',
-          optional: true,
-        },
-        _release_sounds: {
-          label: 'Release sound',
-          core: 'sound',
-          optional: true,
-          multiple: true,
-        },
-      };
-
       setSceneObjectForm(args);
     });
   }, [sceneType]);

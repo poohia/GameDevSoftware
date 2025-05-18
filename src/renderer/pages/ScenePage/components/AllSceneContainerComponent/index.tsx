@@ -38,6 +38,8 @@ const AllSceneContainerComponent: React.FC<PageProps> = (props) => {
               gameObjects={scenes}
               keySelected={stateForm.value?._id}
               title={props.title}
+              isOnAll
+              typeTarget="scenes"
               onClickRow={updateGameobject}
               onDelete={removeGameObject}
             />

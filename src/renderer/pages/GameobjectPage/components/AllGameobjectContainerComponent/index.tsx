@@ -39,6 +39,7 @@ const AllGameobjectContainerComponent: React.FC<PageProps> = (props) => {
               keySelected={stateForm.value?._id}
               title={props.title}
               isOnAll
+              typeTarget="gameObjects"
               onClickRow={updateGameobject}
               onDelete={removeGameObject}
             />

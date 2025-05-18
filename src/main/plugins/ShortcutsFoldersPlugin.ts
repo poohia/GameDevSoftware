@@ -132,6 +132,15 @@ export default class ShortcutsFoldersPlugin {
                   .concat(args.id);
               }
               break;
+            case 'scenes':
+              if (folder.scenes === undefined) {
+                folder.scenes = [args.id];
+              } else {
+                folder.scenes = folder
+                  .scenes!.filter((value) => value !== args.id)
+                  .concat(args.id);
+              }
+              break;
           }
         } else {
           switch (args.typeTarget) {
@@ -152,6 +161,11 @@ export default class ShortcutsFoldersPlugin {
               break;
             case 'gameObjects':
               folder.gameObjects = folder.gameObjects?.filter(
+                (value) => value !== args.id
+              );
+              break;
+            case 'scenes':
+              folder.scenes = folder.scenes?.filter(
                 (value) => value !== args.id
               );
               break;
@@ -197,6 +211,14 @@ export default class ShortcutsFoldersPlugin {
             'get-shortcutsfolder-typetarget',
             data.filter((folder) =>
               folder.gameObjects?.find((value) => value === args.id)
+            )
+          );
+          break;
+        case 'scenes':
+          event.reply(
+            'get-shortcutsfolder-typetarget',
+            data.filter((folder) =>
+              folder.scenes?.find((value) => value === args.id)
             )
           );
           break;
