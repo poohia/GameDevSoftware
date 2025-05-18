@@ -53,6 +53,7 @@ export type Channels =
   | 'load-scenes-types'
   | 'remove-scene'
   | 'get-formulaire-scene'
+  | 'get-formulaire-scene-all'
   | 'create-scene'
   | 'get-scene-value'
   | 'load-scenes'

@@ -46,7 +46,9 @@ export default class ScenePlugin {
       async
         .each(
           data.filter((sceneTypeFile) =>
-            sceneType ? sceneTypeFile.type === sceneType : true
+            sceneType && sceneType !== 'all'
+              ? sceneTypeFile.type === sceneType
+              : true
           ),
           (sceneTypeFile: SceneTypeJSON, callback: () => void) => {
             FileService.readJsonFile(
@@ -138,7 +140,7 @@ export default class ScenePlugin {
     });
   };
 
-  getFormulaireScene = (event: ElectronIpcMainEvent, sType: string) => {
+  private getFormulaireSceneTypes = (sType: string) => {
     //@ts-ignore
     const { path } = global;
     let sceneType: {
@@ -148,12 +150,12 @@ export default class ScenePlugin {
       value: '',
       module: '',
     };
-    FileService.readdir(
+    return FileService.readdir(
       `${path}${FolderPlugin.modulesDirectory}`,
       'directory'
-    ).then((names) => {
-      async
-        .each(names, (name: string, callback: () => void) => {
+    )
+      .then((names) => {
+        return async.each(names, (name: string, callback: () => void) => {
           const moduleDirectory = `${path}${FolderPlugin.modulesDirectory}/${name}${FolderPlugin.sceneTypesDirectory}`;
           FileService.readdir(moduleDirectory, 'file').then((filesName) => {
             async
@@ -166,16 +168,29 @@ export default class ScenePlugin {
               })
               .then(() => callback());
           });
-        })
-        .then(() => {
-          FileService.readJsonFile(sceneType.value).then((data) => {
-            // @ts-ignore
-            event.reply(`get-formulaire-scene-${sType}`, {
-              ...data,
-              module: sceneType.module,
-            });
-          });
         });
+      })
+      .then(() => {
+        return FileService.readJsonFile(sceneType.value);
+      })
+      .then((data) => ({ ...data, ...sceneType }));
+  };
+
+  getFormulaireScene = (event: ElectronIpcMainEvent, sType: string) => {
+    this.getFormulaireSceneTypes(sType).then((data) => {
+      // @ts-ignore
+      event.reply(`get-formulaire-scene-${sType}`, {
+        ...data,
+      });
+    });
+  };
+
+  getFormulaireSceneAll = (event: ElectronIpcMainEvent, sType: string) => {
+    this.getFormulaireSceneTypes(sType).then((data) => {
+      // @ts-ignore
+      event.reply(`get-formulaire-scene-all`, {
+        ...data,
+      });
     });
   };
 
@@ -284,6 +299,9 @@ export default class ScenePlugin {
     });
     ipcMain.on('get-formulaire-scene', (event, args) => {
       this.getFormulaireScene(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('get-formulaire-scene-all', (event, args) => {
+      this.getFormulaireSceneAll(event as ElectronIpcMainEvent, args);
     });
     ipcMain.on('create-scene', (event, args) => {
       this.createScene(event as ElectronIpcMainEvent, args);

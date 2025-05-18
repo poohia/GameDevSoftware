@@ -99,5 +99,6 @@
   "module_shortcutsfolders": "Shortcuts Folders Module",
   "module_shortcutsfolders_create": "Create Folder",
   "module_shortcutsfolders_update": "Modify Folder",
-  "module_shortcutsfolders_form_name": "Folder name"
+  "module_shortcutsfolders_form_name": "Folder name",
+  "module_scene_home_title": "All scenes"
 }

@@ -6,6 +6,7 @@ import { useEvents } from 'renderer/hooks';
 import { PageProps, SceneObjectForm } from 'types';
 import SceneContainerComponent from '../SceneContainerComponent';
 import DropdownFirstScene from '../DropdownFirstScene';
+import AllSceneContainerComponent from '../AllSceneContainerComponent';
 
 const SceneHomeContainer = ({ appendTab }: PageProps) => {
   const [scenesType, setScenesType] = useState<
@@ -37,6 +38,21 @@ const SceneHomeContainer = ({ appendTab }: PageProps) => {
         </span>
         <Grid>
           <Grid.Row columns={4} width="equals">
+            <Grid.Column>
+              <Button
+                onClick={() =>
+                  appendTab(
+                    'all',
+                    AllSceneContainerComponent,
+                    true,
+                    'AllSceneContainerComponent'
+                  )
+                }
+                fluid
+              >
+                <TransComponent id="module_scene_home_title" />
+              </Button>
+            </Grid.Column>
             {scenesType.map((sceneType) => (
               <Grid.Column key={sceneType.typeId}>
                 <Popup

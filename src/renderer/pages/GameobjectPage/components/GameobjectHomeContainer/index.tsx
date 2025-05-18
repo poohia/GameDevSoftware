@@ -6,7 +6,6 @@ import { useEvents } from 'renderer/hooks';
 import { GameObjectForm, PageProps } from 'types';
 import GameobjectContainerComponent from '../GameobjectContainerComponent';
 import AllGameobjectContainerComponent from '../AllGameobjectContainerComponent';
-import i18n from 'translations/i18n';
 
 const GameobjectHomeContainer = ({ appendTab }: PageProps) => {
   const [gamesObjectType, setGameObjectType] = useState<
