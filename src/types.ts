@@ -90,6 +90,7 @@ export type Channels =
   | 'load-chatgpt-models'
   | 'chatgpt-auto-translate'
   | 'chatgpt-translate-file'
+  | 'chatgpt-generate-types'
   | 'send-log'
   | 'send-notification'
   | 'open-terminal'

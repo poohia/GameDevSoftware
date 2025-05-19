@@ -1,5 +1,6 @@
 import { Container, Grid, Header } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
+import GenerateTypeSectionComponent from './components/GenerateTypeSectionComponent';
 import GlobalInformationComponent from './components/GlobalInformationComponent';
 import TranslationSectionComponent from './components/TranslationSectionComponent';
 
@@ -25,6 +26,13 @@ const ChatGPTPage: React.FC = () => {
           <Grid.Column width={16}>
             <Container>
               <TranslationSectionComponent />
+            </Container>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Container>
+              <GenerateTypeSectionComponent />
             </Container>
           </Grid.Column>
         </Grid.Row>

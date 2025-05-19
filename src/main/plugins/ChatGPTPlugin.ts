@@ -3,11 +3,13 @@ import OpenAI from 'openai';
 import { store } from '../main';
 import { ChatGPTType, ElectronIpcMainEvent } from 'types';
 import ChatGPTTranslationPlugin from './subPlugins/ChatGPTTranslationPlugin';
+import ChatGPTGenerateTypes from './subPlugins/ChatGPTGenerateTypes';
 
 export let openAI: OpenAI | null = null;
 
 export default class ChatGPTPlugin {
   translateSubPlugin: ChatGPTTranslationPlugin = new ChatGPTTranslationPlugin();
+  generateTypesSubPlugin: ChatGPTGenerateTypes = new ChatGPTGenerateTypes();
 
   saveChatGPTInfos = (
     event: ElectronIpcMainEvent,
@@ -95,5 +97,8 @@ export default class ChatGPTPlugin {
         this.getChatGPTInfos()
       )
     );
+    ipcMain.on('chatgpt-generate-types', (event: Electron.IpcMainEvent) => {
+      this.generateTypesSubPlugin.generateTypes(event as ElectronIpcMainEvent);
+    });
   };
 }
