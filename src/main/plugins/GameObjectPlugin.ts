@@ -11,6 +11,7 @@ import {
   ObjectGameTypeJSON,
 } from 'types';
 import FolderPlugin from './FolderPlugin';
+import LogService from '../services/LogService';
 
 export default class GameObjectPlugin {
   constructor() {}
@@ -112,9 +113,22 @@ export default class GameObjectPlugin {
           });
         })
         .then(() => {
+          LogService.Log(
+            gameObjects.sort((a, b) => a.typeId.localeCompare(b.typeId))
+          );
+
           event.reply(
             'load-game-object-types',
-            gameObjects.sort((a, b) => a.typeId.localeCompare(b.typeId))
+            gameObjects
+              .sort((a, b) => a.typeId.localeCompare(b.typeId))
+              .map((gameObject) => ({
+                ...gameObject,
+                // default value
+                core: {
+                  _title: 'string',
+                  ...gameObject.core,
+                },
+              }))
           );
         });
     });
@@ -178,7 +192,8 @@ export default class GameObjectPlugin {
           });
         });
       })
-      .then(() => FileService.readJsonFile(gameObjectType));
+      .then(() => FileService.readJsonFile(gameObjectType))
+      .then((data) => ({ ...data, core: { _title: 'string', ...data.core } }));
   };
 
   getFormulaireGameObject = (
@@ -186,6 +201,7 @@ export default class GameObjectPlugin {
     objectType: string
   ) => {
     this.getFormulaireGameObjectType(objectType).then((data) => {
+      LogService.Log(data);
       // @ts-ignore
       event.reply(`get-formulaire-game-object-${objectType}`, data);
     });

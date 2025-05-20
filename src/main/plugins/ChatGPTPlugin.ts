@@ -98,7 +98,10 @@ export default class ChatGPTPlugin {
       )
     );
     ipcMain.on('chatgpt-generate-types', (event: Electron.IpcMainEvent) => {
-      this.generateTypesSubPlugin.generateTypes(event as ElectronIpcMainEvent);
+      this.generateTypesSubPlugin.generateTypes(
+        event as ElectronIpcMainEvent,
+        this.getChatGPTInfos()
+      );
     });
   };
 }
