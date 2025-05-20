@@ -73,6 +73,8 @@ export default class FolderPlugin {
   static packageJSONFile = '/package.json';
   static trapezeFile = '/app.yaml';
 
+  static typesFiles = 'type.ts';
+
   static validePath(path: string) {
     let isValid = true;
     if (!fs.existsSync(`${path}${FolderPlugin.configFile}`)) {

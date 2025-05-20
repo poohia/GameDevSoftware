@@ -22,7 +22,7 @@ const GenerateTypeSectionComponent: React.FC = () => {
   return (
     <Segment className="game-dev-software-module-application-params-identity-segment">
       <span className="game-dev-software-module-application-params-identity-segment-title">
-        {i18n.t('form_input_modal_translations_title')} @todo
+        {i18n.t('form_input_modal_generatetype_title')}
       </span>
       <Button
         icon
@@ -32,7 +32,7 @@ const GenerateTypeSectionComponent: React.FC = () => {
         loading={loading}
         onClick={handleClick}
       >
-        {i18n.t('module_application_home_project_start')} @todo
+        {i18n.t('form_input_modal_generatetype_cta_all')}
         <Icon name="play" />
       </Button>
     </Segment>

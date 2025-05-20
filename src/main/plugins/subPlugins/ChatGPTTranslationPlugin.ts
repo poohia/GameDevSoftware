@@ -50,7 +50,7 @@ export default class ChatGPTTranslationPlugin {
                               It's a {locale: {key:value}} structure, don't modify the key. Answer with json content only, don't send me markdown.\n`,
             },
           ];
-          if (chatGPTInfos?.extraPrompt) {
+          if (chatGPTInfos.extraPrompt) {
             messages.push({
               role: 'user',
               content: `Other tips for translation: ${chatGPTInfos.extraPrompt}\n`,
