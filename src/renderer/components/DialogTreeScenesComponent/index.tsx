@@ -38,94 +38,124 @@ const DialogTreeScenesComponent: React.FC<
   const { scenes } = useContext(ScenesContext);
   const [finalId, setFinalId] = useState<number>(id);
   const [history, setHistory] = useState<number[]>([id]);
+  // const [values, setValues] = useState<number[]>([]); // Semble inutilisé
   const [data, setData] = useState<any>();
   const [orientation, setOrientation] = useState<Orientation>('vertical');
   const [translate, setTranslate] = useState<{ x: number; y: number }>();
 
   const currentScene = useMemo(
     () => scenes.find((s) => s._id === finalId),
-    [finalId]
+    [finalId, scenes] // Ajout de scenes comme dépendance
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
 
   const buildTree = useCallback(
-    (scene: SceneObject): any => {
+    (scene: SceneObject, processingPath: Set<number> = new Set()): any => {
       // On récupère les enfants directs via _actions
       const childScenes = scene._actions
-        // Pour chaque action on cherche la scène cible
         .map((act) =>
           scenes.find((s) => s._id === Number(act._scene.replace('@s:', '')))
         )
-        // Filtrer les valeurs null/undefined
         .filter((s): s is SceneObject => s !== undefined);
+
+      // Créer une nouvelle copie du chemin pour cette branche et y ajouter la scène actuelle
+      // Important : on vérifie si le *child* est dans processingPath
+      // processingPath contient les ancêtres de `scene`
 
       return {
         name: `${scene._title} (${scene._id})`,
         id: scene._id,
+        attributes: {
+          // Pour stocker des métadonnées
+          title: scene._title,
+        },
         children:
           childScenes.length > 0
-            ? childScenes.map((child) => buildTree(child))
+            ? childScenes
+                .map((childScene) => {
+                  if (processingPath.has(childScene._id)) {
+                    // Boucle détectée !
+                    return {
+                      name: `${childScene._title} (${childScene._id}) - [LOOP DETECTED]`,
+                      id: childScene._id,
+                      attributes: { isLoop: true, title: childScene._title },
+                      // Pas d'enfants pour ce nœud pour casser la boucle
+                    };
+                  }
+                  // Ajouter l'ID de la scène *actuelle* au chemin pour les appels récursifs de ses enfants
+                  const nextProcessingPath = new Set(processingPath);
+                  nextProcessingPath.add(scene._id);
+                  return buildTree(childScene, nextProcessingPath);
+                })
+                .filter(Boolean) // Au cas où une des branches retourne null/undefined
             : undefined,
       };
     },
-    [scenes]
+    [scenes] // scenes est la seule dépendance externe de buildTree
   );
 
   const center = useCallback(() => {
     if (!containerRef.current) return;
     const { offsetWidth: w, offsetHeight: h } = containerRef.current;
-    setTranslate(undefined);
-    setTimeout(() => {
-      setTranslate({ x: w / 2, y: 50 });
-    });
-  }, [containerRef]);
+    const y = orientation === 'vertical' ? 50 : h / 2;
+    const x = orientation === 'vertical' ? w / 2 : 50;
 
-  const handleGenerateChilds = useCallback(() => {
-    if (!currentScene) return;
-    setData(buildTree(currentScene));
-    center();
-  }, [currentScene, buildTree]);
+    setTranslate(undefined); // Force le re-render
+    setTimeout(() => {
+      setTranslate({ x, y });
+    });
+  }, [orientation, containerRef]); // containerRef est stable, pas besoin de le mettre en dépendance
 
   const handleNodeClick = useCallback(
     (nodeDatum: any, evt: React.MouseEvent) => {
-      if (finalId === nodeDatum.data.id) {
+      if (finalId === nodeDatum.data.id || nodeDatum.data.attributes?.isLoop) {
+        // Ne pas naviguer si on clique sur le même noeud ou un noeud marquant une boucle
         return;
       }
-      setData(undefined);
+      //setData(undefined); // Sera géré par le useEffect qui dépend de finalId/currentScene
+      setHistory((h) => {
+        if (h[h.length - 1] !== nodeDatum.data.id) {
+          // Evite les doublons si clics rapides
+          return [...h, nodeDatum.data.id];
+        }
+        return h;
+      });
       setFinalId(nodeDatum.data.id);
-      setHistory((h) => h.concat(nodeDatum.data.id));
-      // ici tu peux faire ce que tu veux avec nodeDatum.id
     },
     [finalId]
   );
 
   const back = useCallback(() => {
-    if (history.length === 1) return;
+    if (history.length <= 1) return;
     setHistory((h) => {
-      const lastId = h[h.length - 2];
-
+      const newHistory = [...h];
+      newHistory.pop();
+      const lastId = newHistory[newHistory.length - 1];
       setFinalId(lastId);
-      h.pop();
-      return h;
+      return newHistory;
     });
   }, [history]);
 
   const goFirstScene = useCallback(() => {
     if (!firstScene || finalId === firstScene) return;
-    setFinalId(firstScene);
-    setHistory((h) => h.concat(firstScene));
-  }, [firstScene, finalId]);
+    // @ts-ignore
+    handleNodeClick({ data: { id: firstScene } });
+  }, [firstScene, finalId, handleNodeClick]);
 
   useEffect(() => {
-    if (!currentScene) return;
-    setData(buildTree(currentScene));
-    if (!containerRef.current) return;
-    const { offsetWidth: w } = containerRef.current;
-    setTranslate({ x: w / 2, y: 50 });
-  }, [currentScene, buildTree]);
+    if (!currentScene) {
+      setData(undefined); // Si pas de scène courante, vider l'arbre
+      return;
+    }
+    // L'appel initial à buildTree se fait avec un Set vide pour processingPath
+    setData(buildTree(currentScene, new Set()));
+    if (containerRef.current) {
+      // Centrer après la génération
+      center();
+    }
+  }, [currentScene, buildTree, center]); // buildTree et center sont useCallback
 
-  // Fonction d'export PNG
   const handleExportPng = useCallback(async () => {
     if (!containerRef.current) return;
     const svgNode = containerRef.current.querySelector<SVGSVGElement>('svg');
@@ -133,53 +163,39 @@ const DialogTreeScenesComponent: React.FC<
       console.error('SVG element not found for PNG export.');
       return;
     }
-
-    // Cloner le SVG pour ne pas affecter l'affichage et pour pouvoir le modifier
     const clonedSvgNode = svgNode.cloneNode(true) as SVGSVGElement;
-
-    // Récupérer les dimensions réelles du contenu SVG
     const bbox = svgNode.getBBox();
-
-    // Appliquer les dimensions et viewBox au clone pour s'assurer que tout est visible
     clonedSvgNode.setAttribute('width', `${bbox.width}`);
     clonedSvgNode.setAttribute('height', `${bbox.height}`);
     clonedSvgNode.setAttribute(
       'viewBox',
       `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`
     );
-
-    // S'assurer que le namespace XML est présent pour une meilleure compatibilité
     if (!clonedSvgNode.getAttribute('xmlns')) {
       clonedSvgNode.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     }
-
-    // --- AJOUT DU FOND BLANC POUR SVG ---
     const backgroundRect = document.createElementNS(
       'http://www.w3.org/2000/svg',
       'rect'
     );
     backgroundRect.setAttribute('x', `${bbox.x}`);
     backgroundRect.setAttribute('y', `${bbox.y}`);
-    backgroundRect.setAttribute('width', `${bbox.width}`); // Ou '100%' si viewBox est bien 0 0 width height
-    backgroundRect.setAttribute('height', `${bbox.height}`); // Ou '100%'
+    backgroundRect.setAttribute('width', `${bbox.width}`);
+    backgroundRect.setAttribute('height', `${bbox.height}`);
     backgroundRect.setAttribute('fill', 'white');
-    // Insérer le rectangle en premier pour qu'il soit en arrière-plan
     clonedSvgNode.insertBefore(backgroundRect, clonedSvgNode.firstChild);
-    // --- FIN DE L'AJOUT ---
 
     try {
-      // Utiliser toPng directement sur le nœud SVG cloné et dimensionné
-      // pixelRatio: 2 (ou plus) pour une meilleure résolution (fichier plus grand)
       const dataUrl = await toPng(clonedSvgNode, {
         cacheBust: true,
-        pixelRatio: 2, // Double la résolution de base
-        width: bbox.width, // Spécifier la largeur pour html-to-image
-        height: bbox.height, // Spécifier la hauteur pour html-to-image
+        pixelRatio: 2,
+        width: bbox.width,
+        height: bbox.height,
+        // backgroundColor: 'white', // Redondant si le rect est dans le SVG source
       });
       saveAs(dataUrl, `${currentScene?._title || 'tree'}.png`);
     } catch (e) {
       console.error('Export PNG failed:', e);
-      // Tentative de fallback avec l'ancienne méthode si la nouvelle échoue
       try {
         console.warn('Retrying PNG export with alternative method...');
         const xml = new XMLSerializer().serializeToString(clonedSvgNode);
@@ -197,30 +213,25 @@ const DialogTreeScenesComponent: React.FC<
     }
   }, [currentScene]);
 
-  useEffect(() => {
-    setShortcutsFoldersDropdown(
-      shortcutsFolders.map((folder) => ({
-        text: folder.folderName,
-        value: folder.id,
-      }))
-    );
-  }, [shortcutsFolders]);
+  // Ce useEffect s'occupe de regénérer l'arbre lorsque finalId change (donc currentScene change).
+  // Le useEffect qui dépend de [currentScene, buildTree, center] fait déjà le travail.
+  // Donc celui-ci peut être redondant.
+  // useEffect(() => {
+  //   handleGenerateChilds(); // Appelé quand finalId change
+  // }, [finalId, handleGenerateChilds]);
 
   useEffect(() => {
-    handleGenerateChilds();
-  }, [finalId]);
-
-  useEffect(() => {
-    if (containerRef) {
+    // Centrer si l'orientation change et que l'arbre est déjà affiché
+    if (containerRef.current && data) {
       center();
     }
-  }, [orientation, center]);
+  }, [orientation, center, data]); // data ici pour s'assurer qu'il y a qqch à centrer
 
   useEffect(() => {
     requestMessage('load-first-scene', (firstScene) => {
       setFirstScene(Number(firstScene.file.replace('.json', '')));
     });
-  }, []);
+  }, [requestMessage]); // requestMessage est une fonction de hook, elle devrait être stable
 
   return (
     <ModalComponent
@@ -229,12 +240,14 @@ const DialogTreeScenesComponent: React.FC<
       onAccepted={() => {
         onValidate(finalId);
       }}
-      title={`${currentScene?._title} (${currentScene?._id})`}
+      title={`${currentScene?._title || 'Chargement...'} (${
+        currentScene?._id || 'N/A'
+      })`}
       size="fullscreen"
       {...rest}
     >
       <div className="dialogtreegoscenes-container">
-        <div>
+        <div className="dialogtreegoscenes-toolbar">
           <Button
             icon
             labelPosition="right"
@@ -249,11 +262,7 @@ const DialogTreeScenesComponent: React.FC<
               });
             }}
           >
-            {orientation === 'horizontal' ? (
-              <TransComponent id="module_scene_tree_dialog_orienation_vertical"></TransComponent>
-            ) : (
-              <TransComponent id="module_scene_tree_dialog_orienation_horizontal"></TransComponent>
-            )}
+            <TransComponent id="module_scene_tree_dialog_orienation"></TransComponent>
             <Icon name="redo" />
           </Button>
           <Button
@@ -302,16 +311,58 @@ const DialogTreeScenesComponent: React.FC<
             <Icon name="angle left" />
           </Button>
         </div>
-        <div ref={containerRef}>
-          {data && translate && (
+        <div
+          className="dialogtreegoscenes-treearea"
+          ref={containerRef}
+          style={{ backgroundColor: 'white' }}
+        >
+          {data && translate ? (
             <Tree
               data={data}
               orientation={orientation}
-              nodeSize={{ x: 200, y: 100 }}
+              nodeSize={{ x: 250, y: 120 }} // Augmenté un peu pour les noms plus longs
               translate={translate}
               collapsible={false}
               onNodeClick={handleNodeClick}
+              zoomable={true}
+              draggable={true}
+              separation={{ siblings: 1.2, nonSiblings: 1.8 }}
+              depthFactor={200}
+              svgProps={{
+                style: { width: '100%', height: '100%' },
+              }}
+              // Vous pouvez personnaliser l'apparence des nœuds "loop" ici
+              // en utilisant renderCustomNodeElement ou en modifiant nodeSvgShape
+              // Exemple pour changer la couleur des nœuds de boucle :
+              nodeSvgShape={{
+                shape: 'rect',
+                shapeProps: {
+                  width: 230,
+                  height: 70,
+                  x: -115,
+                  y: -35,
+                  rx: 5,
+                  ry: 5,
+                  strokeWidth: 1,
+                  // @ts-ignore nodeDatum n'est pas typé ici par défaut
+                  stroke: (nodeDatum) =>
+                    nodeDatum.data.attributes?.isLoop ? 'red' : '#607d8b',
+                  // @ts-ignore
+                  fill: (nodeDatum) =>
+                    nodeDatum.data.attributes?.isLoop ? '#ffdddd' : 'white',
+                },
+              }}
+              textLayout={{
+                textAnchor: 'start',
+                x: 15 - 115, // x initial + x du rect
+                y: 0, // Ajustement vertical si nécessaire
+                transform: undefined,
+              }}
             />
+          ) : (
+            <div>
+              <TransComponent id="module_scene_tree_dialog_loading_tree" />
+            </div>
           )}
         </div>
       </div>
