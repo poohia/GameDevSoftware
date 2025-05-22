@@ -149,29 +149,31 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
                       </Header>
                     </Table.Cell>
                     <Table.Cell textAlign="right" className="action">
-                      <Button
-                        basic
-                        icon
-                        color="teal"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setOpenIdShortcutsFolder(name);
-                        }}
-                      >
-                        <Icon name="folder" />
-                      </Button>
-                      <Button
-                        basic
-                        icon
-                        color="red"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          deletable && onDelete(name);
-                        }}
-                        disabled={!deletable}
-                      >
-                        <Icon name="trash" />
-                      </Button>
+                      <div>
+                        <Button
+                          basic
+                          icon
+                          color="teal"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setOpenIdShortcutsFolder(name);
+                          }}
+                        >
+                          <Icon name="folder" />
+                        </Button>
+                        <Button
+                          basic
+                          icon
+                          color="red"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            deletable && onDelete(name);
+                          }}
+                          disabled={!deletable}
+                        >
+                          <Icon name="trash" />
+                        </Button>
+                      </div>
                     </Table.Cell>
                   </Table.Row>
                 )

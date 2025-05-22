@@ -43,6 +43,7 @@ export type Channels =
   | 'load-game-objects'
   | 'load-game-objects-all'
   | 'remove-game-object'
+  | 'generate-tree-game-objects'
   | 'get-formulaire-game-object'
   | 'get-formulaire-game-object-all'
   | 'create-game-object'

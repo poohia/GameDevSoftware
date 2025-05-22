@@ -18,6 +18,8 @@
 
 table.ui.table {
   td.action {
-    display: flex;
+    > div {
+      display: flex;
+    }
   }
 }

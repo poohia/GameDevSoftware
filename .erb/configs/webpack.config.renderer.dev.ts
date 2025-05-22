@@ -60,7 +60,6 @@ const configuration: webpack.Configuration = {
       type: 'umd',
     },
   },
-
   module: {
     rules: [
       {

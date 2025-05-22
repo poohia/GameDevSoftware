@@ -78,7 +78,7 @@ const configuration: webpack.Configuration = {
       },
     ],
   },
-
+  resolve: { extensions: ['.ts', '.tsx', '.js'] },
   optimization: {
     minimize: true,
     minimizer: [

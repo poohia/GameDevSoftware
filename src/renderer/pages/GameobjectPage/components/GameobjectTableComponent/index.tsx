@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
   DialogShortcutsFoldersComponent,
+  DialogTreeScenesComponent,
   DropdownShortcutsFoldersComponent,
   TransComponent,
 } from 'renderer/components';
@@ -8,6 +9,7 @@ import { Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Button, Table } from 'renderer/semantic-ui';
 import { GameObject, ShortcutsFolder } from 'types';
 import { useDatabase } from 'renderer/hooks';
+import ShortcutsFoldersContext from 'renderer/contexts/ShortcutsFoldersContext';
 
 type GameobjectTableComponentProps = {
   gameObjects: GameObject[];
@@ -41,6 +43,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
   const [openIdShortcutsFolder, setOpenIdShortcutsFolder] = useState<
     string | null
   >(null);
+  const [openTreeDialog, setOpenTreeDialog] = useState<number | null>(null);
   const formatData = useMemo(() => {
     let results: GameObject[] = gameObjects;
     if (filter !== '') {
@@ -72,6 +75,15 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
     return results;
   }, [gameObjects, filter, isOnInput, folderFilter]);
   const lengthGameObjects = useMemo(() => formatData.length, [formatData]);
+
+  const { setCurrentShortcutsFolderID } = useContext(ShortcutsFoldersContext);
+
+  const handleValidateSceneTree = useCallback((id: number) => {
+    setFilter(String(id));
+    onClickRow(id);
+    setCurrentShortcutsFolderID(null);
+    setOpenTreeDialog(null);
+  }, []);
 
   useEffect(() => {
     setItem(`gameobject-${title}-filter`, filter);
@@ -122,29 +134,44 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
                     </Header>
                   </Table.Cell>
                   <Table.Cell textAlign="right" className="action">
-                    <Button
-                      basic
-                      icon
-                      color="teal"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setOpenIdShortcutsFolder(_id);
-                      }}
-                    >
-                      <Icon name="folder" />
-                    </Button>
-                    <Button
-                      basic
-                      icon
-                      color="red"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onDelete && onDelete(_id);
-                      }}
-                      disabled={!onDelete}
-                    >
-                      <Icon name="trash" />
-                    </Button>
+                    <div>
+                      {isOnAll && (
+                        <Button
+                          basic
+                          icon
+                          color="violet"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setOpenTreeDialog(_id);
+                          }}
+                        >
+                          <Icon name="magnet" />
+                        </Button>
+                      )}
+                      <Button
+                        basic
+                        icon
+                        color="teal"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setOpenIdShortcutsFolder(_id);
+                        }}
+                      >
+                        <Icon name="folder" />
+                      </Button>
+                      <Button
+                        basic
+                        icon
+                        color="red"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onDelete && onDelete(_id);
+                        }}
+                        disabled={!onDelete}
+                      >
+                        <Icon name="trash" />
+                      </Button>
+                    </div>
                   </Table.Cell>
                 </Table.Row>
               ))}
@@ -168,6 +195,15 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
           multiple
           onClose={() => {
             setOpenIdShortcutsFolder(null);
+          }}
+        />
+      )}
+      {openTreeDialog !== null && typeTarget === 'scenes' && (
+        <DialogTreeScenesComponent
+          id={openTreeDialog}
+          onValidate={handleValidateSceneTree}
+          onClose={() => {
+            setOpenTreeDialog(null);
           }}
         />
       )}

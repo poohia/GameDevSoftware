@@ -179,29 +179,31 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
                     )}
                   </Table.Cell>
                   <Table.Cell textAlign="right" className="action">
-                    <Button
-                      basic
-                      icon
-                      color="teal"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setOpenIdShortcutsFolder(key);
-                      }}
-                    >
-                      <Icon name="folder" />
-                    </Button>
-                    <Button
-                      basic
-                      icon
-                      color="red"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        deletable && onDelete(key);
-                      }}
-                      disabled={!deletable}
-                    >
-                      <Icon name="trash" />
-                    </Button>
+                    <div>
+                      <Button
+                        basic
+                        icon
+                        color="teal"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setOpenIdShortcutsFolder(key);
+                        }}
+                      >
+                        <Icon name="folder" />
+                      </Button>
+                      <Button
+                        basic
+                        icon
+                        color="red"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          deletable && onDelete(key);
+                        }}
+                        disabled={!deletable}
+                      >
+                        <Icon name="trash" />
+                      </Button>
+                    </div>
                   </Table.Cell>
                 </Table.Row>
               ))}

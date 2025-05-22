@@ -275,6 +275,10 @@ export default class GameObjectPlugin {
     );
   };
 
+  generateTree = (event: ElectronIpcMainEvent, arg: number) => {
+    LogService.Log(arg);
+  };
+
   init = () => {
     ipcMain.on('load-game-object-types', (event: Electron.IpcMainEvent) =>
       this.loadGameObjectTypes(event as ElectronIpcMainEvent)
@@ -302,6 +306,9 @@ export default class GameObjectPlugin {
     });
     ipcMain.on('open-gameobject-file', (event, args) => {
       this.openGameObjectFile(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('generate-tree-game-objects', (event, args) => {
+      this.generateTree(event as ElectronIpcMainEvent, args);
     });
   };
 }

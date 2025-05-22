@@ -102,5 +102,10 @@
   "module_shortcutsfolders_create": "Create Folder",
   "module_shortcutsfolders_update": "Modify Folder",
   "module_shortcutsfolders_form_name": "Folder name",
-  "module_scene_home_title": "All scenes"
+  "module_scene_home_title": "All scenes",
+  "module_scene_tree_dialog_orienation_horizontal": "Hotizontal",
+  "module_scene_tree_dialog_orienation_vertical": "Vertical",
+  "module_scene_tree_dialog_center": "Center",
+  "module_scene_tree_dialog_back": "Back",
+  "module_scene_tree_dialog_first_scene": "First Scene"
 }
