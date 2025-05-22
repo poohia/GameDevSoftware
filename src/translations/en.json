@@ -107,5 +107,6 @@
   "module_scene_tree_dialog_orienation_vertical": "Vertical",
   "module_scene_tree_dialog_center": "Center",
   "module_scene_tree_dialog_back": "Back",
-  "module_scene_tree_dialog_first_scene": "First Scene"
+  "module_scene_tree_dialog_first_scene": "First Scene",
+  "module_scene_tree_dialog_export": "Export PNG"
 }
