@@ -101,7 +101,9 @@ export type Channels =
   | 'get-shortcutsfolder-typetarget'
   | 'add-typetarget-shortcutsfolder'
   | 'update-shortcutsfolder'
-  | 'remove-shortcutsfolder';
+  | 'remove-shortcutsfolder'
+  | 'set-saves'
+  | 'load-saves';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -391,3 +393,15 @@ export interface ShortcutsFolderTargetType {
     | 'gameObjects'
     | 'scenes';
 }
+export type GameDatabase = {
+  currentScene: number;
+  history: number[];
+  [key: string]: any;
+};
+export type GameDatabaseSave = {
+  title?: string;
+  date: string;
+  game: GameDatabase;
+  id: number;
+  isPreset?: boolean;
+};

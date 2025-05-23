@@ -75,6 +75,8 @@ export default class FolderPlugin {
 
   static typesFiles = 'type.ts';
 
+  static savesFile = `${FolderPlugin.gameDevSoftwareDirectory}/saves.json`;
+
   static validePath(path: string) {
     let isValid = true;
     if (!fs.existsSync(`${path}${FolderPlugin.configFile}`)) {

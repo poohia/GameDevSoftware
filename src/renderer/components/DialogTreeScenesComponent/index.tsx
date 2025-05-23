@@ -316,7 +316,7 @@ const DialogTreeScenesComponent: React.FC<
           ref={containerRef}
           style={{ backgroundColor: 'white' }}
         >
-          {data && translate ? (
+          {data && translate && (
             <Tree
               data={data}
               orientation={orientation}
@@ -359,10 +359,6 @@ const DialogTreeScenesComponent: React.FC<
                 transform: undefined,
               }}
             />
-          ) : (
-            <div>
-              <TransComponent id="module_scene_tree_dialog_loading_tree" />
-            </div>
           )}
         </div>
       </div>

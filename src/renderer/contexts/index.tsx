@@ -9,6 +9,7 @@ import {
   useFonts,
   useChatGPT,
   useShortcutsFolders,
+  useSaves,
 } from 'renderer/hooks';
 import TranslationsContext from './TranslationsContext';
 import ConstantsContext from './ConstantsContext';
@@ -20,6 +21,7 @@ import ChatGPTContext from './ChatGPTContext';
 import useTerminal from 'renderer/hooks/useTerminal';
 import TerminalContext from './TerminalContext';
 import ShortcutsFoldersContext from './ShortcutsFoldersContext';
+import SavesContext from './SavesContext';
 
 type GameDevSoftwareProviderProps = {
   children: ReactNode;
@@ -39,6 +41,7 @@ const GameDevSoftwareProvider: React.FunctionComponent<
   useFonts();
   const { gameObjects, findGameObjectsByType } = useGameObjects();
   const { darkModeActived, toggleDarkMode } = useDarkMode();
+  const saves = useSaves();
 
   return (
     <DarkModeContext.Provider value={{ darkModeActived, toggleDarkMode }}>
@@ -52,7 +55,9 @@ const GameDevSoftwareProvider: React.FunctionComponent<
                 <ShortcutsFoldersContext.Provider value={shortcutsFolders}>
                   <ChatGPTContext.Provider value={{ ...chatGPT }}>
                     <TerminalContext.Provider value={{ ...terminal }}>
-                      {children}
+                      <SavesContext.Provider value={{ ...saves }}>
+                        {children}
+                      </SavesContext.Provider>
                     </TerminalContext.Provider>
                   </ChatGPTContext.Provider>
                 </ShortcutsFoldersContext.Provider>

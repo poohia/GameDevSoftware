@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import ModalComponent from 'renderer/components/ModalComponent';
-import { useDatabase } from 'renderer/hooks';
 import { Button } from 'renderer/semantic-ui';
 import { Dropdown, DropdownItemProps, Form, Icon } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import useMessages, { useMessagesProps } from '../../useMessages';
+import SavesContext from 'renderer/contexts/SavesContext';
+import { GameDatabaseSave } from 'types';
 
 type DropdownSavesProps = useMessagesProps & {
   onLoadSave: () => void;
@@ -14,77 +15,59 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
   refIframe,
   onLoadSave,
 }) => {
-  /** */
-  const { getItem, setItem } = useDatabase();
+  const { saves, addSave, removeSave } = useContext(SavesContext);
   const { sendMessage } = useMessages(refIframe);
+
   /** */
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
-  const [saveSelected, setSaveSelected] = useState<string | null>(null);
-  const [saves, setSaves] = useState<{ title: string; data: any }[]>(
-    getItem('view-saves') || []
+  const [saveSelected, setSaveSelected] = useState<GameDatabaseSave | null>(
+    null
   );
+
   const [loading, setLoading] = useState<boolean>(false);
   /** */
   const options: DropdownItemProps[] = useMemo(
     () =>
       saves.map((save) => ({
         text: save.title,
-        value: save.title.toLowerCase(),
-        key: save.title.toLowerCase(),
+        value: save.id,
       })),
     [saves]
   );
-
-  const loadSaves = useCallback(() => {
-    setSaves(getItem('view-saves') || []);
-  }, []);
 
   const handleSubmit = useCallback(() => {
     if (title === '') {
       return;
     }
     sendMessage('getSaveData', null, (data) => {
-      if (data.message.title === 'getSaveData') {
-        setItem('view-saves', saves.concat({ title, data: data.data }));
-      }
+      addSave(data.data, title);
       setTitle('');
       setOpenModal(false);
-      loadSaves();
     });
   }, [title]);
 
-  const removeSave = useCallback(
-    (title: string) => {
-      if (loading) return;
-      const futurSaves = saves.filter(
-        (save) => save.title.toLowerCase() !== title
-      );
-      setItem('view-saves', futurSaves);
-      setSaves(futurSaves);
+  const removeCurrentSave = useCallback(() => {
+    if (loading) return;
+
+    if (saveSelected) {
+      removeSave(saveSelected.id);
       setSaveSelected(null);
-    },
-    [loading, saves]
-  );
+    }
+  }, [loading, saveSelected]);
 
-  const loadSave = useCallback(
-    (title: string) => {
-      if (loading) return;
-      const save = saves.find((save) => {
-        return save.title.toLowerCase() === title;
-      });
+  const loadSave = useCallback(() => {
+    if (loading) return;
 
-      if (save) {
-        setLoading(true);
-        sendMessage('setSaveData', save.data);
-        setTimeout(() => {
-          onLoadSave();
-          setLoading(false);
-        }, 500);
-      }
-    },
-    [loading, saves]
-  );
+    if (saveSelected) {
+      setLoading(true);
+      sendMessage('setSaveData', saveSelected.game);
+      setTimeout(() => {
+        onLoadSave();
+        setLoading(false);
+      }, 500);
+    }
+  }, [loading, saveSelected]);
 
   return (
     <>
@@ -95,16 +78,11 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
           placeholder={i18n.t('module_view_save_input_placeholder')}
           clearable
           search
-          value={saveSelected || undefined}
+          value={saveSelected?.id || undefined}
           onChange={(_e, data) => {
-            const save = saves.find(
-              (save) => save.title.toLowerCase() === data.value
+            setSaveSelected(
+              saves.find((save) => save.id === data.value) || null
             );
-            if (!save) {
-              setSaveSelected(null);
-            } else {
-              setSaveSelected(save.title.toLowerCase());
-            }
           }}
         />
         {saveSelected === null && (
@@ -124,7 +102,7 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
               icon
               secondary
               onClick={() => {
-                loadSave(saveSelected);
+                loadSave();
               }}
               loading={loading}
             >
@@ -133,9 +111,7 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
             <Button
               icon
               color="red"
-              onClick={() => {
-                removeSave(saveSelected);
-              }}
+              onClick={removeCurrentSave}
               loading={loading}
             >
               <Icon name="trash" />
@@ -158,6 +134,7 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
                 setTitle(data.value);
               }}
               focus
+              autoFocus
             />
           </Form.Field>
         </Form>
