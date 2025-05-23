@@ -95,7 +95,7 @@
   "module_chatgpt_form_field_translation_split_label": "The translation file is often too large in terms of tokens. You have the option to split the file into multiple parts. Please specify the number of splits for the file",
   "module_chatgpt_creating_translate_file": "Creation of translation....",
   "form_input_modal_generatetype_title": "Generate types",
-  "form_input_modal_generatetype_cta_all": "Generate GameObjects and Scenes",
+  "form_input_modal_generatetype_cta_all": "Generate GameObjects, Scenes and Constants",
   "notification.message.file.translated": "File translated with success",
   "terminal_component_modal_title": "Terminal",
   "module_shortcutsfolders": "Shortcuts Folders Module",

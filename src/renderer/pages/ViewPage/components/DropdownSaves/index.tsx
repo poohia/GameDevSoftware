@@ -61,7 +61,7 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
 
     if (saveSelected) {
       setLoading(true);
-      sendMessage('setSaveData', saveSelected.game);
+      sendMessage('setSaveData', saveSelected);
       setTimeout(() => {
         onLoadSave();
         setLoading(false);

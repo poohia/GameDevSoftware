@@ -24,9 +24,10 @@ export default class ChatGPTGenerateTypes {
     Promise.all([
       this.generateScenesType(chatGPTInfos),
       this.generateGameObjectsType(chatGPTInfos),
+      this.generateConstantsType(chatGPTInfos),
     ])
       .then((data) => {
-        const d = data[0] + '\n\n' + data[1];
+        const d = data[0] + '\n\n' + data[1] + '\n\n' + data[2];
         return FileService.writeFile(targetFile, d);
       })
       .then(() => {
@@ -95,7 +96,8 @@ export default class ChatGPTGenerateTypes {
                   'Mapping rules for each core property:',
                   '- `"boolean"`→ `boolean`',
                   '- `"number"` or `"float"` → `number`',
-                  '- Literals `"image"`, `"translation"`, `"json"`, `"string"`, `"video"`, `"@c:"`, etc. → `string`',
+                  '- Literals `"image"`, `"translation"`, `"json"`, `"string"`, `"video"`, etc. → `string`',
+                  '- References starting with @c: should replace the following text by converting it to PascalCase (e.g., retrospaceadventure_character_type → RetrospaceadventureCharacterType). This type will be created in another script, so you don’t need to generate it yourself',
                   '- References starting with `@go:` → strip prefix and convert the suffix to PascalCase; use that as a type name (e.g. `@go:retrospaceadventure-skill` → `RetrospaceAdventureSkill`).',
                   '- If `"multiple": true`, wrap the type in an array (`TypeName[]`).',
                   '- If `"optional": true`, mark the property optional with `?`.',
@@ -210,11 +212,12 @@ export default class ChatGPTGenerateTypes {
                   'You are a helpful assistant that writes clean, idiomatic TypeScript type definitions from JSON configuration objects. **In every interface you generate, regardless of the config JSON, you must include these two properties at the very top (before any other field):**',
                   '- `_id: number`',
                   '- `_title: string`',
-                  'Interface names must be derived from each object’s `"type"` field by converting kebab-case to PascalCase and add suffix `Props` (PascalCaseProps.',
+                  'Interface names must be derived from each object’s `"type"` field by converting kebab-case to PascalCase and add suffix `Props` (PascalCaseProps)',
                   'Mapping rules for each core property:',
                   '- `"boolean"`→ `boolean`',
                   '- `"number"` or `"float"` → `number`',
-                  '- Literals `"image"`, `"translation"`, `"json"`, `"string"`, `"video"`, `"@c:"`, etc. → `string`',
+                  '- Literals `"image"`, `"translation"`, `"json"`, `"string"`, `"video"`, or all started with `"@"` etc. → `string`',
+                  '- References starting with @c: should replace the following text by converting it to PascalCase (e.g., retrospaceadventure_character_type → RetrospaceadventureCharacterType). This type will be created in another script, so you don’t need to generate it yourself',
                   '- If `"multiple": true`, wrap the type in an array (`TypeName[]`).',
                   '- If `"optional": true`, mark the property optional with `?`.',
                   '- If a `"core"` value is itself an object, generate a nested interface named `<ParentName><PropertyName>` (PascalCase)).',
@@ -278,6 +281,92 @@ export default class ChatGPTGenerateTypes {
               reject(e);
             }
           });
+      });
+    });
+  };
+
+  private generateConstantsType = (chatGPTInfos: ChatGPTType) => {
+    return new Promise((resolve, reject) => {
+      // @ts-ignore
+      const { path } = global;
+      FileService.readJsonFile(
+        pathModule.join(path, FolderPlugin.constantFile)
+      ).then(async (json) => {
+        if (!openAI || !chatGPTInfos) {
+          reject();
+          return;
+        }
+
+        // Prépare la conversation avec un prompt en anglais
+        const messages: ChatCompletionMessageParam[] = [
+          {
+            role: 'system',
+            content: [
+              'You are a helpful assistant that generates TypeScript type aliases from a JSON array of configuration objects.',
+              'For each object in the array:',
+              '- Convert its `"key"` (kebab-case or snake_case) to PascalCase and use that as the alias name.',
+              '- Map its `"value"` to a TypeScript literal or union type:',
+              '  • If the value is an array, emit a union of its elements (e.g. `("a" | "b" | "c")`).',
+              '  • If the value is a string, emit a string literal type (e.g. `"foo.png"`).',
+              '  • If the value is a number, emit a numeric literal type (e.g. `42`).',
+              '- Use the syntax `export type AliasName = <type>;`.',
+              'Output only the TypeScript code, one `export type` per line, with no additional commentary.',
+            ].join(' '),
+          },
+          {
+            role: 'user',
+            content: [
+              'Here is the JSON array of configurations:',
+              '```json',
+              JSON.stringify(json, null, 2),
+              '```',
+            ].join('\n'),
+          },
+        ];
+
+        if (chatGPTInfos.extraPrompt) {
+          messages.push({
+            role: 'user',
+            content: `Other tips for translation: ${chatGPTInfos.extraPrompt}\n`,
+          });
+        }
+
+        try {
+          // Appel à l’API Chat Completions
+          const response = await openAI.chat.completions.create({
+            model: chatGPTInfos.model,
+            messages,
+            temperature: 0.2,
+            functions: [
+              {
+                name: 'write_code',
+                description: 'Generate a TS module given JSON',
+                parameters: {
+                  type: 'object',
+                  properties: {
+                    code: {
+                      type: 'string',
+                      description: 'The complete TS source code',
+                    },
+                  },
+                  required: ['code'],
+                },
+              },
+            ],
+            function_call: { name: 'write_code' },
+          });
+
+          // Récupère le code renvoyé par la fonction
+          const code = response.choices[0].message?.function_call?.arguments;
+          if (!code) {
+            throw new Error('No code returned by the assistant.');
+          }
+
+          resolve(JSON.parse(code).code);
+        } catch (e) {
+          LogService.Notify(JSON.stringify(e));
+          reject(e);
+        }
       });
     });
   };

@@ -176,7 +176,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
           <Grid.Column>
             <Header as="h1">
               {defaultValue === undefined ? (
-                <TransComponent id="module_translation_form_title_new" />
+                <TransComponent id="module_constant_header_append_constant" />
               ) : (
                 <TransComponent id="module_constant_form_title_update" />
               )}
