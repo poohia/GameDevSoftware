@@ -2,6 +2,7 @@ import { Container, Grid, Header, Icon, Input } from 'semantic-ui-react';
 import { Segment } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import useImagesParamsComponent from './useImagesParamsComponent';
+import { AssetInput } from 'renderer/components/FormGenerator/components';
 
 const ImagesParamsComponent = () => {
   const {
@@ -89,15 +90,24 @@ const ImagesParamsComponent = () => {
               <p>Brand Image 128x128 pixels</p>
             </Grid.Column>
             <Grid.Column width={4}>
-              <video
+              {/* <video
                 onClick={replacePromotionVideo}
                 src={splashscreenInformation?.gamePromotionVideo}
                 autoPlay
                 loop
                 width="100%"
                 height="100%"
+              /> */}
+              <AssetInput
+                name="splashcreen-asset"
+                type="video"
+                defaultValue={splashscreenInformation?.gamePromotionVideo}
+                clearable
+                onChange={(data) => {
+                  replacePromotionVideo(data.target.value);
+                }}
               />
-              <p>Video promotion mp4</p>
+              <p>Video promotion mp4 (optionnel)</p>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>

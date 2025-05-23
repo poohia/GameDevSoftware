@@ -31,13 +31,14 @@ export default class SplashscreenPlugin {
         `${path}${FolderPlugin.publicDirectory}/${data.brandImage}`,
         (base64) => {
           data.brandImage = formatBase64('image', base64);
-          FileService.getFileBase64(
-            `${path}${FolderPlugin.publicDirectory}/${data.gamePromotionVideo}`,
-            (videoBase64) => {
-              data.gamePromotionVideo = formatBase64('video', videoBase64);
-              event.reply('load-splashscreen-informations', data);
-            }
-          );
+          // FileService.getFileBase64(
+          //   `${path}${FolderPlugin.publicDirectory}/${data.gamePromotionVideo}`,
+          //   (videoBase64) => {
+          //     data.gamePromotionVideo = formatBase64('video', videoBase64);
+          //     event.reply('load-splashscreen-informations', data);
+          //   }
+          // );
+          event.reply('load-splashscreen-informations', data);
         }
       );
     });
@@ -63,16 +64,14 @@ export default class SplashscreenPlugin {
     ).then(() => this.openSplashscreenFile(event));
   };
 
-  replaceGamePromotionVideo = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
-    const { path } = global;
-    FileService.replaceFile(
-      `${path}${FolderPlugin.splashscreenGamePromotionFile}`,
-      this.mainWindow,
-      {
-        properties: ['openFile'],
-        filters: [{ extensions: ['mp4'], name: 'Video' }],
-      }
-    ).then(() => this.openSplashscreenFile(event));
+  replaceGamePromotionVideo = (event: ElectronIpcMainEvent, asset: string) => {
+    this.openFile()
+      .then((data) => {
+        data.gamePromotionVideo = asset;
+        return this.writeFile(data);
+      })
+      .then(() => {
+        event.reply('splashscreen-replace-promotion-video', asset);
+      });
   };
 }

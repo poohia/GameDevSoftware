@@ -298,9 +298,10 @@ export default class ApplicationPlugin {
     );
     ipcMain.on(
       'splashscreen-replace-promotion-video',
-      (event: Electron.IpcMainEvent) => {
+      (event: Electron.IpcMainEvent, asset: string) => {
         this._splashscreenPlugin.replaceGamePromotionVideo(
-          event as ElectronIpcMainEvent
+          event as ElectronIpcMainEvent,
+          asset
         );
       }
     );

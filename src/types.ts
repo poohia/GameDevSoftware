@@ -308,6 +308,7 @@ export type CustomInputProps = {
   required?: boolean;
   multiple?: boolean;
   optional?: boolean;
+  clearable?: boolean;
   onChange: (value: any) => void;
   onBlur?: () => void;
 };

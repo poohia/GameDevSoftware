@@ -39,8 +39,8 @@ const useImagesParamsComponent = () => {
     sendMessage('splashscreen-replace-brand-image');
   }, []);
 
-  const replacePromotionVideo = useCallback(() => {
-    sendMessage('splashscreen-replace-promotion-video');
+  const replacePromotionVideo = useCallback((asset: string) => {
+    sendMessage('splashscreen-replace-promotion-video', asset);
   }, []);
 
   useEffect(() => {

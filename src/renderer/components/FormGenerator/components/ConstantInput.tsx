@@ -51,9 +51,16 @@ const ModalConstant = (
 };
 
 const ConstantInput = (props: CustomInputProps) => {
-  const { defaultValue, type = 'string', name, onChange, onBlur } = props;
+  const {
+    defaultValue = '',
+    type = 'string',
+    name,
+    clearable,
+    onChange,
+    onBlur,
+  } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState<string>(defaultValue);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = useCallback(
@@ -85,10 +92,20 @@ const ConstantInput = (props: CustomInputProps) => {
     <>
       <div className="ui selection dropdown fluid" onClick={handleClick}>
         {value && <span>{value}</span>}
+        {clearable && !!value && (
+          <i
+            aria-hidden="true"
+            className="dropdown icon clear"
+            onClick={(event) => {
+              event.stopPropagation();
+              handleSubmit('');
+            }}
+          ></i>
+        )}
       </div>
       <ModalConstant
         open={openModal}
-        defaultValue={defaultValue}
+        defaultValue={value}
         type={type}
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}

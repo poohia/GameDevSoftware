@@ -111,11 +111,14 @@ const GameObjectInput: React.FC<
     type,
     multiple,
     optional = false,
+    clearable = false,
     onChange,
     onBlur,
   } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [value, setValue] = useState<string | string[]>(multiple ? [] : '');
+  const [value, setValue] = useState<string | string[]>(
+    defaultValue || multiple ? [] : ''
+  );
 
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -155,7 +158,7 @@ const GameObjectInput: React.FC<
         onChange={(v) => onChange(v)}
         optional={optional}
         type={type}
-        defaultValue={defaultValue}
+        defaultValue={value as string[]}
       />
     );
   }
@@ -164,6 +167,16 @@ const GameObjectInput: React.FC<
     <>
       <div className="ui selection dropdown fluid" onClick={handleClick}>
         {value && <span>{value}</span>}
+        {clearable && !!value && (
+          <i
+            aria-hidden="true"
+            className="dropdown icon clear"
+            onClick={(event) => {
+              event.stopPropagation();
+              handleSubmit('');
+            }}
+          ></i>
+        )}
       </div>
       {optional && value !== '' && (
         <span
@@ -177,7 +190,7 @@ const GameObjectInput: React.FC<
       )}
       <ModalGameObjectInput
         open={openModal}
-        defaultValue={defaultValue}
+        defaultValue={value as string}
         type={type}
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}

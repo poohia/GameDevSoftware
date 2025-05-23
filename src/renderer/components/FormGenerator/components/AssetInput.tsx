@@ -51,9 +51,17 @@ const ModalAsset = (
 };
 
 const AssetInput = (props: CustomInputProps) => {
-  const { defaultValue, type, name, multiple, onChange, onBlur } = props;
+  const {
+    defaultValue = '',
+    type,
+    name,
+    multiple,
+    clearable,
+    onChange,
+    onBlur,
+  } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState<string>(defaultValue);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = useCallback(
@@ -85,10 +93,20 @@ const AssetInput = (props: CustomInputProps) => {
     <>
       <div className="ui selection dropdown fluid" onClick={handleClick}>
         {value && <span>{value}</span>}
+        {clearable && !!value && (
+          <i
+            aria-hidden="true"
+            className="dropdown icon clear"
+            onClick={(event) => {
+              event.stopPropagation();
+              handleSubmit('');
+            }}
+          ></i>
+        )}
       </div>
       <ModalAsset
         open={openModal}
-        defaultValue={defaultValue}
+        defaultValue={value}
         type={type as AssertAcceptedType}
         multiple={multiple}
         onClose={() => setOpenModal(false)}
