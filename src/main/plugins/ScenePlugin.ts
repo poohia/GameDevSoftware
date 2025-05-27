@@ -199,17 +199,6 @@ export default class ScenePlugin {
               _scene: 'scene',
             },
           },
-          _music: {
-            label: 'Primary music',
-            core: 'sound',
-            optional: true,
-          },
-          _release_sounds: {
-            label: 'Release sound',
-            core: 'sound',
-            optional: true,
-            multiple: true,
-          },
         },
       }));
   };

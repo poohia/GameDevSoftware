@@ -4,11 +4,11 @@ import { Icon } from 'semantic-ui-react';
 import useMessages, { useMessagesProps } from '../../useMessages';
 
 const DropdownSound: React.FC<useMessagesProps> = ({ refIframe }) => {
-  const [soundActivated, setSoundActivated] = useState<boolean>(false);
+  const [soundActivated, setSoundActivated] = useState<number>(0);
   const { sendMessage, listenMessage } = useMessages(refIframe);
 
   useEffect(() => {
-    listenMessage<boolean>('currentSound', (response) => {
+    listenMessage<number>('currentSound', (response) => {
       setSoundActivated(response.data);
     });
   }, []);
@@ -17,7 +17,7 @@ const DropdownSound: React.FC<useMessagesProps> = ({ refIframe }) => {
     <Button
       icon
       onClick={() => {
-        sendMessage('setCurrentSound', !soundActivated);
+        sendMessage('setCurrentSound', soundActivated ? 0 : 1);
       }}
       labelPosition="left"
     >
