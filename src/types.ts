@@ -103,7 +103,10 @@ export type Channels =
   | 'update-shortcutsfolder'
   | 'remove-shortcutsfolder'
   | 'set-saves'
-  | 'load-saves';
+  | 'load-saves'
+  | 'open-cypress'
+  | 'open-cypress-screenshots'
+  | 'cypress-clear-screenshots';
 export type Tables =
   | 'locale'
   | 'tabs'

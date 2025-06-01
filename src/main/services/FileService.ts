@@ -1,6 +1,6 @@
 import { dialog } from 'electron';
 import fs from 'fs';
-import { normalize } from 'path';
+import { normalize, join } from 'path';
 
 export default class FileService {
   static saveFileFromBase64 = (
@@ -161,5 +161,57 @@ export default class FileService {
         }
         resolve(src);
       });
+    });
+
+  static clearDirectory = (dirPath: string): Promise<void> =>
+    new Promise((resolve, reject) => {
+      fs.readdir(
+        normalize(dirPath),
+        { withFileTypes: true },
+        (err, entries) => {
+          if (err) {
+            console.error(err);
+            return reject(new Error(err.message));
+          }
+
+          if (entries.length === 0) {
+            return resolve();
+          }
+
+          let pending = entries.length;
+
+          entries.forEach((entry) => {
+            const fullPath = normalize(join(dirPath, entry.name));
+
+            if (entry.isDirectory()) {
+              // Supprime récursivement le sous-dossier et tout son contenu
+              fs.rm(fullPath, { recursive: true, force: true }, (rmErr) => {
+                if (rmErr) {
+                  console.error(rmErr);
+                  return reject(new Error(rmErr.message));
+                }
+
+                pending--;
+                if (pending === 0) {
+                  resolve();
+                }
+              });
+            } else {
+              // Supprime le fichier
+              fs.unlink(fullPath, (unlinkErr) => {
+                if (unlinkErr) {
+                  console.error(unlinkErr);
+                  return reject(new Error(unlinkErr.message));
+                }
+
+                pending--;
+                if (pending === 0) {
+                  resolve();
+                }
+              });
+            }
+          });
+        }
+      );
     });
 }

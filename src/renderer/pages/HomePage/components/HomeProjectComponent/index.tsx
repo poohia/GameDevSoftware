@@ -1,8 +1,14 @@
 import { Container, Grid, Header, Icon } from 'semantic-ui-react';
 import { Button, Segment } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
-import { ButtonStartStopProjectComponent } from 'renderer/components';
-import { HomeSoftwaresInfoComponent } from 'renderer/pages/HomePage/components';
+import {
+  ButtonStartStopProjectComponent,
+  TransComponent,
+} from 'renderer/components';
+import {
+  HomeCypressComponent,
+  HomeSoftwaresInfoComponent,
+} from 'renderer/pages/HomePage/components';
 import { useEffect, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
 import HomeBuildRowComponent from '../HomeBuildRowComponent';
@@ -68,11 +74,21 @@ const HomeProjectComponent: React.FC<HomeProjectComponentProps> = ({
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column>
-                  <Header as="h3">Emulate</Header>
+                  <Header as="h3">
+                    <TransComponent id="module_application_home_emulate_title" />
+                  </Header>
                 </Grid.Column>
               </Grid.Row>
               <Grid.Row>
                 <HomeEmulateRowComponent />
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column>
+                  <Header as="h3">Cypress</Header>
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <HomeCypressComponent />
               </Grid.Row>
             </Grid.Column>
             <Grid.Column>

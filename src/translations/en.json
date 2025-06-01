@@ -58,6 +58,7 @@
   "module_application_params_background": "Background",
   "module_application_params_fontFamily": "Font family",
   "module_gameobject_home_title": "All Game Objects",
+  "module_application_home_emulate_title": "Emulate",
   "form_button_add": "Add",
   "modal_component_btn_close": "Cancel",
   "modal_component_btn_accepted": "Confirm",
@@ -107,5 +108,8 @@
   "module_scene_tree_dialog_center": "Center",
   "module_scene_tree_dialog_back": "Back",
   "module_scene_tree_dialog_first_scene": "First Scene",
-  "module_scene_tree_dialog_export": "Export PNG"
+  "module_scene_tree_dialog_export": "Export PNG",
+  "module_application_home_cypress_open": "Open Cypress",
+  "module_application_home_cypress_open_screenshots": "Open Screenshots",
+  "module_application_home_cypress_clear_screenshots": "Clear Screenshots"
 }

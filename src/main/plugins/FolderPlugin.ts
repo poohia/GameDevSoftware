@@ -8,6 +8,8 @@ export default class FolderPlugin {
   static publicDirectory = '/public';
   static resourcesDirectory = '/resources';
   static platformsDirectory = '/platforms';
+  static cypressDirectory = `cypress`;
+
   static gameDevSoftwareDirectory = `${FolderPlugin.srcDirectory}/GameDevSoftware`;
   static modulesDirectory = `${FolderPlugin.gameDevSoftwareDirectory}/modules`;
 
@@ -76,6 +78,9 @@ export default class FolderPlugin {
   static typesFiles = 'type.ts';
 
   static savesFile = `${FolderPlugin.gameDevSoftwareDirectory}/saves.json`;
+
+  /** Cypress */
+  static cypressScreenshotsDirectory = `${FolderPlugin.cypressDirectory}/cypress/screenshots`;
 
   static validePath(path: string) {
     let isValid = true;
