@@ -48,6 +48,7 @@ const ModalGameObjectInput = (
         keySelected={Number(value.replace('@go:', ''))}
         title="gameobjectinput"
         isOnInput
+        typeTarget="gameObjects"
         onClickRow={handleClickRow}
       />
     </ModalComponent>
@@ -109,16 +110,21 @@ const GameObjectInput: React.FC<
   const {
     defaultValue,
     type,
-    multiple,
+    multiple = false,
     optional = false,
     clearable = false,
     onChange,
     onBlur,
   } = props;
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [value, setValue] = useState<string | string[]>(
-    defaultValue || multiple ? [] : ''
-  );
+  const [value, setValue] = useState<string | string[]>(() => {
+    if (defaultValue) {
+      return defaultValue;
+    } else if (multiple) {
+      return [];
+    }
+    return '';
+  });
 
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -147,8 +153,10 @@ const GameObjectInput: React.FC<
   useEffect(() => {
     if (defaultValue) {
       setValue(defaultValue);
+    } else if (multiple) {
+      setValue([]);
     } else {
-      setValue(multiple ? [] : '');
+      setValue('');
     }
   }, [defaultValue]);
 
