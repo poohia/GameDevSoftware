@@ -36,7 +36,6 @@ const AssetPreviewComponent = (props: AssetPreviewComponentProps) => {
   }, [base64]);
 
   const updateInformations = useCallback(() => {
-    console.log("i' mhere 000");
     if (content instanceof HTMLImageElement) {
       setWidth(content.naturalWidth);
       setHeight(content.naturalHeight);

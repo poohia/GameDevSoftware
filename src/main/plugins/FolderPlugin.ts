@@ -30,6 +30,8 @@ export default class FolderPlugin {
   static sceneFile = `${FolderPlugin.sceneDirectory}/index.json`;
   /* ShortcutsFolderFile */
   static shortcutsFolderFile = `/shortcutsFolders.json`;
+  /* ChatGPT */
+  static chatGPTFile = '/chatgpt.json';
   /** */
   static configFile = `/capacitor.config.json`;
   static configFileJson = '/src/config.json';

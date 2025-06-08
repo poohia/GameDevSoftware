@@ -110,8 +110,6 @@ const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
     }
   }, [value]);
 
-  console.log(isDragAccept, isDragReject);
-
   return (
     <Container fluid className="game-dev-software-file-preview-container">
       <div {...getRootProps({ style })}>
