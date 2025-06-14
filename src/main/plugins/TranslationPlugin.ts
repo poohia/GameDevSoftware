@@ -29,6 +29,16 @@ export default class TranslationPlugin {
     );
   };
 
+  private reverseAllLanguages = (translations: any) => {
+    // on reconstruit un nouvel objet pour ne pas muter l’original
+    return Object.fromEntries(
+      Object.entries(translations).map(([lang, entries]: any) => [
+        lang,
+        [...entries].reverse(), // clone & reverse
+      ])
+    );
+  };
+
   loadTranslations = (event: ElectronIpcMainEvent) => {
     const translations: any = {};
     // @ts-ignore
@@ -67,7 +77,10 @@ export default class TranslationPlugin {
           .finally(() => callback());
       })
       .then(() => {
-        event.reply('load-translations', translations);
+        event.reply(
+          'load-translations',
+          this.reverseAllLanguages(translations)
+        );
       });
   };
 
