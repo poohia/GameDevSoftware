@@ -39,6 +39,7 @@ const GameobjectContainerComponent = (props: PageProps) => {
               gameObjects={gameObjects}
               keySelected={stateForm.value?._id}
               title={props.title}
+              typeTarget="gameObjects"
               onClickRow={updateGameobject}
               onDelete={removeGameObject}
             />

@@ -15,7 +15,6 @@ const useAllSceneContainerComponent = (props: { stateForm: State }) => {
       setGameObjectForm(null);
       once(`get-formulaire-scene-all`, (args) => {
         setGameObjectForm(args);
-        console.log('🚀 ~ once ~ args:', args);
       });
       sendMessage(`get-formulaire-scene-all`, stateForm.value?._type);
     }
