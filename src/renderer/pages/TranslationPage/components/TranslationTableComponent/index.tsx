@@ -31,7 +31,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
   const [filter, setFilter] = useState<string>(() => {
     return getItem('translation-filter') || '';
   });
-  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder | null>(
+  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder[] | null>(
     null
   );
   const [filterModule, setFilterModule] = useState<boolean>(true);
@@ -58,11 +58,15 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
         (translation) => translation.module === module
       );
     }
-    if (folderFilter) {
-      _translations = _translations.filter((translation) =>
-        folderFilter.translations && folderFilter.translations.length > 0
-          ? folderFilter.translations.includes(translation.key)
-          : false
+    if (folderFilter && folderFilter.length > 0) {
+      const allowedKeys = new Set(
+        folderFilter
+          .flatMap((f) => f.translations ?? [])
+          .map((k) => k.toLowerCase()) // même casse que `translation.key`
+      );
+
+      _translations = _translations.filter((t) =>
+        allowedKeys.has(t.key.toLowerCase())
       );
     }
     return _translations;

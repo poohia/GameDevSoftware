@@ -37,7 +37,7 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
   const [filterType, setFilterType] = useState<ConstantType | string>(
     defaultFilterType || ''
   );
-  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder | null>(
+  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder[] | null>(
     null
   );
   const [filterModule, setFilterModule] = useState<boolean>(true);
@@ -88,12 +88,14 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
       _constants = _constants.filter((c) => c.module === module);
     }
 
-    if (folderFilter) {
-      _constants = _constants.filter((constant) =>
-        folderFilter.constants && folderFilter.constants.length > 0
-          ? folderFilter.constants.includes(constant.key)
-          : false
+    if (folderFilter && folderFilter.length > 0) {
+      const allowedKeys = new Set(
+        folderFilter
+          .flatMap((f) => f.constants ?? [])
+          .map((k) => k.toLowerCase()) // ↓ cohérent avec key.toLowerCase()
       );
+
+      _constants = _constants.filter((c) => allowedKeys.has(c.key));
     }
     return _constants;
   }, [filter, filterType, filterModule, constants, folderFilter]);

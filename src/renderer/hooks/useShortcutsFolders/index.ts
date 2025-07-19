@@ -1,50 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useEvents from '../useEvents';
-import { ShortcutsFolder } from 'types';
 import useDatabase from '../useDatabase';
+import { ShortcutsFolder } from 'types';
 
-const useShortcutsFolders = () => {
+const DB_KEY = 'shortcutsFolder';
+
+const useShortcutsFolder = () => {
   const { requestMessage } = useEvents();
   const { getItem, setItem } = useDatabase();
-  const [shortcutsFolders, setShortcutsFolders] = useState<
-    ShortcutsFolder[] | null
-  >(null);
+
+  const [shortcutsFolders, setShortcutsFolders] = useState<ShortcutsFolder[]>(
+    []
+  );
 
   const [currentShortcutsFolderID, setCurrentShortcutsFolderID] = useState<
-    number | null
-  >(() => {
-    return getItem<number>('shortcutsFolder') || null;
-  });
-
-  const [currentShortcutsFolder, setCurrentShortcutsFolder] =
-    useState<ShortcutsFolder | null>(null);
+    number[]
+  >(() => getItem<number[]>(DB_KEY) ?? []);
 
   useEffect(() => {
     requestMessage('load-shortcutsfolder', (data: ShortcutsFolder[]) => {
       setShortcutsFolders(data);
     });
-  }, []);
+  }, [requestMessage]);
+
+  const currentShortcutsFolder = useMemo(() => {
+    if (currentShortcutsFolderID.length === 0) return [];
+    return shortcutsFolders.filter((f) =>
+      currentShortcutsFolderID.includes(f.id)
+    );
+  }, [shortcutsFolders, currentShortcutsFolderID]);
 
   useEffect(() => {
-    if (!shortcutsFolders) return;
-    const folderFind = shortcutsFolders.find(
-      (folder) => folder.id === currentShortcutsFolderID
-    );
-    if (folderFind) {
-      setItem('shortcutsFolder', currentShortcutsFolderID);
-      setCurrentShortcutsFolder(folderFind);
-    } else {
-      setCurrentShortcutsFolder(null);
-      setItem('shortcutsFolder', null);
-    }
-  }, [currentShortcutsFolderID, shortcutsFolders]);
+    setItem(DB_KEY, currentShortcutsFolderID);
+  }, [currentShortcutsFolderID, setItem]);
 
   return {
-    shortcutsFolders: shortcutsFolders || [],
+    shortcutsFolders,
     currentShortcutsFolder,
     currentShortcutsFolderID,
     setCurrentShortcutsFolderID,
   };
 };
 
-export default useShortcutsFolders;
+export default useShortcutsFolder;

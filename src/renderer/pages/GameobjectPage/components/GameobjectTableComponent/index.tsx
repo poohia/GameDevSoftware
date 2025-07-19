@@ -37,7 +37,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
   const [filter, setFilter] = useState<string>(() => {
     return getItem(`gameobject-${title}-filter`) || '';
   });
-  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder | null>(
+  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder[] | null>(
     null
   );
   const [openIdShortcutsFolder, setOpenIdShortcutsFolder] = useState<
@@ -54,23 +54,15 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
           gameObject._title.toLowerCase().includes(filter)
       );
     }
-    if (
-      (isOnInput || isOnAll) &&
-      folderFilter &&
-      typeTarget === 'gameObjects'
-    ) {
-      results = results.filter((gameObject) =>
-        folderFilter.gameObjects && folderFilter.gameObjects.length > 0
-          ? folderFilter.gameObjects.includes(gameObject._id)
-          : false
+    if ((isOnInput || isOnAll) && folderFilter && folderFilter.length > 0) {
+      /* selon le type ciblé, on agrège la bonne clé du dossier */
+      const allowedIds = new Set(
+        folderFilter.flatMap((f) =>
+          typeTarget === 'gameObjects' ? f.gameObjects ?? [] : f.scenes ?? []
+        )
       );
-    }
-    if ((isOnInput || isOnAll) && folderFilter && typeTarget === 'scenes') {
-      results = results.filter((gameObject) =>
-        folderFilter.scenes && folderFilter.scenes.length > 0
-          ? folderFilter.scenes?.includes(gameObject._id)
-          : false
-      );
+
+      results = results.filter((g) => allowedIds.has(g._id));
     }
     return results;
   }, [gameObjects, filter, isOnInput, folderFilter]);
@@ -198,9 +190,10 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
           }}
         />
       )}
-      {openTreeDialog !== null && typeTarget === 'scenes' && (
+      {openTreeDialog !== null && (
         <DialogTreeScenesComponent
           id={openTreeDialog}
+          typeTarget={typeTarget}
           onValidate={handleValidateSceneTree}
           onClose={() => {
             setOpenTreeDialog(null);

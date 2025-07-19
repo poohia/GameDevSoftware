@@ -5,7 +5,7 @@ import i18n from 'translations/i18n';
 import { ShortcutsFolder } from 'types';
 
 type DropdownShortcutsFoldersComponentProps = Omit<DropdownProps, 'options'> & {
-  onChange: (folder: ShortcutsFolder | null) => void;
+  onChange: (folder: ShortcutsFolder[] | null) => void;
 };
 
 const DropdownShortcutsFoldersComponent: React.FC<
@@ -18,6 +18,7 @@ const DropdownShortcutsFoldersComponent: React.FC<
     currentShortcutsFolderID,
     setCurrentShortcutsFolderID,
   } = useContext(ShortcutsFoldersContext);
+
   const [shortcutsFoldersDropdown, setShortcutsFoldersDropdown] = useState<
     DropdownItemProps[]
   >([]);
@@ -28,6 +29,15 @@ const DropdownShortcutsFoldersComponent: React.FC<
   );
 
   useEffect(() => {
+    console.log(
+      '🚀 ~ currentShortcutsFolder:',
+      currentShortcutsFolder,
+      currentShortcutsFolderID
+    );
+    if (!shortcutsFolders) {
+      setShortcutsFoldersDropdown([]);
+      return;
+    }
     setShortcutsFoldersDropdown(
       shortcutsFolders.map((folder) => ({
         text: folder.folderName,
@@ -45,12 +55,13 @@ const DropdownShortcutsFoldersComponent: React.FC<
       fluid
       selection
       clearable
-      search={shortcutsFolders.length > 10}
+      multiple
+      search
       value={value}
       options={shortcutsFoldersDropdown}
       onChange={(_, data) => {
         if (data.value) {
-          setCurrentShortcutsFolderID(Number(data.value));
+          setCurrentShortcutsFolderID(data.value as number[]);
         } else {
           setCurrentShortcutsFolderID(null);
         }

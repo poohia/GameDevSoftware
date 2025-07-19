@@ -34,7 +34,7 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
   const [filterType, setFilterType] = useState<AssertAcceptedType | string>(
     defaultFilterType || ''
   );
-  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder | null>(
+  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder[] | null>(
     null
   );
   const [filterModule, setFilterModule] = useState<boolean>(true);
@@ -62,13 +62,20 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
     if (module) {
       _assets = _assets.filter((asset) => asset.module === module);
     }
-    if (folderFilter) {
-      _assets = _assets.filter((asset) =>
-        folderFilter.assets && folderFilter.assets.length > 0
-          ? folderFilter.assets.includes(asset.name)
-          : false
-      );
+    // if (folderFilter) {
+    //   _assets = _assets.filter((asset) =>
+    //     folderFilter.assets && folderFilter.assets.length > 0
+    //       ? folderFilter.assets.includes(asset.name)
+    //       : false
+    //   );
+    // }
+    if (folderFilter && folderFilter.length > 0) {
+      // on agrège toutes les listes assets[] des dossiers sélectionnés
+      const allowedNames = new Set(folderFilter.flatMap((f) => f.assets ?? []));
+
+      _assets = _assets.filter((asset) => allowedNames.has(asset.name));
     }
+
     return _assets;
   }, [filter, filterType, filterModule, assets, module, folderFilter]);
   const assetsToShow = useMemo(() => formatData(), [formatData]);

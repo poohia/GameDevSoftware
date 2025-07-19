@@ -19,9 +19,11 @@ import { Orientation } from 'react-d3-tree/lib/types/common';
 import TransComponent from '../TransComponent';
 import { toBlob, toPng } from 'html-to-image';
 import { saveAs } from 'file-saver';
+import GameObjectContext from 'renderer/contexts/GameObjectContext';
 
 type DialogTreeScenesComponentComponentProps = {
   id: any;
+  typeTarget?: 'scenes' | 'gameObjects';
   onClose: () => void;
   onValidate: (id: number) => void;
 };
@@ -29,13 +31,14 @@ type DialogTreeScenesComponentComponentProps = {
 const DialogTreeScenesComponent: React.FC<
   DialogTreeScenesComponentComponentProps
 > = (props) => {
-  const { id, onValidate, onClose, ...rest } = props;
+  const { id, typeTarget = 'scenes', onValidate, onClose, ...rest } = props;
 
   const { shortcutsFolders } = useShortcutsFolders();
   const { requestMessage } = useEvents();
 
   const [firstScene, setFirstScene] = useState<number>();
   const { scenes } = useContext(ScenesContext);
+  const { gameObjects } = useContext(GameObjectContext);
   const [finalId, setFinalId] = useState<number>(id);
   const [history, setHistory] = useState<number[]>([id]);
   // const [values, setValues] = useState<number[]>([]); // Semble inutilisé
@@ -44,18 +47,26 @@ const DialogTreeScenesComponent: React.FC<
   const [translate, setTranslate] = useState<{ x: number; y: number }>();
 
   const currentScene = useMemo(
-    () => scenes.find((s) => s._id === finalId),
-    [finalId, scenes] // Ajout de scenes comme dépendance
+    () => {
+      if (typeTarget === 'gameObjects') {
+        return gameObjects.find((g) => g._id === finalId) as SceneObject;
+      }
+      return scenes.find((s) => s._id === finalId);
+    },
+    [finalId, typeTarget, scenes, gameObjects] // Ajout de scenes comme dépendance
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
 
   const buildTree = useCallback(
     (scene: SceneObject, processingPath: Set<number> = new Set()): any => {
+      const keyToReplace = typeTarget === 'scenes' ? '@s:' : '@go:';
       // On récupère les enfants directs via _actions
       const childScenes = scene._actions
         .map((act) =>
-          scenes.find((s) => s._id === Number(act._scene.replace('@s:', '')))
+          scenes.find(
+            (s) => s._id === Number(act._scene.replace(keyToReplace, ''))
+          )
         )
         .filter((s): s is SceneObject => s !== undefined);
 
@@ -92,7 +103,7 @@ const DialogTreeScenesComponent: React.FC<
             : undefined,
       };
     },
-    [scenes] // scenes est la seule dépendance externe de buildTree
+    [scenes, gameObjects] // scenes est la seule dépendance externe de buildTree
   );
 
   const center = useCallback(() => {
@@ -144,6 +155,8 @@ const DialogTreeScenesComponent: React.FC<
   }, [firstScene, finalId, handleNodeClick]);
 
   useEffect(() => {
+    console.log('🚀 ~ useEffect ~ currentScene:', currentScene);
+
     if (!currentScene) {
       setData(undefined); // Si pas de scène courante, vider l'arbre
       return;
