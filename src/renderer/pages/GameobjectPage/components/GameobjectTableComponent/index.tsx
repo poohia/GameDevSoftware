@@ -127,19 +127,17 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
                   </Table.Cell>
                   <Table.Cell textAlign="right" className="action">
                     <div>
-                      {isOnAll && (
-                        <Button
-                          basic
-                          icon
-                          color="violet"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            setOpenTreeDialog(_id);
-                          }}
-                        >
-                          <Icon name="magnet" />
-                        </Button>
-                      )}
+                      <Button
+                        basic
+                        icon
+                        color="violet"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setOpenTreeDialog(_id);
+                        }}
+                      >
+                        <Icon name="magnet" />
+                      </Button>
                       <Button
                         basic
                         icon
