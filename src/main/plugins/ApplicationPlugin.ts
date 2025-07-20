@@ -37,8 +37,8 @@ export default class ApplicationPlugin {
   private _softwaresToCheck: Array<keyof SoftwaresInfo> = [
     'git',
     'node',
-    'npm',
     'capacitor',
+    'yarn',
   ];
   private _advancedPlugin: ApplicationAdvancedPlugin;
 
@@ -198,8 +198,8 @@ export default class ApplicationPlugin {
     const softwaresInfo: SoftwaresInfo = {
       git: null,
       node: null,
-      npm: null,
       capacitor: null,
+      yarn: null,
     };
     async.each(
       this._softwaresToCheck,

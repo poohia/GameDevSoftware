@@ -260,8 +260,8 @@ export type PlatformsParams = {
 export type SoftwaresInfo = {
   git: string | null;
   node: string | null;
-  npm: string | null;
   capacitor: string | null;
+  yarn: string | null;
 };
 export type ModuleArgs<T = any> = {
   data: T;

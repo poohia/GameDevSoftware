@@ -7,7 +7,7 @@ const HomeSoftwaresInfoComponent = () => {
   const [softwaresInfo, setSoftwareInfo] = useState<SoftwaresInfo>({
     git: null,
     node: null,
-    npm: null,
+    yarn: null,
     capacitor: null,
   });
   const { requestMessage } = useEvents();

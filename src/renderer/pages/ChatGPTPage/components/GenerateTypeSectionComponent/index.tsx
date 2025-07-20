@@ -1,18 +1,17 @@
-import { Form, Icon } from 'semantic-ui-react';
+import { Icon } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import { Button, Segment } from 'renderer/semantic-ui';
 import useChatGPTPage from '../../useChatGPTPage';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
 
 const GenerateTypeSectionComponent: React.FC = () => {
-  const { translation, updateChatGPTInfos } = useChatGPTPage();
+  const { apiKey } = useChatGPTPage();
   const { once, sendMessage } = useEvents();
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleClick = useCallback(() => {
     once('chatgpt-generate-types', () => {
-      console.log('🚀 ~ once ~ data:');
       setLoading(false);
     });
     sendMessage('chatgpt-generate-types');
@@ -31,6 +30,7 @@ const GenerateTypeSectionComponent: React.FC = () => {
         fluid
         loading={loading}
         onClick={handleClick}
+        disabled={!apiKey}
       >
         {i18n.t('form_input_modal_generatetype_cta_all')}
         <Icon name="play" />
