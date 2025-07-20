@@ -71,7 +71,7 @@ const DialogTreeScenesComponent: React.FC<
           if (childScene) {
             childrenLinks.push({
               node: childScene,
-              linkDescription: `via action n°${index + 1}`,
+              linkDescription: `By action n°${index}`,
             });
           }
         });
@@ -89,7 +89,7 @@ const DialogTreeScenesComponent: React.FC<
                 // Évite les doublons
                 uniqueChildren.set(id, {
                   node: childGo,
-                  linkDescription: `via la clé "${key}"`,
+                  linkDescription: `By key: "${key}"`,
                 });
               }
             }
@@ -112,7 +112,7 @@ const DialogTreeScenesComponent: React.FC<
         hasChildren
       ) {
         return {
-          name: `${nodeObject._title} (...cliquer pour explorer)`,
+          name: `${nodeObject._title}`,
           id: nodeObject._id,
           attributes: { hasMoreChildren: true },
         };
