@@ -26,17 +26,19 @@ const useGameobjectContainerComponent = (props: PageProps) => {
     [gameObjectType]
   );
 
-  const createGameobject = useCallback(
-    () =>
+  const createGameobject = useCallback(() => {
+    dispatch({ type: 'hide-form' });
+    setTimeout(() => {
       dispatch({
         type: 'show-create-form',
         data: { ...defaultStateFormReducer },
-      }),
-    []
-  );
+      });
+    }, 100);
+  }, []);
 
   const updateGameobject = useCallback(
     (id: number) => {
+      dispatch({ type: 'hide-form' });
       // @ts-ignore
       once(`get-game-object-value-${gameObjectType}`, (value) => {
         dispatch({

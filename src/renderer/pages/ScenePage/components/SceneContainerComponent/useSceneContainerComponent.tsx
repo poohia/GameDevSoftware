@@ -26,17 +26,23 @@ const useSceneContainerComponent = (props: PageProps) => {
     [sceneType]
   );
 
-  const createGameobject = useCallback(
-    () =>
+  const createGameobject = useCallback(() => {
+    dispatch({
+      type: 'hide-form',
+    });
+    setTimeout(() => {
       dispatch({
         type: 'show-create-form',
         data: { ...defaultStateFormReducer },
-      }),
-    []
-  );
+      });
+    }, 100);
+  }, []);
 
   const updateGameobject = useCallback(
     (id: number) => {
+      dispatch({
+        type: 'hide-form',
+      });
       // @ts-ignore
       once(`get-scene-value-${sceneType}`, (value) => {
         dispatch({

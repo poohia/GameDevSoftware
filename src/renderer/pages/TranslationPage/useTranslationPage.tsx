@@ -99,7 +99,10 @@ const useTranslationPage = () => {
   }, []);
 
   const createTranslationKey = useCallback(() => {
-    dispatch({ type: 'show-create-form', data: { languages } });
+    dispatch({ type: 'hide-form' });
+    setTimeout(() => {
+      dispatch({ type: 'show-create-form', data: { languages } });
+    }, 100);
   }, [languages]);
 
   const updateTranslationKey = useCallback(
