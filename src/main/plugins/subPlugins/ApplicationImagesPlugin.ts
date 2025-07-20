@@ -26,12 +26,11 @@ export default class ApplicationImagesPlugin {
 
           if (image.endsWith('favicon.png')) {
             imageParams.favicon = base64;
-          }
-          if (image.endsWith('icon-background.png')) {
+          } else if (image.endsWith('icon-background.png')) {
             imageParams.iconBackgroundAndroid = base64;
           } else if (image.endsWith('icon-foreground.png')) {
             imageParams.iconForegroundAndroid = base64;
-          } else if (image.endsWith('icon.png')) {
+          } else if (image.endsWith('icon-only.png')) {
             imageParams.icon = base64;
           }
           callback();
