@@ -8,7 +8,7 @@ import DarkModeContext from './contexts/DarkModeContext';
 const useApp = () => {
   const [path, setPath] = useState<string | null | undefined>();
   const { on, sendMessage } = useEvents();
-  const { setItem, getItem } = useDatabase();
+  const { setItem, getItem, clearLocalStorage } = useDatabase();
 
   const { darkModeActived } = useContext(DarkModeContext);
 
@@ -31,6 +31,15 @@ const useApp = () => {
         setTimeout(() => setPath(null), 100);
       } else {
         setPath(args);
+        const darkMode = getItem('dark-mode') || 'light';
+        const locale = getItem('locale') || 'en';
+        clearLocalStorage();
+        setItem('dark-mode', darkMode);
+        setItem('locale', locale);
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       }
     });
     const localeDataStorage = getItem<string>('locale');

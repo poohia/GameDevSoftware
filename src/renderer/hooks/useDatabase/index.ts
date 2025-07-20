@@ -14,9 +14,14 @@ const useDatabase = () => {
     return JSON.parse(valueStorage);
   }, []);
 
+  const clearLocalStorage = useCallback(() => {
+    localStorage.clear();
+  }, []);
+
   return {
     setItem,
     getItem,
+    clearLocalStorage,
   };
 };
 
