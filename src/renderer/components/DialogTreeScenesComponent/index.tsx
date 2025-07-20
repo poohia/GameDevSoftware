@@ -9,7 +9,7 @@ import {
 import { Icon } from 'semantic-ui-react';
 import Tree from 'react-d3-tree';
 import ModalComponent from '../ModalComponent';
-import { useEvents, useShortcutsFolders } from 'renderer/hooks';
+import { useEvents } from 'renderer/hooks';
 
 import './index.scss';
 import ScenesContext from 'renderer/contexts/ScenesContext';
@@ -33,7 +33,6 @@ const DialogTreeScenesComponent: React.FC<
 > = (props) => {
   const { id, typeTarget = 'scenes', onValidate, onClose, ...rest } = props;
 
-  const { shortcutsFolders } = useShortcutsFolders();
   const { requestMessage } = useEvents();
 
   const [firstScene, setFirstScene] = useState<number>();
@@ -41,97 +40,132 @@ const DialogTreeScenesComponent: React.FC<
   const { gameObjects } = useContext(GameObjectContext);
   const [finalId, setFinalId] = useState<number>(id);
   const [history, setHistory] = useState<number[]>([id]);
-  // const [values, setValues] = useState<number[]>([]); // Semble inutilisé
   const [data, setData] = useState<any>();
   const [orientation, setOrientation] = useState<Orientation>('vertical');
   const [translate, setTranslate] = useState<{ x: number; y: number }>();
+  const [depth, setDepth] = useState(3);
 
-  const currentScene = useMemo(
-    () => {
-      if (typeTarget === 'gameObjects') {
-        return gameObjects.find((g) => g._id === finalId) as SceneObject;
-      }
-      return scenes.find((s) => s._id === finalId);
-    },
-    [finalId, typeTarget, scenes, gameObjects] // Ajout de scenes comme dépendance
-  );
+  const currentScene = useMemo(() => {
+    if (typeTarget === 'gameObjects') {
+      return gameObjects.find((g) => g._id === finalId);
+    }
+    return scenes.find((s) => s._id === finalId);
+  }, [finalId, typeTarget, scenes, gameObjects]);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
   const buildTree = useCallback(
-    (scene: SceneObject, processingPath: Set<number> = new Set()): any => {
-      const keyToReplace = typeTarget === 'scenes' ? '@s:' : '@go:';
-      // On récupère les enfants directs via _actions
-      const childScenes = scene._actions
-        .map((act) =>
-          scenes.find(
-            (s) => s._id === Number(act._scene.replace(keyToReplace, ''))
-          )
-        )
-        .filter((s): s is SceneObject => s !== undefined);
+    (
+      nodeObject: SceneObject,
+      processingPath: Set<number> = new Set(),
+      currentDepth: number = 0,
+      linkDescription: string = ''
+    ): any => {
+      let childrenLinks: { node: SceneObject; linkDescription: string }[] = [];
 
-      // Créer une nouvelle copie du chemin pour cette branche et y ajouter la scène actuelle
-      // Important : on vérifie si le *child* est dans processingPath
-      // processingPath contient les ancêtres de `scene`
+      if (typeTarget === 'scenes') {
+        (nodeObject._actions || []).forEach((action, index) => {
+          const childScene = scenes.find(
+            (s) => s._id === Number(action._scene.replace('@s:', ''))
+          );
+          if (childScene) {
+            childrenLinks.push({
+              node: childScene,
+              linkDescription: `via action n°${index + 1}`,
+            });
+          }
+        });
+      } else {
+        const uniqueChildren = new Map<
+          number,
+          { node: SceneObject; linkDescription: string }
+        >();
+        Object.entries(nodeObject).forEach(([key, value]) => {
+          const processItem = (item: any) => {
+            if (typeof item === 'string' && item.startsWith('@go:')) {
+              const id = Number(item.replace('@go:', ''));
+              const childGo = gameObjects.find((go) => go._id === id);
+              if (childGo && !uniqueChildren.has(id)) {
+                // Évite les doublons
+                uniqueChildren.set(id, {
+                  node: childGo,
+                  linkDescription: `via la clé "${key}"`,
+                });
+              }
+            }
+          };
+          if (Array.isArray(value)) value.forEach(processItem);
+          else processItem(value);
+        });
+        childrenLinks = Array.from(uniqueChildren.values());
+      }
+
+      const hasChildren = childrenLinks.length > 0;
+      let nodeName = nodeObject._title;
+      if (currentDepth > 0 && linkDescription) {
+        nodeName = `${nodeObject._title} (${linkDescription})`;
+      }
+
+      if (
+        typeTarget === 'gameObjects' &&
+        currentDepth >= depth &&
+        hasChildren
+      ) {
+        return {
+          name: `${nodeObject._title} (...cliquer pour explorer)`,
+          id: nodeObject._id,
+          attributes: { hasMoreChildren: true },
+        };
+      }
 
       return {
-        name: `${scene._title} (${scene._id})`,
-        id: scene._id,
-        attributes: {
-          // Pour stocker des métadonnées
-          title: scene._title,
-        },
-        children:
-          childScenes.length > 0
-            ? childScenes
-                .map((childScene) => {
-                  if (processingPath.has(childScene._id)) {
-                    // Boucle détectée !
-                    return {
-                      name: `${childScene._title} (${childScene._id}) - [LOOP DETECTED]`,
-                      id: childScene._id,
-                      attributes: { isLoop: true, title: childScene._title },
-                      // Pas d'enfants pour ce nœud pour casser la boucle
-                    };
-                  }
-                  // Ajouter l'ID de la scène *actuelle* au chemin pour les appels récursifs de ses enfants
-                  const nextProcessingPath = new Set(processingPath);
-                  nextProcessingPath.add(scene._id);
-                  return buildTree(childScene, nextProcessingPath);
-                })
-                .filter(Boolean) // Au cas où une des branches retourne null/undefined
-            : undefined,
+        name: nodeName,
+        id: nodeObject._id,
+        attributes: {},
+        children: hasChildren
+          ? childrenLinks.map(
+              ({ node: childNode, linkDescription: childLinkDesc }) => {
+                const nextProcessingPath = new Set(processingPath);
+                nextProcessingPath.add(nodeObject._id);
+
+                if (processingPath.has(childNode._id)) {
+                  return {
+                    name: `${childNode._title} [BOUCLE] (${childLinkDesc})`,
+                    id: childNode._id,
+                    attributes: { isLoop: true },
+                  };
+                }
+                return buildTree(
+                  childNode,
+                  nextProcessingPath,
+                  currentDepth + 1,
+                  childLinkDesc
+                );
+              }
+            )
+          : undefined,
       };
     },
-    [scenes, gameObjects] // scenes est la seule dépendance externe de buildTree
+    [scenes, gameObjects, typeTarget, depth]
   );
 
   const center = useCallback(() => {
     if (!containerRef.current) return;
     const { offsetWidth: w, offsetHeight: h } = containerRef.current;
     const y = orientation === 'vertical' ? 50 : h / 2;
-    const x = orientation === 'vertical' ? w / 2 : 50;
-
-    setTranslate(undefined); // Force le re-render
-    setTimeout(() => {
-      setTranslate({ x, y });
-    });
-  }, [orientation, containerRef]); // containerRef est stable, pas besoin de le mettre en dépendance
+    const x = orientation === 'vertical' ? w / 2 : 150;
+    setTranslate(undefined);
+    setTimeout(() => setTranslate({ x, y }));
+  }, [orientation]);
 
   const handleNodeClick = useCallback(
-    (nodeDatum: any, evt: React.MouseEvent) => {
+    (nodeDatum: any) => {
       if (finalId === nodeDatum.data.id || nodeDatum.data.attributes?.isLoop) {
-        // Ne pas naviguer si on clique sur le même noeud ou un noeud marquant une boucle
         return;
       }
-      //setData(undefined); // Sera géré par le useEffect qui dépend de finalId/currentScene
-      setHistory((h) => {
-        if (h[h.length - 1] !== nodeDatum.data.id) {
-          // Evite les doublons si clics rapides
-          return [...h, nodeDatum.data.id];
-        }
-        return h;
-      });
+      setHistory((h) =>
+        h[h.length - 1] !== nodeDatum.data.id ? [...h, nodeDatum.data.id] : h
+      );
       setFinalId(nodeDatum.data.id);
     },
     [finalId]
@@ -142,32 +176,15 @@ const DialogTreeScenesComponent: React.FC<
     setHistory((h) => {
       const newHistory = [...h];
       newHistory.pop();
-      const lastId = newHistory[newHistory.length - 1];
-      setFinalId(lastId);
+      setFinalId(newHistory[newHistory.length - 1]);
       return newHistory;
     });
   }, [history]);
 
   const goFirstScene = useCallback(() => {
     if (!firstScene || finalId === firstScene) return;
-    // @ts-ignore
     handleNodeClick({ data: { id: firstScene } });
   }, [firstScene, finalId, handleNodeClick]);
-
-  useEffect(() => {
-    console.log('🚀 ~ useEffect ~ currentScene:', currentScene);
-
-    if (!currentScene) {
-      setData(undefined); // Si pas de scène courante, vider l'arbre
-      return;
-    }
-    // L'appel initial à buildTree se fait avec un Set vide pour processingPath
-    setData(buildTree(currentScene, new Set()));
-    if (containerRef.current) {
-      // Centrer après la génération
-      center();
-    }
-  }, [currentScene, buildTree, center]); // buildTree et center sont useCallback
 
   const handleExportPng = useCallback(async () => {
     if (!containerRef.current) return;
@@ -204,7 +221,6 @@ const DialogTreeScenesComponent: React.FC<
         pixelRatio: 2,
         width: bbox.width,
         height: bbox.height,
-        // backgroundColor: 'white', // Redondant si le rect est dans le SVG source
       });
       saveAs(dataUrl, `${currentScene?._title || 'tree'}.png`);
     } catch (e) {
@@ -226,33 +242,34 @@ const DialogTreeScenesComponent: React.FC<
     }
   }, [currentScene]);
 
-  // Ce useEffect s'occupe de regénérer l'arbre lorsque finalId change (donc currentScene change).
-  // Le useEffect qui dépend de [currentScene, buildTree, center] fait déjà le travail.
-  // Donc celui-ci peut être redondant.
-  // useEffect(() => {
-  //   handleGenerateChilds(); // Appelé quand finalId change
-  // }, [finalId, handleGenerateChilds]);
-
   useEffect(() => {
-    // Centrer si l'orientation change et que l'arbre est déjà affiché
-    if (containerRef.current && data) {
+    if (!currentScene) {
+      setData(undefined);
+      return;
+    }
+    setData(buildTree(currentScene));
+    if (containerRef.current) {
       center();
     }
-  }, [orientation, center, data]); // data ici pour s'assurer qu'il y a qqch à centrer
+  }, [currentScene, buildTree, center]);
 
   useEffect(() => {
-    requestMessage('load-first-scene', (firstScene) => {
-      setFirstScene(Number(firstScene.file.replace('.json', '')));
-    });
-  }, [requestMessage]); // requestMessage est une fonction de hook, elle devrait être stable
+    if (containerRef.current && data) center();
+  }, [orientation, center, data]);
+
+  useEffect(() => {
+    if (typeTarget === 'scenes') {
+      requestMessage('load-first-scene', (firstScene) => {
+        setFirstScene(Number(firstScene.file.replace('.json', '')));
+      });
+    }
+  }, [requestMessage, typeTarget]);
 
   return (
     <ModalComponent
       open
       onClose={onClose}
-      onAccepted={() => {
-        onValidate(finalId);
-      }}
+      onAccepted={() => onValidate(finalId)}
       title={`${currentScene?._title || 'Chargement...'} (${
         currentScene?._id || 'N/A'
       })`}
@@ -265,48 +282,62 @@ const DialogTreeScenesComponent: React.FC<
             icon
             labelPosition="right"
             color="purple"
-            onClick={() => {
-              setOrientation((_o) => {
-                if (_o === 'horizontal') {
-                  return 'vertical';
-                } else {
-                  return 'horizontal';
-                }
-              });
-            }}
+            onClick={() =>
+              setOrientation((o) =>
+                o === 'horizontal' ? 'vertical' : 'horizontal'
+              )
+            }
           >
-            <TransComponent id="module_scene_tree_dialog_orienation"></TransComponent>
+            <TransComponent id="module_scene_tree_dialog_orienation" />
             <Icon name="redo" />
           </Button>
-          <Button
-            icon
-            labelPosition="right"
-            color="olive"
-            onClick={() => {
-              center();
-            }}
-          >
+          <Button icon labelPosition="right" color="olive" onClick={center}>
             <TransComponent id="module_scene_tree_dialog_center" />
             <Icon name="compress" />
           </Button>
-          <Button
-            icon
-            labelPosition="right"
-            color="brown"
-            onClick={() => {
-              goFirstScene();
-            }}
-          >
-            <TransComponent id="module_scene_tree_dialog_first_scene" />
-            <Icon name="at" />
-          </Button>
+          {typeTarget === 'gameObjects' && (
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                backgroundColor: '#f0f0f0',
+                padding: '5px 10px',
+                borderRadius: '5px',
+              }}
+            >
+              <label
+                htmlFor="depth-input"
+                style={{ marginRight: '8px', fontWeight: 'bold' }}
+              >
+                Profondeur:
+              </label>
+              <input
+                id="depth-input"
+                type="number"
+                value={depth}
+                min={1}
+                max={20}
+                onChange={(e) => setDepth(Number(e.target.value))}
+                style={{ width: '50px' }}
+              />
+            </div>
+          )}
+          {typeTarget === 'scenes' && (
+            <Button
+              icon
+              labelPosition="right"
+              color="brown"
+              onClick={goFirstScene}
+            >
+              <TransComponent id="module_scene_tree_dialog_first_scene" />
+              <Icon name="at" />
+            </Button>
+          )}
           <Button
             icon
             labelPosition="right"
             color="yellow"
-            onClick={() => {
-              handleExportPng();
-            }}
+            onClick={handleExportPng}
           >
             <TransComponent id="module_scene_tree_dialog_export" />
             <Icon name="image" />
@@ -316,9 +347,7 @@ const DialogTreeScenesComponent: React.FC<
             labelPosition="left"
             secondary
             disabled={history.length <= 1}
-            onClick={() => {
-              back();
-            }}
+            onClick={back}
           >
             <TransComponent id="module_scene_tree_dialog_back" />
             <Icon name="angle left" />
@@ -333,42 +362,43 @@ const DialogTreeScenesComponent: React.FC<
             <Tree
               data={data}
               orientation={orientation}
-              nodeSize={{ x: 250, y: 120 }} // Augmenté un peu pour les noms plus longs
               translate={translate}
-              collapsible={false}
               onNodeClick={handleNodeClick}
+              nodeSize={{ x: 320, y: 120 }}
+              separation={{ siblings: 1.2, nonSiblings: 1.5 }}
+              depthFactor={320}
               zoomable={true}
               draggable={true}
-              separation={{ siblings: 1.2, nonSiblings: 1.8 }}
-              depthFactor={200}
-              svgProps={{
-                style: { width: '100%', height: '100%' },
-              }}
-              // Vous pouvez personnaliser l'apparence des nœuds "loop" ici
-              // en utilisant renderCustomNodeElement ou en modifiant nodeSvgShape
-              // Exemple pour changer la couleur des nœuds de boucle :
+              collapsible={false}
+              svgProps={{ style: { width: '100%', height: '100%' } }}
               nodeSvgShape={{
                 shape: 'rect',
                 shapeProps: {
-                  width: 230,
+                  width: 300,
                   height: 70,
-                  x: -115,
+                  x: -150,
                   y: -35,
                   rx: 5,
                   ry: 5,
-                  strokeWidth: 1,
-                  // @ts-ignore nodeDatum n'est pas typé ici par défaut
-                  stroke: (nodeDatum) =>
-                    nodeDatum.data.attributes?.isLoop ? 'red' : '#607d8b',
+                  strokeWidth: 1.5,
                   // @ts-ignore
-                  fill: (nodeDatum) =>
-                    nodeDatum.data.attributes?.isLoop ? '#ffdddd' : 'white',
+                  stroke: (node) => {
+                    if (node.data.attributes?.isLoop) return '#e57373';
+                    if (node.data.attributes?.hasMoreChildren) return '#0288d1';
+                    return '#607d8b';
+                  },
+                  // @ts-ignore
+                  strokeDasharray: (node) =>
+                    node.data.attributes?.hasMoreChildren ? '5 5' : 'none',
+                  // @ts-ignore
+                  fill: (node) =>
+                    node.data.attributes?.isLoop ? '#ffcdd2' : 'white',
                 },
               }}
               textLayout={{
                 textAnchor: 'start',
-                x: 15 - 115, // x initial + x du rect
-                y: 0, // Ajustement vertical si nécessaire
+                x: 10 - 150,
+                y: 0,
                 transform: undefined,
               }}
             />
