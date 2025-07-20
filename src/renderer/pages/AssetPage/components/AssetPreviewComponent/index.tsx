@@ -57,7 +57,7 @@ const AssetPreviewComponent = (props: AssetPreviewComponentProps) => {
   useEffect(() => {
     sendMessage('get-asset-information', { name, type, module });
     once('get-asset-information', (arg: string) => {
-      setBase64(formatBase64(type, arg));
+      setBase64(formatBase64(type, arg, name));
     });
   }, [asset]);
 

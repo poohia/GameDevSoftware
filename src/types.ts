@@ -166,6 +166,24 @@ export type TabDatabaseType = {
   component: string;
 };
 export type AssertAcceptedType = 'image' | 'sound' | 'video' | 'json';
+export const MIME_TYPE_MAP: Record<string, string> = {
+  // Images
+  png: 'image/png',
+  jpeg: 'image/jpeg',
+  jpg: 'image/jpeg',
+  gif: 'image/gif',
+  svg: 'image/svg+xml', // SVG ajouté !
+  webp: 'image/webp',
+
+  // Sons
+  mp3: 'audio/mpeg',
+  wav: 'audio/wav',
+  ogg: 'audio/ogg',
+
+  // Vidéos
+  mp4: 'video/mp4',
+  webm: 'video/webm',
+};
 export type AssertFileValueType = {
   fileName: string;
   fileType: AssertAcceptedType;
