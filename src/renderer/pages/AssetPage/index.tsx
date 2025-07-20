@@ -43,12 +43,17 @@ const AssetPage = () => {
                 keySelected={stateForm.key}
                 onClickRow={(asset) => {
                   dispatch({
-                    type: 'show-update-form',
-                    data: {
-                      key: asset.name,
-                      value: asset,
-                    },
+                    type: 'hide-form',
                   });
+                  setTimeout(() => {
+                    dispatch({
+                      type: 'show-update-form',
+                      data: {
+                        key: asset.name,
+                        value: asset,
+                      },
+                    });
+                  }, 100);
                 }}
                 onDelete={deleteFile}
               />
