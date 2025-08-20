@@ -8,7 +8,9 @@ const useGameObjects = () => {
 
   const findGameObjectsByType = useCallback(
     (_type: string) => {
-      return gameObjects.filter((gameObject) => gameObject._type === _type);
+      return !!_type.trim()
+        ? gameObjects.filter((gameObject) => gameObject._type === _type)
+        : gameObjects;
     },
     [gameObjects]
   );
