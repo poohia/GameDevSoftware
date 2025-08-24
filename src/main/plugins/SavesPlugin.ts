@@ -6,7 +6,6 @@ import FolderPlugin from './FolderPlugin';
 
 export default class SavesPlugin {
   loadSaves = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     FileService.readJsonFile(
       pathModule.join(path, FolderPlugin.savesFile)
@@ -16,7 +15,6 @@ export default class SavesPlugin {
   };
 
   setSaves = (event: ElectronIpcMainEvent, args: GameDatabaseSave[]) => {
-    // @ts-ignore
     const { path } = global;
     FileService.writeJsonFile(
       pathModule.join(path, FolderPlugin.savesFile),

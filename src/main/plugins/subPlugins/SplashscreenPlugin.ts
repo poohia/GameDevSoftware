@@ -24,7 +24,6 @@ export default class SplashscreenPlugin {
   };
 
   openSplashscreenFile = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     this.openFile().then((data: SplashscreenType) => {
       FileService.getFileBase64(
@@ -52,7 +51,6 @@ export default class SplashscreenPlugin {
   };
 
   replaceBrandImage = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     FileService.replaceFile(
       `${path}${FolderPlugin.splashscreenBrandImageFile}`,

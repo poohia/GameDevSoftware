@@ -9,7 +9,6 @@ export default class TranslationPlugin {
   constructor() {}
 
   loadLanguagesAuthorized = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     FileService.readJsonFile(`${path}${FolderPlugin.languageFile}`).then(
       (languages: { code: string; default?: boolean }[]) => {
@@ -41,7 +40,6 @@ export default class TranslationPlugin {
 
   loadTranslations = (event: ElectronIpcMainEvent) => {
     const translations: any = {};
-    // @ts-ignore
     const { path } = global;
     const data = fs.readFileSync(`${path}${FolderPlugin.languageFile}`);
     // @ts-ignore
@@ -85,7 +83,6 @@ export default class TranslationPlugin {
   };
 
   saveTranslations = (event: ElectronIpcMainEvent, args: TranslationObject) => {
-    // @ts-ignore
     const { path } = global;
     async
       .each(Object.keys(args), (code, callback) => {
@@ -100,7 +97,6 @@ export default class TranslationPlugin {
   };
 
   setLanguages = (event: ElectronIpcMainEvent, args: string[]) => {
-    // @ts-ignore
     const { path } = global;
     FileService.writeJsonFile(
       `${path}${FolderPlugin.languageFile}`,
@@ -125,7 +121,6 @@ export default class TranslationPlugin {
   };
 
   setLocaleGame = (event: ElectronIpcMainEvent, locale: string) => {
-    // @ts-ignore
     const { path } = global;
     FileService.readJsonFile(`${path}${FolderPlugin.languageFile}`).then(
       (languages: { code: string; default?: boolean }[]) => {
@@ -146,7 +141,6 @@ export default class TranslationPlugin {
   };
 
   loadLocaleGame = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     FileService.readJsonFile(`${path}${FolderPlugin.languageFile}`).then(
       (languages: { code: string; default?: boolean }[]) => {

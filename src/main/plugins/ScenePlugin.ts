@@ -122,7 +122,6 @@ export default class ScenePlugin {
     event: ElectronIpcMainEvent,
     { id, sceneType }: { id: string; sceneType: string }
   ) => {
-    // @ts-ignore
     const { path } = global;
     ScenePlugin.readIndexFile().then((data) => {
       ScenePlugin.writeIndexFile(
@@ -311,7 +310,6 @@ export default class ScenePlugin {
   };
 
   openSceneFile = (_event: ElectronIpcMainEvent, arg: string) => {
-    // @ts-ignore
     const { path } = global;
     shell.openPath(
       pathModule.normalize(`${path}${FolderPlugin.sceneDirectory}/${arg}.json`)

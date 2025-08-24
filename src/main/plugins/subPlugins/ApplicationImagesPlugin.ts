@@ -10,7 +10,6 @@ import { formatBase64 } from '../../../utils';
 export default class ApplicationImagesPlugin {
   constructor(private mainWindow: BrowserWindow) {}
   loadParamsImage = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     const imageParams: ApplicationImageParams = {
       favicon: '',

@@ -138,7 +138,6 @@ export default class GameObjectPlugin {
     event: ElectronIpcMainEvent,
     { id, objectType }: { id: string; objectType: string }
   ) => {
-    // @ts-ignore
     const { path } = global;
     GameObjectPlugin.readIndexFile().then((data) => {
       GameObjectPlugin.writeIndexFile(
@@ -266,7 +265,6 @@ export default class GameObjectPlugin {
   };
 
   openGameObjectFile = (_event: ElectronIpcMainEvent, arg: string) => {
-    // @ts-ignore
     const { path } = global;
     shell.openPath(
       pathModule.normalize(

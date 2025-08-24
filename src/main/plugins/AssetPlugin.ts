@@ -37,7 +37,6 @@ export default class AssetPlugin {
   };
 
   private directoryFromFileType = (fileType: AssertAcceptedType) => {
-    // @ts-ignore
     const { path } = global;
     switch (fileType) {
       case 'image':
@@ -52,14 +51,12 @@ export default class AssetPlugin {
   };
 
   private readAssetFile = (): AssetType[] => {
-    // @ts-ignore
     const { path } = global;
     // @ts-ignore
     return JSON.parse(fs.readFileSync(`${path}${FolderPlugin.assetFile}`));
   };
 
   private writeAssetFile = (data: AssetType[], callback: () => void) => {
-    // @ts-ignore
     const { path } = global;
     fs.writeFile(
       `${path}${FolderPlugin.assetFile}`,
@@ -199,7 +196,6 @@ export default class AssetPlugin {
   };
 
   loadAllAssets = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     FileService.readJsonFile(`${path}${FolderPlugin.assetFile}`).then(
       (data) => {
@@ -215,7 +211,6 @@ export default class AssetPlugin {
       fileName?: string;
     }
   ) => {
-    // @ts-ignore
     const { path } = global;
     let finalPath = '';
     switch (arg.type) {

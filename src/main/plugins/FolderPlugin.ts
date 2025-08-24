@@ -78,6 +78,7 @@ export default class FolderPlugin {
   static trapezeFile = '/app.yaml';
 
   static typesFiles = 'game-types.ts';
+  static typesFilesSave = 'game-types.ts.save';
 
   static savesFile = `${FolderPlugin.gameDevSoftwareDirectory}/saves.json`;
 

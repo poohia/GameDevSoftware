@@ -62,7 +62,6 @@ export default class ApplicationPlugin {
   private writeOnIndexHtml = (
     args: Pick<ApplicationIdentityParams, 'name' | 'description'>
   ) => {
-    // @ts-ignore
     const { path } = global;
     const xmlString = fs.readFileSync(
       `${path}${FolderPlugin.indexHtml}`,
@@ -105,7 +104,6 @@ export default class ApplicationPlugin {
   };
 
   private openConfigFile = (): ApplicationConfigJson => {
-    // @ts-ignore
     const { path } = global;
     const data = fs.readFileSync(`${path}${FolderPlugin.configFileJson}`);
     // @ts-ignore
@@ -115,7 +113,6 @@ export default class ApplicationPlugin {
   private writeConfigFile = (json: Partial<ApplicationConfigJson>) => {
     let data = this.openConfigFile();
     const finalJSON = this.mergeObjects(data, json);
-    // @ts-ignore
     const { path } = global;
     fs.writeFileSync(
       `${path}${FolderPlugin.configFileJson}`,
@@ -216,7 +213,6 @@ export default class ApplicationPlugin {
   };
 
   setMenuView = (event: ElectronIpcMainEvent, arg: string) => {
-    // @ts-ignore
     const { path } = global;
     FileService.writeJsonFile(`${path}${FolderPlugin.menuConfig}`, {
       path: arg,

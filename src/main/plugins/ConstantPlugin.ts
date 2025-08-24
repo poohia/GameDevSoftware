@@ -8,7 +8,6 @@ export default class ConstantPlugin {
   constructor() {}
 
   loadConstantsFile = (): ConstantObject[] => {
-    // @ts-ignore
     const { path } = global;
     // @ts-ignore
     return JSON.parse(fs.readFileSync(`${path}${FolderPlugin.constantFile}`));
@@ -21,7 +20,6 @@ export default class ConstantPlugin {
   };
 
   saveConstants = (event: ElectronIpcMainEvent, args: ConstantObject[]) => {
-    // @ts-ignore
     const { path } = global;
     fs.writeFileSync(
       `${path}${FolderPlugin.constantFile}`,

@@ -7,14 +7,61 @@ import FileService from '../../services/FileService';
 import LogService from '../../services/LogService';
 import { ChatCompletionMessageParam } from 'openai/resources';
 
+const sameMessageStart: string[] = [
+  'You are a helpful assistant that writes clean, idiomatic TypeScript type definitions from JSON configuration objects. **In every interface you generate, regardless of the config JSON, you must include these two properties at the very top (before any other field):**',
+  '- `_id: number`',
+  '- `_title: string`',
+  'Interface names must be derived from each object’s `"type"` field by converting kebab-case to PascalCase and add suffix `Props` (PascalCaseProps)',
+  'Only append the Props suffix to the interface derived from the root object’s "type" field. Nested interfaces generated for inner objects or arrays should be named in plain PascalCase without the Props suffix and name must be it in the singular.',
+  'For the mapping, only take the `core` property into account and nothing else',
+];
+
+const sameMessageRules: string[] = [
+  'Mapping rules for each core property:',
+  '- `"boolean"`→ `boolean`',
+  '- `"number"` or `"float"` → `number`',
+  '- `"float"` on typescript is `number`',
+  '- Literals `"image"`, `"translation"`, `"json"`, `"string"`, `"video"`, or all started with `"@"` (like `"@go"`, `"@a:"` or `"@c:"`) etc. → `string`',
+  '- References starting with @c: should replace the following text by converting it to PascalCase. This type will be created in another script, so you don’t need to generate it yourself',
+  '- If a property contains a core with a type and not an object, use the type directly without creating an object',
+  '- If `"multiple": true`, wrap the type in an array (`TypeName[]`).',
+  '- Consider all fields is required unless you see `"optional": true`.',
+  '- If `"optional": true`, mark the property optional with `?`. ',
+  '- Flatten simple core-objects: If a field’s "core" is an object whose direct children are themselves objects with a primitive "core" (and possibly metadata like "label"), then do not emit a nested interface for that wrapper—map each child property directly to the primitive type named in its own "core" and ignore all other keys.',
+  '- If a `"core"` is an object does not take into account rules for keys `_id` and `_title` ',
+];
+
+const sameMessageEnd: string[] = [
+  'Please output a single `.ts` file exporting all interfaces and referenced types.',
+];
+
 export default class ChatGPTGenerateTypes {
+  savePrevTypes = () => {
+    return new Promise<void>((resolve) => {
+      const { path } = global;
+      const targetFile = pathModule.join(
+        path,
+        FolderPlugin.gameDevSoftwareDirectory,
+        FolderPlugin.typesFiles
+      );
+      const prevFile = pathModule.join(
+        path,
+        FolderPlugin.gameDevSoftwareDirectory,
+        FolderPlugin.typesFilesSave
+      );
+
+      FileService.copyFile(targetFile, prevFile).finally(() => {
+        resolve();
+      });
+    });
+  };
+
   generateTypes = (event: ElectronIpcMainEvent, chatGPTInfos?: ChatGPTType) => {
     if (!chatGPTInfos) {
       LogService.Notify('ChatGPT Api required', { type: 'error' });
       event.reply('chatgpt-generate-types');
       return;
     }
-    // @ts-ignore
     const { path } = global;
     const targetFile = pathModule.join(
       path,
@@ -27,7 +74,18 @@ export default class ChatGPTGenerateTypes {
       this.generateConstantsType(chatGPTInfos),
     ])
       .then((data) => {
-        const d = data[0] + '\n\n' + data[1] + '\n\n' + data[2];
+        const d =
+          `/** Scenes **/` +
+          '\n\n' +
+          data[0] +
+          '\n\n' +
+          `/** Game Objects **/` +
+          '\n\n' +
+          data[1] +
+          '\n\n' +
+          `/** Constants **/` +
+          '\n\n' +
+          data[2];
         return FileService.writeFile(targetFile, d);
       })
       .then(() => {
@@ -89,20 +147,18 @@ export default class ChatGPTGenerateTypes {
               {
                 role: 'system',
                 content: [
-                  'You are a helpful assistant that writes clean, idiomatic TypeScript type definitions from JSON configuration objects. **In every interface you generate, regardless of the config JSON, you must include these two properties at the very top (before any other field):**',
-                  '- `_id: number`',
-                  '- `_title: string`',
-                  'Interface names must be derived from each object’s `"type"` field by converting kebab-case to PascalCase.',
-                  'Mapping rules for each core property:',
-                  '- `"boolean"`→ `boolean`',
-                  '- `"number"` or `"float"` → `number`',
-                  '- Literals `"image"`, `"translation"`, `"json"`, `"string"`, `"video"`, or all started with `"@"` (like `"@go"` or `"@a:"`) etc. → `string`',
-                  '- References starting with @c: should replace the following text by converting it to PascalCase . This type will be created in another script, so you don’t need to generate it yourself',
-                  '- If `"multiple": true`, wrap the type in an array (`TypeName[]`).',
-                  '- Consider all fields is required unless you see `"optional": true`.',
-                  '- If `"optional": true`, mark the property optional with `?`.',
-                  '- If a `"core"` value is itself an object, generate a nested interface named `<ParentName><PropertyName>` (PascalCase).',
-                  'Please output a single `.ts` file exporting all interfaces and referenced types.',
+                  ...sameMessageStart.map((text) => {
+                    if (
+                      text ===
+                      'Interface names must be derived from each object’s `"type"` field by converting kebab-case to PascalCase and add suffix `Props` (PascalCaseProps)'
+                    ) {
+                      return 'Interface names must be derived from each object’s `"type"` field by converting kebab-case to PascalCase and add suffix `Interface` (PascalCaseInterface) without `Props`';
+                    }
+                    return text;
+                  }),
+                  ,
+                  ...sameMessageRules,
+                  ...sameMessageEnd,
                 ].join(' '),
               },
               {
@@ -209,24 +265,9 @@ export default class ChatGPTGenerateTypes {
               {
                 role: 'system',
                 content: [
-                  'You are a helpful assistant that writes clean, idiomatic TypeScript type definitions from JSON configuration objects. **In every interface you generate, regardless of the config JSON, you must include these two properties at the very top (before any other field):**',
-                  '- `_id: number`',
-                  '- `_title: string`',
-                  'Interface names must be derived from each object’s `"type"` field by converting kebab-case to PascalCase and add suffix `Props` (PascalCaseProps)',
-                  'Only append the Props suffix to the interface derived from the root object’s "type" field. Nested interfaces generated for inner objects or arrays should be named in plain PascalCase without the Props suffix.',
-                  'Mapping rules for each core property:',
-                  '- `"boolean"`→ `boolean`',
-                  '- `"number"` or `"float"` → `number`',
-                  '- `"float"` on typescript is `number`',
-                  '- Literals `"image"`, `"translation"`, `"json"`, `"string"`, `"video"`, or all started with `"@"` (like `"@go"` or `"@a:"`) etc. → `string`',
-                  '- References starting with @c: should replace the following text by converting it to PascalCase. This type will be created in another script, so you don’t need to generate it yourself',
-                  '- If `"multiple": true`, wrap the type in an array (`TypeName[]`).',
-                  '- Consider all fields is required unless you see `"optional": true`.',
-                  '- If `"optional": true`, mark the property optional with `?`. ',
-                  // '- If a core field is an object, interpret its keys and values. If any of those values is itself an object, apply the same rule recursively: base the type solely on its core property and ignore all other properties.',
-                  '- Flatten simple core-objects: If a field’s "core" is an object whose direct children are themselves objects with a primitive "core" (and possibly metadata like "label"), then do not emit a nested interface for that wrapper—map each child property directly to the primitive type named in its own "core" and ignore all other keys.',
-                  '- If a `"core"` is an object does not take into account rules for keys `_id` and `_title` ',
-                  'Please output a single `.ts` file exporting all interfaces and referenced types.',
+                  ...sameMessageStart,
+                  ...sameMessageRules,
+                  ...sameMessageEnd,
                 ].join(' '),
               },
               {

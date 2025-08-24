@@ -16,7 +16,6 @@ export default class FontPlugin {
   constructor(private mainWindow: Electron.BrowserWindow) {}
 
   private loadFontsFile = () => {
-    // @ts-ignore
     const { path } = global;
     return FileService.readJsonFile<FontObject[]>(
       `${path}${FolderPlugin.fontFile}`
@@ -24,7 +23,6 @@ export default class FontPlugin {
   };
 
   private writeFontsFile = (data: FontObject[]) => {
-    // @ts-ignore
     const { path } = global;
     return FileService.writeJsonFile(`${path}${FolderPlugin.fontFile}`, data);
   };
@@ -39,7 +37,6 @@ export default class FontPlugin {
   };
 
   loadFontsData = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     this.loadFontsFile().then((fonts) => {
       const fontsData: FontDataObject[] = [];
@@ -63,7 +60,6 @@ export default class FontPlugin {
   };
 
   appendNewFonts = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     dialog
       .showOpenDialog(this.mainWindow, {
@@ -111,7 +107,6 @@ export default class FontPlugin {
   };
 
   removeFont = (event: ElectronIpcMainEvent, key: string) => {
-    // @ts-ignore
     const { path } = global;
     this.loadFontsFile().then((fonts) => {
       const font = fonts.find((f) => f.key === key);

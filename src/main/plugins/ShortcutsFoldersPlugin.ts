@@ -10,7 +10,6 @@ import { ipcMain } from 'electron';
 
 export default class ShortcutsFoldersPlugin {
   private writeFile(data: ShortcutsFolder[]) {
-    // @ts-ignore
     const { path } = global;
 
     return FileService.writeJsonFile<ShortcutsFolder[]>(
@@ -20,7 +19,6 @@ export default class ShortcutsFoldersPlugin {
   }
 
   private openFile() {
-    // @ts-ignore
     const { path } = global;
 
     return FileService.readJsonFile<ShortcutsFolder[]>(

@@ -5,7 +5,6 @@ import FolderPlugin from './FolderPlugin';
 
 export default class EnvPlugin {
   loadEnvDevelopmentVars = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     FileService.readJsonFile(
       `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[0]}`
@@ -21,7 +20,6 @@ export default class EnvPlugin {
     event: ElectronIpcMainEvent,
     envs: EnvObject[]
   ) => {
-    // @ts-ignore
     const { path } = global;
     FileService.writeJsonFile(
       `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[0]}`,
@@ -32,7 +30,6 @@ export default class EnvPlugin {
   };
 
   loadEnvProductionVars = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     FileService.readJsonFile(
       `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[1]}`
@@ -45,7 +42,6 @@ export default class EnvPlugin {
   };
 
   writeEnvProductionVars = (event: ElectronIpcMainEvent, envs: EnvObject[]) => {
-    // @ts-ignore
     const { path } = global;
     FileService.writeJsonFile(
       `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[1]}`,
@@ -56,7 +52,6 @@ export default class EnvPlugin {
   };
 
   setDefaultValues = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     FileService.readJsonFile(
       `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[2]}`

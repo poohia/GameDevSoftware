@@ -23,7 +23,6 @@ export default class ApplicationAdvancedPlugin {
   };
 
   loadMenusView = (event: ElectronIpcMainEvent) => {
-    // @ts-ignore
     const { path } = global;
     const menusView: MenusViewsType[] = [
       { module: 'home', path: 'pages/Home', used: false },

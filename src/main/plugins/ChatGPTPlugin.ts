@@ -65,7 +65,6 @@ export default class ChatGPTPlugin {
   };
 
   getChatGPTInfos = (): Promise<ChatGPTType | undefined> => {
-    // @ts-ignore
     const { path } = global;
     const chatGPTFilePath = pathModule.join(path, FolderPlugin.chatGPTFile);
     return FileService.readJsonFile(chatGPTFilePath).then((data) => {
@@ -80,7 +79,6 @@ export default class ChatGPTPlugin {
   };
 
   setChatGPTInfos = (infos: Partial<ChatGPTType>) => {
-    // @ts-ignore
     const { path } = global;
     const chatGPTFilePath = pathModule.join(path, FolderPlugin.chatGPTFile);
     return FileService.writeJsonFile(chatGPTFilePath, infos);
@@ -121,12 +119,16 @@ export default class ChatGPTPlugin {
       }
     );
     ipcMain.on('chatgpt-generate-types', (event: Electron.IpcMainEvent) => {
-      this.getChatGPTInfos().then((data) => {
-        this.generateTypesSubPlugin.generateTypes(
-          event as ElectronIpcMainEvent,
-          data
-        );
-      });
+      this.getChatGPTInfos()
+        .then((data) => {
+          return this.generateTypesSubPlugin.savePrevTypes().then(() => data);
+        })
+        .then((data) => {
+          this.generateTypesSubPlugin.generateTypes(
+            event as ElectronIpcMainEvent,
+            data
+          );
+        });
     });
   };
 }

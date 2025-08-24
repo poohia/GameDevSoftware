@@ -14,7 +14,6 @@ export default class ChatGPTTranslationPlugin {
     chatGPTInfos?: ChatGPTType
   ) => {
     const { key, locale } = data;
-    // @ts-ignore
     const { path } = global;
     const fileTranslate = pathModule.join(
       path,
@@ -95,7 +94,6 @@ export default class ChatGPTTranslationPlugin {
     chatGPTInfos?: ChatGPTType
   ) => {
     const { gameLocale, targetLocale } = data;
-    // @ts-ignore
     const { path } = global;
     const pathGameLocale = pathModule.join(
       path,
