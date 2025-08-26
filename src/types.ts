@@ -388,6 +388,9 @@ export type ChatGPTType = {
   translation?: {
     languageFileSplit?: number;
   };
+  generationType?: {
+    extraPrompt?: string;
+  };
 };
 
 export interface ShortcutsFolder {

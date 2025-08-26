@@ -32,6 +32,10 @@ export default class ChatGPTPlugin {
               ? values?.translation?.languageFileSplit
               : args.translation.languageFileSplit,
         },
+        generationType:
+          typeof args.generationType === 'undefined'
+            ? values?.generationType
+            : args.generationType,
       };
       this.setChatGPTInfos(infos);
       this.loadChatGPTInfos(event);
@@ -67,14 +71,16 @@ export default class ChatGPTPlugin {
   getChatGPTInfos = (): Promise<ChatGPTType | undefined> => {
     const { path } = global;
     const chatGPTFilePath = pathModule.join(path, FolderPlugin.chatGPTFile);
-    return FileService.readJsonFile(chatGPTFilePath).then((data) => {
-      if (data.apiKey) {
-        openAI = new OpenAI({
-          apiKey: data.apiKey,
-          dangerouslyAllowBrowser: true,
-        });
-      }
-      return data;
+    return FileService.createFileIfNotExist(chatGPTFilePath, '{}').then(() => {
+      return FileService.readJsonFile(chatGPTFilePath).then((data) => {
+        if (data.apiKey) {
+          openAI = new OpenAI({
+            apiKey: data.apiKey,
+            dangerouslyAllowBrowser: true,
+          });
+        }
+        return data;
+      });
     });
   };
 

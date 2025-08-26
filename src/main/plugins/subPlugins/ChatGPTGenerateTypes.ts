@@ -179,6 +179,13 @@ export default class ChatGPTGenerateTypes {
               });
             }
 
+            if (chatGPTInfos.generationType?.extraPrompt) {
+              messages.push({
+                role: 'user',
+                content: `Other tips for translation: ${chatGPTInfos.generationType?.extraPrompt}\n`,
+              });
+            }
+
             try {
               // Appel à l’API Chat Completions
               const response = await openAI.chat.completions.create({
@@ -288,6 +295,13 @@ export default class ChatGPTGenerateTypes {
               });
             }
 
+            if (chatGPTInfos.generationType?.extraPrompt) {
+              messages.push({
+                role: 'user',
+                content: `Other tips for translation: ${chatGPTInfos.generationType?.extraPrompt}\n`,
+              });
+            }
+
             try {
               // Appel à l’API Chat Completions
               const response = await openAI.chat.completions.create({
@@ -373,6 +387,13 @@ export default class ChatGPTGenerateTypes {
           messages.push({
             role: 'user',
             content: `Other tips for translation: ${chatGPTInfos.extraPrompt}\n`,
+          });
+        }
+
+        if (chatGPTInfos.generationType?.extraPrompt) {
+          messages.push({
+            role: 'user',
+            content: `Other tips for translation: ${chatGPTInfos.generationType?.extraPrompt}\n`,
           });
         }
 

@@ -90,6 +90,25 @@ export default class FileService {
       });
     });
 
+  static createFileIfNotExist = (
+    filePath: string,
+    data: string = ''
+  ): Promise<void> =>
+    new Promise((resolve, reject) => {
+      fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (!err) {
+          return resolve();
+        }
+
+        fs.writeFile(filePath, data, (writeErr) => {
+          if (writeErr) {
+            return reject(writeErr);
+          }
+          resolve();
+        });
+      });
+    });
+
   static writeJsonFile = <T = Object>(path: string, data: T): Promise<void> =>
     new Promise((resolve, reject) => {
       fs.writeFile(normalize(path), JSON.stringify(data, null, 4), (err) => {
