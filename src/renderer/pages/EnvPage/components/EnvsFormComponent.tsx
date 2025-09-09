@@ -103,6 +103,16 @@ const EnvsFormComponent: React.FC<EnvsFormComponentProps> = (props) => {
             >
               {i18n.t('module_translation_form_field_submit')}
             </Button>
+            <Button
+              type="button"
+              color={'brown'}
+              onClick={() => {
+                setValueDevelopment('false');
+                setValueProduction('false');
+              }}
+            >
+              <TransComponent id="module_env_set_default_var" />
+            </Button>
           </Form>
         </Container>
       </Grid.Row>

@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import { ElectronIpcMainEvent, EnvObject } from 'types';
 import FileService from '../services/FileService';
 import FolderPlugin from './FolderPlugin';
+import LogService from '../services/LogService';
 
 export default class EnvPlugin {
   loadEnvDevelopmentVars = (event: ElectronIpcMainEvent) => {
@@ -54,10 +55,17 @@ export default class EnvPlugin {
   setDefaultValues = (event: ElectronIpcMainEvent) => {
     const { path } = global;
     FileService.readJsonFile(
-      `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[2]}`
+      `${path}${FolderPlugin.envFolder}${FolderPlugin.envFiles[0]}`
     ).then((envs) => {
-      this.writeEnvProductionVars(event, envs);
-      this.writeEnvDevelopmentVars(event, envs);
+      LogService.Log(envs);
+      const allFalse: any = Object.fromEntries(
+        Object.entries(envs).map(([key, value]) => [key, 'false'])
+      );
+
+      LogService.Log(envs);
+
+      this.writeEnvProductionVars(event, allFalse);
+      this.writeEnvDevelopmentVars(event, allFalse);
     });
   };
 
