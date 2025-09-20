@@ -69,7 +69,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
         allowedKeys.has(t.key.toLowerCase())
       );
     }
-    return _translations;
+    return _translations.reverse();
   }, [filter, translations, filterModule, folderFilter]);
 
   const lengthTranslations = useMemo(
@@ -116,7 +116,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData.reverse().map(({ key, text, deletable }) => (
+              {formatData.map(({ key, text, deletable }) => (
                 <Table.Row
                   key={key}
                   active={keySelected === key}

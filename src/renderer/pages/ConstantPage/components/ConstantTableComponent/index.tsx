@@ -97,7 +97,7 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
 
       _constants = _constants.filter((c) => allowedKeys.has(c.key));
     }
-    return _constants;
+    return _constants.reverse();
   }, [filter, filterType, filterModule, constants, folderFilter]);
   const formatString = useCallback(
     (value: number | number[] | string | string[]) => {
@@ -163,56 +163,52 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData
-                .reverse()
-                .map(({ key, value, description, deletable }) => (
-                  <Table.Row
-                    key={key}
-                    active={keySelected === key}
-                    onClick={() => onClickRow(key)}
-                  >
-                    <Table.Cell width={16}>
-                      <Header as="h3" textAlign="left">
-                        {key}
-                        <Header.Subheader>
-                          {formatString(value)}
-                        </Header.Subheader>
-                      </Header>
-                      {description && (
-                        <p>
-                          <i>{description}</i>
-                        </p>
-                      )}
-                    </Table.Cell>
-                    <Table.Cell textAlign="right" className="action">
-                      <div>
-                        <Button
-                          basic
-                          icon
-                          color="teal"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            setOpenIdShortcutsFolder(key);
-                          }}
-                        >
-                          <Icon name="folder" />
-                        </Button>
-                        <Button
-                          basic
-                          icon
-                          color="red"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            deletable && onDelete(key);
-                          }}
-                          disabled={!deletable}
-                        >
-                          <Icon name="trash" />
-                        </Button>
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
+              {formatData.map(({ key, value, description, deletable }) => (
+                <Table.Row
+                  key={key}
+                  active={keySelected === key}
+                  onClick={() => onClickRow(key)}
+                >
+                  <Table.Cell width={16}>
+                    <Header as="h3" textAlign="left">
+                      {key}
+                      <Header.Subheader>{formatString(value)}</Header.Subheader>
+                    </Header>
+                    {description && (
+                      <p>
+                        <i>{description}</i>
+                      </p>
+                    )}
+                  </Table.Cell>
+                  <Table.Cell textAlign="right" className="action">
+                    <div>
+                      <Button
+                        basic
+                        icon
+                        color="teal"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setOpenIdShortcutsFolder(key);
+                        }}
+                      >
+                        <Icon name="folder" />
+                      </Button>
+                      <Button
+                        basic
+                        icon
+                        color="red"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          deletable && onDelete(key);
+                        }}
+                        disabled={!deletable}
+                      >
+                        <Icon name="trash" />
+                      </Button>
+                    </div>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
             <Table.Footer>
               <Table.Row>

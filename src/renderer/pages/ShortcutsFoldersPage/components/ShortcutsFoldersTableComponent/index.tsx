@@ -21,11 +21,13 @@ const ShortcutsFoldersTableComponent: React.FC<
   });
 
   const results = useMemo(() => {
-    return shortcutsFolders.filter(
-      (folder) =>
-        folder.id.toString().toLocaleLowerCase().includes(filter) ||
-        folder.folderName.toLocaleLowerCase().includes(filter)
-    );
+    return shortcutsFolders
+      .filter(
+        (folder) =>
+          folder.id.toString().toLocaleLowerCase().includes(filter) ||
+          folder.folderName.toLocaleLowerCase().includes(filter)
+      )
+      .reverse();
   }, [shortcutsFolders, filter]);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const ShortcutsFoldersTableComponent: React.FC<
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {results.reverse().map((folder) => (
+              {results.map((folder) => (
                 <Table.Row
                   key={`table-shortcutsfolder-${folder.id}`}
                   active={keySelected === folder.id.toString()}

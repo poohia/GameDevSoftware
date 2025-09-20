@@ -64,7 +64,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
 
       results = results.filter((g) => allowedIds.has(g._id));
     }
-    return results;
+    return results.reverse();
   }, [gameObjects, filter, isOnInput, folderFilter]);
   const lengthGameObjects = useMemo(() => formatData.length, [formatData]);
 
@@ -110,7 +110,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData.reverse().map(({ _id, _title, _type }) => (
+              {formatData.map(({ _id, _title, _type }) => (
                 <Table.Row
                   key={`gameobject-${_id}`}
                   active={keySelected === _id}

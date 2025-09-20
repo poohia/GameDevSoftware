@@ -60,7 +60,6 @@ export default class ScenePlugin {
           }
         )
         .then(() => {
-          UtilsService.ArrayOrderByObjectID(sceneValue);
           if (sceneType) {
             // @ts-ignore
             event.reply(`load-scenes-${sceneType}`, sceneValue);
