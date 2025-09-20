@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { TransComponent } from 'renderer/components';
 import i18n from 'translations/i18n';
-import { Container, Form, Grid, Header } from 'semantic-ui-react';
+import {
+  Container,
+  Dropdown,
+  DropdownItemProps,
+  Form,
+  Grid,
+  Header,
+} from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 
 type EnvsFormComponentProps = {
@@ -14,12 +21,26 @@ type EnvsFormComponentProps = {
   ) => void;
 };
 
+const OptionsEnvs: DropdownItemProps[] = [
+  {
+    key: 'true',
+    value: 'true',
+    text: 'true',
+  },
+  {
+    key: 'false',
+    value: 'false',
+    text: 'false',
+  },
+];
+
 const EnvsFormComponent: React.FC<EnvsFormComponentProps> = (props) => {
   const { defaultKey, defaultValue, onSubmit } = props;
 
   const [key, setKey] = useState<string>(defaultKey);
   const [valueDevelopment, setValueDevelopment] = useState<string>('');
   const [valueProduction, setValueProduction] = useState<string>('');
+  console.log('🚀 ~ EnvsFormComponent ~ valueProduction:', valueProduction);
 
   const handleChangeKey = useCallback((value: string) => {
     setKey(value.toUpperCase().replace(' ', '_'));
@@ -71,25 +92,27 @@ const EnvsFormComponent: React.FC<EnvsFormComponentProps> = (props) => {
               />
             </Form.Field>
             <Form.Field required>
-              <Form.Input
-                label={i18n.t('module_env_form_development_value_label')}
+              <label>{i18n.t('module_env_form_development_value_label')}</label>
+              <Dropdown
+                fluid
+                selection
                 value={valueDevelopment}
-                onChange={(_: any, data: { value: string }) =>
-                  setValueDevelopment(data.value)
-                }
-                required
-                focus
+                options={OptionsEnvs}
+                onChange={(_: any, data) => {
+                  setValueDevelopment(data.value as string);
+                }}
               />
             </Form.Field>
             <Form.Field required>
-              <Form.Input
-                label={i18n.t('module_env_form_production_value_label')}
+              <label>{i18n.t('module_env_form_production_value_label')}</label>
+              <Dropdown
+                fluid
+                selection
                 value={valueProduction}
-                onChange={(_: any, data: { value: string }) =>
-                  setValueProduction(data.value)
-                }
-                required
-                focus
+                options={OptionsEnvs}
+                onChange={(_: any, data) => {
+                  setValueProduction(data.value as string);
+                }}
               />
             </Form.Field>
             <Button
