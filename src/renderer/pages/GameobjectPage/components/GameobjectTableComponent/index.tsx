@@ -110,7 +110,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData.map(({ _id, _title, _type }) => (
+              {formatData.reverse().map(({ _id, _title, _type }) => (
                 <Table.Row
                   key={`gameobject-${_id}`}
                   active={keySelected === _id}

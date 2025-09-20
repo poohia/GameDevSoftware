@@ -1,21 +1,19 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
-import UtilsService from '../services/UtilsService';
 import { ConstantObject, ElectronIpcMainEvent } from 'types';
 import FolderPlugin from './FolderPlugin';
+import FileService from '../services/FileService';
 
 export default class ConstantPlugin {
   constructor() {}
 
-  loadConstantsFile = (): ConstantObject[] => {
+  loadConstantsFile = (): Promise<ConstantObject[]> => {
     const { path } = global;
-    // @ts-ignore
-    return JSON.parse(fs.readFileSync(`${path}${FolderPlugin.constantFile}`));
+    return FileService.readJsonFile(`${path}${FolderPlugin.constantFile}`);
   };
 
-  loadConstants = (event: ElectronIpcMainEvent) => {
-    const data = this.loadConstantsFile();
-    UtilsService.OrderByKeyASC(data);
+  loadConstants = async (event: ElectronIpcMainEvent) => {
+    const data = await this.loadConstantsFile();
     event.reply('load-constants', data);
   };
 

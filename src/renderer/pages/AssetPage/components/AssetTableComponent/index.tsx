@@ -78,7 +78,7 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
 
     return _assets;
   }, [filter, filterType, filterModule, assets, module, folderFilter]);
-  const assetsToShow = useMemo(() => formatData(), [formatData]);
+  const assetsToShow = useMemo(() => formatData().reverse(), [formatData]);
   const lengthAssets = useMemo(() => assetsToShow.length, [assetsToShow]);
 
   useEffect(() => {

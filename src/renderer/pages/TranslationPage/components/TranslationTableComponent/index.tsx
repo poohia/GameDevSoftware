@@ -116,7 +116,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {formatData.map(({ key, text, deletable }) => (
+              {formatData.reverse().map(({ key, text, deletable }) => (
                 <Table.Row
                   key={key}
                   active={keySelected === key}

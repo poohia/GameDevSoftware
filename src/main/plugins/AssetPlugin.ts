@@ -10,7 +10,6 @@ import {
 } from 'types';
 import pathModule from 'path';
 import FileService from '../services/FileService';
-import UtilsService from '../services/UtilsService';
 import FolderPlugin from './FolderPlugin';
 import { OptimizeAssetsPlugin } from './subPlugins';
 
@@ -50,33 +49,28 @@ export default class AssetPlugin {
     }
   };
 
-  private readAssetFile = (): AssetType[] => {
+  private readAssetFile = (): Promise<AssetType[]> => {
     const { path } = global;
-    // @ts-ignore
-    return JSON.parse(fs.readFileSync(`${path}${FolderPlugin.assetFile}`));
+    return FileService.readJsonFile(`${path}${FolderPlugin.assetFile}`);
   };
 
   private writeAssetFile = (data: AssetType[], callback: () => void) => {
     const { path } = global;
-    fs.writeFile(
-      `${path}${FolderPlugin.assetFile}`,
-      JSON.stringify(data, null, 4),
-      (err) => {
-        if (err) return;
+    FileService.writeJsonFile(`${path}${FolderPlugin.assetFile}`, data).then(
+      () => {
         callback();
       }
     );
   };
 
-  loadAssets = (event: ElectronIpcMainEvent) => {
-    const data = this.readAssetFile();
-    UtilsService.SortAssets(data);
+  loadAssets = async (event: ElectronIpcMainEvent) => {
+    const data = await this.readAssetFile();
     event.reply('load-assets', data);
   };
 
-  saveAsset = (event: ElectronIpcMainEvent, arg: AssertFileValueType) => {
+  saveAsset = async (event: ElectronIpcMainEvent, arg: AssertFileValueType) => {
     const { fileName, fileType, fileAlt, content, ...rest } = arg;
-    const assets = this.readAssetFile();
+    const assets = await this.readAssetFile();
     this.writeAssetFile(
       assets
         .filter((asset) => asset.name !== fileName)
@@ -105,8 +99,8 @@ export default class AssetPlugin {
     );
   };
 
-  deleteAsset = (event: ElectronIpcMainEvent, arg: string) => {
-    const assets = this.readAssetFile();
+  deleteAsset = async (event: ElectronIpcMainEvent, arg: string) => {
+    const assets = await this.readAssetFile();
     this.writeAssetFile(
       assets.filter((a) => a.name !== arg),
       () => {
@@ -146,8 +140,11 @@ export default class AssetPlugin {
     }
   };
 
-  getAssetBase64FromAssets = (event: ElectronIpcMainEvent, arg: string) => {
-    const data = this.readAssetFile();
+  getAssetBase64FromAssets = async (
+    event: ElectronIpcMainEvent,
+    arg: string
+  ) => {
+    const data = await this.readAssetFile();
     const assetFind = data.find((d) => d.name === arg);
     if (assetFind) this.getAssetInformation(event, assetFind);
   };
@@ -167,8 +164,8 @@ export default class AssetPlugin {
           { extensions: ['json'], name: 'Json' },
         ],
       })
-      .then((result) => {
-        const assets = this.readAssetFile();
+      .then(async (result) => {
+        const assets = await this.readAssetFile();
         async.each(
           result.filePaths,
           (filePath, callback) => {

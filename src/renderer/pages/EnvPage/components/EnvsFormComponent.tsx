@@ -40,7 +40,6 @@ const EnvsFormComponent: React.FC<EnvsFormComponentProps> = (props) => {
   const [key, setKey] = useState<string>(defaultKey);
   const [valueDevelopment, setValueDevelopment] = useState<string>('');
   const [valueProduction, setValueProduction] = useState<string>('');
-  console.log('🚀 ~ EnvsFormComponent ~ valueProduction:', valueProduction);
 
   const handleChangeKey = useCallback((value: string) => {
     setKey(value.toUpperCase().replace(' ', '_'));

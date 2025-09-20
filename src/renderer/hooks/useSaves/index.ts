@@ -37,7 +37,6 @@ const useSaves = () => {
 
   useEffect(() => {
     on('load-saves', (_saves) => {
-      console.log('🚀 ~ on ~ _saves:', _saves, typeof _saves);
       setSaves(_saves);
     });
     sendMessage('load-saves');

@@ -63,7 +63,6 @@ export default class GameObjectPlugin {
           }
         )
         .then(() => {
-          UtilsService.ArrayOrderByObjectID(gameObjectsValue);
           if (objectType) {
             // @ts-ignore
             event.reply(`load-game-objects-${objectType}`, gameObjectsValue);

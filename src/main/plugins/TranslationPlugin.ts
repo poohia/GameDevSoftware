@@ -29,13 +29,14 @@ export default class TranslationPlugin {
   };
 
   private reverseAllLanguages = (translations: any) => {
+    return translations;
     // on reconstruit un nouvel objet pour ne pas muter l’original
-    return Object.fromEntries(
-      Object.entries(translations).map(([lang, entries]: any) => [
-        lang,
-        [...entries].reverse(), // clone & reverse
-      ])
-    );
+    // return Object.fromEntries(
+    //   Object.entries(translations).map(([lang, entries]: any) => [
+    //     lang,
+    //     [...entries].reverse(), // clone & reverse
+    //   ])
+    // );
   };
 
   loadTranslations = (event: ElectronIpcMainEvent) => {
