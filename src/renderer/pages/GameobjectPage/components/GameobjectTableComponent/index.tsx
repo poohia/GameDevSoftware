@@ -64,7 +64,8 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
 
       results = results.filter((g) => allowedIds.has(g._id));
     }
-    return results.reverse();
+
+    return Array.from(results).reverse();
   }, [gameObjects, filter, isOnInput, folderFilter]);
   const lengthGameObjects = useMemo(() => formatData.length, [formatData]);
 

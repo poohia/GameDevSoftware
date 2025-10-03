@@ -203,7 +203,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                   selection
                   search
                   defaultValue={translations}
-                  options={translationsDropdown}
+                  options={Array.from(translationsDropdown).reverse()}
                   multiple
                   onChange={(_e, data) => {
                     setTranslations(data.value as string[]);
@@ -220,7 +220,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                   selection
                   search
                   defaultValue={assets}
-                  options={assetsDropdown}
+                  options={Array.from(assetsDropdown).reverse()}
                   multiple
                   onChange={(_e, data) => {
                     setAssets(data.value as string[]);
@@ -237,7 +237,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                   selection
                   search
                   defaultValue={constants}
-                  options={constantsDropdown}
+                  options={Array.from(constantsDropdown).reverse()}
                   multiple
                   onChange={(_e, data) => {
                     setConstants(data.value as string[]);
@@ -254,7 +254,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                   selection
                   search
                   defaultValue={gameObjects}
-                  options={gameObjectsDropdown}
+                  options={Array.from(gameObjectsDropdown).reverse()}
                   multiple
                   onChange={(_e, data) => {
                     setGameObjects(data.value as number[]);
@@ -271,7 +271,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                   selection
                   search
                   defaultValue={scenes}
-                  options={scenesDropdown}
+                  options={Array.from(scenesDropdown).reverse()}
                   multiple
                   onChange={(_e, data) => {
                     setScenes(data.value as number[]);

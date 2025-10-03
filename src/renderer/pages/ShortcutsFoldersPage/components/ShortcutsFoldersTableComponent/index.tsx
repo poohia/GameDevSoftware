@@ -21,13 +21,13 @@ const ShortcutsFoldersTableComponent: React.FC<
   });
 
   const results = useMemo(() => {
-    return shortcutsFolders
-      .filter(
+    return Array.from(
+      shortcutsFolders.filter(
         (folder) =>
           folder.id.toString().toLocaleLowerCase().includes(filter) ||
           folder.folderName.toLocaleLowerCase().includes(filter)
       )
-      .reverse();
+    ).reverse();
   }, [shortcutsFolders, filter]);
 
   useEffect(() => {

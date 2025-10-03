@@ -91,7 +91,7 @@ const DropDownGameObjectInput = (props: {
       search
       multiple
       value={value}
-      options={gameObjects}
+      options={Array.from(gameObjects).reverse()}
       clearable={optional}
       onChange={(_e, data) => {
         setValue(data.value as string[]);

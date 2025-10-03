@@ -97,7 +97,7 @@ const ConstantTableComponent: React.FC<ConstantTableComponentProps> = (
 
       _constants = _constants.filter((c) => allowedKeys.has(c.key));
     }
-    return _constants.reverse();
+    return Array.from(_constants).reverse();
   }, [filter, filterType, filterModule, constants, folderFilter]);
   const formatString = useCallback(
     (value: number | number[] | string | string[]) => {

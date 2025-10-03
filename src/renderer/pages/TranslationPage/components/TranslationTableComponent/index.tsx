@@ -69,7 +69,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
         allowedKeys.has(t.key.toLowerCase())
       );
     }
-    return _translations.reverse();
+    return Array.from(_translations).reverse();
   }, [filter, translations, filterModule, folderFilter]);
 
   const lengthTranslations = useMemo(
