@@ -25,6 +25,17 @@ const useSaves = () => {
     [saves]
   );
 
+  const eraseSave = useCallback((save: GameDatabaseSave) => {
+    setSaves((_saves) => {
+      const saveFind = _saves.find((s) => s.id === save.id);
+      if (saveFind) {
+        saveFind.game = save.game;
+      }
+      sendMessage('set-saves', _saves);
+      return Array.from(_saves);
+    });
+  }, []);
+
   const removeSave = useCallback(
     (id: number) => {
       sendMessage(
@@ -45,6 +56,7 @@ const useSaves = () => {
   return {
     saves,
     addSave,
+    eraseSave,
     removeSave,
   };
 };

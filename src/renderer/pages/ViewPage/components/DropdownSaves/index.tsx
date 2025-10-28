@@ -15,7 +15,7 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
   refIframe,
   onLoadSave,
 }) => {
-  const { saves, addSave, removeSave } = useContext(SavesContext);
+  const { saves, addSave, eraseSave, removeSave } = useContext(SavesContext);
   const { sendMessage } = useMessages(refIframe);
 
   /** */
@@ -46,6 +46,20 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
       setOpenModal(false);
     });
   }, [title]);
+
+  const eraseSaveAction = useCallback(() => {
+    if (loading || !saveSelected) return;
+    setLoading(true);
+
+    sendMessage('getSaveData', null, (data) => {
+      saveSelected.game = data.data.game;
+      eraseSave(saveSelected);
+      setTimeout(() => {
+        onLoadSave();
+        setLoading(false);
+      }, 500);
+    });
+  }, [saveSelected]);
 
   const removeCurrentSave = useCallback(() => {
     if (loading) return;
@@ -107,6 +121,14 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
               loading={loading}
             >
               <Icon name="save" />
+            </Button>
+            <Button
+              icon
+              color="purple"
+              onClick={eraseSaveAction}
+              loading={loading}
+            >
+              <Icon name="erase" />
             </Button>
             <Button
               icon
