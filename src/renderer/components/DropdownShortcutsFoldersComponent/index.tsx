@@ -28,12 +28,11 @@ const DropdownShortcutsFoldersComponent: React.FC<
     [currentShortcutsFolderID]
   );
 
+  const finalShortcutsFoldersDropdown = useMemo(() => {
+    return Array.from(shortcutsFoldersDropdown).reverse();
+  }, [shortcutsFoldersDropdown]);
+
   useEffect(() => {
-    console.log(
-      '🚀 ~ currentShortcutsFolder:',
-      currentShortcutsFolder,
-      currentShortcutsFolderID
-    );
     if (!shortcutsFolders) {
       setShortcutsFoldersDropdown([]);
       return;
@@ -58,7 +57,7 @@ const DropdownShortcutsFoldersComponent: React.FC<
       multiple
       search
       value={value}
-      options={shortcutsFoldersDropdown}
+      options={finalShortcutsFoldersDropdown}
       onChange={(_, data) => {
         if (data.value) {
           setCurrentShortcutsFolderID(data.value as number[]);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Dropdown, DropdownItemProps } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import ModalComponent from '../ModalComponent';
@@ -21,6 +21,10 @@ const DialogShortcutsFoldersComponent: React.FC<
   const [shortcutsFoldersDropdown, setShortcutsFoldersDropdown] = useState<
     DropdownItemProps[]
   >([]);
+
+  const finalShortcutsFoldersDropdown = useMemo(() => {
+    return Array.from(shortcutsFoldersDropdown).reverse();
+  }, [shortcutsFoldersDropdown]);
 
   const [values, setValues] = useState<number[]>([]);
 
@@ -63,7 +67,7 @@ const DialogShortcutsFoldersComponent: React.FC<
         clearable
         value={values}
         multiple={multiple}
-        options={shortcutsFoldersDropdown}
+        options={finalShortcutsFoldersDropdown}
         onChange={(_, data) => {
           setValues((data.value || []) as number[]);
         }}
