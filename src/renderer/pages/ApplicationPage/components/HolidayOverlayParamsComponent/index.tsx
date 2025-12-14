@@ -58,6 +58,7 @@ const HolidayOverlayParamsComponent: React.FC = () => {
                 }
                 checked={halloween}
                 onChange={(_e, data) => setHalloween(!!data.checked)}
+                disabled
               />
             </Grid.Column>
           </Grid.Row>
