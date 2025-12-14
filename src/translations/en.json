@@ -111,5 +111,8 @@
   "module_scene_tree_dialog_export": "Export PNG",
   "module_application_home_cypress_open": "Open Cypress",
   "module_application_home_cypress_open_screenshots": "Open Screenshots",
-  "module_application_home_cypress_clear_screenshots": "Clear Screenshots"
+  "module_application_home_cypress_clear_screenshots": "Clear Screenshots",
+  "module_application_params_holiday_overlay_title": "Holiday overlay",
+  "module_application_params_holiday_overlay_halloween_label": "Halloween",
+  "module_application_params_holiday_overlay_christmas_label": "Christmas"
 }

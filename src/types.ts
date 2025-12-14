@@ -106,7 +106,9 @@ export type Channels =
   | 'load-saves'
   | 'open-cypress'
   | 'open-cypress-screenshots'
-  | 'cypress-clear-screenshots';
+  | 'cypress-clear-screenshots'
+  | 'set-holidays-overlay'
+  | 'get-holidays-overlay';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -248,6 +250,10 @@ export type ApplicationConfigJson = {
   webStore: string;
   background?: string;
   fontFamily?: string;
+  holidaysOverlay: {
+    christmas: boolean;
+    halloween: boolean;
+  };
 };
 export type ApplicationIdentityParams = {
   package: string;

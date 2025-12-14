@@ -19,6 +19,8 @@ const EnvsTableComponent: React.FC<EnvsTableComponentProps> = (props) => {
       'IGNORE_SPLASHSCREEN',
       'IGNORE_ORIENTATION',
       'FORCE_SHOW_APP_BANNER',
+      'FORCE_CHIRSTMAS_OVLERAY',
+      'FORCE_HALLOWEEN_OVERLAY',
     ],
     []
   );
@@ -43,33 +45,31 @@ const EnvsTableComponent: React.FC<EnvsTableComponentProps> = (props) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {Object.keys(productionEnvs)
-                .reverse()
-                .map((key: string) => (
-                  <Table.Row
-                    key={`table-row-env-development-${key}`}
-                    onClick={() => onClickRow(key)}
-                    disabled={key === 'ENV'}
-                  >
-                    <Table.Cell>{key}</Table.Cell>
-                    <Table.Cell>{developmentEnvs[key]}</Table.Cell>
-                    <Table.Cell>{productionEnvs[key]}</Table.Cell>
-                    <Table.Cell>
-                      <Button
-                        basic
-                        icon
-                        color="red"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          onDelete(key);
-                        }}
-                        disabled={keyUndelatable.includes(key)}
-                      >
-                        <Icon name="trash" />
-                      </Button>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
+              {Object.keys(productionEnvs).map((key: string) => (
+                <Table.Row
+                  key={`table-row-env-development-${key}`}
+                  onClick={() => onClickRow(key)}
+                  disabled={key === 'ENV'}
+                >
+                  <Table.Cell>{key}</Table.Cell>
+                  <Table.Cell>{developmentEnvs[key]}</Table.Cell>
+                  <Table.Cell>{productionEnvs[key]}</Table.Cell>
+                  <Table.Cell>
+                    <Button
+                      basic
+                      icon
+                      color="red"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onDelete(key);
+                      }}
+                      disabled={keyUndelatable.includes(key)}
+                    >
+                      <Icon name="trash" />
+                    </Button>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table>
         </Grid.Column>

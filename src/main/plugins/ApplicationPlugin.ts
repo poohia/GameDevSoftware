@@ -20,6 +20,7 @@ import FileService from '../services/FileService';
 import ApplicationAdvancedPlugin from './subPlugins/ApplicationAdvancedPlugin';
 import PackageJSONService from '../services/PackageJSONService';
 import CapacitorService from '../services/CapacitorService';
+import ApplicationHolidaysOverlayPlugin from './subPlugins/ApplicationHolidaysOverlayPlugin';
 
 const options = {
   ignoreAttributes: false,
@@ -41,6 +42,7 @@ export default class ApplicationPlugin {
     'yarn',
   ];
   private _advancedPlugin: ApplicationAdvancedPlugin;
+  private _holidaysOverlay: ApplicationHolidaysOverlayPlugin;
 
   constructor(private mainWindow: BrowserWindow) {
     this._imagePlugin = new ApplicationImagesPlugin(this.mainWindow);
@@ -48,6 +50,7 @@ export default class ApplicationPlugin {
     this._buildPlugin = new ApplicationBuildPlugin();
     this._splashscreenPlugin = new SplashscreenPlugin(this.mainWindow);
     this._advancedPlugin = new ApplicationAdvancedPlugin();
+    this._holidaysOverlay = new ApplicationHolidaysOverlayPlugin();
   }
 
   // static refreshConfigFileToSrc = (callback?: (err?: Error) => void) => {
@@ -341,6 +344,20 @@ export default class ApplicationPlugin {
     });
     ipcMain.on('set-background', (event: Electron.IpcMainEvent, args) => {
       this._advancedPlugin.setBackground(
+        event as ElectronIpcMainEvent,
+        args,
+        this.openConfigFile,
+        this.writeConfigFile
+      );
+    });
+    ipcMain.on('get-holidays-overlay', (event: Electron.IpcMainEvent) => {
+      this._holidaysOverlay.getHolidaysOverlay(
+        event as ElectronIpcMainEvent,
+        this.openConfigFile
+      );
+    });
+    ipcMain.on('set-holidays-overlay', (event: Electron.IpcMainEvent, args) => {
+      this._holidaysOverlay.setHolidaysOverlay(
         event as ElectronIpcMainEvent,
         args,
         this.openConfigFile,
