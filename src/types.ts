@@ -32,6 +32,7 @@ export type Channels =
   | 'get-softwares-info'
   | 'prepare-platform'
   | 'build-platform'
+  | 'build-demo-platform'
   | 'emulate-platform'
   | 'load-game-modules'
   | 'load-constants'
@@ -66,8 +67,6 @@ export type Channels =
   | 'load-env-production-vars'
   | 'write-env-production-vars'
   | 'set-env-default-values'
-  | 'load-menus-views'
-  | 'set-menu-view'
   | 'optimize-assets'
   | 'load-splashscreen-informations'
   | 'splashscreen-modify-slogan'
@@ -108,7 +107,11 @@ export type Channels =
   | 'open-cypress-screenshots'
   | 'cypress-clear-screenshots'
   | 'set-holidays-overlay'
-  | 'get-holidays-overlay';
+  | 'get-holidays-overlay'
+  | 'get-page-home-config'
+  | 'set-page-home-config'
+  | 'get-page-enddemo-config'
+  | 'set-page-enddemo-config';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -369,6 +372,25 @@ export type EnvObject = {
   [key: string]: string;
 };
 export type MenusViewsType = { module: string; path: string; used: boolean };
+export type PagesConfigType = {
+  homePath: {
+    path: string;
+  };
+  endDemoPath: {
+    path: string;
+    endDemoPath: number | null;
+  };
+  creditsPath: {
+    path: string;
+    blocks: {
+      title: string;
+      persons: {
+        name: string;
+        title: string;
+      }[];
+    }[];
+  };
+};
 
 export type SplashscreenType = {
   brandImage: string;

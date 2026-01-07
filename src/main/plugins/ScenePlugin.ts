@@ -197,6 +197,7 @@ export default class ScenePlugin {
             core: {
               _scene: 'scene',
             },
+            optional: true,
           },
         },
       }));

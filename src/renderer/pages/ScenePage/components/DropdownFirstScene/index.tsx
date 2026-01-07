@@ -18,7 +18,7 @@ const DropdownFirstScene = () => {
     () =>
       scenes.map((scene) => ({
         key: scene._id,
-        text: `Id: ${scene._id}`,
+        text: `${scene._id} - ${scene._title}`,
         value: scene._id,
       })),
     [scenes]

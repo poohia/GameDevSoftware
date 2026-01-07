@@ -80,6 +80,14 @@ export default class CapacitorService {
     });
   };
 
+  static buildDemo = (callback: (err: Error) => void) => {
+    // @ts-ignore
+    const path = global.path;
+    exec(`yarn build-demo`, { cwd: path }, (error, stdout) => {
+      callback(Error(error?.message));
+    });
+  };
+
   static openAndroidStudio = () => {
     // @ts-ignore
     const path = global.path;

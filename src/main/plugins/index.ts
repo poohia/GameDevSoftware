@@ -15,6 +15,7 @@ import ChatGPTPlugin from './ChatGPTPlugin';
 import ShortcutsFoldersPlugin from './ShortcutsFoldersPlugin';
 import SavesPlugin from './SavesPlugin';
 import CypressPlugin from './CypressPlugin';
+import PagesPlugin from './PagesPlugin';
 
 type Plugins =
   | 'folderPlugin'
@@ -32,7 +33,8 @@ type Plugins =
   | 'chatgptPlugin'
   | 'shortcutsFoldersPlugin'
   | 'savesPlugin'
-  | 'cypressPlugin';
+  | 'cypressPlugin'
+  | 'pagesPlugin';
 
 export default class PluginsContainer {
   private _folderPlugin;
@@ -51,6 +53,7 @@ export default class PluginsContainer {
   private _shortcutsFoldersPlugin;
   private _savesPlugin;
   private _cypressPlugin;
+  private _pagesPlugin;
 
   constructor(mainWindow: BrowserWindow) {
     this._folderPlugin = new FolderPlugin(mainWindow);
@@ -69,6 +72,7 @@ export default class PluginsContainer {
     this._shortcutsFoldersPlugin = new ShortcutsFoldersPlugin();
     this._savesPlugin = new SavesPlugin();
     this._cypressPlugin = new CypressPlugin();
+    this._pagesPlugin = new PagesPlugin();
   }
 
   init() {

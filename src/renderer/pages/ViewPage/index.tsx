@@ -4,7 +4,7 @@ import { useDatabase } from 'renderer/hooks';
 import { Button } from 'renderer/semantic-ui';
 import { Icon } from 'semantic-ui-react';
 import {
-  BtnHome,
+  BtnGoTo,
   DropdownLocale,
   DropdownSaves,
   DropdownSound,
@@ -73,7 +73,7 @@ const ViewPage: React.FC = () => {
                 }
               }}
             />
-            <BtnHome refIframe={refIframe.current} />
+            <BtnGoTo refIframe={refIframe.current} />
             <DropdownLocale refIframe={refIframe.current} />
             <DropdownSound refIframe={refIframe.current} />
           </>

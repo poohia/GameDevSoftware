@@ -19,7 +19,9 @@ export default class FolderPlugin {
   static assetFile = `${FolderPlugin.gameDevSoftwareDirectory}/assets.json`;
   /** Menu and Parameters */
   static menuPath = '/pages/Home';
+  static endDemoPath = '/pages/EndDemo';
   static menuConfig = `${FolderPlugin.gameDevSoftwareDirectory}/homecomponent.json`;
+  static pagesConfig = `${FolderPlugin.gameDevSoftwareDirectory}/pages.json`;
   /** Game Objects */
   static gameObjectTypesDirectory = `/gameobjectTypes`;
   static gameObjectDirectory = `${FolderPlugin.gameDevSoftwareDirectory}/gameObjects`;
@@ -98,6 +100,8 @@ export default class FolderPlugin {
     } else if (!fs.existsSync(`${path}${FolderPlugin.assetFile}`)) {
       isValid = false;
     } else if (!fs.existsSync(`${path}${FolderPlugin.fontFile}`)) {
+      isValid = false;
+    } else if (!fs.existsSync(`${path}${FolderPlugin.pagesConfig}`)) {
       isValid = false;
     }
 

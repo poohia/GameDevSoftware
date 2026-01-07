@@ -64,7 +64,7 @@ export default class ApplicationAdvancedPlugin {
         if (viewFind) {
           viewFind.used = true;
         }
-        event.reply('load-menus-views', menusView);
+        // event.reply('load-menus-views', menusView);
       }
     );
   };

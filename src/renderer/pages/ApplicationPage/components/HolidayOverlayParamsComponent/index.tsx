@@ -6,7 +6,6 @@ import { Checkbox, Container, Grid } from 'semantic-ui-react';
 import { ApplicationConfigJson } from 'types';
 
 const HolidayOverlayParamsComponent: React.FC = () => {
-  const [init, setInit] = useState<boolean>(false);
   const [christmas, setChristmas] = useState<boolean>(false);
   const [halloween, setHalloween] = useState<boolean>(false);
 
@@ -17,16 +16,9 @@ const HolidayOverlayParamsComponent: React.FC = () => {
       (holidaysOverlay: ApplicationConfigJson['holidaysOverlay']) => {
         setChristmas(holidaysOverlay.christmas);
         setHalloween(holidaysOverlay.halloween);
-        setInit(true);
       }
     );
   }, []);
-
-  useEffect(() => {
-    if (init) {
-      sendMessage('set-holidays-overlay', { christmas, halloween });
-    }
-  }, [christmas, halloween]);
 
   return (
     <Container>
@@ -46,7 +38,13 @@ const HolidayOverlayParamsComponent: React.FC = () => {
                   </label>
                 }
                 checked={christmas}
-                onChange={(_e, data) => setChristmas(!!data.checked)}
+                onChange={(_e, data) => {
+                  setChristmas(!!data.checked),
+                    sendMessage('set-holidays-overlay', {
+                      christmas: !!data.checked,
+                      halloween,
+                    });
+                }}
               />
             </Grid.Column>
             <Grid.Column width={8}>
@@ -57,7 +55,13 @@ const HolidayOverlayParamsComponent: React.FC = () => {
                   </label>
                 }
                 checked={halloween}
-                onChange={(_e, data) => setHalloween(!!data.checked)}
+                onChange={(_e, data) => {
+                  setHalloween(!!data.checked);
+                  sendMessage('set-holidays-overlay', {
+                    christmas,
+                    halloween: !!data.checked,
+                  });
+                }}
                 disabled
               />
             </Grid.Column>

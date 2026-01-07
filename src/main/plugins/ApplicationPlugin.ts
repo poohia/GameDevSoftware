@@ -255,14 +255,11 @@ export default class ApplicationPlugin {
     ipcMain.on('get-softwares-info', (event: Electron.IpcMainEvent) =>
       this.getSoftwaresInfo(event as ElectronIpcMainEvent)
     );
-    ipcMain.on('load-menus-views', (event: Electron.IpcMainEvent) =>
-      this._advancedPlugin.loadMenusView(event as ElectronIpcMainEvent)
-    );
-    ipcMain.on('set-menu-view', (event: Electron.IpcMainEvent, args) =>
-      this.setMenuView(event as ElectronIpcMainEvent, args)
-    );
     ipcMain.on('build-platform', (event: Electron.IpcMainEvent) =>
       this._buildPlugin.buildPlatform(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('build-demo-platform', (event: Electron.IpcMainEvent) =>
+      this._buildPlugin.buildDemo(event as ElectronIpcMainEvent)
     );
     ipcMain.on('prepare-platform', (event: Electron.IpcMainEvent, args) =>
       this._buildPlugin.preparePlatform(event as ElectronIpcMainEvent, args)

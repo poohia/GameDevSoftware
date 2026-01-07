@@ -118,23 +118,6 @@ const AdvancedParamsComponent: React.FC = () => {
             </Grid.Column>
             <Grid.Column width={8}>
               <label>
-                <TransComponent id="module_application_params_home_view" />
-              </label>
-              <Dropdown
-                fluid
-                selection
-                value={menusView?.find((m) => m.active)?.value}
-                options={menusView}
-                onChange={(_, { value }) => {
-                  sendMessage('set-menu-view', value);
-                }}
-                required
-              />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column width={8}>
-              <label>
                 <TransComponent id="module_application_params_background" />
               </label>
               <AssetInput
@@ -146,6 +129,8 @@ const AdvancedParamsComponent: React.FC = () => {
                 }}
               />
             </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
             <Grid.Column width={8}>
               <label>
                 <TransComponent id="module_application_params_fontFamily" />

@@ -8,6 +8,7 @@ type Messages =
   | 'setSaveData'
   | 'changePath'
   | 'goHome'
+  | 'goDemo'
   | 'currentLocale'
   | 'setCurrentLocale'
   | 'currentSound'

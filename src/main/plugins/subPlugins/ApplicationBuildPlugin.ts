@@ -23,6 +23,15 @@ export default class ApplicationBuildPlugin {
     });
   };
 
+  buildDemo = (event: ElectronIpcMainEvent) => {
+    CapacitorService.buildDemo((err) => {
+      if (err) {
+        event.reply('build-platform', false);
+      }
+      event.reply('build-platform', true);
+    });
+  };
+
   emulatePlatform = (
     _event: ElectronIpcMainEvent,
     arg: keyof PlatformsParams

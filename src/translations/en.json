@@ -7,6 +7,7 @@
   "module_gameobject": "Game Object Module",
   "module_scene": "Scene Module",
   "module_chatgpt": "ChatGPT Module",
+  "module_pages": "Pages Module",
   "form_scene_module_first_scene": "First scene",
   "module_scene_title": "Scenes",
   "dropdown_languages_placeholder_default": "Select Country",
@@ -53,6 +54,7 @@
   "module_application_home_project_refresh": "Refresh",
   "module_application_home_project_open_new_project": "Open project",
   "module_application_home_project_build": "Build",
+  "module_application_home_project_build_demo": "Build demo version",
   "module_application_params_home_view": "Home View by modules",
   "module_application_params_orientation_title": "App orientation",
   "module_application_params_background": "Background",
@@ -87,6 +89,7 @@
   "module_view_save_input_placeholder": "Saves",
   "module_view_save_modal_title": "New Save",
   "module_view_save_modal_input_label": "Title of save",
+  "module_view_go_to": "Go to",
   "module_font": "Font Module",
   "module_font_append_font": "Append a new Fonts",
   "module_chatgpt_form_field_api_key_label": "API Key",
@@ -114,5 +117,7 @@
   "module_application_home_cypress_clear_screenshots": "Clear Screenshots",
   "module_application_params_holiday_overlay_title": "Holiday overlay",
   "module_application_params_holiday_overlay_halloween_label": "Halloween",
-  "module_application_params_holiday_overlay_christmas_label": "Christmas"
+  "module_application_params_holiday_overlay_christmas_label": "Christmas",
+  "module_pages_home_config": "Home page config",
+  "module_pages_enddemo_config": "Demo page config"
 }
