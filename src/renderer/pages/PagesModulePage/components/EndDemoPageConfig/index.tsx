@@ -2,21 +2,15 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import { TransComponent } from 'renderer/components';
 import ScenesContext from 'renderer/contexts/ScenesContext';
 import { useEvents } from 'renderer/hooks';
-import GameobjectTableComponent from 'renderer/pages/GameobjectPage/components/GameobjectTableComponent';
 import { Segment } from 'renderer/semantic-ui';
-import {
-  Container,
-  Dropdown,
-  DropdownProps,
-  Form,
-  Grid,
-} from 'semantic-ui-react';
+import { Container, Dropdown, DropdownProps, Grid } from 'semantic-ui-react';
 import { MenusViewsType } from 'types';
 
 const EndDemoPageConfig: React.FC = () => {
   const [menusView, setMenusViews] = useState<DropdownProps['options']>([]);
   const { requestMessage, sendMessage } = useEvents();
   const { scenes } = useContext(ScenesContext);
+  const [sceneId, setSceneId] = useState<number | null>(null);
   const options = useMemo(
     () =>
       scenes.map((scene) => ({
@@ -37,6 +31,12 @@ const EndDemoPageConfig: React.FC = () => {
           active: path.used,
         }))
       );
+    });
+  }, []);
+
+  useEffect(() => {
+    requestMessage('get-page-scene-before-demo-id', (s: number | null) => {
+      setSceneId(s);
     });
   }, []);
 
@@ -67,14 +67,22 @@ const EndDemoPageConfig: React.FC = () => {
             </Grid.Column>
             <Grid.Column width={12}>
               <label>
-                <TransComponent id="module_scene_home_title" />
+                <TransComponent id="module_pages_config_scene_before_demo_id_label" />
               </label>
               <Dropdown
                 fluid
                 selection
                 required
+                clearable
+                search
                 options={options}
-                onChange={() => {}}
+                value={sceneId || ''}
+                onChange={(_, data) => {
+                  sendMessage(
+                    'set-page-scene-before-demo-id',
+                    data.value || null
+                  );
+                }}
               />
             </Grid.Column>
           </Grid.Row>

@@ -34,6 +34,11 @@ export default class PagesPlugin {
       menuPath = FolderPlugin.endDemoPath;
     }
 
+    if (page === 'credits') {
+      menusView = [{ module: 'default', path: 'pages/Credits', used: false }];
+      menuPath = FolderPlugin.creditsPath;
+    }
+
     let currentMenuView: string | null = null;
     async.parallel(
       [
@@ -78,6 +83,8 @@ export default class PagesPlugin {
           event.reply('get-page-home-config', menusView);
         } else if (page === 'endDemo') {
           event.reply('get-page-enddemo-config', menusView);
+        } else if (page === 'credits') {
+          event.reply('get-page-credits-config', menusView);
         }
       }
     );
@@ -105,6 +112,43 @@ export default class PagesPlugin {
       });
   };
 
+  getSceneBeforeDemoId = (event: ElectronIpcMainEvent) => {
+    this.openPagesConfig().then((results: PagesConfigType) => {
+      event.reply(
+        'get-page-scene-before-demo-id',
+        results.endDemoPath.beforeSceneId || null
+      );
+    });
+  };
+
+  setSceneBeforeDemoId = (event: ElectronIpcMainEvent, id: number | null) => {
+    this.openPagesConfig()
+      .then((results: PagesConfigType) => {
+        results.endDemoPath.beforeSceneId = id;
+        return this.writePagesConfig(results);
+      })
+      .then(() => {
+        this.getSceneBeforeDemoId(event);
+      });
+  };
+
+  getCreditsBlock = (event: ElectronIpcMainEvent) => {
+    this.openPagesConfig().then((results: PagesConfigType) => {
+      event.reply('get-page-credits-blocks', results.creditsPath.blocks || {});
+    });
+  };
+
+  setCreditsBlock = (event: ElectronIpcMainEvent, data: any) => {
+    this.openPagesConfig()
+      .then((results: PagesConfigType) => {
+        results.creditsPath.blocks = data;
+        return this.writePagesConfig(results);
+      })
+      .then(() => {
+        this.getCreditsBlock(event);
+      });
+  };
+
   init = () => {
     ipcMain.on('get-page-home-config', (event: Electron.IpcMainEvent) =>
       this.getPageConfig(event as ElectronIpcMainEvent, 'home')
@@ -119,6 +163,32 @@ export default class PagesPlugin {
       'set-page-enddemo-config',
       (event: Electron.IpcMainEvent, args) =>
         this.setPageConfig(event as ElectronIpcMainEvent, 'endDemo', args)
+    );
+    ipcMain.on('get-page-credits-config', (event: Electron.IpcMainEvent) =>
+      this.getPageConfig(event as ElectronIpcMainEvent, 'credits')
+    );
+    ipcMain.on(
+      'set-page-credits-config',
+      (event: Electron.IpcMainEvent, args) =>
+        this.setPageConfig(event as ElectronIpcMainEvent, 'credits', args)
+    );
+    ipcMain.on(
+      'get-page-scene-before-demo-id',
+      (event: Electron.IpcMainEvent) =>
+        this.getSceneBeforeDemoId(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on(
+      'set-page-scene-before-demo-id',
+      (event: Electron.IpcMainEvent, args) =>
+        this.setSceneBeforeDemoId(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('get-page-credits-blocks', (event: Electron.IpcMainEvent) =>
+      this.getCreditsBlock(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on(
+      'set-page-credits-blocks',
+      (event: Electron.IpcMainEvent, args) =>
+        this.setCreditsBlock(event as ElectronIpcMainEvent, args)
     );
   };
 }

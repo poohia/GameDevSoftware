@@ -9,6 +9,7 @@ type Messages =
   | 'changePath'
   | 'goHome'
   | 'goDemo'
+  | 'goCredits'
   | 'currentLocale'
   | 'setCurrentLocale'
   | 'currentSound'

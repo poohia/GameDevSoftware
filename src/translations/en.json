@@ -55,7 +55,7 @@
   "module_application_home_project_open_new_project": "Open project",
   "module_application_home_project_build": "Build",
   "module_application_home_project_build_demo": "Build demo version",
-  "module_application_params_home_view": "Home View by modules",
+  "module_application_params_home_view": "Select page",
   "module_application_params_orientation_title": "App orientation",
   "module_application_params_background": "Background",
   "module_application_params_fontFamily": "Font family",
@@ -119,5 +119,7 @@
   "module_application_params_holiday_overlay_halloween_label": "Halloween",
   "module_application_params_holiday_overlay_christmas_label": "Christmas",
   "module_pages_home_config": "Home page config",
-  "module_pages_enddemo_config": "Demo page config"
+  "module_pages_enddemo_config": "Demo page config",
+  "module_pages_credits_config": "Credits page config",
+  "module_pages_config_scene_before_demo_id_label": "Select scene before show demo"
 }

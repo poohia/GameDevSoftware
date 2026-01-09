@@ -20,6 +20,7 @@ export default class FolderPlugin {
   /** Menu and Parameters */
   static menuPath = '/pages/Home';
   static endDemoPath = '/pages/EndDemo';
+  static creditsPath = '/pages/Credits';
   static menuConfig = `${FolderPlugin.gameDevSoftwareDirectory}/homecomponent.json`;
   static pagesConfig = `${FolderPlugin.gameDevSoftwareDirectory}/pages.json`;
   /** Game Objects */

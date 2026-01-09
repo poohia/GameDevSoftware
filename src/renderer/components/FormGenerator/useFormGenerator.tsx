@@ -22,11 +22,12 @@ import DropDownFontsComponent from '../DropDownFontsComponent';
 
 export type FormGeneratorProps = {
   form: any;
-  type: string;
+  type?: string;
   defaultValues?: any;
   loading?: boolean;
   onSubmit: (data: any) => void;
-  onClose: () => void;
+  onClose?: () => void;
+  onChange?: (data: any) => void;
   onOpenFileClick?: () => void;
 };
 
@@ -38,6 +39,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
     loading,
     onSubmit,
     onClose,
+    onChange,
     onOpenFileClick,
   } = props;
 
@@ -45,6 +47,11 @@ const useFormGenerator = (props: FormGeneratorProps) => {
     initialValues: defaultValues ? defaultValues : {},
     onSubmit: (values) => {
       onSubmit({ ...values, _type });
+    },
+    validate: (values) => {
+      if (onChange) {
+        onChange({ ...values, _type });
+      }
     },
     enableReinitialize: true,
   });
@@ -270,20 +277,22 @@ const useFormGenerator = (props: FormGeneratorProps) => {
   const FormGeneratedComponent = useMemo(() => {
     return (
       <Grid>
-        <Grid.Row>
-          <Grid.Column>
-            <Header as="h1">
-              <TransComponent
-                id={
-                  defaultValues === undefined
-                    ? 'form_title_new_type'
-                    : 'form_title_update_type'
-                }
-                values={[{ key: 'type', value: _type }]}
-              />
-            </Header>
-          </Grid.Column>
-        </Grid.Row>
+        {_type && (
+          <Grid.Row>
+            <Grid.Column>
+              <Header as="h1">
+                <TransComponent
+                  id={
+                    defaultValues === undefined
+                      ? 'form_title_new_type'
+                      : 'form_title_update_type'
+                  }
+                  values={[{ key: 'type', value: _type }]}
+                />
+              </Header>
+            </Grid.Column>
+          </Grid.Row>
+        )}
         <Grid.Row>
           <Grid.Column>
             <Form onSubmit={formik.handleSubmit}>
@@ -300,18 +309,20 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                   <TransComponent id="module_translation_form_field_acton_open_file" />
                 </Button>
               )}
-              <Icon
-                name="close"
-                size="big"
-                style={{
-                  float: 'right',
-                  cursor: 'pointer',
-                  // position: 'relative',
-                  // bottom: '20px',
-                  marginBottom: '20px',
-                }}
-                onClick={onClose}
-              />
+              {onClose && (
+                <Icon
+                  name="close"
+                  size="big"
+                  style={{
+                    float: 'right',
+                    cursor: 'pointer',
+                    // position: 'relative',
+                    // bottom: '20px',
+                    marginBottom: '20px',
+                  }}
+                  onClick={onClose}
+                />
+              )}
               <br />
               <FormikProvider value={formik}>
                 {Object.keys(form).map((key) => (

@@ -111,7 +111,13 @@ export type Channels =
   | 'get-page-home-config'
   | 'set-page-home-config'
   | 'get-page-enddemo-config'
-  | 'set-page-enddemo-config';
+  | 'set-page-enddemo-config'
+  | 'get-page-credits-config'
+  | 'set-page-credits-config'
+  | 'get-page-scene-before-demo-id'
+  | 'set-page-scene-before-demo-id'
+  | 'get-page-credits-blocks'
+  | 'set-page-credits-blocks';
 export type Tables =
   | 'locale'
   | 'tabs'
@@ -378,7 +384,7 @@ export type PagesConfigType = {
   };
   endDemoPath: {
     path: string;
-    endDemoPath: number | null;
+    beforeSceneId: number | null;
   };
   creditsPath: {
     path: string;
