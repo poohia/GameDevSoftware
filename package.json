@@ -257,7 +257,7 @@
     "portfinder": "^1.0.32",
     "react": "^18.0.0",
     "react-color": "^2.19.3",
-    "react-d3-tree": "^3.3.6",
+    "react-d3-tree": "^3.6.6",
     "react-dom": "^18.0.0",
     "react-dropzone": "^13.0.0",
     "react-toastify": "^11.0.2",
@@ -265,10 +265,6 @@
     "semantic-ui-react": "^2.1.4",
     "strip-ansi": "^7.1.0",
     "title-case": "^3.0.3"
-  },
-  "devEngines": {
-    "node": ">=14.x",
-    "npm": ">=7.x"
   },
   "collective": {
     "url": "https://opencollective.com/electron-react-boilerplate-594"

@@ -15,7 +15,7 @@ import './index.scss';
 import ScenesContext from 'renderer/contexts/ScenesContext';
 import { SceneObject } from 'types';
 import { Button } from 'renderer/semantic-ui';
-import { Orientation } from 'react-d3-tree/lib/types/common';
+import { Orientation } from 'react-d3-tree/lib/types';
 import TransComponent from '../TransComponent';
 import { toBlob, toPng } from 'html-to-image';
 import { saveAs } from 'file-saver';
