@@ -65,6 +65,7 @@ const DialogShortcutsFoldersComponent: React.FC<
         fluid
         selection
         clearable
+        search
         value={values}
         multiple={multiple}
         options={finalShortcutsFoldersDropdown}

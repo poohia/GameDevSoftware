@@ -26,7 +26,6 @@ const BtnGoTo: React.FC<useMessagesProps> = ({ refIframe }) => {
       ]}
       style={{ width: '110px' }}
       onChange={(_, data) => {
-        console.log('🚀 ~ BtnGoTo ~ data:', data);
         if (data.value === 'home') {
           sendMessage('goHome');
         } else if (data.value === 'demo') {

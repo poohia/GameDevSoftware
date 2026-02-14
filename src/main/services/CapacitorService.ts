@@ -35,6 +35,10 @@ export default class CapacitorService {
       CapacitorService.buildPlatform(platform, callback);
       return;
     }
+    let opts = ``;
+    if (platform === 'ios') {
+      opts = ' --packagemanager CocoaPods';
+    }
     // @ts-ignore
     const path = global.path;
     exec(`yarn add @capacitor/${platform}`, { cwd: path }, (error) => {
@@ -42,7 +46,7 @@ export default class CapacitorService {
         callback(Error(error?.message));
         return;
       }
-      exec(`yarn cap add ${platform}`, { cwd: path }, (error) => {
+      exec(`yarn cap add ${platform}${opts}`, { cwd: path }, (error) => {
         callback(Error(error?.message));
       });
     });

@@ -86,10 +86,10 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
                   <TranslationInput
                     name=""
                     onChange={(data) => {
-                      setFile({
-                        ...file,
+                      setFile((f) => ({
+                        ...f,
                         fileAlt: data.target.value,
-                      });
+                      }));
                     }}
                     defaultValue={file.fileAlt}
                   />

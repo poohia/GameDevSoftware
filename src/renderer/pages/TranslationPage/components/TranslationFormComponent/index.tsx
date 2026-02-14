@@ -10,7 +10,7 @@ import {
 } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
-import { ChatGPTType, Translation, TranslationObject } from 'types';
+import { Translation, TranslationObject } from 'types';
 import { countryOptions } from 'renderer/components/DropdownLanguagesComponent';
 import ChatGPTContext from 'renderer/contexts/ChatGPTContext';
 import { useEvents } from 'renderer/hooks';
@@ -20,6 +20,7 @@ export type TranslationFormComponentValue = {
   value: string;
   valueComputer?: string;
   valueMobile?: string;
+  isHtml?: boolean;
   editable?: boolean;
   deletable?: boolean;
 };
@@ -92,6 +93,7 @@ const TranslationFormComponent = (
     keyTranslation || `message_${new Date().getTime()}`
   );
   const [translationsValue, setTranslationsValue] = useState(values);
+  const [isHtml, setIsHtml] = useState<boolean>(false);
   const [editable, setEditable] = useState<boolean>(true);
   const [deletable, setDeletable] = useState<boolean>(true);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(
@@ -181,8 +183,9 @@ const TranslationFormComponent = (
       values[translation.code] = {
         key: keyValue,
         text: translation.value,
-        textComputer: translation.valueComputer,
-        textMobile: translation.valueMobile,
+        textComputer: showAdvanced ? translation.valueComputer : null,
+        textMobile: showAdvanced ? translation.valueMobile : null,
+        isHtml,
         editable,
         deletable,
       };
@@ -199,7 +202,7 @@ const TranslationFormComponent = (
     //   };
     // });
     // onSubmit(values);
-  }, [translationsValue, editable, deletable]);
+  }, [translationsValue, showAdvanced, isHtml, editable, deletable]);
 
   useEffect(() => {
     setKeyValue(keyTranslation || `message_${new Date().getTime()}`);
@@ -211,6 +214,9 @@ const TranslationFormComponent = (
       // values.forEach((value) => {
       //   translations[value.code] = { [keyValue]: value.value };
       // });
+      setIsHtml(
+        typeof values[0].isHtml !== 'undefined' ? values[0].isHtml : false
+      );
       setEditable(
         typeof values[0].editable !== 'undefined' ? values[0].editable : true
       );
@@ -293,7 +299,7 @@ const TranslationFormComponent = (
                         }
                       />
                     </label>
-                    <Input
+                    <Form.TextArea
                       value={value.value}
                       onChange={(_, data) => {
                         handleTranslationValue({
@@ -307,7 +313,7 @@ const TranslationFormComponent = (
                   {showAdvanced && (
                     <>
                       <Form.Field>
-                        <Form.Input
+                        <Form.TextArea
                           label={i18n.t(
                             'module_translation_form_field_computer_text'
                           )}
@@ -323,7 +329,7 @@ const TranslationFormComponent = (
                         />
                       </Form.Field>
                       <Form.Field>
-                        <Form.Input
+                        <Form.TextArea
                           label={i18n.t(
                             'module_translation_form_field_mobile_text'
                           )}
@@ -342,6 +348,14 @@ const TranslationFormComponent = (
                   )}
                 </>
               ))}
+              <Form.Field>
+                <Form.Checkbox
+                  label={i18n.t('module_translation_form_field_isHtml_label')}
+                  checked={isHtml}
+                  onChange={() => setIsHtml(!isHtml)}
+                  disabled={loading}
+                />
+              </Form.Field>
               <Form.Field>
                 <Form.Checkbox
                   label={i18n.t('form_label_editable')}

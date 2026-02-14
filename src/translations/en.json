@@ -121,5 +121,6 @@
   "module_pages_home_config": "Home page config",
   "module_pages_enddemo_config": "Demo page config",
   "module_pages_credits_config": "Credits page config",
-  "module_pages_config_scene_before_demo_id_label": "Select scene before show demo"
+  "module_pages_config_scene_before_demo_id_label": "Select scene before show demo",
+  "module_translation_form_field_isHtml_label": "isHtml or long text"
 }
