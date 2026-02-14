@@ -20,7 +20,12 @@ export default class AssetPlugin {
   }
 
   private typeFromExtension = (ext: string): AssertAcceptedType => {
-    if (ext === '.png' || ext === '.jpg' || ext === '.jpeg') {
+    if (
+      ext === '.png' ||
+      ext === '.jpg' ||
+      ext === '.jpeg' ||
+      ext === '.webp'
+    ) {
       return 'image';
     }
     if (ext === '.mp3') {
@@ -155,10 +160,19 @@ export default class AssetPlugin {
         properties: ['openFile', 'multiSelections'],
         filters: [
           {
-            extensions: ['jpg', 'jpeg', 'png', 'mp3', 'mp4', 'mkv', 'json'],
+            extensions: [
+              'jpg',
+              'jpeg',
+              'png',
+              'webp',
+              'mp3',
+              'mp4',
+              'mkv',
+              'json',
+            ],
             name: 'All',
           },
-          { extensions: ['jpg', 'jpeg', 'png'], name: 'Image' },
+          { extensions: ['jpg', 'jpeg', 'png', 'webp'], name: 'Image' },
           { extensions: ['mp3'], name: 'Sound' },
           { extensions: ['mp4', 'mkv'], name: 'Video' },
           { extensions: ['json'], name: 'Json' },
