@@ -20,6 +20,9 @@ const ButtonStartStopProjectComponent: React.FC<
     if (loadingToggleProject) return;
     sendMessage('toggle-project');
     setLoadingToggleProject(true);
+    setTimeout(() => {
+      onCLickRefresh?.();
+    }, 700);
   }, [loadingToggleProject, sendMessage]);
 
   useEffect(() => {
