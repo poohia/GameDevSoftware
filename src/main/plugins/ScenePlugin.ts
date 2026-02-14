@@ -4,6 +4,7 @@ import async from 'async';
 import pathModule from 'path';
 import FileService from '../services/FileService';
 import UtilsService from '../services/UtilsService';
+import EditorService from '../services/EditorService';
 import {
   ElectronIpcMainEvent,
   SceneObject,
@@ -310,11 +311,16 @@ export default class ScenePlugin {
     });
   };
 
-  openSceneFile = (_event: ElectronIpcMainEvent, arg: string) => {
+  openSceneFile = async (_event: ElectronIpcMainEvent, arg: string) => {
     const { path } = global;
-    shell.openPath(
-      pathModule.normalize(`${path}${FolderPlugin.sceneDirectory}/${arg}.json`)
+    const normalizedPath = pathModule.normalize(
+      `${path}${FolderPlugin.sceneDirectory}/${arg}.json`
     );
+    const openedInVSCode =
+      await EditorService.openPathInVSCode(normalizedPath);
+    if (!openedInVSCode) {
+      shell.openPath(normalizedPath);
+    }
   };
 
   openSceneInFolder = (_event: ElectronIpcMainEvent, arg: string) => {
