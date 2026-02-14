@@ -29,6 +29,7 @@ export type FormGeneratorProps = {
   onClose?: () => void;
   onChange?: (data: any) => void;
   onOpenFileClick?: () => void;
+  onOpenFileInFolderClick?: () => void;
 };
 
 const useFormGenerator = (props: FormGeneratorProps) => {
@@ -41,6 +42,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
     onClose,
     onChange,
     onOpenFileClick,
+    onOpenFileInFolderClick,
   } = props;
 
   const formik = useFormik<any>({
@@ -309,6 +311,16 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                   <TransComponent id="module_translation_form_field_acton_open_file" />
                 </Button>
               )}
+              {defaultValues !== undefined && onOpenFileInFolderClick && (
+                <Button
+                  type="button"
+                  loading={loading}
+                  color={'brown'}
+                  onClick={onOpenFileInFolderClick}
+                >
+                  <TransComponent id="module_translation_form_field_acton_open_file_in_folder" />
+                </Button>
+              )}
               {onClose && (
                 <Icon
                   name="close"
@@ -341,6 +353,16 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                     onClick={onOpenFileClick}
                   >
                     <TransComponent id="module_translation_form_field_acton_open_file" />
+                  </Button>
+                )}
+                {defaultValues !== undefined && onOpenFileInFolderClick && (
+                  <Button
+                    type="button"
+                    loading={loading}
+                    color={'brown'}
+                    onClick={onOpenFileInFolderClick}
+                  >
+                    <TransComponent id="module_translation_form_field_acton_open_file_in_folder" />
                   </Button>
                 )}
               </FormikProvider>

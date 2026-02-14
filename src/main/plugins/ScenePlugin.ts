@@ -317,6 +317,13 @@ export default class ScenePlugin {
     );
   };
 
+  openSceneInFolder = (_event: ElectronIpcMainEvent, arg: string) => {
+    const { path } = global;
+    shell.showItemInFolder(
+      pathModule.normalize(`${path}${FolderPlugin.sceneDirectory}/${arg}.json`)
+    );
+  };
+
   init = () => {
     ipcMain.on('load-scenes-types', (event: Electron.IpcMainEvent) =>
       this.loadSceneTypes(event as ElectronIpcMainEvent)
@@ -347,6 +354,9 @@ export default class ScenePlugin {
     });
     ipcMain.on('open-scene-file', (event, args) => {
       this.openSceneFile(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('open-scene-in-folder', (event, args) => {
+      this.openSceneInFolder(event as ElectronIpcMainEvent, args);
     });
   };
 }

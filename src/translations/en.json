@@ -18,6 +18,7 @@
   "module_translation_form_field_key_label": "Key",
   "module_translation_form_field_submit": "Save",
   "module_translation_form_field_acton_open_file": "Open file",
+  "module_translation_form_field_acton_open_file_in_folder": "Open file on folder",
   "module_translation_form_field_mobile_text": "Text for Mobile",
   "module_translation_form_field_computer_text": "Text for Computer",
   "module_translation_form_field_button_auto_translate": "Translate with ChatGPT",

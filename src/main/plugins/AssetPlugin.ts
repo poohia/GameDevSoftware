@@ -244,6 +244,37 @@ export default class AssetPlugin {
     shell.openPath(pathModule.normalize(finalPath));
   };
 
+  openAssetsInFolder = (
+    _event: ElectronIpcMainEvent,
+    arg: {
+      type: typeAssetToOpen;
+      fileName?: string;
+    }
+  ) => {
+    const { path } = global;
+    let finalPath = '';
+    switch (arg.type) {
+      case 'image':
+        finalPath = `${path}${FolderPlugin.directoryImages}/${arg.fileName}`;
+        break;
+      case 'video':
+        finalPath = `${path}${FolderPlugin.directoryVideos}/${arg.fileName}`;
+        break;
+      case 'sound':
+        finalPath = `${path}${FolderPlugin.directorySounds}/${arg.fileName}`;
+        break;
+      case 'json':
+        finalPath = `${path}${FolderPlugin.directoryJson}/${arg.fileName}`;
+        break;
+      case 'root':
+      default:
+        finalPath = `${path}${FolderPlugin.assetsDirectory}`;
+        shell.openPath(pathModule.normalize(finalPath));
+        return;
+    }
+    shell.showItemInFolder(pathModule.normalize(finalPath));
+  };
+
   init = () => {
     ipcMain.on('load-assets', (event: Electron.IpcMainEvent) =>
       this.loadAssets(event as ElectronIpcMainEvent)
@@ -272,6 +303,9 @@ export default class AssetPlugin {
     });
     ipcMain.on('open-assets-folder', (event, arg) =>
       this.openAssetsFolder(event as ElectronIpcMainEvent, arg)
+    );
+    ipcMain.on('open-assets-in-folder', (event, arg) =>
+      this.openAssetsInFolder(event as ElectronIpcMainEvent, arg)
     );
   };
 }

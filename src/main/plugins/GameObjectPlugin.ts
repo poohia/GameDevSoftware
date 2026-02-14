@@ -273,6 +273,15 @@ export default class GameObjectPlugin {
     );
   };
 
+  openGameObjectInFolder = (_event: ElectronIpcMainEvent, arg: string) => {
+    const { path } = global;
+    shell.showItemInFolder(
+      pathModule.normalize(
+        `${path}${FolderPlugin.gameObjectDirectory}/${arg}.json`
+      )
+    );
+  };
+
   generateTree = (event: ElectronIpcMainEvent, arg: number) => {
     LogService.Log(arg);
   };
@@ -304,6 +313,9 @@ export default class GameObjectPlugin {
     });
     ipcMain.on('open-gameobject-file', (event, args) => {
       this.openGameObjectFile(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('open-gameobject-in-folder', (event, args) => {
+      this.openGameObjectInFolder(event as ElectronIpcMainEvent, args);
     });
     ipcMain.on('generate-tree-game-objects', (event, args) => {
       this.generateTree(event as ElectronIpcMainEvent, args);

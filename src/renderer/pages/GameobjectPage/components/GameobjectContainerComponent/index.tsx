@@ -17,6 +17,7 @@ const GameobjectContainerComponent = (props: PageProps) => {
     sendCreateGameobject,
     closeForm,
     openFile,
+    openFileInFolder,
   } = useGameobjectContainerComponent(props);
 
   return (
@@ -55,6 +56,7 @@ const GameobjectContainerComponent = (props: PageProps) => {
               onSubmit={sendCreateGameobject}
               onClose={closeForm}
               onOpenFileClick={openFile}
+              onOpenFileInFolderClick={openFileInFolder}
             />
           </Grid.Column>
         )}

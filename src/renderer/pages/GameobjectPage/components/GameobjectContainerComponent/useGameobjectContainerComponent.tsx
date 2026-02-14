@@ -61,6 +61,11 @@ const useGameobjectContainerComponent = (props: PageProps) => {
     [stateForm]
   );
 
+  const openFileInFolder = useCallback(
+    () => sendMessage('open-gameobject-in-folder', stateForm.key),
+    [stateForm]
+  );
+
   useEffect(() => {
     sendMessage('load-game-objects', gameObjectType);
     sendMessage('get-formulaire-game-object', gameObjectType);
@@ -91,6 +96,7 @@ const useGameobjectContainerComponent = (props: PageProps) => {
     sendCreateGameobject,
     closeForm: () => dispatch({ type: 'hide-form' }),
     openFile,
+    openFileInFolder,
   };
 };
 

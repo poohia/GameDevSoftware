@@ -17,6 +17,7 @@ const AllGameobjectContainerComponent: React.FC<PageProps> = (props) => {
     sendCreateGameobject,
     closeForm,
     openFile,
+    openFileInFolder,
   } = useGameobjectContainerComponent(props);
   const { gameObjectForm } = useAllGameobjectContainerComponent({
     stateForm,
@@ -55,6 +56,7 @@ const AllGameobjectContainerComponent: React.FC<PageProps> = (props) => {
               onSubmit={sendCreateGameobject}
               onClose={closeForm}
               onOpenFileClick={openFile}
+              onOpenFileInFolderClick={openFileInFolder}
             />
           </Grid.Column>
         )}

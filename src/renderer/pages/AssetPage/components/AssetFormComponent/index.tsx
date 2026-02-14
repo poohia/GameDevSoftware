@@ -122,18 +122,32 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
                 {i18n.t('module_translation_form_field_submit')}
               </Button>
               {defaultValue && (
-                <Button
-                  type="button"
-                  onClick={() => {
-                    sendMessage('open-assets-folder', {
-                      type: file.fileType,
-                      fileName: file.fileName,
-                    });
-                  }}
-                  color={'brown'}
-                >
-                  {i18n.t('module_translation_form_field_acton_open_file')}
-                </Button>
+                <>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      sendMessage('open-assets-folder', {
+                        type: file.fileType,
+                        fileName: file.fileName,
+                      });
+                    }}
+                    color={'brown'}
+                  >
+                    {i18n.t('module_translation_form_field_acton_open_file')}
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      sendMessage('open-assets-in-folder', {
+                        type: file.fileType,
+                        fileName: file.fileName,
+                      });
+                    }}
+                    color={'brown'}
+                  >
+                    {i18n.t('module_translation_form_field_acton_open_file_in_folder')}
+                  </Button>
+                </>
               )}
             </Form>
           </Container>
