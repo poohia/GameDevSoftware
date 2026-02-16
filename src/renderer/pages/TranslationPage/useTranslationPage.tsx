@@ -45,11 +45,10 @@ const useTranslationPage = () => {
       sendMessage('set-languages', [...languages, localeToAppend]);
       setTranslations((_translations: any) => {
         _translations[localeToAppend] = [];
-        currentTranslations?.forEach(({ key, isHtml, deletable, editable }) => {
+        currentTranslations?.forEach(({ key, deletable, editable }) => {
           _translations[localeToAppend].push({
             key,
             text: '',
-            isHtml: isHtml || false,
             editable: editable || false,
             deletable: deletable || false,
           });
@@ -119,7 +118,6 @@ const useTranslationPage = () => {
             value: translation?.text || '',
             valueComputer: translation?.textComputer || '',
             valueMobile: translation?.textMobile || '',
-            isHtml: translation?.isHtml,
             editable: translation?.editable,
             deletable: translation?.deletable,
           });
@@ -149,18 +147,11 @@ const useTranslationPage = () => {
           const key = createTranslations[code].key;
           let value = tt.find((ttt) => ttt.key === key);
           if (value) {
-            const {
-              text,
-              textComputer,
-              textMobile,
-              isHtml,
-              editable,
-              deletable,
-            } = createTranslations[code];
+            const { text, textComputer, textMobile, editable, deletable } =
+              createTranslations[code];
             value.text = text;
             (value.textComputer = textComputer),
               (value.textMobile = textMobile),
-              (value.isHtml = isHtml),
               (value.editable = editable);
             value.deletable = deletable;
           } else {

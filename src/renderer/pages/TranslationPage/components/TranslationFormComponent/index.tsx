@@ -20,7 +20,6 @@ export type TranslationFormComponentValue = {
   value: string;
   valueComputer?: string;
   valueMobile?: string;
-  isHtml?: boolean;
   editable?: boolean;
   deletable?: boolean;
 };
@@ -93,7 +92,6 @@ const TranslationFormComponent = (
     keyTranslation || `message_${new Date().getTime()}`
   );
   const [translationsValue, setTranslationsValue] = useState(values);
-  const [isHtml, setIsHtml] = useState<boolean>(false);
   const [editable, setEditable] = useState<boolean>(true);
   const [deletable, setDeletable] = useState<boolean>(true);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(
@@ -185,7 +183,6 @@ const TranslationFormComponent = (
         text: translation.value,
         textComputer: showAdvanced ? translation.valueComputer : null,
         textMobile: showAdvanced ? translation.valueMobile : null,
-        isHtml,
         editable,
         deletable,
       };
@@ -202,7 +199,7 @@ const TranslationFormComponent = (
     //   };
     // });
     // onSubmit(values);
-  }, [translationsValue, showAdvanced, isHtml, editable, deletable]);
+  }, [translationsValue, showAdvanced, editable, deletable]);
 
   useEffect(() => {
     setKeyValue(keyTranslation || `message_${new Date().getTime()}`);
@@ -214,9 +211,6 @@ const TranslationFormComponent = (
       // values.forEach((value) => {
       //   translations[value.code] = { [keyValue]: value.value };
       // });
-      setIsHtml(
-        typeof values[0].isHtml !== 'undefined' ? values[0].isHtml : false
-      );
       setEditable(
         typeof values[0].editable !== 'undefined' ? values[0].editable : true
       );
@@ -348,14 +342,6 @@ const TranslationFormComponent = (
                   )}
                 </>
               ))}
-              <Form.Field>
-                <Form.Checkbox
-                  label={i18n.t('module_translation_form_field_isHtml_label')}
-                  checked={isHtml}
-                  onChange={() => setIsHtml(!isHtml)}
-                  disabled={loading}
-                />
-              </Form.Field>
               <Form.Field>
                 <Form.Checkbox
                   label={i18n.t('form_label_editable')}

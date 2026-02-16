@@ -143,7 +143,6 @@ export type PageProps = {
 export type Translation = {
   key: string;
   text: string;
-  isHtml?: boolean;
   textComputer?: string | null;
   textMobile?: string | null;
   editable: boolean;
