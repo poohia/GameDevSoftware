@@ -203,38 +203,13 @@ const ThemePage: React.FC = () => {
       const pathKey = getPathKey(section, key);
       setFieldTypes((prev) => ({ ...prev, [pathKey]: nextType }));
 
-      const currentValue = theme?.[section]?.[key] || '';
-      if (nextType === 'asset') {
-        if (!currentValue.startsWith('@a:')) {
-          onChangeValue(section, key, '');
-        }
-        return;
-      }
-      if (nextType === 'font') {
-        if (currentValue.startsWith('@a:')) {
-          onChangeValue(section, key, '');
-          return;
-        }
-        onChangeValue(section, key, withFontPrefix(currentValue));
-        return;
-      }
       if (nextType === 'color') {
-        if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(currentValue)) {
-          onChangeValue(section, key, currentValue);
-          return;
-        }
         onChangeValue(section, key, '#000000');
         return;
       }
-      if (currentValue.startsWith('@a:')) {
-        onChangeValue(section, key, currentValue.replace('@a:', ''));
-        return;
-      }
-      if (currentValue.startsWith('@f:')) {
-        onChangeValue(section, key, currentValue.replace('@f:', ''));
-      }
+      onChangeValue(section, key, '');
     },
-    [theme, onChangeValue]
+    [onChangeValue]
   );
 
   const addSection = useCallback(() => {
@@ -596,21 +571,21 @@ const ThemePage: React.FC = () => {
                                       backgroundColor: '#fff',
                                       cursor: 'pointer',
                                     }}
-                                    value={
-                                      /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
-                                        newValueBySection[section] || ''
-                                      )
-                                        ? newValueBySection[section]
-                                        : '#000000'
-                                    }
-                                    onChange={(_e, data) =>
-                                      setNewValueBySection((prev) => ({
-                                        ...prev,
-                                        [section]:
-                                          (data.value as string) || '#000000',
-                                      }))
-                                    }
-                                  />
+                                  value={
+                                    /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
+                                      newValueBySection[section] || ''
+                                    )
+                                      ? newValueBySection[section]
+                                      : '#000000'
+                                  }
+                                  onChange={(event) =>
+                                    setNewValueBySection((prev) => ({
+                                      ...prev,
+                                      [section]:
+                                        event.currentTarget.value || '#000000',
+                                    }))
+                                  }
+                                />
                                 ) : (
                                   <Form.Input
                                     value={newValueBySection[section] || ''}
@@ -747,21 +722,21 @@ const ThemePage: React.FC = () => {
                                         backgroundColor: '#fff',
                                         cursor: 'pointer',
                                       }}
-                                      value={
-                                        /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
-                                          value || ''
-                                        )
-                                          ? value
-                                          : '#000000'
-                                      }
-                                      onChange={(_e, data) =>
-                                        onChangeValue(
-                                          section,
-                                          key,
-                                          (data.value as string) || '#000000'
-                                        )
-                                      }
-                                    />
+                                    value={
+                                      /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
+                                        value || ''
+                                      )
+                                        ? value
+                                        : '#000000'
+                                    }
+                                    onChange={(event) =>
+                                      onChangeValue(
+                                        section,
+                                        key,
+                                        event.currentTarget.value || '#000000'
+                                      )
+                                    }
+                                  />
                                   ) : (
                                     <Form.Input
                                       value={value || ''}

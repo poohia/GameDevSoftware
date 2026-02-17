@@ -74,6 +74,10 @@ const DropDownFontsComponent: React.FC<DropdownLanguagesComponentProps> = (
   }, []);
 
   useEffect(() => {
+    setValue(valueProps);
+  }, [valueProps]);
+
+  useEffect(() => {
     if (onChange) {
       //@ts-ignore
       onChange(null, { value: finalValue });
