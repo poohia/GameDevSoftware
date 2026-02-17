@@ -8,6 +8,7 @@
   "module_scene": "Scene Module",
   "module_chatgpt": "ChatGPT Module",
   "module_pages": "Pages Module",
+  "module_theme": "Theme Module",
   "form_scene_module_first_scene": "First scene",
   "module_scene_title": "Scenes",
   "dropdown_languages_placeholder_default": "Select Country",

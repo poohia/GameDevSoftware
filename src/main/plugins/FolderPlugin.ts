@@ -85,6 +85,8 @@ export default class FolderPlugin {
 
   static savesFile = `${FolderPlugin.gameDevSoftwareDirectory}/saves.json`;
 
+  static themeFile = `${FolderPlugin.gameDevSoftwareDirectory}/theme.json`;
+
   /** Cypress */
   static cypressScreenshotsDirectory = `${FolderPlugin.cypressDirectory}/cypress/screenshots`;
 

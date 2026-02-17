@@ -16,6 +16,7 @@ import ShortcutsFoldersPlugin from './ShortcutsFoldersPlugin';
 import SavesPlugin from './SavesPlugin';
 import CypressPlugin from './CypressPlugin';
 import PagesPlugin from './PagesPlugin';
+import ThemePlugin from './ThemePlugin';
 
 type Plugins =
   | 'folderPlugin'
@@ -34,7 +35,8 @@ type Plugins =
   | 'shortcutsFoldersPlugin'
   | 'savesPlugin'
   | 'cypressPlugin'
-  | 'pagesPlugin';
+  | 'pagesPlugin'
+  | 'themePlugin';
 
 export default class PluginsContainer {
   private _folderPlugin;
@@ -54,6 +56,7 @@ export default class PluginsContainer {
   private _savesPlugin;
   private _cypressPlugin;
   private _pagesPlugin;
+  private _themePlugin;
 
   constructor(mainWindow: BrowserWindow) {
     this._folderPlugin = new FolderPlugin(mainWindow);
@@ -73,6 +76,7 @@ export default class PluginsContainer {
     this._savesPlugin = new SavesPlugin();
     this._cypressPlugin = new CypressPlugin();
     this._pagesPlugin = new PagesPlugin();
+    this._themePlugin = new ThemePlugin();
   }
 
   init() {

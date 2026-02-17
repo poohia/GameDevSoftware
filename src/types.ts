@@ -106,6 +106,8 @@ export type Channels =
   | 'remove-shortcutsfolder'
   | 'set-saves'
   | 'load-saves'
+  | 'set-theme'
+  | 'load-theme'
   | 'open-cypress'
   | 'open-cypress-screenshots'
   | 'cypress-clear-screenshots'

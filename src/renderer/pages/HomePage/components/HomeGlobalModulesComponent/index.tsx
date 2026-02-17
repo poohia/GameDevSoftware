@@ -30,6 +30,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
       'font',
       'chatgpt',
       'pages',
+      'theme',
     ],
     onChangeLocale,
     appendTab,
