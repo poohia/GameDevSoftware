@@ -38,6 +38,12 @@ const withFontPrefix = (value?: string) => {
   return `@f:${finalValue}`;
 };
 
+const normalizeKeyDraftValue = (value?: string) =>
+  (value || '').toLowerCase().replace(/\s+/g, '_');
+
+const normalizeKeyFinalValue = (value?: string) =>
+  normalizeKeyDraftValue(value).replace(/^_+|_+$/g, '');
+
 const ThemePage: React.FC = () => {
   const [theme, setTheme] = useState<ThemeData>({});
   const [assets, setAssets] = useState<AssetType[]>([]);
@@ -186,7 +192,7 @@ const ThemePage: React.FC = () => {
   const addKeyInSection = useCallback(
     (section: string) => {
       if (section === 'default') return;
-      const key = (newKeyBySection[section] || '').trim();
+      const key = normalizeKeyFinalValue(newKeyBySection[section] || '');
       if (!key) return;
 
       const nextType = newTypeBySection[section] || 'string';
@@ -241,7 +247,7 @@ const ThemePage: React.FC = () => {
   const renameKey = useCallback(
     (section: string, oldKey: string, rawNewKey: string) => {
       if (section === 'default') return;
-      const newKey = rawNewKey.trim();
+      const newKey = normalizeKeyFinalValue(rawNewKey);
       if (!newKey || newKey === oldKey) {
         setKeyDrafts((prev) => ({
           ...prev,
@@ -380,7 +386,7 @@ const ThemePage: React.FC = () => {
                               onChange={(_e, data) =>
                                 setNewKeyBySection((prev) => ({
                                   ...prev,
-                                  [section]: data.value,
+                                  [section]: normalizeKeyDraftValue(data.value),
                                 }))
                               }
                             />
@@ -495,7 +501,7 @@ const ThemePage: React.FC = () => {
                                 onChange={(_e, data) =>
                                   setKeyDrafts((prev) => ({
                                     ...prev,
-                                    [pathKey]: data.value,
+                                    [pathKey]: normalizeKeyDraftValue(data.value),
                                   }))
                                 }
                                 onBlur={() =>
