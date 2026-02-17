@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Container, Dropdown, Form, Grid, Header } from 'semantic-ui-react';
+import {
+  Container,
+  Dropdown,
+  Form,
+  Grid,
+  Header,
+  Icon,
+} from 'semantic-ui-react';
 import { TransComponent } from 'renderer/components';
-import { useEvents } from 'renderer/hooks';
+import { useDatabase, useEvents } from 'renderer/hooks';
 import { Button, Segment } from 'renderer/semantic-ui';
 import DropDownFontsComponent from 'renderer/components/DropDownFontsComponent';
 import { AssetType } from 'types';
@@ -51,6 +58,14 @@ const normalizeKeyDraftValue = (value?: string) =>
 const normalizeKeyFinalValue = (value?: string) =>
   normalizeKeyDraftValue(value).replace(/^_+|_+$/g, '');
 
+const normalizeSectionDraftValue = (value?: string) =>
+  (value || '').toLowerCase().replace(/\s+/g, '_');
+
+const normalizeSectionFinalValue = (value?: string) =>
+  normalizeSectionDraftValue(value).replace(/^_+|_+$/g, '');
+
+const THEME_SECTIONS_OPEN_DB_KEY = 'themepage-sections-open';
+
 const ThemePage: React.FC = () => {
   const [theme, setTheme] = useState<ThemeData>({});
   const [assets, setAssets] = useState<AssetType[]>([]);
@@ -68,8 +83,20 @@ const ThemePage: React.FC = () => {
   const [newValueBySection, setNewValueBySection] = useState<
     Record<string, string>
   >({});
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const hasLoadedThemeRef = useRef(false);
+  const savedOpenSectionsRef = useRef<Record<string, boolean>>({});
+  const [hasLoadedOpenSections, setHasLoadedOpenSections] =
+    useState<boolean>(false);
   const { on, requestMessage, sendMessage } = useEvents();
+  const { getItem, setItem } = useDatabase();
+
+  const persistOpenSections = useCallback(
+    (next: Record<string, boolean>) => {
+      setItem(THEME_SECTIONS_OPEN_DB_KEY, next);
+    },
+    [setItem]
+  );
 
   const hydrateFieldTypes = useCallback((nextTheme: ThemeData) => {
     const nextFieldTypes: Record<string, ThemeValueType> = {};
@@ -107,6 +134,49 @@ const ThemePage: React.FC = () => {
     if (!hasLoadedThemeRef.current) return;
     sendMessage('set-theme', theme);
   }, [theme, sendMessage]);
+
+  useEffect(() => {
+    const savedOpenSections =
+      getItem<Record<string, boolean>>(THEME_SECTIONS_OPEN_DB_KEY) || {};
+    savedOpenSectionsRef.current = savedOpenSections;
+    setOpenSections(savedOpenSections);
+    setHasLoadedOpenSections(true);
+  }, [getItem]);
+
+  useEffect(() => {
+    if (!hasLoadedOpenSections) return;
+    setOpenSections((prev) => {
+      const sectionNames = Object.keys(theme || {});
+      const baseOpenSections =
+        Object.keys(prev).length === 0 ? savedOpenSectionsRef.current : prev;
+      const next = sectionNames.reduce<Record<string, boolean>>(
+        (acc, sectionName) => {
+          acc[sectionName] = !!baseOpenSections[sectionName];
+          return acc;
+        },
+        {}
+      );
+      if (JSON.stringify(prev) === JSON.stringify(next)) {
+        return prev;
+      }
+      persistOpenSections(next);
+      return next;
+    });
+  }, [theme, persistOpenSections, hasLoadedOpenSections]);
+
+  const toggleSection = useCallback(
+    (section: string) => {
+      setOpenSections((prev) => {
+        const next = {
+          ...prev,
+          [section]: !prev[section],
+        };
+        persistOpenSections(next);
+        return next;
+      });
+    },
+    [persistOpenSections]
+  );
 
   const onChangeValue = useCallback(
     (section: string, key: string, value?: string) => {
@@ -168,7 +238,7 @@ const ThemePage: React.FC = () => {
   );
 
   const addSection = useCallback(() => {
-    const section = newSectionName.trim();
+    const section = normalizeSectionFinalValue(newSectionName);
     if (!section) return;
 
     setTheme((prev) => {
@@ -178,31 +248,45 @@ const ThemePage: React.FC = () => {
         [section]: {},
       };
     });
-    setNewSectionName('');
-  }, [newSectionName]);
-
-  const removeSection = useCallback((section: string) => {
-    if (section === 'default') return;
-    setTheme((prev) => {
-      const nextTheme = { ...prev };
-      delete nextTheme[section];
-      return nextTheme;
+    setOpenSections((prev) => {
+      const next = { ...prev, [section]: false };
+      persistOpenSections(next);
+      return next;
     });
-    setFieldTypes((prev) =>
-      Object.fromEntries(
-        Object.entries(prev).filter(
-          ([pathKey]) => !pathKey.startsWith(`${section}.`)
+    setNewSectionName('');
+  }, [newSectionName, persistOpenSections]);
+
+  const removeSection = useCallback(
+    (section: string) => {
+      if (section === 'default') return;
+      setTheme((prev) => {
+        const nextTheme = { ...prev };
+        delete nextTheme[section];
+        return nextTheme;
+      });
+      setFieldTypes((prev) =>
+        Object.fromEntries(
+          Object.entries(prev).filter(
+            ([pathKey]) => !pathKey.startsWith(`${section}.`)
+          )
         )
-      )
-    );
-    setKeyDrafts((prev) =>
-      Object.fromEntries(
-        Object.entries(prev).filter(
-          ([pathKey]) => !pathKey.startsWith(`${section}.`)
+      );
+      setKeyDrafts((prev) =>
+        Object.fromEntries(
+          Object.entries(prev).filter(
+            ([pathKey]) => !pathKey.startsWith(`${section}.`)
+          )
         )
-      )
-    );
-  }, []);
+      );
+      setOpenSections((prev) => {
+        const next = { ...prev };
+        delete next[section];
+        persistOpenSections(next);
+        return next;
+      });
+    },
+    [persistOpenSections]
+  );
 
   const addKeyInSection = useCallback(
     (section: string) => {
@@ -350,7 +434,11 @@ const ThemePage: React.FC = () => {
                           'module_theme_section_name_placeholder'
                         )}
                         value={newSectionName}
-                        onChange={(_e, data) => setNewSectionName(data.value)}
+                        onChange={(_e, data) =>
+                          setNewSectionName(
+                            normalizeSectionDraftValue(data.value)
+                          )
+                        }
                       />
                     </Grid.Column>
                     <Grid.Column width={4}>
@@ -369,13 +457,25 @@ const ThemePage: React.FC = () => {
             <Grid columns={1} stackable>
               {Object.entries(theme).map(([section, values]) => {
                 const isDefaultSection = section === 'default';
+                const isSectionOpen = !!openSections[section];
                 return (
                   <Grid.Column key={section} width={16}>
                     <Segment>
                       <Grid style={{ margin: '10px' }}>
                         <Grid.Row>
-                          <Grid.Column width={12}>
-                            <Header as="h3">{section}</Header>
+                          <Grid.Column
+                            width={12}
+                            onClick={() => toggleSection(section)}
+                            style={{ cursor: 'pointer' }}
+                          >
+                            <Header as="h3">
+                              <Icon
+                                name={
+                                  isSectionOpen ? 'angle down' : 'angle right'
+                                }
+                              />
+                              {section}
+                            </Header>
                           </Grid.Column>
                           <Grid.Column width={4} textAlign="right">
                             {!isDefaultSection && (
@@ -389,176 +489,23 @@ const ThemePage: React.FC = () => {
                           </Grid.Column>
                         </Grid.Row>
                       </Grid>
-                      <Form>
-                        {!isDefaultSection && (
-                          <Form.Group widths="equal">
-                            <Form.Input
-                              label={i18n.t('module_theme_new_key')}
-                              placeholder={i18n.t(
-                                'module_theme_new_key_placeholder'
-                              )}
-                              value={newKeyBySection[section] || ''}
-                              onChange={(_e, data) =>
-                                setNewKeyBySection((prev) => ({
-                                  ...prev,
-                                  [section]: normalizeKeyDraftValue(data.value),
-                                }))
-                              }
-                            />
-                            <Form.Field>
-                              <label>{i18n.t('module_theme_type')}</label>
-                              <Dropdown
-                                fluid
-                                selection
-                                options={[
-                                  {
-                                    key: 'string',
-                                    text: i18n.t('module_theme_type_string'),
-                                    value: 'string',
-                                  },
-                                  {
-                                    key: 'asset',
-                                    text: i18n.t('module_theme_type_asset'),
-                                    value: 'asset',
-                                  },
-                                  {
-                                    key: 'font',
-                                    text: i18n.t('module_theme_type_font'),
-                                    value: 'font',
-                                  },
-                                  {
-                                    key: 'color',
-                                    text: i18n.t('module_theme_type_color'),
-                                    value: 'color',
-                                  },
-                                ]}
-                                value={newTypeBySection[section] || 'string'}
-                                onChange={(_e, data) =>
-                                  setNewTypeBySection((prev) => ({
-                                    ...prev,
-                                    [section]: data.value as ThemeValueType,
-                                  }))
-                                }
-                              />
-                            </Form.Field>
-                            <Form.Field>
-                              <label>
-                                {i18n.t('module_theme_default_value')}
-                              </label>
-                              {(newTypeBySection[section] || 'string') ===
-                              'asset' ? (
-                                <Dropdown
-                                  fluid
-                                  selection
-                                  search
-                                  placeholder={i18n.t(
-                                    'module_theme_select_asset'
-                                  )}
-                                  options={assetOptions}
-                                  value={
-                                    newValueBySection[section] || undefined
-                                  }
-                                  onChange={(_e, data) =>
-                                    setNewValueBySection((prev) => ({
-                                      ...prev,
-                                      [section]: (data.value as string) || '',
-                                    }))
-                                  }
-                                />
-                              ) : (newTypeBySection[section] || 'string') ===
-                                'font' ? (
-                                <DropDownFontsComponent
-                                  value={stripFontPrefix(
-                                    newValueBySection[section] || ''
-                                  )}
-                                  onChange={(_e, data) =>
-                                    setNewValueBySection((prev) => ({
-                                      ...prev,
-                                      [section]: withFontPrefix(
-                                        data.value as string
-                                      ),
-                                    }))
-                                  }
-                                />
-                              ) : (newTypeBySection[section] || 'string') ===
-                                'color' ? (
-                                <input
-                                  type="color"
-                                  style={{
-                                    width: '100%',
-                                    minHeight: 40,
-                                    border: '1px solid rgba(34,36,38,.15)',
-                                    borderRadius: 4,
-                                    padding: 4,
-                                    backgroundColor: '#fff',
-                                    cursor: 'pointer',
-                                  }}
-                                  value={
-                                    /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
-                                      newValueBySection[section] || ''
-                                    )
-                                      ? newValueBySection[section]
-                                      : '#000000'
-                                  }
-                                  onChange={(_e, data) =>
-                                    setNewValueBySection((prev) => ({
-                                      ...prev,
-                                      [section]:
-                                        (data.value as string) || '#000000',
-                                    }))
-                                  }
-                                />
-                              ) : (
-                                <Form.Input
-                                  value={newValueBySection[section] || ''}
-                                  onChange={(_e, data) =>
-                                    setNewValueBySection((prev) => ({
-                                      ...prev,
-                                      [section]: data.value,
-                                    }))
-                                  }
-                                />
-                              )}
-                            </Form.Field>
-                            <Form.Field>
-                              <label>&nbsp;</label>
-                              <Button
-                                fluid
-                                color="teal"
-                                onClick={() => addKeyInSection(section)}
-                              >
-                                {i18n.t('module_theme_add_key')}
-                              </Button>
-                            </Form.Field>
-                          </Form.Group>
-                        )}
-
-                        {Object.entries(values || {}).map(([key, value]) => {
-                          const pathKey = getPathKey(section, key);
-                          const isDefaultKey = key === 'default';
-                          const type =
-                            fieldTypes[pathKey] ||
-                            detectValueType(section, key, value);
-                          return (
-                            <Form.Group widths="equal" key={pathKey}>
+                      {isSectionOpen && (
+                        <Form>
+                          {!isDefaultSection && (
+                            <Form.Group widths="equal">
                               <Form.Input
-                                label={i18n.t('module_theme_key')}
-                                value={keyDrafts[pathKey] ?? key}
-                                disabled={isDefaultSection}
+                                label={i18n.t('module_theme_new_key')}
+                                placeholder={i18n.t(
+                                  'module_theme_new_key_placeholder'
+                                )}
+                                value={newKeyBySection[section] || ''}
                                 onChange={(_e, data) =>
-                                  setKeyDrafts((prev) => ({
+                                  setNewKeyBySection((prev) => ({
                                     ...prev,
-                                    [pathKey]: normalizeKeyDraftValue(
+                                    [section]: normalizeKeyDraftValue(
                                       data.value
                                     ),
                                   }))
-                                }
-                                onBlur={() =>
-                                  renameKey(
-                                    section,
-                                    key,
-                                    keyDrafts[pathKey] ?? key
-                                  )
                                 }
                               />
                               <Form.Field>
@@ -566,7 +513,6 @@ const ThemePage: React.FC = () => {
                                 <Dropdown
                                   fluid
                                   selection
-                                  disabled={isDefaultSection}
                                   options={[
                                     {
                                       key: 'string',
@@ -589,19 +535,21 @@ const ThemePage: React.FC = () => {
                                       value: 'color',
                                     },
                                   ]}
-                                  value={type}
+                                  value={newTypeBySection[section] || 'string'}
                                   onChange={(_e, data) =>
-                                    onChangeType(
-                                      section,
-                                      key,
-                                      data.value as ThemeValueType
-                                    )
+                                    setNewTypeBySection((prev) => ({
+                                      ...prev,
+                                      [section]: data.value as ThemeValueType,
+                                    }))
                                   }
                                 />
                               </Form.Field>
                               <Form.Field>
-                                <label>{i18n.t('module_theme_value')}</label>
-                                {type === 'asset' ? (
+                                <label>
+                                  {i18n.t('module_theme_default_value')}
+                                </label>
+                                {(newTypeBySection[section] || 'string') ===
+                                'asset' ? (
                                   <Dropdown
                                     fluid
                                     selection
@@ -610,27 +558,33 @@ const ThemePage: React.FC = () => {
                                       'module_theme_select_asset'
                                     )}
                                     options={assetOptions}
-                                    value={value || undefined}
+                                    value={
+                                      newValueBySection[section] || undefined
+                                    }
                                     onChange={(_e, data) =>
-                                      onChangeValue(
-                                        section,
-                                        key,
-                                        data.value as string
-                                      )
+                                      setNewValueBySection((prev) => ({
+                                        ...prev,
+                                        [section]: (data.value as string) || '',
+                                      }))
                                     }
                                   />
-                                ) : type === 'font' ? (
+                                ) : (newTypeBySection[section] || 'string') ===
+                                  'font' ? (
                                   <DropDownFontsComponent
-                                    value={stripFontPrefix(value)}
+                                    value={stripFontPrefix(
+                                      newValueBySection[section] || ''
+                                    )}
                                     onChange={(_e, data) =>
-                                      onChangeValue(
-                                        section,
-                                        key,
-                                        withFontPrefix(data.value as string)
-                                      )
+                                      setNewValueBySection((prev) => ({
+                                        ...prev,
+                                        [section]: withFontPrefix(
+                                          data.value as string
+                                        ),
+                                      }))
                                     }
                                   />
-                                ) : type === 'color' ? (
+                                ) : (newTypeBySection[section] || 'string') ===
+                                  'color' ? (
                                   <input
                                     type="color"
                                     style={{
@@ -644,47 +598,199 @@ const ThemePage: React.FC = () => {
                                     }}
                                     value={
                                       /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
-                                        value || ''
+                                        newValueBySection[section] || ''
                                       )
-                                        ? value
+                                        ? newValueBySection[section]
                                         : '#000000'
                                     }
                                     onChange={(_e, data) =>
-                                      onChangeValue(
-                                        section,
-                                        key,
-                                        (data.value as string) || '#000000'
-                                      )
+                                      setNewValueBySection((prev) => ({
+                                        ...prev,
+                                        [section]:
+                                          (data.value as string) || '#000000',
+                                      }))
                                     }
                                   />
                                 ) : (
                                   <Form.Input
-                                    value={value || ''}
+                                    value={newValueBySection[section] || ''}
                                     onChange={(_e, data) =>
-                                      onChangeValue(
-                                        section,
-                                        key,
-                                        data.value as string
-                                      )
+                                      setNewValueBySection((prev) => ({
+                                        ...prev,
+                                        [section]: data.value,
+                                      }))
                                     }
                                   />
                                 )}
                               </Form.Field>
                               <Form.Field>
                                 <label>&nbsp;</label>
-                                {!isDefaultSection && !isDefaultKey && (
-                                  <Button
-                                    color="red"
-                                    onClick={() => removeKey(section, key)}
-                                  >
-                                    {i18n.t('module_theme_delete_row')}
-                                  </Button>
-                                )}
+                                <Button
+                                  fluid
+                                  color="teal"
+                                  onClick={() => addKeyInSection(section)}
+                                >
+                                  {i18n.t('module_theme_add_key')}
+                                </Button>
                               </Form.Field>
                             </Form.Group>
-                          );
-                        })}
-                      </Form>
+                          )}
+
+                          {Object.entries(values || {}).map(([key, value]) => {
+                            const pathKey = getPathKey(section, key);
+                            const isDefaultKey = key === 'default';
+                            const type =
+                              fieldTypes[pathKey] ||
+                              detectValueType(section, key, value);
+                            return (
+                              <Form.Group widths="equal" key={pathKey}>
+                                <Form.Input
+                                  label={i18n.t('module_theme_key')}
+                                  value={keyDrafts[pathKey] ?? key}
+                                  disabled={isDefaultSection}
+                                  onChange={(_e, data) =>
+                                    setKeyDrafts((prev) => ({
+                                      ...prev,
+                                      [pathKey]: normalizeKeyDraftValue(
+                                        data.value
+                                      ),
+                                    }))
+                                  }
+                                  onBlur={() =>
+                                    renameKey(
+                                      section,
+                                      key,
+                                      keyDrafts[pathKey] ?? key
+                                    )
+                                  }
+                                />
+                                <Form.Field>
+                                  <label>{i18n.t('module_theme_type')}</label>
+                                  <Dropdown
+                                    fluid
+                                    selection
+                                    disabled={isDefaultSection}
+                                    options={[
+                                      {
+                                        key: 'string',
+                                        text: i18n.t(
+                                          'module_theme_type_string'
+                                        ),
+                                        value: 'string',
+                                      },
+                                      {
+                                        key: 'asset',
+                                        text: i18n.t('module_theme_type_asset'),
+                                        value: 'asset',
+                                      },
+                                      {
+                                        key: 'font',
+                                        text: i18n.t('module_theme_type_font'),
+                                        value: 'font',
+                                      },
+                                      {
+                                        key: 'color',
+                                        text: i18n.t('module_theme_type_color'),
+                                        value: 'color',
+                                      },
+                                    ]}
+                                    value={type}
+                                    onChange={(_e, data) =>
+                                      onChangeType(
+                                        section,
+                                        key,
+                                        data.value as ThemeValueType
+                                      )
+                                    }
+                                  />
+                                </Form.Field>
+                                <Form.Field>
+                                  <label>{i18n.t('module_theme_value')}</label>
+                                  {type === 'asset' ? (
+                                    <Dropdown
+                                      fluid
+                                      selection
+                                      search
+                                      placeholder={i18n.t(
+                                        'module_theme_select_asset'
+                                      )}
+                                      options={assetOptions}
+                                      value={value || undefined}
+                                      onChange={(_e, data) =>
+                                        onChangeValue(
+                                          section,
+                                          key,
+                                          data.value as string
+                                        )
+                                      }
+                                    />
+                                  ) : type === 'font' ? (
+                                    <DropDownFontsComponent
+                                      value={stripFontPrefix(value)}
+                                      onChange={(_e, data) =>
+                                        onChangeValue(
+                                          section,
+                                          key,
+                                          withFontPrefix(data.value as string)
+                                        )
+                                      }
+                                    />
+                                  ) : type === 'color' ? (
+                                    <input
+                                      type="color"
+                                      style={{
+                                        width: '100%',
+                                        minHeight: 40,
+                                        border: '1px solid rgba(34,36,38,.15)',
+                                        borderRadius: 4,
+                                        padding: 4,
+                                        backgroundColor: '#fff',
+                                        cursor: 'pointer',
+                                      }}
+                                      value={
+                                        /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
+                                          value || ''
+                                        )
+                                          ? value
+                                          : '#000000'
+                                      }
+                                      onChange={(_e, data) =>
+                                        onChangeValue(
+                                          section,
+                                          key,
+                                          (data.value as string) || '#000000'
+                                        )
+                                      }
+                                    />
+                                  ) : (
+                                    <Form.Input
+                                      value={value || ''}
+                                      onChange={(_e, data) =>
+                                        onChangeValue(
+                                          section,
+                                          key,
+                                          data.value as string
+                                        )
+                                      }
+                                    />
+                                  )}
+                                </Form.Field>
+                                <Form.Field>
+                                  <label>&nbsp;</label>
+                                  {!isDefaultSection && !isDefaultKey && (
+                                    <Button
+                                      color="red"
+                                      onClick={() => removeKey(section, key)}
+                                    >
+                                      {i18n.t('module_theme_delete_row')}
+                                    </Button>
+                                  )}
+                                </Form.Field>
+                              </Form.Group>
+                            );
+                          })}
+                        </Form>
+                      )}
                     </Segment>
                   </Grid.Column>
                 );
