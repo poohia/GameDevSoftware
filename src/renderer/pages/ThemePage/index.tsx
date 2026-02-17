@@ -450,7 +450,6 @@ const ThemePage: React.FC = () => {
                                 <Dropdown
                                   fluid
                                   selection
-                                  clearable
                                   search
                                   placeholder={i18n.t(
                                     'module_theme_select_asset'
@@ -504,7 +503,8 @@ const ThemePage: React.FC = () => {
                                   onChange={(_e, data) =>
                                     setNewValueBySection((prev) => ({
                                       ...prev,
-                                      [section]: (data.value as string) || '#000000',
+                                      [section]:
+                                        (data.value as string) || '#000000',
                                     }))
                                   }
                                 />
@@ -548,7 +548,9 @@ const ThemePage: React.FC = () => {
                                 onChange={(_e, data) =>
                                   setKeyDrafts((prev) => ({
                                     ...prev,
-                                    [pathKey]: normalizeKeyDraftValue(data.value),
+                                    [pathKey]: normalizeKeyDraftValue(
+                                      data.value
+                                    ),
                                   }))
                                 }
                                 onBlur={() =>
@@ -603,7 +605,6 @@ const ThemePage: React.FC = () => {
                                   <Dropdown
                                     fluid
                                     selection
-                                    clearable
                                     search
                                     placeholder={i18n.t(
                                       'module_theme_select_asset'
@@ -642,7 +643,9 @@ const ThemePage: React.FC = () => {
                                       cursor: 'pointer',
                                     }}
                                     value={
-                                      /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(value || '')
+                                      /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
+                                        value || ''
+                                      )
                                         ? value
                                         : '#000000'
                                     }
