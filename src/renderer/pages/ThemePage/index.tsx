@@ -7,7 +7,7 @@ import DropDownFontsComponent from 'renderer/components/DropDownFontsComponent';
 import { AssetType } from 'types';
 import i18n from 'translations/i18n';
 
-type ThemeValueType = 'string' | 'asset' | 'font';
+type ThemeValueType = 'string' | 'asset' | 'font' | 'color';
 type ThemeData = Record<string, Record<string, string>>;
 
 const getPathKey = (section: string, key: string) => `${section}.${key}`;
@@ -17,8 +17,15 @@ const detectValueType = (
   key: string,
   value?: string
 ): ThemeValueType => {
+  if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(value || '')) return 'color';
   if ((value || '').startsWith('@a:')) return 'asset';
   if ((value || '').startsWith('@f:')) return 'font';
+  if (
+    section.toLowerCase().includes('color') ||
+    key.toLowerCase().includes('color')
+  ) {
+    return 'color';
+  }
   if (
     section.toLowerCase().includes('font') ||
     key.toLowerCase().includes('font')
@@ -139,6 +146,14 @@ const ThemePage: React.FC = () => {
           return;
         }
         onChangeValue(section, key, withFontPrefix(currentValue));
+        return;
+      }
+      if (nextType === 'color') {
+        if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(currentValue)) {
+          onChangeValue(section, key, currentValue);
+          return;
+        }
+        onChangeValue(section, key, '#000000');
         return;
       }
       if (currentValue.startsWith('@a:')) {
@@ -411,6 +426,11 @@ const ThemePage: React.FC = () => {
                                     text: i18n.t('module_theme_type_font'),
                                     value: 'font',
                                   },
+                                  {
+                                    key: 'color',
+                                    text: i18n.t('module_theme_type_color'),
+                                    value: 'color',
+                                  },
                                 ]}
                                 value={newTypeBySection[section] || 'string'}
                                 onChange={(_e, data) =>
@@ -458,6 +478,33 @@ const ThemePage: React.FC = () => {
                                       [section]: withFontPrefix(
                                         data.value as string
                                       ),
+                                    }))
+                                  }
+                                />
+                              ) : (newTypeBySection[section] || 'string') ===
+                                'color' ? (
+                                <input
+                                  type="color"
+                                  style={{
+                                    width: '100%',
+                                    minHeight: 40,
+                                    border: '1px solid rgba(34,36,38,.15)',
+                                    borderRadius: 4,
+                                    padding: 4,
+                                    backgroundColor: '#fff',
+                                    cursor: 'pointer',
+                                  }}
+                                  value={
+                                    /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
+                                      newValueBySection[section] || ''
+                                    )
+                                      ? newValueBySection[section]
+                                      : '#000000'
+                                  }
+                                  onChange={(_e, data) =>
+                                    setNewValueBySection((prev) => ({
+                                      ...prev,
+                                      [section]: (data.value as string) || '#000000',
                                     }))
                                   }
                                 />
@@ -534,6 +581,11 @@ const ThemePage: React.FC = () => {
                                       text: i18n.t('module_theme_type_font'),
                                       value: 'font',
                                     },
+                                    {
+                                      key: 'color',
+                                      text: i18n.t('module_theme_type_color'),
+                                      value: 'color',
+                                    },
                                   ]}
                                   value={type}
                                   onChange={(_e, data) =>
@@ -574,6 +626,31 @@ const ThemePage: React.FC = () => {
                                         section,
                                         key,
                                         withFontPrefix(data.value as string)
+                                      )
+                                    }
+                                  />
+                                ) : type === 'color' ? (
+                                  <input
+                                    type="color"
+                                    style={{
+                                      width: '100%',
+                                      minHeight: 40,
+                                      border: '1px solid rgba(34,36,38,.15)',
+                                      borderRadius: 4,
+                                      padding: 4,
+                                      backgroundColor: '#fff',
+                                      cursor: 'pointer',
+                                    }}
+                                    value={
+                                      /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(value || '')
+                                        ? value
+                                        : '#000000'
+                                    }
+                                    onChange={(_e, data) =>
+                                      onChangeValue(
+                                        section,
+                                        key,
+                                        (data.value as string) || '#000000'
                                       )
                                     }
                                   />

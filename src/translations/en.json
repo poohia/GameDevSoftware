@@ -19,6 +19,7 @@
   "module_theme_type_string": "string",
   "module_theme_type_asset": "asset",
   "module_theme_type_font": "font",
+  "module_theme_type_color": "color",
   "module_theme_default_value": "Default value",
   "module_theme_select_asset": "Select asset",
   "module_theme_add_key": "Add key",
