@@ -13,9 +13,16 @@ import { Button, Segment } from 'renderer/semantic-ui';
 import DropDownFontsComponent from 'renderer/components/DropDownFontsComponent';
 import { AssetType } from 'types';
 import i18n from 'translations/i18n';
+import { ChromePicker } from 'react-color';
 
 type ThemeValueType = 'string' | 'asset' | 'font' | 'color';
 type ThemeData = Record<string, Record<string, string>>;
+type ColorPickerState = {
+  id: string;
+  mode: 'new' | 'edit';
+  section: string;
+  key?: string;
+} | null;
 
 const getPathKey = (section: string, key: string) => `${section}.${key}`;
 
@@ -64,6 +71,15 @@ const normalizeSectionFinalValue = (value?: string) =>
   normalizeSectionDraftValue(value).replace(/^_+|_+$/g, '');
 
 const THEME_SECTIONS_OPEN_DB_KEY = 'themepage-sections-open';
+const buildColorPickerId = (
+  mode: 'new' | 'edit',
+  section: string,
+  key: string = ''
+) => `${mode}__${section}__${key}`;
+const normalizeDisplayColorValue = (value?: string) => {
+  const v = stripColorPrefix(value) || '';
+  return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v) ? v : '#000000';
+};
 
 const ThemePage: React.FC = () => {
   const [theme, setTheme] = useState<ThemeData>({});
@@ -82,6 +98,9 @@ const ThemePage: React.FC = () => {
   const [newValueBySection, setNewValueBySection] = useState<
     Record<string, string>
   >({});
+  const [activeColorPicker, setActiveColorPicker] =
+    useState<ColorPickerState>(null);
+  const [colorDraft, setColorDraft] = useState<string>('#000000');
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const hasLoadedThemeRef = useRef(false);
   const savedOpenSectionsRef = useRef<Record<string, boolean>>({});
@@ -197,6 +216,63 @@ const ThemePage: React.FC = () => {
     []
   );
 
+  const openColorPicker = useCallback(
+    (params: {
+      mode: 'new' | 'edit';
+      section: string;
+      key?: string;
+      value?: string;
+    }) => {
+      setColorDraft(normalizeDisplayColorValue(params.value));
+      setActiveColorPicker({
+        id: buildColorPickerId(params.mode, params.section, params.key),
+        mode: params.mode,
+        section: params.section,
+        key: params.key,
+      });
+    },
+    []
+  );
+
+  const closeColorPicker = useCallback(
+    (commit: boolean = true) => {
+      if (!activeColorPicker) return;
+
+      if (commit) {
+        if (activeColorPicker.mode === 'new') {
+          setNewValueBySection((prev) => ({
+            ...prev,
+            [activeColorPicker.section]: withColorPrefix(colorDraft),
+          }));
+        } else if (activeColorPicker.key) {
+          onChangeValue(
+            activeColorPicker.section,
+            activeColorPicker.key,
+            withColorPrefix(colorDraft)
+          );
+        }
+      }
+
+      setActiveColorPicker(null);
+    },
+    [activeColorPicker, colorDraft, onChangeValue]
+  );
+
+  useEffect(() => {
+    if (!activeColorPicker) return;
+
+    const onDocumentMouseDown = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (target.closest(`[data-color-picker-id="${activeColorPicker.id}"]`)) {
+        return;
+      }
+      closeColorPicker(true);
+    };
+
+    document.addEventListener('mousedown', onDocumentMouseDown);
+    return () => document.removeEventListener('mousedown', onDocumentMouseDown);
+  }, [activeColorPicker, closeColorPicker]);
+
   const onChangeType = useCallback(
     (section: string, key: string, nextType: ThemeValueType) => {
       const pathKey = getPathKey(section, key);
@@ -274,8 +350,8 @@ const ThemePage: React.FC = () => {
         nextType === 'font'
           ? withFontPrefix(nextValueRaw)
           : nextType === 'color'
-            ? withColorPrefix(nextValueRaw || '#000000')
-            : nextValueRaw;
+          ? withColorPrefix(nextValueRaw || '#000000')
+          : nextValueRaw;
 
       setTheme((prev) => ({
         ...prev,
@@ -563,38 +639,60 @@ const ThemePage: React.FC = () => {
                                   />
                                 ) : (newTypeBySection[section] || 'string') ===
                                   'color' ? (
-                                  <input
-                                    type="color"
-                                    style={{
-                                      width: '100%',
-                                      minHeight: 40,
-                                      border: '1px solid rgba(34,36,38,.15)',
-                                      borderRadius: 4,
-                                      padding: 4,
-                                      backgroundColor: '#fff',
-                                      cursor: 'pointer',
-                                    }}
-                                  value={
-                                    /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
-                                      stripColorPrefix(
-                                        newValueBySection[section] || ''
-                                      ) || ''
-                                    )
-                                      ? stripColorPrefix(
-                                          newValueBySection[section] || ''
-                                        )
-                                      : '#000000'
-                                  }
-                                  onChange={(event) =>
-                                    setNewValueBySection((prev) => ({
-                                      ...prev,
-                                      [section]:
-                                        withColorPrefix(
-                                          event.currentTarget.value || '#000000'
-                                        ),
-                                    }))
-                                  }
-                                />
+                                  <div
+                                    style={{ position: 'relative' }}
+                                    data-color-picker-id={buildColorPickerId(
+                                      'new',
+                                      section
+                                    )}
+                                  >
+                                    <div
+                                      className="ui input"
+                                      style={{ cursor: 'pointer' }}
+                                      onClick={() =>
+                                        openColorPicker({
+                                          mode: 'new',
+                                          section,
+                                          value: newValueBySection[section],
+                                        })
+                                      }
+                                    >
+                                      <input
+                                        readOnly
+                                        value={normalizeDisplayColorValue(
+                                          newValueBySection[section]
+                                        )}
+                                        style={{
+                                          backgroundColor:
+                                            normalizeDisplayColorValue(
+                                              newValueBySection[section]
+                                            ),
+                                          color: 'white',
+                                          border: '1px solid white',
+                                        }}
+                                      />
+                                    </div>
+                                    {activeColorPicker?.id ===
+                                      buildColorPickerId('new', section) && (
+                                      <div
+                                        style={{
+                                          position: 'absolute',
+                                          zIndex: 20,
+                                          marginTop: 8,
+                                        }}
+                                      >
+                                        <ChromePicker
+                                          disableAlpha
+                                          color={colorDraft}
+                                          onChange={(color) =>
+                                            setColorDraft(
+                                              color.hex || '#000000'
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
                                 ) : (
                                   <Form.Input
                                     value={newValueBySection[section] || ''}
@@ -720,34 +818,66 @@ const ThemePage: React.FC = () => {
                                       }
                                     />
                                   ) : type === 'color' ? (
-                                    <input
-                                      type="color"
-                                      style={{
-                                        width: '100%',
-                                        minHeight: 40,
-                                        border: '1px solid rgba(34,36,38,.15)',
-                                        borderRadius: 4,
-                                        padding: 4,
-                                        backgroundColor: '#fff',
-                                        cursor: 'pointer',
-                                      }}
-                                    value={
-                                      /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
-                                        stripColorPrefix(value) || ''
-                                      )
-                                        ? stripColorPrefix(value)
-                                        : '#000000'
-                                    }
-                                    onChange={(event) =>
-                                      onChangeValue(
+                                    <div
+                                      style={{ position: 'relative' }}
+                                      data-color-picker-id={buildColorPickerId(
+                                        'edit',
                                         section,
-                                        key,
-                                        withColorPrefix(
-                                          event.currentTarget.value || '#000000'
-                                        )
-                                      )
-                                    }
-                                  />
+                                        key
+                                      )}
+                                    >
+                                      <div
+                                        className="ui input"
+                                        style={{
+                                          cursor: 'pointer',
+                                        }}
+                                        onClick={() =>
+                                          openColorPicker({
+                                            mode: 'edit',
+                                            section,
+                                            key,
+                                            value,
+                                          })
+                                        }
+                                      >
+                                        <input
+                                          readOnly
+                                          value={normalizeDisplayColorValue(
+                                            value
+                                          )}
+                                          style={{
+                                            backgroundColor:
+                                              normalizeDisplayColorValue(value),
+                                            color: 'white',
+                                            border: '1px solid white',
+                                          }}
+                                        />
+                                      </div>
+                                      {activeColorPicker?.id ===
+                                        buildColorPickerId(
+                                          'edit',
+                                          section,
+                                          key
+                                        ) && (
+                                        <div
+                                          style={{
+                                            position: 'absolute',
+                                            zIndex: 20,
+                                            marginTop: 8,
+                                          }}
+                                        >
+                                          <ChromePicker
+                                            disableAlpha
+                                            color={colorDraft}
+                                            onChange={(color) =>
+                                              setColorDraft(
+                                                color.hex || '#000000'
+                                              )
+                                            }
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
                                   ) : (
                                     <Form.Input
                                       value={value || ''}
