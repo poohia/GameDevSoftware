@@ -20,25 +20,14 @@ type ThemeData = Record<string, Record<string, string>>;
 const getPathKey = (section: string, key: string) => `${section}.${key}`;
 
 const detectValueType = (
-  section: string,
-  key: string,
+  _section: string,
+  _key: string,
   value?: string
 ): ThemeValueType => {
+  if ((value || '').startsWith('@c:')) return 'color';
   if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(value || '')) return 'color';
   if ((value || '').startsWith('@a:')) return 'asset';
   if ((value || '').startsWith('@f:')) return 'font';
-  if (
-    section.toLowerCase().includes('color') ||
-    key.toLowerCase().includes('color')
-  ) {
-    return 'color';
-  }
-  if (
-    section.toLowerCase().includes('font') ||
-    key.toLowerCase().includes('font')
-  ) {
-    return 'font';
-  }
   return 'string';
 };
 
@@ -50,6 +39,16 @@ const withFontPrefix = (value?: string) => {
   if (!finalValue) return '';
   if (finalValue.startsWith('@f:')) return finalValue;
   return `@f:${finalValue}`;
+};
+
+const stripColorPrefix = (value?: string) =>
+  (value || '').startsWith('@c:') ? (value || '').replace('@c:', '') : value;
+
+const withColorPrefix = (value?: string) => {
+  const finalValue = value || '';
+  if (!finalValue) return '';
+  if (finalValue.startsWith('@c:')) return finalValue;
+  return `@c:${finalValue}`;
 };
 
 const normalizeKeyDraftValue = (value?: string) =>
@@ -204,7 +203,7 @@ const ThemePage: React.FC = () => {
       setFieldTypes((prev) => ({ ...prev, [pathKey]: nextType }));
 
       if (nextType === 'color') {
-        onChangeValue(section, key, '#000000');
+        onChangeValue(section, key, '@c:#000000');
         return;
       }
       onChangeValue(section, key, '');
@@ -272,7 +271,11 @@ const ThemePage: React.FC = () => {
       const nextType = newTypeBySection[section] || 'string';
       const nextValueRaw = newValueBySection[section] || '';
       const nextValue =
-        nextType === 'font' ? withFontPrefix(nextValueRaw) : nextValueRaw;
+        nextType === 'font'
+          ? withFontPrefix(nextValueRaw)
+          : nextType === 'color'
+            ? withColorPrefix(nextValueRaw || '#000000')
+            : nextValueRaw;
 
       setTheme((prev) => ({
         ...prev,
@@ -573,16 +576,22 @@ const ThemePage: React.FC = () => {
                                     }}
                                   value={
                                     /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
-                                      newValueBySection[section] || ''
+                                      stripColorPrefix(
+                                        newValueBySection[section] || ''
+                                      ) || ''
                                     )
-                                      ? newValueBySection[section]
+                                      ? stripColorPrefix(
+                                          newValueBySection[section] || ''
+                                        )
                                       : '#000000'
                                   }
                                   onChange={(event) =>
                                     setNewValueBySection((prev) => ({
                                       ...prev,
                                       [section]:
-                                        event.currentTarget.value || '#000000',
+                                        withColorPrefix(
+                                          event.currentTarget.value || '#000000'
+                                        ),
                                     }))
                                   }
                                 />
@@ -724,16 +733,18 @@ const ThemePage: React.FC = () => {
                                       }}
                                     value={
                                       /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(
-                                        value || ''
+                                        stripColorPrefix(value) || ''
                                       )
-                                        ? value
+                                        ? stripColorPrefix(value)
                                         : '#000000'
                                     }
                                     onChange={(event) =>
                                       onChangeValue(
                                         section,
                                         key,
-                                        event.currentTarget.value || '#000000'
+                                        withColorPrefix(
+                                          event.currentTarget.value || '#000000'
+                                        )
                                       )
                                     }
                                   />
