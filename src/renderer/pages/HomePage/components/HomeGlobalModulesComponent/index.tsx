@@ -31,6 +31,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
       'chatgpt',
       'pages',
       'theme',
+      'cache',
     ],
     onChangeLocale,
     appendTab,

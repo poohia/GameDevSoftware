@@ -108,6 +108,8 @@ export type Channels =
   | 'load-saves'
   | 'set-theme'
   | 'load-theme'
+  | 'set-cache'
+  | 'load-cache'
   | 'open-cypress'
   | 'open-cypress-screenshots'
   | 'cypress-clear-screenshots'
@@ -219,6 +221,10 @@ export type AssetType = {
 };
 export type AssetHeaderComponentProps = {
   onClickAdd: () => void;
+};
+export type CacheItem = {
+  sceneId: number;
+  assets: string[];
 };
 export type ApplicationConfigJson = {
   name: string;

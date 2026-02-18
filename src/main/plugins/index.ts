@@ -17,6 +17,7 @@ import SavesPlugin from './SavesPlugin';
 import CypressPlugin from './CypressPlugin';
 import PagesPlugin from './PagesPlugin';
 import ThemePlugin from './ThemePlugin';
+import CachePlugin from './CachePlugin';
 
 type Plugins =
   | 'folderPlugin'
@@ -36,7 +37,8 @@ type Plugins =
   | 'savesPlugin'
   | 'cypressPlugin'
   | 'pagesPlugin'
-  | 'themePlugin';
+  | 'themePlugin'
+  | 'cachePlugin';
 
 export default class PluginsContainer {
   private _folderPlugin;
@@ -57,6 +59,7 @@ export default class PluginsContainer {
   private _cypressPlugin;
   private _pagesPlugin;
   private _themePlugin;
+  private _cachePlugin;
 
   constructor(mainWindow: BrowserWindow) {
     this._folderPlugin = new FolderPlugin(mainWindow);
@@ -77,6 +80,7 @@ export default class PluginsContainer {
     this._cypressPlugin = new CypressPlugin();
     this._pagesPlugin = new PagesPlugin();
     this._themePlugin = new ThemePlugin();
+    this._cachePlugin = new CachePlugin();
   }
 
   init() {

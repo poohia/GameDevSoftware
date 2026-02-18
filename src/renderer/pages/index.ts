@@ -13,3 +13,4 @@ export { default as ChatGPTPage } from './ChatGPTPage';
 export { default as ShortcutsFoldersPage } from './ShortcutsFoldersPage';
 export { default as PagesModulePage } from './PagesModulePage';
 export { default as ThemePage } from './ThemePage';
+export { default as CachePage } from './CachePage';

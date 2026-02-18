@@ -16,6 +16,7 @@ import {
   ShortcutsFoldersPage,
   PagesModulePage,
   ThemePage,
+  CachePage,
 } from 'renderer/pages';
 import {
   AllGameobjectContainerComponent,
@@ -50,6 +51,7 @@ modulesComponent['ChatgptPage'] = ChatGPTPage;
 modulesComponent['ShortcutsfoldersPage'] = ShortcutsFoldersPage;
 modulesComponent['PagesPage'] = PagesModulePage;
 modulesComponent['ThemePage'] = ThemePage;
+modulesComponent['CachePage'] = CachePage;
 
 export default function App() {
   const { path, tabs, tabActive, onTabChange } = useApp();
