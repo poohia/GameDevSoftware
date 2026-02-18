@@ -80,6 +80,23 @@ const normalizeDisplayColorValue = (value?: string) => {
   const v = stripColorPrefix(value) || '';
   return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v) ? v : '#000000';
 };
+const getReadableTextAndBorderColor = (backgroundColor: string) => {
+  const hex = backgroundColor.replace('#', '');
+  const normalizedHex =
+    hex.length === 3
+      ? hex
+          .split('')
+          .map((c) => `${c}${c}`)
+          .join('')
+      : hex;
+
+  const r = parseInt(normalizedHex.slice(0, 2), 16);
+  const g = parseInt(normalizedHex.slice(2, 4), 16);
+  const b = parseInt(normalizedHex.slice(4, 6), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  return luminance > 0.6 ? 'black' : 'white';
+};
 const isSectionLockedByEditable = (values?: Record<string, string>) => {
   const editableValue = (values as Record<string, unknown> | undefined)
     ?.editable;
@@ -672,14 +689,18 @@ const ThemePage: React.FC = () => {
                                         value={normalizeDisplayColorValue(
                                           newValueBySection[section]
                                         )}
-                                        style={{
-                                          backgroundColor:
-                                            normalizeDisplayColorValue(
-                                              newValueBySection[section]
-                                            ),
-                                          color: 'white',
-                                          border: '1px solid white',
-                                        }}
+                                        style={(() => {
+                                          const bg = normalizeDisplayColorValue(
+                                            newValueBySection[section]
+                                          );
+                                          const fg =
+                                            getReadableTextAndBorderColor(bg);
+                                          return {
+                                            backgroundColor: bg,
+                                            color: fg,
+                                            border: `1px solid ${fg}`,
+                                          };
+                                        })()}
                                       />
                                     </div>
                                     {activeColorPicker?.id ===
@@ -856,12 +877,17 @@ const ThemePage: React.FC = () => {
                                           value={normalizeDisplayColorValue(
                                             value
                                           )}
-                                          style={{
-                                            backgroundColor:
-                                              normalizeDisplayColorValue(value),
-                                            color: 'white',
-                                            border: '1px solid white',
-                                          }}
+                                          style={(() => {
+                                            const bg =
+                                              normalizeDisplayColorValue(value);
+                                            const fg =
+                                              getReadableTextAndBorderColor(bg);
+                                            return {
+                                              backgroundColor: bg,
+                                              color: fg,
+                                              border: `1px solid ${fg}`,
+                                            };
+                                          })()}
                                         />
                                       </div>
                                       {activeColorPicker?.id ===
