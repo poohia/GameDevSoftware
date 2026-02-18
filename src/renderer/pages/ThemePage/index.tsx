@@ -80,6 +80,15 @@ const normalizeDisplayColorValue = (value?: string) => {
   const v = stripColorPrefix(value) || '';
   return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v) ? v : '#000000';
 };
+const isSectionLockedByEditable = (values?: Record<string, string>) => {
+  const editableValue = (values as Record<string, unknown> | undefined)
+    ?.editable;
+  if (editableValue === false) return true;
+  if (typeof editableValue === 'string') {
+    return editableValue.toLowerCase() === 'false';
+  }
+  return false;
+};
 
 const ThemePage: React.FC = () => {
   const [theme, setTheme] = useState<ThemeData>({});
@@ -121,6 +130,7 @@ const ThemePage: React.FC = () => {
     const nextKeyDrafts: Record<string, string> = {};
     Object.entries(nextTheme || {}).forEach(([section, values]) => {
       Object.entries(values || {}).forEach(([key, value]) => {
+        if (key === 'editable') return;
         const pathKey = getPathKey(section, key);
         nextFieldTypes[pathKey] = detectValueType(section, key, value);
         nextKeyDrafts[pathKey] = key;
@@ -308,7 +318,7 @@ const ThemePage: React.FC = () => {
 
   const removeSection = useCallback(
     (section: string) => {
-      if (section === 'default') return;
+      if (isSectionLockedByEditable(theme?.[section])) return;
       setTheme((prev) => {
         const nextTheme = { ...prev };
         delete nextTheme[section];
@@ -335,12 +345,12 @@ const ThemePage: React.FC = () => {
         return next;
       });
     },
-    [persistOpenSections]
+    [persistOpenSections, theme]
   );
 
   const addKeyInSection = useCallback(
     (section: string) => {
-      if (section === 'default') return;
+      if (isSectionLockedByEditable(theme?.[section])) return;
       const key = normalizeKeyFinalValue(newKeyBySection[section] || '');
       if (!key) return;
 
@@ -372,11 +382,11 @@ const ThemePage: React.FC = () => {
       setNewValueBySection((prev) => ({ ...prev, [section]: '' }));
       setNewTypeBySection((prev) => ({ ...prev, [section]: 'string' }));
     },
-    [newKeyBySection, newTypeBySection, newValueBySection]
+    [newKeyBySection, newTypeBySection, newValueBySection, theme]
   );
 
   const removeKey = useCallback((section: string, key: string) => {
-    if (section === 'default') return;
+    if (isSectionLockedByEditable(theme?.[section])) return;
     setTheme((prev) => {
       const sectionValues = { ...(prev[section] || {}) };
       delete sectionValues[key];
@@ -395,11 +405,11 @@ const ThemePage: React.FC = () => {
       delete next[getPathKey(section, key)];
       return next;
     });
-  }, []);
+  }, [theme]);
 
   const renameKey = useCallback(
     (section: string, oldKey: string, rawNewKey: string) => {
-      if (section === 'default') return;
+      if (isSectionLockedByEditable(theme?.[section])) return;
       const newKey = normalizeKeyFinalValue(rawNewKey);
       if (!newKey || newKey === oldKey) {
         setKeyDrafts((prev) => ({
@@ -510,7 +520,7 @@ const ThemePage: React.FC = () => {
 
             <Grid columns={1} stackable>
               {Object.entries(theme).map(([section, values]) => {
-                const isDefaultSection = section === 'default';
+                const isSectionLocked = isSectionLockedByEditable(values);
                 const isSectionOpen = !!openSections[section];
                 return (
                   <Grid.Column key={section} width={16}>
@@ -532,7 +542,7 @@ const ThemePage: React.FC = () => {
                             </Header>
                           </Grid.Column>
                           <Grid.Column width={4} textAlign="right">
-                            {!isDefaultSection && (
+                            {!isSectionLocked && (
                               <Button
                                 color="red"
                                 onClick={() => removeSection(section)}
@@ -545,7 +555,7 @@ const ThemePage: React.FC = () => {
                       </Grid>
                       {isSectionOpen && (
                         <Form>
-                          {!isDefaultSection && (
+                          {!isSectionLocked && (
                             <Form.Group widths="equal">
                               <Form.Input
                                 label={i18n.t('module_theme_new_key')}
@@ -718,9 +728,10 @@ const ThemePage: React.FC = () => {
                             </Form.Group>
                           )}
 
-                          {Object.entries(values || {}).map(([key, value]) => {
+                          {Object.entries(values || {})
+                            .filter(([key]) => key !== 'editable')
+                            .map(([key, value]) => {
                             const pathKey = getPathKey(section, key);
-                            const isDefaultKey = key === 'default';
                             const type =
                               fieldTypes[pathKey] ||
                               detectValueType(section, key, value);
@@ -729,7 +740,7 @@ const ThemePage: React.FC = () => {
                                 <Form.Input
                                   label={i18n.t('module_theme_key')}
                                   value={keyDrafts[pathKey] ?? key}
-                                  disabled={isDefaultSection}
+                                  disabled={isSectionLocked}
                                   onChange={(_e, data) =>
                                     setKeyDrafts((prev) => ({
                                       ...prev,
@@ -751,7 +762,7 @@ const ThemePage: React.FC = () => {
                                   <Dropdown
                                     fluid
                                     selection
-                                    disabled={isDefaultSection}
+                                    disabled={isSectionLocked}
                                     options={[
                                       {
                                         key: 'string',
@@ -893,7 +904,7 @@ const ThemePage: React.FC = () => {
                                 </Form.Field>
                                 <Form.Field>
                                   <label>&nbsp;</label>
-                                  {!isDefaultSection && !isDefaultKey && (
+                                  {!isSectionLocked && (
                                     <Button
                                       color="red"
                                       onClick={() => removeKey(section, key)}
