@@ -159,7 +159,7 @@ const ShortcutsFoldersFormComponent: React.FC<
   useEffect(() => {
     setScenesDropdowns(
       currentScenes.map((scene) => ({
-        text: scene._title,
+        text: `${scene._id} - ${scene._title}`,
         value: scene._id,
       }))
     );

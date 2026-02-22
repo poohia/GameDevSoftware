@@ -6,12 +6,15 @@ import {
   useRef,
   useState,
 } from 'react';
-import { TransComponent } from 'renderer/components';
+import {
+  DropdownShortcutsFoldersComponent,
+  TransComponent,
+} from 'renderer/components';
 import AssetsContext from 'renderer/contexts/AssetsContext';
 import ScenesContext from 'renderer/contexts/ScenesContext';
 import { useEvents } from 'renderer/hooks';
 import { Button, Table } from 'renderer/semantic-ui';
-import { CacheItem } from 'types';
+import { CacheItem, ShortcutsFolder } from 'types';
 import {
   Container,
   Dropdown,
@@ -26,6 +29,9 @@ const CachePage: React.FC = () => {
   const [caches, setCaches] = useState<CacheItem[]>([]);
   const [newSceneId, setNewSceneId] = useState<number | null>(null);
   const [newAssets, setNewAssets] = useState<string[]>([]);
+  const [folderFilter, setFilterFolder] = useState<ShortcutsFolder[] | null>(
+    null
+  );
   const hasLoadedRef = useRef(false);
   const { on, sendMessage } = useEvents();
   const { assets } = useContext(AssetsContext);
@@ -52,16 +58,29 @@ const CachePage: React.FC = () => {
     sendMessage('set-cache', caches);
   }, [caches, sendMessage]);
 
+  const allowedSceneIds = useMemo(
+    () => new Set(folderFilter?.flatMap((folder) => folder.scenes ?? []) || []),
+    [folderFilter]
+  );
+  const allowedAssets = useMemo(
+    () => new Set(folderFilter?.flatMap((folder) => folder.assets ?? []) || []),
+    [folderFilter]
+  );
+
   const sceneOptions = useMemo(
     () =>
       scenes
+        .filter((scene) => {
+          if (!folderFilter || folderFilter.length === 0) return true;
+          return allowedSceneIds.has(scene._id);
+        })
         .map((scene) => ({
           key: scene._id,
           text: `${scene._id} - ${scene._title}`,
           value: scene._id,
         }))
         .sort((a, b) => Number(a.value) - Number(b.value)),
-    [scenes]
+    [allowedSceneIds, folderFilter, scenes]
   );
   const selectedSceneIds = useMemo(
     () => new Set(caches.map((cache) => cache.sceneId)),
@@ -76,25 +95,51 @@ const CachePage: React.FC = () => {
   );
   const sceneLabelMap = useMemo(
     () =>
-      sceneOptions.reduce<Record<number, string>>((acc, option) => {
-        acc[option.value as number] = option.text as string;
+      scenes.reduce<Record<number, string>>((acc, scene) => {
+        acc[scene._id] = `${scene._id} - ${scene._title}`;
         return acc;
       }, {}),
-    [sceneOptions]
+    [scenes]
+  );
+  const getSceneDisplayLabel = useCallback(
+    (sceneId: number) => {
+      if (sceneId === -1) return 'Splashscreen';
+      return sceneLabelMap[sceneId] || `${sceneId}`;
+    },
+    [sceneLabelMap]
   );
 
-  const assetOptions = useMemo(() => {
-    const namesFromContexts = assets.map((asset) => asset.name);
-    const namesFromCaches = caches.flatMap((cache) => cache.assets || []);
-    const allAssetNames = Array.from(
-      new Set([...namesFromContexts, ...namesFromCaches, ...newAssets])
-    );
-    return allAssetNames.map((name) => ({
+  const baseAssetOptions = useMemo(() => {
+    const filteredAssets = assets
+      .filter((asset) => asset.type === 'image')
+      .map((asset) => asset.name)
+      .filter((assetName) => {
+        if (!folderFilter || folderFilter.length === 0) return true;
+        return allowedAssets.has(assetName);
+      });
+    return Array.from(new Set(filteredAssets)).map((name) => ({
       key: name,
       text: name,
       value: name,
     }));
-  }, [assets, caches, newAssets]);
+  }, [allowedAssets, assets, folderFilter]);
+
+  const buildAssetOptions = useCallback(
+    (currentValues: string[] = []) => {
+      const optionNames = Array.from(
+        new Set([
+          ...baseAssetOptions.map((option) => option.value as string),
+          ...currentValues,
+        ])
+      );
+      return optionNames.map((name) => ({
+        key: name,
+        text: name,
+        value: name,
+      }));
+    },
+    [baseAssetOptions]
+  );
 
   const addRow = useCallback(() => {
     if (availableSceneOptions.length === 0 && newSceneId === null) return;
@@ -130,9 +175,12 @@ const CachePage: React.FC = () => {
 
   useEffect(() => {
     if (newSceneId === null) return;
-    if (!selectedSceneIds.has(newSceneId)) return;
+    const existsInFilteredOptions = availableSceneOptions.some(
+      (option) => option.value === newSceneId
+    );
+    if (existsInFilteredOptions && !selectedSceneIds.has(newSceneId)) return;
     setNewSceneId(null);
-  }, [newSceneId, selectedSceneIds]);
+  }, [availableSceneOptions, newSceneId, selectedSceneIds]);
 
   return (
     <Container style={{ width: '60%', maxWidth: 1600 }}>
@@ -144,7 +192,12 @@ const CachePage: React.FC = () => {
             </Header>
           </Grid.Column>
         </Grid.Row>
-
+        <br /> <br /> <br /> <br />
+        <Grid.Row className="game-dev-software-table-component-search">
+          <Grid.Column width={8}>
+            <DropdownShortcutsFoldersComponent onChange={setFilterFolder} />
+          </Grid.Column>
+        </Grid.Row>
         <Grid.Row>
           <Grid.Column width={16}>
             <Form>
@@ -172,8 +225,9 @@ const CachePage: React.FC = () => {
                         placeholder={i18n.t('module_cache_select_scene')}
                         options={availableSceneOptions}
                         value={newSceneId ?? undefined}
+                        clearable
                         onChange={(_e, data) =>
-                          setNewSceneId((data.value as number) || 0)
+                          setNewSceneId((data.value as number) || null)
                         }
                       />
                     </Table.Cell>
@@ -185,7 +239,7 @@ const CachePage: React.FC = () => {
                         multiple
                         clearable
                         placeholder={i18n.t('module_cache_select_assets')}
-                        options={assetOptions}
+                        options={buildAssetOptions(newAssets)}
                         value={newAssets}
                         onChange={(_e, data) =>
                           setNewAssets((data.value as string[]) || [])
@@ -207,7 +261,7 @@ const CachePage: React.FC = () => {
                   {caches.map((item, index) => (
                     <Table.Row key={`${item.sceneId}-${index}`}>
                       <Table.Cell>
-                        {sceneLabelMap[item.sceneId] || item.sceneId}
+                        {getSceneDisplayLabel(item.sceneId)}
                       </Table.Cell>
                       <Table.Cell>
                         <Dropdown
@@ -216,7 +270,7 @@ const CachePage: React.FC = () => {
                           search
                           multiple
                           clearable
-                          options={assetOptions}
+                          options={buildAssetOptions(item.assets || [])}
                           value={item.assets || []}
                           onChange={(_e, data) =>
                             updateAssets(index, (data.value as string[]) || [])
@@ -228,6 +282,7 @@ const CachePage: React.FC = () => {
                           color="red"
                           icon
                           onClick={() => deleteRow(index)}
+                          disabled={item.sceneId === -1}
                         >
                           <Icon name="trash" />
                         </Button>
