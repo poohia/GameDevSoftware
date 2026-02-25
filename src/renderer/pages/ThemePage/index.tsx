@@ -16,7 +16,14 @@ import i18n from 'translations/i18n';
 import { ChromePicker } from 'react-color';
 
 type ThemeValueType = 'string' | 'asset' | 'font' | 'color';
-type ThemeData = Record<string, Record<string, string>>;
+type ThemeValue = string | null;
+type ThemeData = Record<string, Record<string, ThemeValue>>;
+type ThemeFieldConstraint = {
+  section: string;
+  key: string;
+  type: ThemeValueType;
+  allowNull?: boolean;
+};
 type ColorPickerState = {
   id: string;
   mode: 'new' | 'edit';
@@ -24,13 +31,40 @@ type ColorPickerState = {
   key?: string;
 } | null;
 
+const THEME_FIELD_CONSTRAINTS: ThemeFieldConstraint[] = [
+  {
+    section: 'default_button',
+    key: 'background_image',
+    type: 'asset',
+    allowNull: true,
+  },
+  {
+    section: 'default_button',
+    key: 'background_image_active',
+    type: 'asset',
+    allowNull: true,
+  },
+  {
+    section: 'default_modal',
+    key: 'background_image',
+    type: 'asset',
+    allowNull: true,
+  },
+];
+
 const getPathKey = (section: string, key: string) => `${section}.${key}`;
+const getThemeFieldConstraint = (section: string, key: string) =>
+  THEME_FIELD_CONSTRAINTS.find(
+    (constraint) => constraint.section === section && constraint.key === key
+  );
 
 const detectValueType = (
-  _section: string,
-  _key: string,
-  value?: string
+  section: string,
+  key: string,
+  value?: ThemeValue
 ): ThemeValueType => {
+  const constraint = getThemeFieldConstraint(section, key);
+  if (constraint) return constraint.type;
   if ((value || '').startsWith('@c:')) return 'color';
   if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(value || '')) return 'color';
   if ((value || '').startsWith('@a:')) return 'asset';
@@ -38,8 +72,12 @@ const detectValueType = (
   return 'string';
 };
 
-const stripFontPrefix = (value?: string) =>
-  (value || '').startsWith('@f:') ? (value || '').replace('@f:', '') : value;
+const stripFontPrefix = (value?: ThemeValue) => {
+  const finalValue = value || '';
+  return finalValue.startsWith('@f:')
+    ? finalValue.replace('@f:', '')
+    : finalValue;
+};
 
 const withFontPrefix = (value?: string) => {
   const finalValue = value || '';
@@ -48,8 +86,12 @@ const withFontPrefix = (value?: string) => {
   return `@f:${finalValue}`;
 };
 
-const stripColorPrefix = (value?: string) =>
-  (value || '').startsWith('@c:') ? (value || '').replace('@c:', '') : value;
+const stripColorPrefix = (value?: ThemeValue) => {
+  const finalValue = value || '';
+  return finalValue.startsWith('@c:')
+    ? finalValue.replace('@c:', '')
+    : finalValue;
+};
 
 const withColorPrefix = (value?: string) => {
   const finalValue = value || '';
@@ -76,7 +118,7 @@ const buildColorPickerId = (
   section: string,
   key: string = ''
 ) => `${mode}__${section}__${key}`;
-const normalizeDisplayColorValue = (value?: string) => {
+const normalizeDisplayColorValue = (value?: ThemeValue) => {
   const v = stripColorPrefix(value) || '';
   return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v) ? v : '#000000';
 };
@@ -97,9 +139,8 @@ const getReadableTextAndBorderColor = (backgroundColor: string) => {
 
   return luminance > 0.6 ? 'black' : 'white';
 };
-const isSectionLockedByEditable = (values?: Record<string, string>) => {
-  const editableValue = (values as Record<string, unknown> | undefined)
-    ?.editable;
+const isSectionLockedByEditable = (values?: Record<string, ThemeValue>) => {
+  const editableValue = values?.editable;
   if (editableValue === false) return true;
   if (typeof editableValue === 'string') {
     return editableValue.toLowerCase() === 'false';
@@ -224,10 +265,10 @@ const ThemePage: React.FC = () => {
   );
 
   const onChangeValue = useCallback(
-    (section: string, key: string, value?: string) => {
-      const nextValue = value || '';
+    (section: string, key: string, value?: ThemeValue) => {
+      const nextValue = value === undefined ? '' : value;
       setTheme((prev) => {
-        const currentValue = prev?.[section]?.[key] || '';
+        const currentValue = prev?.[section]?.[key] ?? '';
         if (currentValue === nextValue) {
           return prev;
         }
@@ -248,7 +289,7 @@ const ThemePage: React.FC = () => {
       mode: 'new' | 'edit';
       section: string;
       key?: string;
-      value?: string;
+      value?: ThemeValue;
     }) => {
       setColorDraft(normalizeDisplayColorValue(params.value));
       setActiveColorPicker({
@@ -302,10 +343,16 @@ const ThemePage: React.FC = () => {
 
   const onChangeType = useCallback(
     (section: string, key: string, nextType: ThemeValueType) => {
+      const constraint = getThemeFieldConstraint(section, key);
+      const finalType = constraint?.type || nextType;
       const pathKey = getPathKey(section, key);
-      setFieldTypes((prev) => ({ ...prev, [pathKey]: nextType }));
+      setFieldTypes((prev) => ({ ...prev, [pathKey]: finalType }));
 
-      if (nextType === 'color') {
+      if (constraint) {
+        return;
+      }
+
+      if (finalType === 'color') {
         onChangeValue(section, key, '@c:#000000');
         return;
       }
@@ -371,13 +418,17 @@ const ThemePage: React.FC = () => {
       const key = normalizeKeyFinalValue(newKeyBySection[section] || '');
       if (!key) return;
 
-      const nextType = newTypeBySection[section] || 'string';
+      const constraint = getThemeFieldConstraint(section, key);
+      const nextType =
+        constraint?.type || newTypeBySection[section] || 'string';
       const nextValueRaw = newValueBySection[section] || '';
       const nextValue =
         nextType === 'font'
           ? withFontPrefix(nextValueRaw)
           : nextType === 'color'
           ? withColorPrefix(nextValueRaw || '#000000')
+          : nextType === 'asset' && constraint?.allowNull && !nextValueRaw
+          ? null
           : nextValueRaw;
 
       setTheme((prev) => ({
@@ -619,7 +670,24 @@ const ThemePage: React.FC = () => {
                                       value: 'color',
                                     },
                                   ]}
-                                  value={newTypeBySection[section] || 'string'}
+                                  value={
+                                    getThemeFieldConstraint(
+                                      section,
+                                      normalizeKeyFinalValue(
+                                        newKeyBySection[section] || ''
+                                      )
+                                    )?.type ||
+                                    newTypeBySection[section] ||
+                                    'string'
+                                  }
+                                  disabled={
+                                    !!getThemeFieldConstraint(
+                                      section,
+                                      normalizeKeyFinalValue(
+                                        newKeyBySection[section] || ''
+                                      )
+                                    )
+                                  }
                                   onChange={(_e, data) =>
                                     setNewTypeBySection((prev) => ({
                                       ...prev,
@@ -632,12 +700,26 @@ const ThemePage: React.FC = () => {
                                 <label>
                                   {i18n.t('module_theme_default_value')}
                                 </label>
-                                {(newTypeBySection[section] || 'string') ===
-                                'asset' ? (
+                                {(getThemeFieldConstraint(
+                                  section,
+                                  normalizeKeyFinalValue(
+                                    newKeyBySection[section] || ''
+                                  )
+                                )?.type ||
+                                  newTypeBySection[section] ||
+                                  'string') === 'asset' ? (
                                   <Dropdown
                                     fluid
                                     selection
                                     search
+                                    clearable={
+                                      !!getThemeFieldConstraint(
+                                        section,
+                                        normalizeKeyFinalValue(
+                                          newKeyBySection[section] || ''
+                                        )
+                                      )?.allowNull
+                                    }
                                     placeholder={i18n.t(
                                       'module_theme_select_asset'
                                     )}
@@ -652,8 +734,14 @@ const ThemePage: React.FC = () => {
                                       }))
                                     }
                                   />
-                                ) : (newTypeBySection[section] || 'string') ===
-                                  'font' ? (
+                                ) : (getThemeFieldConstraint(
+                                    section,
+                                    normalizeKeyFinalValue(
+                                      newKeyBySection[section] || ''
+                                    )
+                                  )?.type ||
+                                    newTypeBySection[section] ||
+                                    'string') === 'font' ? (
                                   <DropDownFontsComponent
                                     value={stripFontPrefix(
                                       newValueBySection[section] || ''
@@ -667,8 +755,14 @@ const ThemePage: React.FC = () => {
                                       }))
                                     }
                                   />
-                                ) : (newTypeBySection[section] || 'string') ===
-                                  'color' ? (
+                                ) : (getThemeFieldConstraint(
+                                    section,
+                                    normalizeKeyFinalValue(
+                                      newKeyBySection[section] || ''
+                                    )
+                                  )?.type ||
+                                    newTypeBySection[section] ||
+                                    'string') === 'color' ? (
                                   <div
                                     style={{ position: 'relative' }}
                                     data-color-picker-id={buildColorPickerId(
@@ -756,7 +850,12 @@ const ThemePage: React.FC = () => {
                             .filter(([key]) => key !== 'editable')
                             .map(([key, value]) => {
                               const pathKey = getPathKey(section, key);
+                              const fieldConstraint = getThemeFieldConstraint(
+                                section,
+                                key
+                              );
                               const type =
+                                fieldConstraint?.type ||
                                 fieldTypes[pathKey] ||
                                 detectValueType(section, key, value);
                               return (
@@ -786,7 +885,9 @@ const ThemePage: React.FC = () => {
                                     <Dropdown
                                       fluid
                                       selection
-                                      disabled={isSectionLocked}
+                                      disabled={
+                                        isSectionLocked || !!fieldConstraint
+                                      }
                                       options={[
                                         {
                                           key: 'string',
@@ -836,16 +937,20 @@ const ThemePage: React.FC = () => {
                                         fluid
                                         selection
                                         search
+                                        clearable={!!fieldConstraint?.allowNull}
                                         placeholder={i18n.t(
                                           'module_theme_select_asset'
                                         )}
                                         options={assetOptions}
-                                        value={value || undefined}
+                                        value={value ?? undefined}
                                         onChange={(_e, data) =>
                                           onChangeValue(
                                             section,
                                             key,
-                                            data.value as string
+                                            (data.value as string | null) ??
+                                              (fieldConstraint?.allowNull
+                                                ? null
+                                                : '')
                                           )
                                         }
                                       />
