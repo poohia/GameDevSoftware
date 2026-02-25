@@ -170,7 +170,7 @@ const ThemePage: React.FC = () => {
       hasLoadedThemeRef.current = true;
     });
     requestMessage('load-assets', (data: AssetType[]) => {
-      setAssets(data || []);
+      setAssets((data || []).filter((a) => a.type === 'image'));
     });
     sendMessage('load-theme');
   }, [hydrateFieldTypes]);
@@ -402,27 +402,30 @@ const ThemePage: React.FC = () => {
     [newKeyBySection, newTypeBySection, newValueBySection, theme]
   );
 
-  const removeKey = useCallback((section: string, key: string) => {
-    if (isSectionLockedByEditable(theme?.[section])) return;
-    setTheme((prev) => {
-      const sectionValues = { ...(prev[section] || {}) };
-      delete sectionValues[key];
-      return {
-        ...prev,
-        [section]: sectionValues,
-      };
-    });
-    setFieldTypes((prev) => {
-      const next = { ...prev };
-      delete next[getPathKey(section, key)];
-      return next;
-    });
-    setKeyDrafts((prev) => {
-      const next = { ...prev };
-      delete next[getPathKey(section, key)];
-      return next;
-    });
-  }, [theme]);
+  const removeKey = useCallback(
+    (section: string, key: string) => {
+      if (isSectionLockedByEditable(theme?.[section])) return;
+      setTheme((prev) => {
+        const sectionValues = { ...(prev[section] || {}) };
+        delete sectionValues[key];
+        return {
+          ...prev,
+          [section]: sectionValues,
+        };
+      });
+      setFieldTypes((prev) => {
+        const next = { ...prev };
+        delete next[getPathKey(section, key)];
+        return next;
+      });
+      setKeyDrafts((prev) => {
+        const next = { ...prev };
+        delete next[getPathKey(section, key)];
+        return next;
+      });
+    },
+    [theme]
+  );
 
   const renameKey = useCallback(
     (section: string, oldKey: string, rawNewKey: string) => {
@@ -484,7 +487,7 @@ const ThemePage: React.FC = () => {
       assets.map((asset) => ({
         key: asset.name,
         value: `@a:${asset.name}`,
-        text: `${asset.name} (${asset.type})`,
+        text: `${asset.name}`,
       })),
     [assets]
   );
@@ -752,196 +755,208 @@ const ThemePage: React.FC = () => {
                           {Object.entries(values || {})
                             .filter(([key]) => key !== 'editable')
                             .map(([key, value]) => {
-                            const pathKey = getPathKey(section, key);
-                            const type =
-                              fieldTypes[pathKey] ||
-                              detectValueType(section, key, value);
-                            return (
-                              <Form.Group widths="equal" key={pathKey}>
-                                <Form.Input
-                                  label={i18n.t('module_theme_key')}
-                                  value={keyDrafts[pathKey] ?? key}
-                                  disabled={isSectionLocked}
-                                  onChange={(_e, data) =>
-                                    setKeyDrafts((prev) => ({
-                                      ...prev,
-                                      [pathKey]: normalizeKeyDraftValue(
-                                        data.value
-                                      ),
-                                    }))
-                                  }
-                                  onBlur={() =>
-                                    renameKey(
-                                      section,
-                                      key,
-                                      keyDrafts[pathKey] ?? key
-                                    )
-                                  }
-                                />
-                                <Form.Field>
-                                  <label>{i18n.t('module_theme_type')}</label>
-                                  <Dropdown
-                                    fluid
-                                    selection
+                              const pathKey = getPathKey(section, key);
+                              const type =
+                                fieldTypes[pathKey] ||
+                                detectValueType(section, key, value);
+                              return (
+                                <Form.Group widths="equal" key={pathKey}>
+                                  <Form.Input
+                                    label={i18n.t('module_theme_key')}
+                                    value={keyDrafts[pathKey] ?? key}
                                     disabled={isSectionLocked}
-                                    options={[
-                                      {
-                                        key: 'string',
-                                        text: i18n.t(
-                                          'module_theme_type_string'
-                                        ),
-                                        value: 'string',
-                                      },
-                                      {
-                                        key: 'asset',
-                                        text: i18n.t('module_theme_type_asset'),
-                                        value: 'asset',
-                                      },
-                                      {
-                                        key: 'font',
-                                        text: i18n.t('module_theme_type_font'),
-                                        value: 'font',
-                                      },
-                                      {
-                                        key: 'color',
-                                        text: i18n.t('module_theme_type_color'),
-                                        value: 'color',
-                                      },
-                                    ]}
-                                    value={type}
                                     onChange={(_e, data) =>
-                                      onChangeType(
+                                      setKeyDrafts((prev) => ({
+                                        ...prev,
+                                        [pathKey]: normalizeKeyDraftValue(
+                                          data.value
+                                        ),
+                                      }))
+                                    }
+                                    onBlur={() =>
+                                      renameKey(
                                         section,
                                         key,
-                                        data.value as ThemeValueType
+                                        keyDrafts[pathKey] ?? key
                                       )
                                     }
                                   />
-                                </Form.Field>
-                                <Form.Field>
-                                  <label>{i18n.t('module_theme_value')}</label>
-                                  {type === 'asset' ? (
+                                  <Form.Field>
+                                    <label>{i18n.t('module_theme_type')}</label>
                                     <Dropdown
                                       fluid
                                       selection
-                                      search
-                                      placeholder={i18n.t(
-                                        'module_theme_select_asset'
-                                      )}
-                                      options={assetOptions}
-                                      value={value || undefined}
+                                      disabled={isSectionLocked}
+                                      options={[
+                                        {
+                                          key: 'string',
+                                          text: i18n.t(
+                                            'module_theme_type_string'
+                                          ),
+                                          value: 'string',
+                                        },
+                                        {
+                                          key: 'asset',
+                                          text: i18n.t(
+                                            'module_theme_type_asset'
+                                          ),
+                                          value: 'asset',
+                                        },
+                                        {
+                                          key: 'font',
+                                          text: i18n.t(
+                                            'module_theme_type_font'
+                                          ),
+                                          value: 'font',
+                                        },
+                                        {
+                                          key: 'color',
+                                          text: i18n.t(
+                                            'module_theme_type_color'
+                                          ),
+                                          value: 'color',
+                                        },
+                                      ]}
+                                      value={type}
                                       onChange={(_e, data) =>
-                                        onChangeValue(
+                                        onChangeType(
                                           section,
                                           key,
-                                          data.value as string
+                                          data.value as ThemeValueType
                                         )
                                       }
                                     />
-                                  ) : type === 'font' ? (
-                                    <DropDownFontsComponent
-                                      value={stripFontPrefix(value)}
-                                      onChange={(_e, data) =>
-                                        onChangeValue(
-                                          section,
-                                          key,
-                                          withFontPrefix(data.value as string)
-                                        )
-                                      }
-                                    />
-                                  ) : type === 'color' ? (
-                                    <div
-                                      style={{ position: 'relative' }}
-                                      data-color-picker-id={buildColorPickerId(
-                                        'edit',
-                                        section,
-                                        key
-                                      )}
-                                    >
-                                      <div
-                                        className="ui input"
-                                        style={{
-                                          cursor: 'pointer',
-                                        }}
-                                        onClick={() =>
-                                          openColorPicker({
-                                            mode: 'edit',
+                                  </Form.Field>
+                                  <Form.Field>
+                                    <label>
+                                      {i18n.t('module_theme_value')}
+                                    </label>
+                                    {type === 'asset' ? (
+                                      <Dropdown
+                                        fluid
+                                        selection
+                                        search
+                                        placeholder={i18n.t(
+                                          'module_theme_select_asset'
+                                        )}
+                                        options={assetOptions}
+                                        value={value || undefined}
+                                        onChange={(_e, data) =>
+                                          onChangeValue(
                                             section,
                                             key,
-                                            value,
-                                          })
+                                            data.value as string
+                                          )
                                         }
-                                      >
-                                        <input
-                                          readOnly
-                                          value={normalizeDisplayColorValue(
-                                            value
-                                          )}
-                                          style={(() => {
-                                            const bg =
-                                              normalizeDisplayColorValue(value);
-                                            const fg =
-                                              getReadableTextAndBorderColor(bg);
-                                            return {
-                                              backgroundColor: bg,
-                                              color: fg,
-                                              border: `1px solid ${fg}`,
-                                            };
-                                          })()}
-                                        />
-                                      </div>
-                                      {activeColorPicker?.id ===
-                                        buildColorPickerId(
+                                      />
+                                    ) : type === 'font' ? (
+                                      <DropDownFontsComponent
+                                        value={stripFontPrefix(value)}
+                                        onChange={(_e, data) =>
+                                          onChangeValue(
+                                            section,
+                                            key,
+                                            withFontPrefix(data.value as string)
+                                          )
+                                        }
+                                      />
+                                    ) : type === 'color' ? (
+                                      <div
+                                        style={{ position: 'relative' }}
+                                        data-color-picker-id={buildColorPickerId(
                                           'edit',
                                           section,
                                           key
-                                        ) && (
+                                        )}
+                                      >
                                         <div
+                                          className="ui input"
                                           style={{
-                                            position: 'absolute',
-                                            zIndex: 20,
-                                            marginTop: 8,
+                                            cursor: 'pointer',
                                           }}
+                                          onClick={() =>
+                                            openColorPicker({
+                                              mode: 'edit',
+                                              section,
+                                              key,
+                                              value,
+                                            })
+                                          }
                                         >
-                                          <ChromePicker
-                                            disableAlpha
-                                            color={colorDraft}
-                                            onChange={(color) =>
-                                              setColorDraft(
-                                                color.hex || '#000000'
-                                              )
-                                            }
+                                          <input
+                                            readOnly
+                                            value={normalizeDisplayColorValue(
+                                              value
+                                            )}
+                                            style={(() => {
+                                              const bg =
+                                                normalizeDisplayColorValue(
+                                                  value
+                                                );
+                                              const fg =
+                                                getReadableTextAndBorderColor(
+                                                  bg
+                                                );
+                                              return {
+                                                backgroundColor: bg,
+                                                color: fg,
+                                                border: `1px solid ${fg}`,
+                                              };
+                                            })()}
                                           />
                                         </div>
-                                      )}
-                                    </div>
-                                  ) : (
-                                    <Form.Input
-                                      value={value || ''}
-                                      onChange={(_e, data) =>
-                                        onChangeValue(
-                                          section,
-                                          key,
-                                          data.value as string
-                                        )
-                                      }
-                                    />
-                                  )}
-                                </Form.Field>
-                                <Form.Field>
-                                  <label>&nbsp;</label>
-                                  {!isSectionLocked && (
-                                    <Button
-                                      color="red"
-                                      onClick={() => removeKey(section, key)}
-                                    >
-                                      {i18n.t('module_theme_delete_row')}
-                                    </Button>
-                                  )}
-                                </Form.Field>
-                              </Form.Group>
-                            );
-                          })}
+                                        {activeColorPicker?.id ===
+                                          buildColorPickerId(
+                                            'edit',
+                                            section,
+                                            key
+                                          ) && (
+                                          <div
+                                            style={{
+                                              position: 'absolute',
+                                              zIndex: 20,
+                                              marginTop: 8,
+                                            }}
+                                          >
+                                            <ChromePicker
+                                              disableAlpha
+                                              color={colorDraft}
+                                              onChange={(color) =>
+                                                setColorDraft(
+                                                  color.hex || '#000000'
+                                                )
+                                              }
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <Form.Input
+                                        value={value || ''}
+                                        onChange={(_e, data) =>
+                                          onChangeValue(
+                                            section,
+                                            key,
+                                            data.value as string
+                                          )
+                                        }
+                                      />
+                                    )}
+                                  </Form.Field>
+                                  <Form.Field>
+                                    <label>&nbsp;</label>
+                                    {!isSectionLocked && (
+                                      <Button
+                                        color="red"
+                                        onClick={() => removeKey(section, key)}
+                                      >
+                                        {i18n.t('module_theme_delete_row')}
+                                      </Button>
+                                    )}
+                                  </Form.Field>
+                                </Form.Group>
+                              );
+                            })}
                         </Form>
                       )}
                     </Segment>
