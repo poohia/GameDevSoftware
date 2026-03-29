@@ -15,7 +15,8 @@ import {
 
 const ViewPage: React.FC = () => {
   const { setItem, getItem } = useDatabase();
-  const { sendMessage, on } = useEvents();
+  const { sendMessage, on, requestMessage } = useEvents();
+  const [projectStarted, setProjectStarted] = useState<boolean>(false);
   const [orientationLandscape, setOrientationLandscape] = useState<boolean>(
     () => {
       const o = getItem<boolean>('orientationLandscape');
@@ -27,7 +28,7 @@ const ViewPage: React.FC = () => {
     '100%',
     '100%',
   ]);
-  const refIframe: React.LegacyRef<HTMLIFrameElement> | null = useRef(null);
+  const refIframe = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
     setItem('orientationLandscape', orientationLandscape);
@@ -38,6 +39,12 @@ const ViewPage: React.FC = () => {
       if (refIframe.current) {
         refIframe.current.src = refIframe.current.src;
       }
+    });
+  }, []);
+
+  useEffect(() => {
+    return requestMessage('projected-started', (_projecteStarted) => {
+      setProjectStarted(_projecteStarted);
     });
   }, []);
 
@@ -54,26 +61,27 @@ const ViewPage: React.FC = () => {
             onClickUrl={() => window.open('http://localhost:3333', '_blank')}
           />
         </div>
-        <div>
-          <DropdownViewportSize
-            orientation={orientationLandscape ? 'landscape' : 'portrait'}
-            onChange={(width, height) => setViewPortSize([width, height])}
-          />
-          &nbsp;
-          <Button
-            onClick={() => setOrientationLandscape(!orientationLandscape)}
-            color="violet"
-            icon
-          >
-            <Icon name="redo" />
-          </Button>
-          <br />
-          <span>
-            w: {viewPortSize[0]}, h: {viewPortSize[1]}
-          </span>
-        </div>
-        {refIframe.current && (
+        {projectStarted && refIframe.current && (
           <>
+            <div>
+              <DropdownViewportSize
+                orientation={orientationLandscape ? 'landscape' : 'portrait'}
+                onChange={(width, height) => setViewPortSize([width, height])}
+              />
+              &nbsp;
+              <Button
+                onClick={() => setOrientationLandscape(!orientationLandscape)}
+                color="violet"
+                icon
+              >
+                <Icon name="redo" />
+              </Button>
+              <br />
+              <span>
+                w: {viewPortSize[0]}, h: {viewPortSize[1]}
+              </span>
+            </div>
+
             <RouteInformationComponent refIframe={refIframe.current} />
             <DropdownSaves
               refIframe={refIframe.current}
@@ -89,6 +97,7 @@ const ViewPage: React.FC = () => {
             <Button
               onClick={() => sendMessage('reset-view-game-database')}
               color="red"
+              labelPosition="right"
               icon
             >
               {i18n.t('module_view_reset_database')} <Icon name="database" />
