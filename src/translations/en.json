@@ -118,6 +118,7 @@
   "module_view_save_modal_title": "New Save",
   "module_view_save_modal_input_label": "Title of save",
   "module_view_go_to": "Go to",
+  "module_view_reset_database": "Reset game data",
   "module_font": "Font Module",
   "module_font_append_font": "Append a new Fonts",
   "module_chatgpt_form_field_api_key_label": "API Key",

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { ButtonStartStopProjectComponent } from 'renderer/components';
-import { useDatabase } from 'renderer/hooks';
+import { useDatabase, useEvents } from 'renderer/hooks';
 import { Button } from 'renderer/semantic-ui';
 import { Icon } from 'semantic-ui-react';
+import i18n from 'translations/i18n';
 import {
   BtnGoTo,
   DropdownLocale,
@@ -14,6 +15,7 @@ import {
 
 const ViewPage: React.FC = () => {
   const { setItem, getItem } = useDatabase();
+  const { sendMessage, on } = useEvents();
   const [orientationLandscape, setOrientationLandscape] = useState<boolean>(
     () => {
       const o = getItem<boolean>('orientationLandscape');
@@ -30,6 +32,14 @@ const ViewPage: React.FC = () => {
   useEffect(() => {
     setItem('orientationLandscape', orientationLandscape);
   }, [orientationLandscape]);
+
+  useEffect(() => {
+    return on('reset-view-game-database', () => {
+      if (refIframe.current) {
+        refIframe.current.src = refIframe.current.src;
+      }
+    });
+  }, []);
 
   return (
     <div id="game-dev-software-module-view">
@@ -77,11 +87,11 @@ const ViewPage: React.FC = () => {
             <DropdownLocale refIframe={refIframe.current} />
             <DropdownSound refIframe={refIframe.current} />
             <Button
-              onClick={() => setOrientationLandscape(!orientationLandscape)}
+              onClick={() => sendMessage('reset-view-game-database')}
               color="red"
               icon
             >
-              Reset Database <Icon name="database" />
+              {i18n.t('module_view_reset_database')} <Icon name="database" />
             </Button>
           </>
         )}

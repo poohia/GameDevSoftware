@@ -9,5 +9,6 @@
   "module_cache_select_scene": "Selectionner une scene",
   "module_cache_select_assets": "Selectionner des assets",
   "module_cache_delete_row": "Supprimer la ligne",
-  "module_cache_empty": "Aucune ligne de cache. Ajoutez une ligne pour commencer."
+  "module_cache_empty": "Aucune ligne de cache. Ajoutez une ligne pour commencer.",
+  "module_view_reset_database": "Reinitialiser les donnees du jeu"
 }
