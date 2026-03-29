@@ -29,7 +29,7 @@ export default class AssetPlugin {
     ) {
       return 'image';
     }
-    if (ext === '.mp3') {
+    if (ext === '.mp3' || ext === '.wav') {
       return 'sound';
     }
     if (ext === '.mp4' || ext === '.mkv') {
@@ -174,7 +174,7 @@ export default class AssetPlugin {
             name: 'All',
           },
           { extensions: ['jpg', 'jpeg', 'png', 'webp'], name: 'Image' },
-          { extensions: ['mp3'], name: 'Sound' },
+          { extensions: ['mp3', 'wav'], name: 'Sound' },
           { extensions: ['mp4', 'mkv'], name: 'Video' },
           { extensions: ['json'], name: 'Json' },
         ],
@@ -243,8 +243,7 @@ export default class AssetPlugin {
         finalPath = `${path}${FolderPlugin.assetsDirectory}`;
     }
     const normalizedPath = pathModule.normalize(finalPath);
-    const openedInVSCode =
-      await EditorService.openPathInVSCode(normalizedPath);
+    const openedInVSCode = await EditorService.openPathInVSCode(normalizedPath);
     if (!openedInVSCode) {
       shell.openPath(normalizedPath);
     }

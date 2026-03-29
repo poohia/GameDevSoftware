@@ -53,7 +53,7 @@ const DropzoneAssetFileComponent = (props: DropzoneAssetFileComponentProps) => {
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png'],
       'video/*': ['.mp4', '.mkv'],
-      'audio/*': ['.mp3'],
+      'audio/*': ['.mp3', '.wav'],
       'application/json': ['.json'],
     },
     maxFiles: 1,
