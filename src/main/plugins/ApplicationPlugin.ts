@@ -14,6 +14,7 @@ import {
   ApplicationPlatformsPlugin,
   ApplicationBuildPlugin,
   SplashscreenPlugin,
+  LocalStorageIframePlugin,
 } from './subPlugins';
 import VersionSoftwareService from '../services/VersionSoftwareService';
 import FileService from '../services/FileService';
@@ -35,6 +36,7 @@ export default class ApplicationPlugin {
   private _platformsPlugin;
   private _buildPlugin;
   private _splashscreenPlugin;
+  private _localStorageIframePlugin;
   private _softwaresToCheck: Array<keyof SoftwaresInfo> = [
     'git',
     'node',
@@ -51,6 +53,9 @@ export default class ApplicationPlugin {
     this._splashscreenPlugin = new SplashscreenPlugin(this.mainWindow);
     this._advancedPlugin = new ApplicationAdvancedPlugin();
     this._holidaysOverlay = new ApplicationHolidaysOverlayPlugin();
+    this._localStorageIframePlugin = new LocalStorageIframePlugin(
+      this.mainWindow
+    );
   }
 
   // static refreshConfigFileToSrc = (callback?: (err?: Error) => void) => {
@@ -360,6 +365,11 @@ export default class ApplicationPlugin {
         this.openConfigFile,
         this.writeConfigFile
       );
+    });
+    ipcMain.on('reset-view-game-database', (event: Electron.IpcMainEvent) => {
+      this._localStorageIframePlugin.resetGameData().finally(() => {
+        event.reply('reset-view-game-database');
+      });
     });
   };
 }

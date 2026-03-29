@@ -28,6 +28,7 @@ export type Channels =
   | 'remove-platform'
   | 'add-platform'
   | 'toggle-project'
+  | 'reset-view-game-database'
   | 'projected-started'
   | 'get-softwares-info'
   | 'prepare-platform'

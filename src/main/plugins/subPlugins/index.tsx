@@ -3,3 +3,4 @@ export { default as ApplicationPlatformsPlugin } from './ApplicationPlatformsPlu
 export { default as ApplicationBuildPlugin } from './ApplicationBuildPlugin';
 export { default as OptimizeAssetsPlugin } from './OptimizeAssetsPlugin';
 export { default as SplashscreenPlugin } from './SplashscreenPlugin';
+export { default as LocalStorageIframePlugin } from './LocalStorageIframePlugin';

@@ -76,6 +76,13 @@ const ViewPage: React.FC = () => {
             <BtnGoTo refIframe={refIframe.current} />
             <DropdownLocale refIframe={refIframe.current} />
             <DropdownSound refIframe={refIframe.current} />
+            <Button
+              onClick={() => setOrientationLandscape(!orientationLandscape)}
+              color="red"
+              icon
+            >
+              Reset Database <Icon name="database" />
+            </Button>
           </>
         )}
       </div>

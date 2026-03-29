@@ -1,9 +1,16 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron';
 import fs from 'fs';
 import { ElectronIpcMainEvent } from 'types';
+import { LocalStorageIframePlugin } from './subPlugins';
 
 export default class FolderPlugin {
-  constructor(private mainWindow: BrowserWindow) {}
+  private _localStorageIframePlugin;
+
+  constructor(private mainWindow: BrowserWindow) {
+    this._localStorageIframePlugin = new LocalStorageIframePlugin(
+      this.mainWindow
+    );
+  }
   static srcDirectory = '/src';
   static publicDirectory = '/public';
   static resourcesDirectory = '/resources';
@@ -135,6 +142,7 @@ export default class FolderPlugin {
       .then((result) => {
         const path = result.filePaths[0];
         if (FolderPlugin.validePath(path)) {
+          this._localStorageIframePlugin.resetViewDatabase();
           event.reply('set-path', path);
           event.reply('path-is-correct', path);
           FolderPlugin.saveGlobalPath(path);
