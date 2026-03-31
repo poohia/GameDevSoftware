@@ -167,6 +167,7 @@ export default class AssetPlugin {
               'png',
               'webp',
               'mp3',
+              'wav',
               'mp4',
               'mkv',
               'json',
