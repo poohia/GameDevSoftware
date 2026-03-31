@@ -8,14 +8,16 @@ import ScenesContext from 'renderer/contexts/ScenesContext';
 
 const ModalSceneInput = (
   props: ModalProps & {
+    type: string;
     defaultValue?: string;
     onSubmit: (value: string) => void;
     onClose: () => void;
   }
 ) => {
-  const { open, defaultValue, onClose, onSubmit, ...rest } = props;
+  const { open, defaultValue, type, onClose, onSubmit, ...rest } = props;
   const { scenes } = useContext(ScenesContext);
   const [value, setValue] = useState<string>('');
+  const [filteredScenes, setFilteredScenes] = useState(scenes);
 
   const handleClickRow = useCallback((id: number) => {
     setValue(`@s:${id}`);
@@ -29,6 +31,14 @@ const ModalSceneInput = (
     }
   }, [defaultValue]);
 
+  useEffect(() => {
+    setFilteredScenes(
+      !!type.trim()
+        ? scenes.filter((scene) => scene._type === type)
+        : scenes
+    );
+  }, [scenes, type]);
+
   return (
     <ModalComponent
       open={open}
@@ -39,7 +49,7 @@ const ModalSceneInput = (
       {...rest}
     >
       <GameobjectTableComponent
-        gameObjects={scenes}
+        gameObjects={filteredScenes}
         keySelected={Number(value.replace('@s:', ''))}
         title="gameobjectssceneinput"
         typeTarget="scenes"
@@ -50,11 +60,12 @@ const ModalSceneInput = (
 };
 
 const DropDownSceneInput = (props: {
+  type: string;
   defaultValue?: string[];
   optional?: boolean;
   onChange: (value: string[]) => void;
 }) => {
-  const { defaultValue, optional = false, onChange } = props;
+  const { type, defaultValue, optional = false, onChange } = props;
   const { scenes } = useContext(ScenesContext);
   const [sceneOptions, setSceneOptions] = useState<DropdownItemProps[]>([]);
   const [value, setValue] = useState<string[]>([]);
@@ -69,13 +80,16 @@ const DropDownSceneInput = (props: {
 
   useEffect(() => {
     setSceneOptions(
-      scenes.map((scene) => ({
+      (type.trim()
+        ? scenes.filter((scene) => scene._type === type)
+        : scenes
+      ).map((scene) => ({
         text: scene._title,
         value: `@s:${scene._id}`,
         key: `sceneinput-s-${scene._id}`,
       }))
     );
-  }, [scenes]);
+  }, [scenes, type]);
 
   return (
     <Dropdown
@@ -96,10 +110,12 @@ const DropDownSceneInput = (props: {
 
 const SceneInput: React.FC<
   Omit<CustomInputProps, 'name' | 'onChange'> & {
+    type?: string;
     onChange: (value?: string | string[]) => void;
   }
 > = (props) => {
   const {
+    type = '',
     defaultValue,
     multiple = false,
     optional = false,
@@ -157,6 +173,7 @@ const SceneInput: React.FC<
     return (
       <DropDownSceneInput
         onChange={(nextValue) => onChange(nextValue)}
+        type={type}
         optional={optional}
         defaultValue={value as string[]}
       />
@@ -190,6 +207,7 @@ const SceneInput: React.FC<
       )}
       <ModalSceneInput
         open={openModal}
+        type={type}
         defaultValue={value as string}
         onClose={() => setOpenModal(false)}
         onSubmit={handleSubmit}

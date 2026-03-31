@@ -180,6 +180,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         return (
           <FieldComponent {...defaultProps}>
             <SceneInput
+              type={core.replace('@s:', '')}
               defaultValue={defaultValue}
               multiple={multiple}
               optional={optional}
