@@ -25,11 +25,14 @@ export default class CapacitorService {
     // @ts-ignore
     const path = global.path;
 
-    this._projectProcess = spawn('yarn', ['start'], {
-      cwd: path,
-      shell: true,
-      env: process.env,
-    });
+    this._projectProcess = spawn(
+      process.platform === 'win32' ? 'yarn.cmd' : 'yarn',
+      ['start'],
+      {
+        cwd: path,
+        env: process.env,
+      }
+    );
     this._isStoppingProject = false;
     this.sendProjectState(true);
 
@@ -48,7 +51,9 @@ export default class CapacitorService {
 
       if (!isExpectedStop && code !== 0) {
         LogService.Notify(
-          `yarn start stopped unexpectedly (code: ${code}, signal: ${signal ?? 'none'})`,
+          `yarn start stopped unexpectedly (code: ${code}, signal: ${
+            signal ?? 'none'
+          })`,
           {
             type: 'error',
             autoClose: 10000,
@@ -70,11 +75,26 @@ export default class CapacitorService {
     });
   };
 
+  private stopDetachedProjectProcess = () => {
+    this._isStoppingProject = true;
+    kill(3333)
+      .catch(() => {
+        LogService.Notify('No project process found on port 3333.', {
+          type: 'info',
+          autoClose: 5000,
+          hideProgressBar: true,
+        });
+      })
+      .finally(() => {
+        this._projectProcess = null;
+        this._isStoppingProject = false;
+        this.sendProjectState(false);
+      });
+  };
+
   private stopProjectProcess = () => {
     if (!this._projectProcess || this._projectProcess.killed) {
-      this._projectProcess = null;
-      this._isStoppingProject = false;
-      this.sendProjectState(false);
+      this.stopDetachedProjectProcess();
       return;
     }
     this._isStoppingProject = true;
@@ -206,15 +226,7 @@ export default class CapacitorService {
     }
     portfinder.getPortPromise({ port: 3333 }).then((port) => {
       if (port !== 3333) {
-        this.sendProjectState(true);
-        LogService.Notify(
-          'Port 3333 already in use by another process. Stop it manually to start from this app.',
-          {
-            type: 'warning',
-            autoClose: 10000,
-            hideProgressBar: true,
-          }
-        );
+        this.stopDetachedProjectProcess();
         return;
       }
       this.startProjectProcess();
