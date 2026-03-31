@@ -52,7 +52,11 @@ const useGameobjectContainerComponent = (props: PageProps) => {
   );
 
   const sendCreateGameobject = useCallback((data: any) => {
-    setLoadingForm(true);
+    if (!data._id) {
+      dispatch({ type: 'hide-form' });
+    } else {
+      setLoadingForm(true);
+    }
     sendMessage('create-game-object', data);
   }, []);
 
