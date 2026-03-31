@@ -176,6 +176,21 @@ const useFormGenerator = (props: FormGeneratorProps) => {
           </FieldComponent>
         );
       }
+      if (typeof core === 'string' && core.startsWith('@s:')) {
+        return (
+          <FieldComponent {...defaultProps}>
+            <SceneInput
+              defaultValue={defaultValue}
+              multiple={multiple}
+              optional={optional}
+              onChange={(value) => {
+                formik.setFieldValue(key, value);
+              }}
+              {...rest}
+            />
+          </FieldComponent>
+        );
+      }
       if (core === 'boolean') {
         return (
           <FieldComponent {...defaultProps} label="" required={false}>
@@ -207,9 +222,10 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         return (
           <FieldComponent {...defaultProps}>
             <SceneInput
-              name={key}
               defaultValue={defaultValue}
-              onChange={onChange}
+              onChange={(value) => {
+                formik.setFieldValue(key, value);
+              }}
               {...rest}
             />
           </FieldComponent>

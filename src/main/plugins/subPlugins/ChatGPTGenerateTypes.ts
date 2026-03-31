@@ -21,7 +21,7 @@ const sameMessageRules: string[] = [
   '- `"boolean"`→ `boolean`',
   '- `"number"` or `"float"` → `number`',
   '- `"float"` on typescript is `number`',
-  '- Literals `"image"`, `"translation"`, `"json"`, `"string"`, `"video"`, or all started with `"@"` (like `"@go"`, `"@a:"` or `"@c:"`) etc. → `string`',
+  '- Literals `"image"`, `"translation"`, `"json"`, `"string"`, `"video"`, or all started with `"@"` (like `"@go:"`, `"@s:"`,`"@a:"` or `"@c:"`) etc. → `string`',
   '- References starting with @c: should replace the following text by converting it to PascalCase. This type will be created in another script, so you don’t need to generate it yourself',
   '- If a property contains a core with a type and not an object, use the type directly without creating an object',
   '- If `"multiple": true`, wrap the type in an array (`TypeName[]`).',
