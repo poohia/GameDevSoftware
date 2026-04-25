@@ -1,9 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormikProvider, useFormik } from 'formik';
 import { Form, Grid, Header, Icon } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import { FormField } from 'types';
 import TransComponent from '../TransComponent';
+import ModalComponent from '../ModalComponent';
 import {
   FieldMultipleComponent,
   FieldComponent,
@@ -26,6 +27,7 @@ export type FormGeneratorProps = {
   defaultValues?: any;
   loading?: boolean;
   onSubmit: (data: any) => void;
+  onDuplicate?: (title: string) => void;
   onClose?: () => void;
   onChange?: (data: any) => void;
   onOpenFileClick?: () => void;
@@ -39,11 +41,14 @@ const useFormGenerator = (props: FormGeneratorProps) => {
     defaultValues,
     loading,
     onSubmit,
+    onDuplicate,
     onClose,
     onChange,
     onOpenFileClick,
     onOpenFileInFolderClick,
   } = props;
+  const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
+  const [duplicateTitle, setDuplicateTitle] = useState('');
 
   const formik = useFormik<any>({
     initialValues: defaultValues ? defaultValues : {},
@@ -68,6 +73,20 @@ const useFormGenerator = (props: FormGeneratorProps) => {
     },
     [formik.initialValues]
   );
+
+  const openDuplicateDialog = useCallback(() => {
+    setDuplicateTitle(
+      defaultValues?._title ? `${defaultValues._title} copy` : ''
+    );
+    setDuplicateDialogOpen(true);
+  }, [defaultValues]);
+
+  const submitDuplicateDialog = useCallback(() => {
+    const title = duplicateTitle.trim();
+    if (!title || !onDuplicate) return;
+    onDuplicate(title);
+    setDuplicateDialogOpen(false);
+  }, [duplicateTitle, onDuplicate]);
 
   const generateField = useCallback(
     (field: FormField): any => {
@@ -318,6 +337,16 @@ const useFormGenerator = (props: FormGeneratorProps) => {
               <Button type="submit" loading={loading}>
                 <TransComponent id="form_action_submit" />
               </Button>
+              {defaultValues !== undefined && onDuplicate && (
+                <Button
+                  type="button"
+                  loading={loading}
+                  color="blue"
+                  onClick={openDuplicateDialog}
+                >
+                  <TransComponent id="form_action_duplicate" />
+                </Button>
+              )}
               {defaultValues !== undefined && onOpenFileClick && (
                 <Button
                   type="button"
@@ -362,6 +391,16 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                 <Button type="submit" loading={loading}>
                   <TransComponent id="form_action_submit" />
                 </Button>
+                {defaultValues !== undefined && onDuplicate && (
+                  <Button
+                    type="button"
+                    loading={loading}
+                    color="blue"
+                    onClick={openDuplicateDialog}
+                  >
+                    <TransComponent id="form_action_duplicate" />
+                  </Button>
+                )}
                 {defaultValues !== undefined && onOpenFileClick && (
                   <Button
                     type="button"
@@ -384,11 +423,40 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                 )}
               </FormikProvider>
             </Form>
+            {onDuplicate && (
+              <ModalComponent
+                open={duplicateDialogOpen}
+                title={<TransComponent id="form_duplicate_scene_modal_title" />}
+                disableAccepted={duplicateTitle.trim() === ''}
+                onClose={() => setDuplicateDialogOpen(false)}
+                onAccepted={submitDuplicateDialog}
+              >
+                <Form.Input
+                  fluid
+                  label={
+                    <TransComponent id="form_duplicate_scene_modal_title_label" />
+                  }
+                  value={duplicateTitle}
+                  onChange={(_, data) => setDuplicateTitle(String(data.value))}
+                />
+              </ModalComponent>
+            )}
           </Grid.Column>
         </Grid.Row>
       </Grid>
     );
-  }, [formik.initialValues, loading]);
+  }, [
+    defaultValues,
+    duplicateDialogOpen,
+    duplicateTitle,
+    formik.initialValues,
+    loading,
+    onDuplicate,
+    onOpenFileClick,
+    onOpenFileInFolderClick,
+    openDuplicateDialog,
+    submitDuplicateDialog,
+  ]);
 
   return FormGeneratedComponent;
 };

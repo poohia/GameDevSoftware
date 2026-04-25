@@ -267,6 +267,58 @@ export default class ScenePlugin {
     });
   };
 
+  duplicateScene = (
+    event: ElectronIpcMainEvent,
+    args: { id: number; title: string; sceneType: string }
+  ) => {
+    const { path } = global;
+    const { id, title, sceneType } = args;
+
+    ScenePlugin.readIndexFile().then((data) => {
+      const originalSceneIndex = data.find((d) => d.file === `${id}.json`);
+      if (!originalSceneIndex) return;
+
+      FileService.readJsonFile<SceneObject>(
+        `${path}/${FolderPlugin.sceneDirectory}/${id}.json`
+      ).then((scene) => {
+        const ids = data.map((d) => Number(d.file.replace('.json', '')));
+        const _id = ids.length > 0 ? Math.max(...ids) + 1 : 1;
+        const _title = title.trim() || `${scene._title} copy`;
+        const duplicatedScene: SceneObject = {
+          ...scene,
+          _id,
+          _title,
+          _actions: scene._actions || [],
+        };
+
+        data.push({
+          file: `${_id}.json`,
+          type: originalSceneIndex.type,
+          module: originalSceneIndex.module,
+        });
+
+        async.parallel(
+          [
+            (callback) =>
+              ScenePlugin.writeIndexFile(data).then(() => callback(null)),
+            (callback) =>
+              FileService.writeJsonFile(
+                `${path}/${FolderPlugin.sceneDirectory}/${_id}.json`,
+                duplicatedScene
+              ).then(() => callback(null)),
+          ],
+          () => {
+            this.loadScenes(event, sceneType);
+            if (sceneType !== originalSceneIndex.type) {
+              this.loadScenes(event, originalSceneIndex.type);
+            }
+            this.loadScenes(event);
+          }
+        );
+      });
+    });
+  };
+
   getSceneValue = (
     event: ElectronIpcMainEvent,
     args: { id: string; sceneType: string }
@@ -316,8 +368,7 @@ export default class ScenePlugin {
     const normalizedPath = pathModule.normalize(
       `${path}${FolderPlugin.sceneDirectory}/${arg}.json`
     );
-    const openedInVSCode =
-      await EditorService.openPathInVSCode(normalizedPath);
+    const openedInVSCode = await EditorService.openPathInVSCode(normalizedPath);
     if (!openedInVSCode) {
       shell.openPath(normalizedPath);
     }
@@ -348,6 +399,9 @@ export default class ScenePlugin {
     });
     ipcMain.on('create-scene', (event, args) => {
       this.createScene(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('duplicate-scene', (event, args) => {
+      this.duplicateScene(event as ElectronIpcMainEvent, args);
     });
     ipcMain.on('get-scene-value', (event, args) => {
       this.getSceneValue(event as ElectronIpcMainEvent, args);

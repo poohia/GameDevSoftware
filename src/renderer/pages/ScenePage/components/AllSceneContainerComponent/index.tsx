@@ -16,6 +16,7 @@ const AllSceneContainerComponent: React.FC<PageProps> = (props) => {
     createGameobject,
     updateGameobject,
     sendCreateGameobject,
+    duplicateScene,
     closeForm,
     openFile,
     openFileInFolder,
@@ -54,6 +55,7 @@ const AllSceneContainerComponent: React.FC<PageProps> = (props) => {
               defaultValues={stateForm.value}
               loading={loadingForm}
               onSubmit={sendCreateGameobject}
+              onDuplicate={duplicateScene}
               onClose={closeForm}
               onOpenFileClick={openFile}
               onOpenFileInFolderClick={openFileInFolder}

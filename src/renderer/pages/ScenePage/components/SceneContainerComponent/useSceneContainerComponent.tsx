@@ -72,6 +72,18 @@ const useSceneContainerComponent = (props: PageProps) => {
     [sceneObjectForm]
   );
 
+  const duplicateScene = useCallback(
+    (title: string) => {
+      if (!stateForm.value?._id) return;
+      sendMessage('duplicate-scene', {
+        id: stateForm.value._id,
+        title,
+        sceneType,
+      });
+    },
+    [sceneType, stateForm.value]
+  );
+
   const openFile = useCallback(
     () => sendMessage('open-scene-file', stateForm.key),
     [stateForm]
@@ -110,6 +122,7 @@ const useSceneContainerComponent = (props: PageProps) => {
     createGameobject,
     updateGameobject,
     sendCreateGameobject,
+    duplicateScene,
     closeForm: () => dispatch({ type: 'hide-form' }),
     openFile,
     openFileInFolder,

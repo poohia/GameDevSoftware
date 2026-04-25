@@ -58,6 +58,7 @@ export type Channels =
   | 'get-formulaire-scene'
   | 'get-formulaire-scene-all'
   | 'create-scene'
+  | 'duplicate-scene'
   | 'get-scene-value'
   | 'load-scenes'
   | 'switch-theme'

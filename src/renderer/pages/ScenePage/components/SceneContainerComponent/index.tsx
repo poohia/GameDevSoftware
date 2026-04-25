@@ -15,6 +15,7 @@ const SceneContainerComponent = (props: PageProps) => {
     createGameobject,
     updateGameobject,
     sendCreateGameobject,
+    duplicateScene,
     closeForm,
     openFile,
     openFileInFolder,
@@ -54,6 +55,7 @@ const SceneContainerComponent = (props: PageProps) => {
               defaultValues={stateForm.value}
               loading={loadingForm}
               onSubmit={sendCreateGameobject}
+              onDuplicate={duplicateScene}
               onClose={closeForm}
               onOpenFileClick={openFile}
               onOpenFileInFolderClick={openFileInFolder}
