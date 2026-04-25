@@ -250,6 +250,56 @@ export default class GameObjectPlugin {
     });
   };
 
+  duplicateGameObject = (
+    event: ElectronIpcMainEvent,
+    args: { id: number; title: string; objectType: string }
+  ) => {
+    const { path } = global;
+    const { id, title, objectType } = args;
+
+    GameObjectPlugin.readIndexFile().then((data) => {
+      const originalGameObjectIndex = data.find((d) => d.file === `${id}.json`);
+      if (!originalGameObjectIndex) return;
+
+      FileService.readJsonFile<GameObject>(
+        `${path}/${FolderPlugin.gameObjectDirectory}/${id}.json`
+      ).then((gameObject) => {
+        const ids = data.map((d) => Number(d.file.replace('.json', '')));
+        const _id = ids.length > 0 ? Math.max(...ids) + 1 : 1;
+        const _title = title.trim() || `${gameObject._title} copy`;
+        const duplicatedGameObject: GameObject = {
+          ...gameObject,
+          _id,
+          _title,
+        };
+
+        data.push({
+          file: `${_id}.json`,
+          type: originalGameObjectIndex.type,
+        });
+
+        async.parallel(
+          [
+            (callback) =>
+              GameObjectPlugin.writeIndexFile(data).then(() => callback(null)),
+            (callback) =>
+              FileService.writeJsonFile(
+                `${path}/${FolderPlugin.gameObjectDirectory}/${_id}.json`,
+                duplicatedGameObject
+              ).then(() => callback(null)),
+          ],
+          () => {
+            this.loadGameObjects(event, objectType);
+            if (objectType !== originalGameObjectIndex.type) {
+              this.loadGameObjects(event, originalGameObjectIndex.type);
+            }
+            this.loadGameObjects(event);
+          }
+        );
+      });
+    });
+  };
+
   getGameObjectValue = (
     event: ElectronIpcMainEvent,
     args: { id: string; gameObjectType: string }
@@ -270,8 +320,7 @@ export default class GameObjectPlugin {
     const normalizedPath = pathModule.normalize(
       `${path}${FolderPlugin.gameObjectDirectory}/${arg}.json`
     );
-    const openedInVSCode =
-      await EditorService.openPathInVSCode(normalizedPath);
+    const openedInVSCode = await EditorService.openPathInVSCode(normalizedPath);
     if (!openedInVSCode) {
       shell.openPath(normalizedPath);
     }
@@ -308,6 +357,9 @@ export default class GameObjectPlugin {
     });
     ipcMain.on('create-game-object', (event, args) => {
       this.createGameObject(event as ElectronIpcMainEvent, args);
+    });
+    ipcMain.on('duplicate-game-object', (event, args) => {
+      this.duplicateGameObject(event as ElectronIpcMainEvent, args);
     });
     ipcMain.on('get-game-object-value', (event, args) => {
       this.getGameObjectValue(event as ElectronIpcMainEvent, args);

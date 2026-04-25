@@ -49,6 +49,7 @@ export type Channels =
   | 'get-formulaire-game-object'
   | 'get-formulaire-game-object-all'
   | 'create-game-object'
+  | 'duplicate-game-object'
   | 'get-game-object-value'
   | 'load-all-assets'
   | 'load-asset-base64'

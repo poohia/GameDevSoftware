@@ -60,6 +60,18 @@ const useGameobjectContainerComponent = (props: PageProps) => {
     sendMessage('create-game-object', data);
   }, []);
 
+  const duplicateGameobject = useCallback(
+    (title: string) => {
+      if (!stateForm.value?._id) return;
+      sendMessage('duplicate-game-object', {
+        id: stateForm.value._id,
+        title,
+        objectType: gameObjectType,
+      });
+    },
+    [gameObjectType, stateForm.value]
+  );
+
   const openFile = useCallback(
     () => sendMessage('open-gameobject-file', stateForm.key),
     [stateForm]
@@ -98,6 +110,7 @@ const useGameobjectContainerComponent = (props: PageProps) => {
     createGameobject,
     updateGameobject,
     sendCreateGameobject,
+    duplicateGameobject,
     closeForm: () => dispatch({ type: 'hide-form' }),
     openFile,
     openFileInFolder,

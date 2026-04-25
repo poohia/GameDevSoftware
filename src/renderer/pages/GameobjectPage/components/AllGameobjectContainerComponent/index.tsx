@@ -15,6 +15,7 @@ const AllGameobjectContainerComponent: React.FC<PageProps> = (props) => {
     removeGameObject,
     updateGameobject,
     sendCreateGameobject,
+    duplicateGameobject,
     closeForm,
     openFile,
     openFileInFolder,
@@ -54,6 +55,7 @@ const AllGameobjectContainerComponent: React.FC<PageProps> = (props) => {
               defaultValues={stateForm.value}
               loading={loadingForm}
               onSubmit={sendCreateGameobject}
+              onDuplicate={duplicateGameobject}
               onClose={closeForm}
               onOpenFileClick={openFile}
               onOpenFileInFolderClick={openFileInFolder}

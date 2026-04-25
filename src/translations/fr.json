@@ -12,6 +12,6 @@
   "module_cache_empty": "Aucune ligne de cache. Ajoutez une ligne pour commencer.",
   "module_view_reset_database": "Reinitialiser les donnees du jeu",
   "form_action_duplicate": "Dupliquer",
-  "form_duplicate_scene_modal_title": "Dupliquer la scene",
-  "form_duplicate_scene_modal_title_label": "Titre de la nouvelle scene"
+  "form_duplicate_modal_title": "Dupliquer",
+  "form_duplicate_modal_title_label": "Nouveau titre"
 }

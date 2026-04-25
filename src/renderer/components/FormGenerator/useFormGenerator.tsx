@@ -426,7 +426,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
             {onDuplicate && (
               <ModalComponent
                 open={duplicateDialogOpen}
-                title={<TransComponent id="form_duplicate_scene_modal_title" />}
+                title={<TransComponent id="form_duplicate_modal_title" />}
                 disableAccepted={duplicateTitle.trim() === ''}
                 onClose={() => setDuplicateDialogOpen(false)}
                 onAccepted={submitDuplicateDialog}
@@ -434,7 +434,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                 <Form.Input
                   fluid
                   label={
-                    <TransComponent id="form_duplicate_scene_modal_title_label" />
+                    <TransComponent id="form_duplicate_modal_title_label" />
                   }
                   value={duplicateTitle}
                   onChange={(_, data) => setDuplicateTitle(String(data.value))}
