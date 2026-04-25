@@ -11,6 +11,7 @@
   "module_cache_delete_row": "Supprimer la ligne",
   "module_cache_empty": "Aucune ligne de cache. Ajoutez une ligne pour commencer.",
   "module_view_reset_database": "Reinitialiser les donnees du jeu",
+  "form_input_modal_default_value_label": "Valeur actuelle",
   "form_action_duplicate": "Dupliquer",
   "form_duplicate_modal_title": "Dupliquer",
   "form_duplicate_modal_title_label": "Nouveau titre"

@@ -24,6 +24,7 @@ const ModalTranslation = (
   const { translations, currentTranslations } = useContext(TranslationsContext);
 
   const [value, setValue] = useState<string>('');
+  const keySelected = useMemo(() => value.replace('@t:', ''), [value]);
 
   const handleClickRow = useCallback(
     (key: string) => {
@@ -33,7 +34,7 @@ const ModalTranslation = (
   );
   useEffect(() => {
     if (defaultValue) {
-      setValue(defaultValue.replace('@t:', ''));
+      setValue(defaultValue);
     }
   }, [defaultValue]);
 
@@ -54,7 +55,8 @@ const ModalTranslation = (
           onDelete={() => {}}
           translations={currentTranslations}
           module={null}
-          keySelected={value.replace('@t:', '')}
+          keySelected={keySelected}
+          showSelectedValue
         />
       )}
     </ModalComponent>

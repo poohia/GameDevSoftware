@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
-import { Button, Table } from 'renderer/semantic-ui';
+import { Button, Segment, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { ShortcutsFolder, Translation } from 'types';
 import { useDatabase } from 'renderer/hooks';
@@ -14,6 +14,7 @@ type TranslationTableComponentProps = {
   locale: string;
   canDelete?: boolean;
   keySelected?: string;
+  showSelectedValue?: boolean;
   module: string | null;
   onClickRow: (key: string) => void;
   onDelete: (key: string) => void;
@@ -22,6 +23,7 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
   const {
     translations,
     keySelected,
+    showSelectedValue = false,
     module,
     canDelete = true,
     onClickRow,
@@ -76,6 +78,10 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
     () => Object.keys(formatData).length,
     [formatData]
   );
+  const selectedTranslation = useMemo(
+    () => translations.find((translation) => translation.key === keySelected),
+    [keySelected, translations]
+  );
 
   useEffect(() => {
     setItem('translation-filter', filter);
@@ -83,6 +89,19 @@ const TranslationTableComponent = (props: TranslationTableComponentProps) => {
 
   return (
     <Grid className="game-dev-software-table-component">
+      {showSelectedValue && keySelected && (
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Header as="h4">
+              {i18n.t('form_input_modal_default_value_label')}
+            </Header>
+            <Segment>
+              <strong>{keySelected}</strong>
+              {`: ${selectedTranslation?.text || ''}`}
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+      )}
       <Grid.Row className="game-dev-software-table-component-search">
         <Grid.Column width={16}>
           <Input
