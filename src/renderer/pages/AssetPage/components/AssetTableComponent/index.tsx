@@ -5,7 +5,7 @@ import {
   DropdownShortcutsFoldersComponent,
 } from 'renderer/components';
 import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
-import { Button, Table } from 'renderer/semantic-ui';
+import { Button, Segment, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { AssertAcceptedType, AssetType, ShortcutsFolder } from 'types';
 import { useDatabase } from 'renderer/hooks';
@@ -14,6 +14,7 @@ type AssetTableComponentProps = {
   assets: AssetType[];
   keySelected?: string;
   defaultFilterType?: AssertAcceptedType;
+  showSelectedValue?: boolean;
   module: string | null;
   onClickRow: (name: AssetType) => void;
   onDelete: (name: string) => void;
@@ -23,6 +24,7 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
     assets,
     keySelected,
     defaultFilterType,
+    showSelectedValue = false,
     module,
     onClickRow,
     onDelete,
@@ -83,6 +85,10 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
     [formatData]
   );
   const lengthAssets = useMemo(() => assetsToShow.length, [assetsToShow]);
+  const selectedAsset = useMemo(
+    () => assets.find((asset) => asset.name === keySelected),
+    [assets, keySelected]
+  );
 
   useEffect(() => {
     setItem('asset-filter', filter);
@@ -90,6 +96,18 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
 
   return (
     <Grid className="game-dev-software-table-component">
+      {showSelectedValue && keySelected && (
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Header as="h4">
+              {i18n.t('form_input_modal_default_value_label')}
+            </Header>
+            <Segment>
+              <strong>@a:{keySelected}</strong>
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+      )}
       <Grid.Row
         className="game-dev-software-table-component-search"
         columns={2}

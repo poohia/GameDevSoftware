@@ -25,7 +25,9 @@ const ModalAsset = (
   );
   useEffect(() => {
     if (defaultValue) {
-      setValue(defaultValue.replace('@c:', ''));
+      setValue(defaultValue);
+    } else {
+      setValue('');
     }
   }, [defaultValue]);
 
@@ -45,6 +47,7 @@ const ModalAsset = (
         assets={assets}
         keySelected={value.replace('@a:', '')}
         defaultFilterType={type}
+        showSelectedValue
       />
     </ModalComponent>
   );
