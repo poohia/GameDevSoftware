@@ -1,4 +1,4 @@
-import { PlatformsParams } from 'types';
+import { ApplicationIdentityParams, PlatformsParams } from 'types';
 import pathModule from 'path';
 import fs from 'fs';
 import { ChildProcess, spawn } from 'child_process';
@@ -277,5 +277,29 @@ export default class CapacitorService {
         resolve(data);
       });
     });
+  };
+
+  static writeWeb2DesktopConfig = (args: ApplicationIdentityParams) => {
+    const { path } = global;
+    const configPath = pathModule.join(
+      path,
+      FolderPlugin.web2desktopConfigFiles[0]
+    );
+    return FileService.createFileIfNotExist(configPath, '{}')
+      .then(() => FileService.readJsonFile(configPath))
+      .then((data) => {
+        const nextData = {
+          ...data,
+          name: args.name,
+          build: {
+            ...(data.build || {}),
+            appBundleId: args.package,
+            version: args.version,
+            author: args.authorName,
+            maintainerEmail: args.authorEmail,
+          },
+        };
+        return FileService.writeJsonFile(configPath, nextData);
+      });
   };
 }

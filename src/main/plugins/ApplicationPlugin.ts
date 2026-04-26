@@ -195,6 +195,9 @@ export default class ApplicationPlugin {
       () => {
         PackageJSONService.updateVersion(args.version);
       },
+      () => {
+        CapacitorService.writeWeb2DesktopConfig(args);
+      },
     ]);
     // ApplicationPlugin.refreshConfigFileToSrc();
   };
