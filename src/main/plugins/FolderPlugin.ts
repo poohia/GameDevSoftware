@@ -16,7 +16,7 @@ export default class FolderPlugin {
   static publicDirectory = '/public';
   static resourcesDirectory = '/resources';
   static cypressDirectory = `cypress`;
-  static electronDirectory = 'web2desktop';
+  static electronDirectory = '/web2desktop';
 
   static gameDevSoftwareDirectory = pathModule.join(
     FolderPlugin.srcDirectory,
@@ -140,6 +140,37 @@ export default class FolderPlugin {
     pathModule.join(FolderPlugin.resourcesDirectory, 'splash.png'),
     pathModule.join(FolderPlugin.resourcesDirectory, 'icon-background.png'),
     pathModule.join(FolderPlugin.resourcesDirectory, 'icon-foreground.png'),
+
+    pathModule.join(
+      FolderPlugin.resourcesDirectory,
+      FolderPlugin.electronDirectory,
+      'splash.png'
+    ),
+    pathModule.join(
+      FolderPlugin.resourcesDirectory,
+      FolderPlugin.electronDirectory,
+      'icon.icns'
+    ),
+    pathModule.join(
+      FolderPlugin.resourcesDirectory,
+      FolderPlugin.electronDirectory,
+      'icon.ico'
+    ),
+    pathModule.join(
+      FolderPlugin.resourcesDirectory,
+      FolderPlugin.electronDirectory,
+      'icon.png'
+    ),
+    pathModule.join(
+      FolderPlugin.resourcesDirectory,
+      FolderPlugin.electronDirectory,
+      'icon@2x.png'
+    ),
+    pathModule.join(
+      FolderPlugin.resourcesDirectory,
+      FolderPlugin.electronDirectory,
+      'icon@3x.png'
+    ),
   ];
   static appPlatforms = [`/android`, `/ios`, `/web2desktop`, `/build`];
   /** fonts */
