@@ -4,11 +4,12 @@ import {
   DropdownAssetTypesComponent,
   DropdownShortcutsFoldersComponent,
 } from 'renderer/components';
-import { Checkbox, Grid, Header, Icon, Input } from 'semantic-ui-react';
+import { Checkbox, Grid, Header, Icon, Input, Popup } from 'semantic-ui-react';
 import { Button, Segment, Table } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { AssertAcceptedType, AssetType, ShortcutsFolder } from 'types';
-import { useDatabase } from 'renderer/hooks';
+import { useDatabase, useEvents } from 'renderer/hooks';
+import { formatBase64 } from 'utils';
 
 type AssetTableComponentProps = {
   assets: AssetType[];
@@ -19,6 +20,64 @@ type AssetTableComponentProps = {
   onClickRow: (name: AssetType) => void;
   onDelete: (name: string) => void;
 };
+
+const AssetTableHeaderCellContent = (props: { asset: AssetType }) => {
+  const { asset } = props;
+  const { name, type } = asset;
+  const { once, sendMessage } = useEvents();
+  const [base64, setBase64] = useState<string>();
+  const [loading, setLoading] = useState(false);
+
+  const loadPreview = useCallback(() => {
+    if (type !== 'image' || base64 || loading) return;
+    setLoading(true);
+    once('get-asset-information', (arg: string) => {
+      setBase64(formatBase64(type, arg, name));
+      setLoading(false);
+    });
+    sendMessage('get-asset-information', asset);
+  }, [asset, base64, loading, name, once, sendMessage, type]);
+
+  const header = (
+    <div onMouseEnter={loadPreview}>
+      <Header as="h3" textAlign="left">
+        {name}
+        <Header.Subheader>{type}</Header.Subheader>
+      </Header>
+    </div>
+  );
+
+  if (type !== 'image') {
+    return header;
+  }
+
+  return (
+    <Popup
+      hoverable
+      mouseEnterDelay={400}
+      trigger={header}
+      content={
+        <div style={{ minWidth: 180, textAlign: 'center' }}>
+          {base64 ? (
+            <img
+              src={base64}
+              alt={name}
+              style={{
+                display: 'block',
+                maxHeight: 220,
+                maxWidth: 260,
+                objectFit: 'contain',
+              }}
+            />
+          ) : (
+            <span>{loading ? 'Loading...' : name}</span>
+          )}
+        </div>
+      }
+    />
+  );
+};
+
 const AssetTableComponent = (props: AssetTableComponentProps) => {
   const {
     assets,
@@ -171,10 +230,16 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
                     active={keySelected === name}
                   >
                     <Table.Cell width={16}>
-                      <Header as="h3" textAlign="left">
-                        {name}
-                        <Header.Subheader>{type}</Header.Subheader>
-                      </Header>
+                      <AssetTableHeaderCellContent
+                        asset={{
+                          name,
+                          type,
+                          module,
+                          editable,
+                          deletable,
+                          ...rest,
+                        }}
+                      />
                     </Table.Cell>
                     <Table.Cell textAlign="right" className="action">
                       <div>
