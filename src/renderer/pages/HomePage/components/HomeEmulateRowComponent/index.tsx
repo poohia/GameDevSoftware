@@ -7,7 +7,6 @@ import { Button } from 'renderer/semantic-ui';
 const HomeEmulateRowComponent = () => {
   const { platforms } = usePlatformsComponent();
   const { sendMessage } = useEvents();
-  const [loadingSoftware, setLoadingSoftware] = useState<boolean>(false);
   const [loadingBrowser, setLoadingBrowser] = useState<boolean>(false);
   if (!platforms) return <></>;
   const { android, browser, electron, ios } = platforms;
@@ -47,9 +46,7 @@ const HomeEmulateRowComponent = () => {
             disabled={!electron}
             onClick={() => {
               sendMessage('emulate-platform', 'electron');
-              setLoadingSoftware(!loadingSoftware);
             }}
-            loading={loadingSoftware}
           >
             Software
           </Button>

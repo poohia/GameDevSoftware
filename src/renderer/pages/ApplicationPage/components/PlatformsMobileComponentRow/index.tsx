@@ -29,7 +29,6 @@ const PlatformsMobileComponentRow = (props: {
                   setLoading(true);
                   sendMessage('remove-platform', platform);
                 }}
-                disabled={platform === 'browser' || platform === 'electron'}
               >
                 <TransComponent id="module_application_params_platforms_remove" />
                 <Icon name="close" />
@@ -45,7 +44,6 @@ const PlatformsMobileComponentRow = (props: {
                   setLoading(true);
                   sendMessage('add-platform', platform);
                 }}
-                disabled={platform === 'electron'}
               >
                 <TransComponent id="module_application_params_platforms_append" />
                 <Icon name="add" />

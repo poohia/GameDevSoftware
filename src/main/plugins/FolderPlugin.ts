@@ -1,5 +1,6 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron';
 import fs from 'fs';
+import pathModule from 'path';
 import { ElectronIpcMainEvent } from 'types';
 import { LocalStorageIframePlugin } from './subPlugins';
 
@@ -14,46 +15,100 @@ export default class FolderPlugin {
   static srcDirectory = '/src';
   static publicDirectory = '/public';
   static resourcesDirectory = '/resources';
-  static platformsDirectory = '/platforms';
   static cypressDirectory = `cypress`;
+  static electronDirectory = 'web2desktop';
 
-  static gameDevSoftwareDirectory = `${FolderPlugin.srcDirectory}/GameDevSoftware`;
-  static modulesDirectory = `${FolderPlugin.gameDevSoftwareDirectory}/modules`;
+  static gameDevSoftwareDirectory = pathModule.join(
+    FolderPlugin.srcDirectory,
+    'GameDevSoftware'
+  );
+  static modulesDirectory = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'modules'
+  );
 
-  static translationDirectory = `${FolderPlugin.srcDirectory}/translations`;
-  static languageFile = `${FolderPlugin.gameDevSoftwareDirectory}/languages.json`;
-  static constantFile = `${FolderPlugin.gameDevSoftwareDirectory}/constants.json`;
-  static assetFile = `${FolderPlugin.gameDevSoftwareDirectory}/assets.json`;
+  static translationDirectory = pathModule.join(
+    FolderPlugin.srcDirectory,
+    'translations'
+  );
+  static languageFile = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'languages.json'
+  );
+  static constantFile = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'constants.json'
+  );
+  static assetFile = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'assets.json'
+  );
   /** Menu and Parameters */
-  static menuPath = '/pages/Home';
-  static endDemoPath = '/pages/EndDemo';
-  static creditsPath = '/pages/Credits';
-  static menuConfig = `${FolderPlugin.gameDevSoftwareDirectory}/homecomponent.json`;
-  static pagesConfig = `${FolderPlugin.gameDevSoftwareDirectory}/pages.json`;
+  static menuPath = pathModule.join('/pages', 'Home');
+  static endDemoPath = pathModule.join('/pages', 'EndDemo');
+  static creditsPath = pathModule.join('/pages', 'Credits');
+  static menuConfig = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'homecomponent.json'
+  );
+  static pagesConfig = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'pages.json'
+  );
   /** Game Objects */
   static gameObjectTypesDirectory = `/gameobjectTypes`;
-  static gameObjectDirectory = `${FolderPlugin.gameDevSoftwareDirectory}/gameObjects`;
-  static gameObjectFile = `${FolderPlugin.gameObjectDirectory}/index.json`;
+  static gameObjectDirectory = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'gameObjects'
+  );
+  static gameObjectFile = pathModule.join(
+    FolderPlugin.gameObjectDirectory,
+    'index.json'
+  );
   /* Scenes  */
   static sceneTypesDirectory = `/scenesTypes`;
-  static sceneDirectory = `${FolderPlugin.gameDevSoftwareDirectory}/scenes`;
-  static sceneFile = `${FolderPlugin.sceneDirectory}/index.json`;
+  static sceneDirectory = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'scenes'
+  );
+  static sceneFile = pathModule.join(FolderPlugin.sceneDirectory, 'index.json');
   /* ShortcutsFolderFile */
   static shortcutsFolderFile = `/shortcutsFolders.json`;
   /* ChatGPT */
   static chatGPTFile = '/chatgpt.json';
   /** */
   static configFile = `/capacitor.config.json`;
-  static configFileJson = '/src/config.json';
+  static configFileJson = pathModule.join(
+    FolderPlugin.srcDirectory,
+    'config.json'
+  );
   static indexHtml = `/index.html`;
   /** directories */
-  static assetsDirectory = `${FolderPlugin.publicDirectory}/assets`;
-  static directoryImages = `${FolderPlugin.assetsDirectory}/images`;
-  static directoryVideos = `${FolderPlugin.assetsDirectory}/videos`;
-  static directorySounds = `${FolderPlugin.assetsDirectory}/sounds`;
-  static directoryJson = `${FolderPlugin.gameDevSoftwareDirectory}/configurationsFiles`;
+  static assetsDirectory = pathModule.join(
+    FolderPlugin.publicDirectory,
+    'assets'
+  );
+  static directoryImages = pathModule.join(
+    FolderPlugin.assetsDirectory,
+    'images'
+  );
+  static directoryVideos = pathModule.join(
+    FolderPlugin.assetsDirectory,
+    'videos'
+  );
+  static directorySounds = pathModule.join(
+    FolderPlugin.assetsDirectory,
+    'sounds'
+  );
+  static directoryJson = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'configurationsFiles'
+  );
   /** env files */
-  static envFolder = `${FolderPlugin.gameDevSoftwareDirectory}/envs`;
+  static envFolder = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'envs'
+  );
   static envFiles = [
     '/env.development.json',
     '/env.production.json',
@@ -61,28 +116,41 @@ export default class FolderPlugin {
   ];
   /** */
   /** */
-  static splashscreenFileConfig = `${FolderPlugin.gameDevSoftwareDirectory}/splashscreen.json`;
-  static splashscreenAssetFolder = `${FolderPlugin.assetsDirectory}/splashscreen`;
-  static splashscreenBrandImageFile = `${FolderPlugin.splashscreenAssetFolder}/brand.png`;
-  static splashscreenGamePromotionFile = `${FolderPlugin.splashscreenAssetFolder}/game_promotion.mp4`;
+  static splashscreenFileConfig = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'splashscreen.json'
+  );
+  static splashscreenAssetFolder = pathModule.join(
+    FolderPlugin.assetsDirectory,
+    'splashscreen'
+  );
+  static splashscreenBrandImageFile = pathModule.join(
+    FolderPlugin.splashscreenAssetFolder,
+    'brand.png'
+  );
+  static splashscreenGamePromotionFile = pathModule.join(
+    FolderPlugin.splashscreenAssetFolder,
+    'game_promotion.mp4'
+  );
   /** */
   static appImages = [
-    `${FolderPlugin.publicDirectory}/favicon.png`,
-    `${FolderPlugin.resourcesDirectory}/icon-only.png`,
-    `${FolderPlugin.resourcesDirectory}/splash.png`,
-    `${FolderPlugin.resourcesDirectory}/splash.png`,
-    `${FolderPlugin.resourcesDirectory}/icon-background.png`,
-    `${FolderPlugin.resourcesDirectory}/icon-foreground.png`,
+    pathModule.join(FolderPlugin.publicDirectory, 'favicon.png'),
+    pathModule.join(FolderPlugin.resourcesDirectory, 'icon-only.png'),
+    pathModule.join(FolderPlugin.resourcesDirectory, 'splash.png'),
+    pathModule.join(FolderPlugin.resourcesDirectory, 'splash.png'),
+    pathModule.join(FolderPlugin.resourcesDirectory, 'icon-background.png'),
+    pathModule.join(FolderPlugin.resourcesDirectory, 'icon-foreground.png'),
   ];
-  static appPlatforms = [
-    `/android`,
-    `/ios`,
-    `${FolderPlugin.platformsDirectory}/electron`,
-    `/build`,
-  ];
+  static appPlatforms = [`/android`, `/ios`, `/web2desktop`, `/build`];
   /** fonts */
-  static fontFile = `${FolderPlugin.gameDevSoftwareDirectory}/fonts.json`;
-  static directoryFonts = `${FolderPlugin.assetsDirectory}/fonts`;
+  static fontFile = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'fonts.json'
+  );
+  static directoryFonts = pathModule.join(
+    FolderPlugin.assetsDirectory,
+    'fonts'
+  );
 
   static packageJSONFile = '/package.json';
   static trapezeFile = '/app.yaml';
@@ -90,13 +158,40 @@ export default class FolderPlugin {
   static typesFiles = 'game-types.ts';
   static typesFilesSave = 'game-types.ts.save';
 
-  static savesFile = `${FolderPlugin.gameDevSoftwareDirectory}/saves.json`;
+  static savesFile = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'saves.json'
+  );
 
-  static themeFile = `${FolderPlugin.gameDevSoftwareDirectory}/theme.json`;
-  static cacheFile = `${FolderPlugin.gameDevSoftwareDirectory}/caches.json`;
+  static themeFile = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'theme.json'
+  );
+  static cacheFile = pathModule.join(
+    FolderPlugin.gameDevSoftwareDirectory,
+    'caches.json'
+  );
+
+  /** Web2Desktop */
+  static web2desktopConfigFiles = [
+    pathModule.join(
+      FolderPlugin.resourcesDirectory,
+      'web2desktop',
+      'config.local.json'
+    ),
+    pathModule.join(
+      FolderPlugin.electronDirectory,
+      FolderPlugin.srcDirectory,
+      'config.local.json'
+    ),
+  ];
 
   /** Cypress */
-  static cypressScreenshotsDirectory = `${FolderPlugin.cypressDirectory}/cypress/screenshots`;
+  static cypressScreenshotsDirectory = pathModule.join(
+    FolderPlugin.cypressDirectory,
+    'cypress',
+    'screenshots'
+  );
 
   static validePath(path: string) {
     let isValid = true;

@@ -105,11 +105,14 @@ export default class CapacitorService {
     platform: keyof PlatformsParams,
     callback: (err: Error) => void
   ) => {
-    if (platform !== 'android' && platform !== 'ios') return;
+    if (platform !== 'android' && platform !== 'ios' && platform !== 'electron')
+      return;
     // @ts-ignore
     const path = global.path;
+    const platformDirectory =
+      platform === 'electron' ? 'web2desktop' : platform;
     fs.rm(
-      pathModule.join(path, platform),
+      pathModule.join(path, platformDirectory),
       {
         recursive: true,
         force: true,
@@ -124,6 +127,28 @@ export default class CapacitorService {
     platform: keyof PlatformsParams,
     callback: (err: Error) => void
   ) => {
+    const path = global.path;
+
+    if (platform === 'electron') {
+      exec(
+        'git clone https://github.com/joazco/web2desktop.git',
+        { cwd: path },
+        (error) => {
+          if (error) {
+            callback(Error(error?.message));
+            return;
+          }
+          exec(
+            `yarn install`,
+            { cwd: pathModule.join(path, 'web2desktop') },
+            (error) => {
+              callback(Error(error?.message));
+            }
+          );
+        }
+      );
+      return;
+    }
     if (platform !== 'android' && platform !== 'ios') {
       CapacitorService.buildPlatform(platform, callback);
       return;
@@ -132,8 +157,7 @@ export default class CapacitorService {
     if (platform === 'ios') {
       opts = ' --packagemanager CocoaPods';
     }
-    // @ts-ignore
-    const path = global.path;
+
     exec(`yarn add @capacitor/${platform}`, { cwd: path }, (error) => {
       if (error) {
         callback(Error(error?.message));
@@ -198,7 +222,11 @@ export default class CapacitorService {
   };
 
   openElectron = () => {
-    // @todo
+    exec(
+      `yarn dev`,
+      { cwd: pathModule.join(path, FolderPlugin.electronDirectory) },
+      (error) => {}
+    );
   };
 
   openBrowser = () => {

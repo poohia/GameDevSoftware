@@ -2,6 +2,7 @@ import { ElectronIpcMainEvent, PlatformsParams } from 'types';
 import async from 'async';
 import fs from 'fs';
 import portfinder from 'portfinder';
+import pathModule from 'path';
 import FolderPlugin from '../FolderPlugin';
 import CapacitorService from '../../services/CapacitorService';
 
@@ -18,16 +19,17 @@ export default class ApplicationPlatformsPlugin {
     async.each(
       FolderPlugin.appPlatforms,
       (platformDirectory: string, callback: (error?: Error) => void) => {
-        fs.access(`${path}${platformDirectory}`, (err) => {
+        fs.access(pathModule.join(path, platformDirectory), (err) => {
           let isExist = false;
           if (!err) {
             isExist = true;
           }
+
           if (platformDirectory.endsWith('android'))
             _platforms.android = isExist;
           if (platformDirectory.endsWith('ios')) _platforms.ios = isExist;
-          // if (platformDirectory.endsWith('electron'))
-          //   _platforms.electron = isExist;
+          if (platformDirectory.endsWith('web2desktop'))
+            _platforms.electron = isExist;
           if (platformDirectory.endsWith('build')) _platforms.browser = isExist;
           callback();
         });
