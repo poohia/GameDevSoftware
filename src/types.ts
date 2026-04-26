@@ -296,6 +296,14 @@ export type ApplicationImageParams = {
   icon: string;
   iconForegroundAndroid: string;
   iconBackgroundAndroid: string;
+  web2desktop: {
+    splash: string;
+    iconIcns: string;
+    iconIco: string;
+    icon: string;
+    icon2x: string;
+    icon3x: string;
+  };
 };
 export type PlatformsParams = {
   android: boolean;

@@ -16,6 +16,14 @@ export default class ApplicationImagesPlugin {
       icon: '',
       iconBackgroundAndroid: '',
       iconForegroundAndroid: '',
+      web2desktop: {
+        icon: '',
+        icon2x: '',
+        icon3x: '',
+        iconIcns: '',
+        iconIco: '',
+        splash: '',
+      },
     };
     each(
       FolderPlugin.appImages,
