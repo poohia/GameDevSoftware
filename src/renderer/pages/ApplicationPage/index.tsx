@@ -6,6 +6,7 @@ import {
   IdentityParamsComponent,
   ImagesParamsComponent,
   PlatformsComponent,
+  Web2desktopParamsComponent,
 } from './components';
 
 const ApplicationPage: React.FC = () => {
@@ -32,6 +33,11 @@ const ApplicationPage: React.FC = () => {
         <Grid.Row>
           <Grid.Column width={16}>
             <PlatformsComponent />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Web2desktopParamsComponent />
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>

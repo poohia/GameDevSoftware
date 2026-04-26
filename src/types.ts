@@ -22,6 +22,8 @@ export type Channels =
   | 'get-asset-information'
   | 'load-params-identity'
   | 'set-params-identity'
+  | 'load-web2desktop-params'
+  | 'set-web2desktop-params'
   | 'load-params-image'
   | 'replace-params-image'
   | 'load-platforms'
@@ -306,6 +308,19 @@ export type ApplicationImageParams = {
     icon2x: string;
     icon3x: string;
   };
+};
+export type ApplicationWeb2DesktopParams = {
+  themeSource: 'system' | 'dark' | 'light';
+  resizable: boolean;
+  closable: boolean;
+  copyright: string;
+  windowsCertificateFile: string;
+  windowsCertificatePassword: string;
+  appleId: string;
+  appleIdPassword: string;
+  appleIdentity: string;
+  appleTeamId: string;
+  steamAppId: number | null;
 };
 export type PlatformsParams = {
   android: boolean;

@@ -1,4 +1,8 @@
-import { ApplicationIdentityParams, PlatformsParams } from 'types';
+import {
+  ApplicationIdentityParams,
+  ApplicationWeb2DesktopParams,
+  PlatformsParams,
+} from 'types';
 import pathModule from 'path';
 import fs from 'fs';
 import { ChildProcess, spawn } from 'child_process';
@@ -223,7 +227,7 @@ export default class CapacitorService {
 
   openElectron = () => {
     exec(
-      `yarn dev`,
+      `yarn start`,
       { cwd: pathModule.join(path, FolderPlugin.electronDirectory) },
       (error) => {}
     );
@@ -301,5 +305,82 @@ export default class CapacitorService {
         };
         return FileService.writeJsonFile(configPath, nextData);
       });
+  };
+
+  private static readWeb2DesktopConfig = () => {
+    const { path } = global;
+    const configPath = pathModule.join(
+      path,
+      FolderPlugin.web2desktopConfigFiles[0]
+    );
+    return FileService.createFileIfNotExist(configPath, '{}').then(() =>
+      FileService.readJsonFile(configPath)
+    );
+  };
+
+  private static writeWeb2DesktopConfigFile = (data: any) => {
+    const { path } = global;
+    return FileService.writeJsonFile(
+      pathModule.join(path, FolderPlugin.web2desktopConfigFiles[0]),
+      data
+    );
+  };
+
+  static loadWeb2DesktopParams = (): Promise<ApplicationWeb2DesktopParams> =>
+    CapacitorService.readWeb2DesktopConfig().then((data) => ({
+      themeSource: data.themeSource || 'system',
+      resizable: data.resizable ?? true,
+      closable: data.closable ?? true,
+      copyright: data.build?.copyright || '',
+      windowsCertificateFile:
+        data.build?.windows?.signature?.certificateFile || '',
+      windowsCertificatePassword:
+        data.build?.windows?.signature?.certificatePassword || '',
+      appleId: data.build?.apple?.signature?.appleId || '',
+      appleIdPassword: data.build?.apple?.signature?.appleIdPassword || '',
+      appleIdentity: data.build?.apple?.signature?.identity || '',
+      appleTeamId: data.build?.apple?.signature?.teamId || '',
+      steamAppId: data.plugins?.Steam?.appId ?? null,
+    }));
+
+  static writeWeb2DesktopParams = (args: ApplicationWeb2DesktopParams) => {
+    return CapacitorService.readWeb2DesktopConfig().then((data) => {
+      const nextData = {
+        ...data,
+        themeSource: args.themeSource,
+        resizable: args.resizable,
+        closable: args.closable,
+        build: {
+          ...(data.build || {}),
+          copyright: args.copyright,
+          windows: {
+            ...(data.build?.windows || {}),
+            signature: {
+              ...(data.build?.windows?.signature || {}),
+              certificateFile: args.windowsCertificateFile,
+              certificatePassword: args.windowsCertificatePassword,
+            },
+          },
+          apple: {
+            ...(data.build?.apple || {}),
+            signature: {
+              ...(data.build?.apple?.signature || {}),
+              appleId: args.appleId,
+              appleIdPassword: args.appleIdPassword,
+              identity: args.appleIdentity,
+              teamId: args.appleTeamId,
+            },
+          },
+        },
+        plugins: {
+          ...(data.plugins || {}),
+          Steam: {
+            ...(data.plugins?.Steam || {}),
+            appId: args.steamAppId,
+          },
+        },
+      };
+      return CapacitorService.writeWeb2DesktopConfigFile(nextData);
+    });
   };
 }

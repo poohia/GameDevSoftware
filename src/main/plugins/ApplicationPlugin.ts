@@ -5,6 +5,7 @@ import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import {
   ApplicationConfigJson,
   ApplicationIdentityParams,
+  ApplicationWeb2DesktopParams,
   ElectronIpcMainEvent,
   SoftwaresInfo,
 } from 'types';
@@ -202,6 +203,21 @@ export default class ApplicationPlugin {
     // ApplicationPlugin.refreshConfigFileToSrc();
   };
 
+  loadWeb2DesktopParams = (event: ElectronIpcMainEvent) => {
+    CapacitorService.loadWeb2DesktopParams().then((params) => {
+      event.reply('load-web2desktop-params', params);
+    });
+  };
+
+  setWeb2DesktopParams = (
+    event: ElectronIpcMainEvent,
+    args: ApplicationWeb2DesktopParams
+  ) => {
+    CapacitorService.writeWeb2DesktopParams(args).then(() => {
+      this.loadWeb2DesktopParams(event);
+    });
+  };
+
   getSoftwaresInfo = (event: ElectronIpcMainEvent) => {
     const softwaresInfo: SoftwaresInfo = {
       git: null,
@@ -238,6 +254,12 @@ export default class ApplicationPlugin {
     );
     ipcMain.on('set-params-identity', (event: Electron.IpcMainEvent, args) =>
       this.setParamsIdentity(event as ElectronIpcMainEvent, args)
+    );
+    ipcMain.on('load-web2desktop-params', (event: Electron.IpcMainEvent) =>
+      this.loadWeb2DesktopParams(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on('set-web2desktop-params', (event: Electron.IpcMainEvent, args) =>
+      this.setWeb2DesktopParams(event as ElectronIpcMainEvent, args)
     );
     ipcMain.on('load-params-image', (event: Electron.IpcMainEvent) =>
       this._imagePlugin.loadParamsImage(event as ElectronIpcMainEvent)
