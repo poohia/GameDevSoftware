@@ -26,7 +26,7 @@ const ModalGameObjectInput = (
   );
   useEffect(() => {
     if (defaultValue) {
-      setValue(defaultValue.replace('@go:', ''));
+      setValue(defaultValue);
     }
   }, [defaultValue]);
 
@@ -49,6 +49,7 @@ const ModalGameObjectInput = (
         title="gameobjectinput"
         isOnInput
         typeTarget="gameObjects"
+        showSelectedValue
         onClickRow={handleClickRow}
       />
     </ModalComponent>

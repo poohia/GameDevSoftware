@@ -6,7 +6,7 @@ import {
   TransComponent,
 } from 'renderer/components';
 import { Grid, Header, Icon, Input } from 'semantic-ui-react';
-import { Button, Table } from 'renderer/semantic-ui';
+import { Button, Segment, Table } from 'renderer/semantic-ui';
 import { GameObject, ShortcutsFolder } from 'types';
 import { useDatabase } from 'renderer/hooks';
 import ShortcutsFoldersContext from 'renderer/contexts/ShortcutsFoldersContext';
@@ -18,6 +18,7 @@ type GameobjectTableComponentProps = {
   typeTarget: 'scenes' | 'gameObjects';
   isOnInput?: boolean;
   isOnAll?: boolean;
+  showSelectedValue?: boolean;
   onClickRow: (id: number) => void;
   onDelete?: (id: number) => void;
 };
@@ -29,6 +30,7 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
     title,
     isOnInput = false,
     isOnAll = false,
+    showSelectedValue = false,
     typeTarget,
     onClickRow,
     onDelete,
@@ -68,6 +70,14 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
     return Array.from(results).reverse();
   }, [gameObjects, filter, isOnInput, folderFilter]);
   const lengthGameObjects = useMemo(() => formatData.length, [formatData]);
+  const selectedGameObject = useMemo(
+    () => gameObjects.find((gameObject) => gameObject._id === keySelected),
+    [gameObjects, keySelected]
+  );
+  const selectedValuePrefix = useMemo(
+    () => (typeTarget === 'scenes' ? '@s:' : '@go:'),
+    [typeTarget]
+  );
 
   const { setCurrentShortcutsFolderID } = useContext(ShortcutsFoldersContext);
 
@@ -84,6 +94,25 @@ const GameobjectTableComponent = (props: GameobjectTableComponentProps) => {
 
   return (
     <Grid className="game-dev-software-table-component">
+      {showSelectedValue && keySelected && (
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Header as="h4">
+              <TransComponent id="form_input_modal_default_value_label" />
+            </Header>
+            <Segment>
+              <strong>
+                {selectedValuePrefix}
+                {keySelected}
+              </strong>
+              {': '}
+              {selectedGameObject?._title && (
+                <TransComponent id={selectedGameObject._title} />
+              )}
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+      )}
       <Grid.Row className="game-dev-software-table-component-search">
         <Grid.Column width={16}>
           <Input

@@ -33,9 +33,7 @@ const ModalSceneInput = (
 
   useEffect(() => {
     setFilteredScenes(
-      !!type.trim()
-        ? scenes.filter((scene) => scene._type === type)
-        : scenes
+      !!type.trim() ? scenes.filter((scene) => scene._type === type) : scenes
     );
   }, [scenes, type]);
 
@@ -53,6 +51,7 @@ const ModalSceneInput = (
         keySelected={Number(value.replace('@s:', ''))}
         title="gameobjectssceneinput"
         typeTarget="scenes"
+        showSelectedValue
         onClickRow={handleClickRow}
       />
     </ModalComponent>
