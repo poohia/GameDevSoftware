@@ -195,6 +195,8 @@ export const MIME_TYPE_MAP: Record<string, string> = {
   gif: 'image/gif',
   svg: 'image/svg+xml', // SVG ajouté !
   webp: 'image/webp',
+  ico: 'image/x-icon',
+  icns: 'image/icns',
 
   // Sons
   mp3: 'audio/mpeg',

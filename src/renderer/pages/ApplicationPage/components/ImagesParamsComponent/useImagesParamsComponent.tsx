@@ -2,6 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { useEvents } from 'renderer/hooks';
 import { ApplicationImageParams, SplashscreenType } from 'types';
 
+export type ApplicationImageTarget =
+  | keyof Omit<ApplicationImageParams, 'web2desktop'>
+  | `web2desktop.${keyof ApplicationImageParams['web2desktop']}`;
+
 const useImagesParamsComponent = () => {
   const [imagesParams, setImagesParams] = useState<
     ApplicationImageParams | undefined
@@ -11,7 +15,7 @@ const useImagesParamsComponent = () => {
   >();
   const { requestMessage, sendMessage } = useEvents();
 
-  const replaceImage = (target: keyof ApplicationImageParams) => {
+  const replaceImage = (target: ApplicationImageTarget) => {
     sendMessage('replace-params-image', target);
   };
 

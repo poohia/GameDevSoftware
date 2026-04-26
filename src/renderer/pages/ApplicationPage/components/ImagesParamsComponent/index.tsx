@@ -84,6 +84,51 @@ const ImagesParamsComponent = () => {
                 <Header.Content>Electron</Header.Content>
               </Header>
             </Grid.Column>
+            <Grid.Column width={4}>
+              <img
+                onClick={() => replaceImage('web2desktop.icon')}
+                src={imagesParams?.web2desktop.icon}
+              />
+              <p>Icon 512x512 pixels</p>
+            </Grid.Column>
+            <Grid.Column width={4}>
+              <img
+                onClick={() => replaceImage('web2desktop.icon2x')}
+                src={imagesParams?.web2desktop.icon2x}
+              />
+              <p>Icon @2x 1024x1024 pixels</p>
+            </Grid.Column>
+            <Grid.Column width={4}>
+              <img
+                onClick={() => replaceImage('web2desktop.icon3x')}
+                src={imagesParams?.web2desktop.icon3x}
+              />
+              <p>Icon @3x 1536x1536 pixels</p>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={4}></Grid.Column>
+            <Grid.Column width={4}>
+              <img
+                onClick={() => replaceImage('web2desktop.splash')}
+                src={imagesParams?.web2desktop.splash}
+              />
+              <p>Splash 800×600px pixels</p>
+            </Grid.Column>
+            <Grid.Column width={4}>
+              <img
+                onClick={() => replaceImage('web2desktop.iconIco')}
+                src={imagesParams?.web2desktop.iconIco}
+              />
+              <p>Icon Windows .ico</p>
+            </Grid.Column>
+            <Grid.Column width={4}>
+              <img
+                onClick={() => replaceImage('web2desktop.iconIcns')}
+                src={imagesParams?.web2desktop.iconIcns}
+              />
+              <p>Icon macOS .icns</p>
+            </Grid.Column>
           </Grid.Row>
 
           <Grid.Row>
