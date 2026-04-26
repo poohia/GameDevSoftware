@@ -75,6 +75,17 @@ const ImagesParamsComponent = () => {
               <p>Icon Background 432×432 pixels</p>
             </Grid.Column>
           </Grid.Row>
+          {/* Electron / Web2Desktop */}
+
+          <Grid.Row>
+            <Grid.Column width={4}>
+              <Header as="h3">
+                <Icon name="windows" />
+                <Header.Content>Electron</Header.Content>
+              </Header>
+            </Grid.Column>
+          </Grid.Row>
+
           <Grid.Row>
             <Grid.Column width={4}>
               <Header as="h3">

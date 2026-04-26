@@ -40,6 +40,11 @@ export default class ApplicationImagesPlugin {
           } else if (image.endsWith('icon-only.png')) {
             imageParams.icon = base64;
           }
+          if (image.includes(FolderPlugin.electronDirectory)) {
+            if (image.includes('splash')) {
+              imageParams.web2desktop.splash = base64;
+            }
+          }
           callback();
         });
       },
