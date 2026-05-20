@@ -32,6 +32,14 @@ const Web2desktopParamsComponent = () => {
                 onBlur={onSubmit}
               />
               <Form.Checkbox
+                label="fullscreen"
+                checked={params.fullScreen}
+                onChange={(_, { checked }) =>
+                  setParam('fullScreen', Boolean(checked))
+                }
+                onBlur={onSubmit}
+              />
+              <Form.Checkbox
                 label="resizable"
                 checked={params.resizable}
                 onChange={(_, { checked }) =>

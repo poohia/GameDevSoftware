@@ -4,3 +4,6 @@ export { default as ApplicationBuildPlugin } from './ApplicationBuildPlugin';
 export { default as OptimizeAssetsPlugin } from './OptimizeAssetsPlugin';
 export { default as SplashscreenPlugin } from './SplashscreenPlugin';
 export { default as LocalStorageIframePlugin } from './LocalStorageIframePlugin';
+export { default as ApplicationAdvancedPlugin } from './ApplicationAdvancedPlugin';
+export { default as ApplicationHolidaysOverlayPlugin } from './ApplicationHolidaysOverlayPlugin';
+export { default as Web2DesktopPlugin } from './Web2DesktopPlugin';

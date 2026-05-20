@@ -16,13 +16,14 @@ import {
   ApplicationBuildPlugin,
   SplashscreenPlugin,
   LocalStorageIframePlugin,
+  ApplicationAdvancedPlugin,
+  ApplicationHolidaysOverlayPlugin,
+  Web2DesktopPlugin,
 } from './subPlugins';
 import VersionSoftwareService from '../services/VersionSoftwareService';
 import FileService from '../services/FileService';
-import ApplicationAdvancedPlugin from './subPlugins/ApplicationAdvancedPlugin';
 import PackageJSONService from '../services/PackageJSONService';
 import CapacitorService from '../services/CapacitorService';
-import ApplicationHolidaysOverlayPlugin from './subPlugins/ApplicationHolidaysOverlayPlugin';
 
 const options = {
   ignoreAttributes: false,
@@ -46,6 +47,7 @@ export default class ApplicationPlugin {
   ];
   private _advancedPlugin: ApplicationAdvancedPlugin;
   private _holidaysOverlay: ApplicationHolidaysOverlayPlugin;
+  private _web2desktopPlugin: Web2DesktopPlugin;
 
   constructor(private mainWindow: BrowserWindow) {
     this._imagePlugin = new ApplicationImagesPlugin(this.mainWindow);
@@ -57,6 +59,7 @@ export default class ApplicationPlugin {
     this._localStorageIframePlugin = new LocalStorageIframePlugin(
       this.mainWindow
     );
+    this._web2desktopPlugin = new Web2DesktopPlugin();
   }
 
   // static refreshConfigFileToSrc = (callback?: (err?: Error) => void) => {
@@ -197,14 +200,14 @@ export default class ApplicationPlugin {
         PackageJSONService.updateVersion(args.version);
       },
       () => {
-        CapacitorService.writeWeb2DesktopConfig(args);
+        this._web2desktopPlugin.writeWeb2DesktopConfig(args);
       },
     ]);
     // ApplicationPlugin.refreshConfigFileToSrc();
   };
 
   loadWeb2DesktopParams = (event: ElectronIpcMainEvent) => {
-    CapacitorService.loadWeb2DesktopParams().then((params) => {
+    this._web2desktopPlugin.loadWeb2DesktopParams().then((params) => {
       event.reply('load-web2desktop-params', params);
     });
   };
@@ -213,8 +216,21 @@ export default class ApplicationPlugin {
     event: ElectronIpcMainEvent,
     args: ApplicationWeb2DesktopParams
   ) => {
-    CapacitorService.writeWeb2DesktopParams(args).then(() => {
+    this._web2desktopPlugin.writeWeb2DesktopParams(args).then(() => {
       this.loadWeb2DesktopParams(event);
+      const json = this.openConfigFile();
+      if (!json.web2desktop) {
+        json.web2desktop = {};
+      }
+      const { web2desktop } = json;
+      web2desktop.fullScreen =
+        args.fullScreen ?? web2desktop.fullScreen ?? false;
+      web2desktop.resizable = args.resizable ?? web2desktop.resizable ?? false;
+      web2desktop.closable = args.closable ?? web2desktop.closable ?? false;
+      web2desktop.themeSource =
+        args.themeSource ?? web2desktop.themeSource ?? 'dark';
+
+      this.writeConfigFile(json);
     });
   };
 

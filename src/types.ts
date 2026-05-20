@@ -281,6 +281,12 @@ export type ApplicationConfigJson = {
     christmas: boolean;
     halloween: boolean;
   };
+  web2desktop?: Partial<
+    Pick<
+      ApplicationWeb2DesktopParams,
+      'themeSource' | 'fullScreen' | 'closable' | 'resizable'
+    >
+  >;
 };
 export type ApplicationIdentityParams = {
   package: string;
@@ -311,6 +317,7 @@ export type ApplicationImageParams = {
 };
 export type ApplicationWeb2DesktopParams = {
   themeSource: 'system' | 'dark' | 'light';
+  fullScreen: boolean;
   resizable: boolean;
   closable: boolean;
   copyright: string;

@@ -200,6 +200,18 @@ export default class ScenePlugin {
             },
             optional: true,
           },
+          _musics: {
+            label: 'Musics',
+            multiple: true,
+            core: {
+              sound: 'sound',
+              volume: 'float',
+              fadeDuration: 'number',
+              // par défaut loop est à true; la music d'une scene est forcement (pour le moment) en loop
+              // loop: 'boolean',
+              seek: 'number',
+            },
+          },
         },
       }));
   };
