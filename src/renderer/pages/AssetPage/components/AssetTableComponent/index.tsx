@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   DialogShortcutsFoldersComponent,
   DropdownAssetTypesComponent,
@@ -21,8 +21,11 @@ type AssetTableComponentProps = {
   onDelete: (name: string) => void;
 };
 
-const AssetTableHeaderCellContent = (props: { asset: AssetType }) => {
-  const { asset } = props;
+const AssetPreviewPopup = (props: {
+  asset: AssetType;
+  children: ReactNode;
+}) => {
+  const { asset, children } = props;
   const { name, type } = asset;
   const { once, sendMessage } = useEvents();
   const [base64, setBase64] = useState<string>();
@@ -38,24 +41,15 @@ const AssetTableHeaderCellContent = (props: { asset: AssetType }) => {
     sendMessage('get-asset-information', asset);
   }, [asset, base64, loading, name, once, sendMessage, type]);
 
-  const header = (
-    <div onMouseEnter={loadPreview}>
-      <Header as="h3" textAlign="left">
-        {name}
-        <Header.Subheader>{type}</Header.Subheader>
-      </Header>
-    </div>
-  );
-
   if (type !== 'image') {
-    return header;
+    return <>{children}</>;
   }
 
   return (
     <Popup
       hoverable
       mouseEnterDelay={400}
-      trigger={header}
+      trigger={<div onMouseEnter={loadPreview}>{children}</div>}
       content={
         <div style={{ minWidth: 180, textAlign: 'center' }}>
           {base64 ? (
@@ -75,6 +69,23 @@ const AssetTableHeaderCellContent = (props: { asset: AssetType }) => {
         </div>
       }
     />
+  );
+};
+
+const AssetTableHeaderCellContent = (props: { asset: AssetType }) => {
+  const { asset } = props;
+  const { name, type } = asset;
+  const header = (
+    <Header as="h3" textAlign="left">
+      {name}
+      <Header.Subheader>{type}</Header.Subheader>
+    </Header>
+  );
+
+  return (
+    <AssetPreviewPopup asset={asset}>
+      {header}
+    </AssetPreviewPopup>
   );
 };
 
@@ -162,7 +173,13 @@ const AssetTableComponent = (props: AssetTableComponentProps) => {
               {i18n.t('form_input_modal_default_value_label')}
             </Header>
             <Segment>
-              <strong>@a:{keySelected}</strong>
+              {selectedAsset ? (
+                <AssetPreviewPopup asset={selectedAsset}>
+                  <strong>@a:{keySelected}</strong>
+                </AssetPreviewPopup>
+              ) : (
+                <strong>@a:{keySelected}</strong>
+              )}
             </Segment>
           </Grid.Column>
         </Grid.Row>
