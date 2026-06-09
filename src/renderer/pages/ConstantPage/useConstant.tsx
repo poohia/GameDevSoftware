@@ -63,11 +63,13 @@ const useConstant = () => {
         sendMessage('save-constants', _constants);
         return JSON.parse(JSON.stringify(_constants));
       });
-      // dispatch({
-      //   type: 'hide-form',
-      // });
+      if (!stateForm.isEdit) {
+        dispatch({
+          type: 'hide-form',
+        });
+      }
     },
-    [constants]
+    [sendMessage, stateForm.isEdit]
   );
 
   const updateConstant = useCallback(
