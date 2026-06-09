@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useDatabase } from 'renderer/hooks';
 import { TransComponent } from 'renderer/components';
 import { Button, Table } from 'renderer/semantic-ui';
-import { Grid, Icon } from 'semantic-ui-react';
+import { Grid, Icon, Input } from 'semantic-ui-react';
 import { EnvObject } from 'types';
 
 type EnvsTableComponentProps = {
@@ -13,6 +14,10 @@ type EnvsTableComponentProps = {
 
 const EnvsTableComponent: React.FC<EnvsTableComponentProps> = (props) => {
   const { productionEnvs, developmentEnvs, onClickRow, onDelete } = props;
+  const { setItem, getItem } = useDatabase();
+  const [filter, setFilter] = useState<string>(() => {
+    return getItem<string>('env-filter') || '';
+  });
   const keyUndelatable = useMemo(
     () => [
       'ENV',
@@ -24,9 +29,43 @@ const EnvsTableComponent: React.FC<EnvsTableComponentProps> = (props) => {
     ],
     []
   );
+  const filteredKeys = useMemo(() => {
+    const normalizedFilter = filter.toLowerCase();
+
+    return Object.keys(productionEnvs).filter((key) => {
+      if (normalizedFilter === '') {
+        return true;
+      }
+
+      return (
+        key.toLowerCase().includes(normalizedFilter) ||
+        String(developmentEnvs[key] || '')
+          .toLowerCase()
+          .includes(normalizedFilter) ||
+        String(productionEnvs[key] || '')
+          .toLowerCase()
+          .includes(normalizedFilter)
+      );
+    });
+  }, [developmentEnvs, filter, productionEnvs]);
+
+  useEffect(() => {
+    setItem('env-filter', filter);
+  }, [filter, setItem]);
 
   return (
     <Grid className="game-dev-software-table-component-unscroll">
+      <Grid.Row className="game-dev-software-table-component-search">
+        <Grid.Column width={16}>
+          <Input
+            icon="search"
+            placeholder="Search..."
+            value={filter}
+            fluid
+            onChange={(_, { value }) => setFilter(value.toLowerCase())}
+          />
+        </Grid.Column>
+      </Grid.Row>
       <Grid.Row>
         <Grid.Column>
           <Table celled selectable>
@@ -45,7 +84,7 @@ const EnvsTableComponent: React.FC<EnvsTableComponentProps> = (props) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {Object.keys(productionEnvs).map((key: string) => (
+              {filteredKeys.map((key: string) => (
                 <Table.Row
                   key={`table-row-env-development-${key}`}
                   onClick={() => onClickRow(key)}
