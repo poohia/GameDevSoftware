@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Header, Icon } from 'semantic-ui-react';
-import { Button, Table } from 'renderer/semantic-ui';
+import { Table } from 'renderer/semantic-ui';
 import ModalComponent from '../ModalComponent';
 import TransComponent from '../TransComponent';
 
@@ -24,31 +24,48 @@ const TabsOrderModalComponent: React.FC<TabsOrderModalComponentProps> = ({
   onAccepted,
 }) => {
   const [draftTabs, setDraftTabs] = useState<TabsOrderItem[]>(tabs);
+  const [draggedTabId, setDraggedTabId] = useState<number | null>(null);
+  const [dropTarget, setDropTarget] = useState<{
+    id: number;
+    position: 'before' | 'after';
+  } | null>(null);
 
   useEffect(() => {
     if (open) {
       setDraftTabs(tabs);
+      setDraggedTabId(null);
+      setDropTarget(null);
     }
   }, [open, tabs]);
 
-  const moveTab = (index: number, direction: -1 | 1) => {
+  const reorderTabs = (targetId: number, position: 'before' | 'after') => {
     setDraftTabs((currentTabs) => {
-      const targetIndex = index + direction;
-      const currentTab = currentTabs[index];
-      const targetTab = currentTabs[targetIndex];
-
-      if (
-        !currentTab ||
-        currentTab.menuItemKey === 'home' ||
-        !targetTab ||
-        targetTab.menuItemKey === 'home'
-      ) {
+      if (draggedTabId === null || draggedTabId === 0 || draggedTabId === targetId) {
         return currentTabs;
       }
 
-      const nextTabs = Array.from(currentTabs);
-      nextTabs[index] = targetTab;
-      nextTabs[targetIndex] = currentTab;
+      const draggedIndex = currentTabs.findIndex((tab) => tab.id === draggedTabId);
+      const targetIndex = currentTabs.findIndex((tab) => tab.id === targetId);
+
+      if (draggedIndex === -1 || targetIndex === -1) {
+        return currentTabs;
+      }
+
+      const draggedTab = currentTabs[draggedIndex];
+      const nextTabs = currentTabs.filter((tab) => tab.id !== draggedTabId);
+      const nextTargetIndex = nextTabs.findIndex((tab) => tab.id === targetId);
+
+      if (nextTargetIndex === -1) {
+        return currentTabs;
+      }
+
+      let insertionIndex = nextTargetIndex;
+      if (position === 'after') {
+        insertionIndex += 1;
+      }
+
+      insertionIndex = Math.max(1, Math.min(insertionIndex, nextTabs.length));
+      nextTabs.splice(insertionIndex, 0, draggedTab);
       return nextTabs;
     });
   };
@@ -83,19 +100,66 @@ const TabsOrderModalComponent: React.FC<TabsOrderModalComponentProps> = ({
             <Table.HeaderCell>
               <TransComponent
                 id="tabs_order_modal_table_actions"
-                defaultValue="Actions"
+                defaultValue="Move"
               />
             </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {draftTabs.map((tab, index) => {
+          {draftTabs.map((tab) => {
             const isHome = tab.menuItemKey === 'home';
-            const disableUp = isHome || index <= 1;
-            const disableDown = isHome || index >= draftTabs.length - 1;
+            const isDragged = draggedTabId === tab.id;
+            const isDropTarget = dropTarget?.id === tab.id;
+            const borderStyle =
+              isDropTarget && dropTarget
+                ? dropTarget.position === 'before'
+                  ? 'inset 0 3px 0 #2185d0'
+                  : 'inset 0 -3px 0 #2185d0'
+                : undefined;
 
             return (
-              <Table.Row key={`tabs-order-row-${tab.id}`} active={tab.isActive}>
+              <Table.Row
+                key={`tabs-order-row-${tab.id}`}
+                active={tab.isActive}
+                draggable={!isHome}
+                onDragStart={(event) => {
+                  if (isHome) return;
+                  event.dataTransfer.effectAllowed = 'move';
+                  event.dataTransfer.setData('text/plain', tab.id.toString());
+                  setDraggedTabId(tab.id);
+                }}
+                onDragOver={(event) => {
+                  if (draggedTabId === null || draggedTabId === tab.id) return;
+                  event.preventDefault();
+                  const { top, height } = event.currentTarget.getBoundingClientRect();
+                  const position =
+                    event.clientY < top + height / 2 ? 'before' : 'after';
+                  setDropTarget({
+                    id: tab.id,
+                    position: isHome ? 'after' : position,
+                  });
+                }}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  if (draggedTabId === null || draggedTabId === tab.id) return;
+                  const { top, height } =
+                    event.currentTarget.getBoundingClientRect();
+                  const position =
+                    event.clientY < top + height / 2 ? 'before' : 'after';
+                  reorderTabs(tab.id, isHome ? 'after' : position);
+                  setDraggedTabId(null);
+                  setDropTarget(null);
+                }}
+                onDragEnd={() => {
+                  setDraggedTabId(null);
+                  setDropTarget(null);
+                }}
+                style={{
+                  cursor: isHome ? 'default' : 'grab',
+                  opacity: isDragged ? 0.5 : 1,
+                  boxShadow: borderStyle,
+                }}
+              >
                 <Table.Cell>
                   <Header as="h4">
                     <TransComponent
@@ -118,23 +182,11 @@ const TabsOrderModalComponent: React.FC<TabsOrderModalComponentProps> = ({
                     />
                   )}
                 </Table.Cell>
-                <Table.Cell textAlign="right">
-                  <Button
-                    basic
-                    icon
-                    onClick={() => moveTab(index, -1)}
-                    disabled={disableUp}
-                  >
-                    <Icon name="arrow up" />
-                  </Button>
-                  <Button
-                    basic
-                    icon
-                    onClick={() => moveTab(index, 1)}
-                    disabled={disableDown}
-                  >
-                    <Icon name="arrow down" />
-                  </Button>
+                <Table.Cell textAlign="center">
+                  <Icon
+                    name={isHome ? 'lock' : 'bars'}
+                    style={{ cursor: isHome ? 'default' : 'grab' }}
+                  />
                 </Table.Cell>
               </Table.Row>
             );

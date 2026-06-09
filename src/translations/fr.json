@@ -19,7 +19,7 @@
   "tabs_order_modal_title": "Reordonner les onglets ouverts",
   "tabs_order_modal_table_tab": "Onglet",
   "tabs_order_modal_table_status": "Statut",
-  "tabs_order_modal_table_actions": "Actions",
+  "tabs_order_modal_table_actions": "Deplacer",
   "tabs_order_modal_status_active": "Actif",
   "tabs_order_modal_status_fixed": "Fixe"
 }
