@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Icon, Menu, Tab } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 
@@ -16,6 +16,25 @@ export type UseTabsProps = {
   activeKeyboardControl?: boolean;
 };
 
+type TabState = {
+  id: number;
+  index: number;
+  menuItemKey: string;
+  componentName: string;
+};
+
+type RenderedTab = TabState & {
+  menuItem: React.ReactNode;
+  pane: React.ReactNode;
+};
+
+const HOME_TAB: TabState = {
+  id: 0,
+  index: 0,
+  menuItemKey: 'home',
+  componentName: 'HomePage',
+};
+
 const useTabs = (props: UseTabsProps) => {
   const {
     tableTabs,
@@ -29,149 +48,200 @@ const useTabs = (props: UseTabsProps) => {
     index: 0,
     id: 0,
   });
+  const [tabsState, setTabsState] = useState<TabState[]>([HOME_TAB]);
 
-  const removeTab = useCallback((id: number) => {
-    setTabs((_tabs) => {
-      setTabActive((_tabActive) => {
-        if (id !== _tabActive.id) {
-          saveDatabaseTabActive(_tabActive);
-          return _tabActive;
-        }
-        const index = _tabs.map((tab) => tab.id).indexOf(id) - 1;
-        const { id: idTab } = _tabs[index];
-        _tabActive = { index: index, id: idTab };
-        saveDatabaseTabActive(_tabActive);
-        return _tabActive;
-      });
-      const tab = _tabs.find((tab) => tab.id === id);
-      tab && removeDatabaseTabs(tab.menuItemKey);
-      return Array.from(_tabs.filter((tab) => tab.id !== id));
-    });
+  const saveDatabaseTabActive = useCallback(
+    (nextTabActive: { index: number; id: number }) => {
+      setItem<TabActiveType>(tableActiveTab, nextTabActive);
+    },
+    [setItem, tableActiveTab]
+  );
+
+  const normalizeTabs = useCallback((tabsToNormalize: TabState[]) => {
+    return tabsToNormalize.map((tab, index) => ({
+      ...tab,
+      index,
+    }));
   }, []);
 
-  const nextTab = useCallback((id: number) => {
-    setTabs((_tabs) => {
-      setTabActive((_tabActive) => {
-        const index = _tabs.map((tab) => tab.id).indexOf(id) + 1;
-        if (_tabs[index] === undefined) {
-          _tabActive = { index: 0, id: 0 };
-          saveDatabaseTabActive(_tabActive);
-          return _tabActive;
+  const saveDatabaseTabs = useCallback(
+    (tabsToSave: TabState[]) => {
+      setItem<TabDatabaseType[]>(
+        tableTabs,
+        tabsToSave
+          .filter((tab) => tab.menuItemKey !== 'home')
+          .map((tab) => ({
+            id: tab.id,
+            menuItem: tab.menuItemKey,
+            component: tab.componentName,
+          }))
+      );
+    },
+    [setItem, tableTabs]
+  );
+
+  const removeTab = useCallback(
+    (id: number) => {
+      setTabsState((_tabs) => {
+        const removedIndex = _tabs.findIndex((tab) => tab.id === id);
+        if (removedIndex === -1) {
+          return _tabs;
         }
-        const { id: idTab } = _tabs[index];
-        _tabActive = { index: index, id: idTab };
-        saveDatabaseTabActive(_tabActive);
-        return _tabActive;
+
+        const nextTabs = normalizeTabs(_tabs.filter((tab) => tab.id !== id));
+
+        setTabActive((_tabActive) => {
+          let nextTabActive = _tabActive;
+
+          if (_tabActive.id === id) {
+            const fallbackTab =
+              nextTabs[Math.max(removedIndex - 1, 0)] || nextTabs[0];
+            nextTabActive = fallbackTab
+              ? { index: fallbackTab.index, id: fallbackTab.id }
+              : { index: 0, id: 0 };
+          } else {
+            const activeIndex = nextTabs.findIndex(
+              (tab) => tab.id === _tabActive.id
+            );
+            nextTabActive =
+              activeIndex === -1
+                ? { index: 0, id: 0 }
+                : { ..._tabActive, index: activeIndex };
+          }
+
+          saveDatabaseTabActive(nextTabActive);
+          return nextTabActive;
+        });
+
+        saveDatabaseTabs(nextTabs);
+        return nextTabs;
       });
-      return _tabs;
-    });
-  }, []);
+    },
+    [normalizeTabs, saveDatabaseTabActive, saveDatabaseTabs]
+  );
 
-  const prevTab = useCallback((id: number) => {
-    setTabs((_tabs) => {
-      setTabActive((_tabActive) => {
-        const index = _tabs.map((tab) => tab.id).indexOf(id) + -1;
-        if (_tabs[index] === undefined) {
-          const lastTab = _tabs[_tabs.length - 1];
-          _tabActive = { index: _tabs.length - 1, id: lastTab.id };
-          saveDatabaseTabActive(_tabActive);
-          return _tabActive;
-        }
-        const { id: idTab } = _tabs[index];
-        _tabActive = { index: index, id: idTab };
-        saveDatabaseTabActive(_tabActive);
-        return _tabActive;
+  const nextTab = useCallback(
+    (id: number) => {
+      setTabsState((_tabs) => {
+        setTabActive((_tabActive) => {
+          const index = _tabs.map((tab) => tab.id).indexOf(id) + 1;
+          if (_tabs[index] === undefined) {
+            const nextTabActive = { index: 0, id: 0 };
+            saveDatabaseTabActive(nextTabActive);
+            return nextTabActive;
+          }
+
+          const { id: idTab } = _tabs[index];
+          const nextTabActive = { index, id: idTab };
+          saveDatabaseTabActive(nextTabActive);
+          return nextTabActive;
+        });
+        return _tabs;
       });
-      return _tabs;
-    });
-  }, []);
+    },
+    [saveDatabaseTabActive]
+  );
 
-  const saveDatabaseTabs = (menuItem: string, component: string) => {
-    let tabsLocalStorage = getItem<TabDatabaseType[]>(tableTabs);
-    if (!tabsLocalStorage) {
-      tabsLocalStorage = [];
-    }
-    setItem(tableTabs, tabsLocalStorage.concat({ menuItem, component }));
-  };
+  const prevTab = useCallback(
+    (id: number) => {
+      setTabsState((_tabs) => {
+        setTabActive((_tabActive) => {
+          const index = _tabs.map((tab) => tab.id).indexOf(id) - 1;
+          if (_tabs[index] === undefined) {
+            const lastTab = _tabs[_tabs.length - 1];
+            const nextTabActive = { index: _tabs.length - 1, id: lastTab.id };
+            saveDatabaseTabActive(nextTabActive);
+            return nextTabActive;
+          }
 
-  const saveDatabaseTabActive = (tabActive: { index: number; id: number }) => {
-    setItem<TabActiveType>(tableActiveTab, tabActive);
-  };
-
-  const removeDatabaseTabs = (menuItem: string) => {
-    let tabsLocalStorage = getItem<TabDatabaseType[]>(tableTabs);
-    if (!tabsLocalStorage) {
-      return;
-    }
-    setItem(
-      tableTabs,
-      tabsLocalStorage.filter((tab) => tab.menuItem !== menuItem)
-    );
-  };
+          const { id: idTab } = _tabs[index];
+          const nextTabActive = { index, id: idTab };
+          saveDatabaseTabActive(nextTabActive);
+          return nextTabActive;
+        });
+        return _tabs;
+      });
+    },
+    [saveDatabaseTabActive]
+  );
 
   const appendTab = useCallback(
     (
       menuItem: string,
-      Component: React.FunctionComponent<PageProps>,
+      _Component: React.FunctionComponent<PageProps>,
       _saveTabs = true,
       componentName = `${titleCase(menuItem.replace('module_', ''))}Page`
     ) => {
-      setTabs((_tabs) => {
-        const id = _tabs[_tabs.length - 1].id + 1;
-        const key = menuItem;
-        const tabFind = _tabs.find((tab) => tab.menuItem.key === key);
-        const index = _tabs.length;
-        if (tabFind) {
-          setTabActive({ index: tabFind.index, id: tabFind.id });
+      setTabsState((_tabs) => {
+        const tabFindIndex = _tabs.findIndex(
+          (tab) => tab.menuItemKey === menuItem
+        );
+        if (tabFindIndex !== -1) {
+          const existingTab = _tabs[tabFindIndex];
+          const nextTabActive = { index: tabFindIndex, id: existingTab.id };
+          setTabActive(nextTabActive);
+          saveDatabaseTabActive(nextTabActive);
           return _tabs;
         }
-        if (_saveTabs) {
-          setTabActive({ index, id });
-          saveDatabaseTabActive({ index, id });
-          saveDatabaseTabs(menuItem, componentName);
-        }
 
-        return Array.from(
+        const id = Math.max(..._tabs.map((tab) => tab.id)) + 1;
+        const nextTabs = normalizeTabs(
           _tabs.concat({
             id,
-            index,
+            index: _tabs.length,
             menuItemKey: menuItem,
-            menuItem: (
-              <Menu.Item key={key}>
-                <TransComponent
-                  id={menuItem}
-                  defaultValue={menuItem}
-                  onMouseDown={(e) => {
-                    const { button } = e;
-                    if (button === 1) {
-                      e?.stopPropagation();
-                      removeTab(id);
-                    }
-                  }}
-                />
-                <Icon
-                  name="close"
-                  onClick={(event: Event) => {
-                    event.stopPropagation();
-                    removeTab(id);
-                  }}
-                />
-              </Menu.Item>
-            ),
-            pane: (
-              <Tab.Pane key={key}>
-                <Component
-                  appendTab={appendTab}
-                  id={tabActive.id}
-                  title={menuItem}
-                />
-              </Tab.Pane>
-            ),
+            componentName,
           })
         );
+
+        if (_saveTabs) {
+          const nextTabActive = { index: nextTabs.length - 1, id };
+          setTabActive(nextTabActive);
+          saveDatabaseTabActive(nextTabActive);
+          saveDatabaseTabs(nextTabs);
+        }
+
+        return nextTabs;
       });
     },
-    [removeTab]
+    [normalizeTabs, saveDatabaseTabActive, saveDatabaseTabs]
+  );
+
+  const applyTabsOrder = useCallback(
+    (orderedIds: number[]) => {
+      setTabsState((_tabs) => {
+        if (orderedIds.length !== _tabs.length || orderedIds[0] !== 0) {
+          return _tabs;
+        }
+
+        const tabsMap = new Map(_tabs.map((tab) => [tab.id, tab]));
+        const orderedTabs = orderedIds
+          .map((id) => tabsMap.get(id))
+          .filter((tab): tab is TabState => !!tab);
+
+        if (orderedTabs.length !== _tabs.length) {
+          return _tabs;
+        }
+
+        const nextTabs = normalizeTabs(orderedTabs);
+        saveDatabaseTabs(nextTabs);
+
+        setTabActive((_tabActive) => {
+          const nextIndex = nextTabs.findIndex(
+            (tab) => tab.id === _tabActive.id
+          );
+          const nextTabActive =
+            nextIndex === -1
+              ? { index: 0, id: 0 }
+              : { ..._tabActive, index: nextIndex };
+          saveDatabaseTabActive(nextTabActive);
+          return nextTabActive;
+        });
+
+        return nextTabs;
+      });
+    },
+    [normalizeTabs, saveDatabaseTabActive, saveDatabaseTabs]
   );
 
   const listenerChangeTab = useCallback(
@@ -189,32 +259,49 @@ const useTabs = (props: UseTabsProps) => {
       }
       if (ctrlKey && code === 'Tab') {
         nextTab(id);
-        return;
       }
     },
-    [tabActive]
+    [nextTab, prevTab, removeTab, tabActive]
   );
 
-  const onTabChange = (index: number, id: number) => {
-    document.removeEventListener('keydown', listenerChangeTab);
-    const _tabActive = { index, id };
-    saveDatabaseTabActive(_tabActive);
-    setTabActive(_tabActive);
-  };
+  const onTabChange = useCallback(
+    (index: number, id: number) => {
+      document.removeEventListener('keydown', listenerChangeTab);
+      const nextTabActive = { index, id };
+      saveDatabaseTabActive(nextTabActive);
+      setTabActive(nextTabActive);
+    },
+    [listenerChangeTab, saveDatabaseTabActive]
+  );
 
   useEffect(() => {
-    const tabsLocalStorage = getItem<TabDatabaseType[]>(tableTabs);
-    if (tabsLocalStorage) {
-      tabsLocalStorage.forEach((tab) => {
-        const { menuItem, component } = tab;
-        appendTab(menuItem, modulesComponent[component], false);
-      });
-    }
+    const tabsLocalStorage = getItem<TabDatabaseType[]>(tableTabs) || [];
+    const restoredTabs = normalizeTabs([
+      HOME_TAB,
+      ...tabsLocalStorage.map((tab, index) => ({
+        id: tab.id ?? index + 1,
+        index: index + 1,
+        menuItemKey: tab.menuItem,
+        componentName: tab.component,
+      })),
+    ]);
+    setTabsState(restoredTabs);
+
     const tabActiveLocalStorage = getItem<TabActiveType>(tableActiveTab);
     if (tabActiveLocalStorage) {
-      setTabActive(tabActiveLocalStorage);
+      const restoredActiveIndex = restoredTabs.findIndex(
+        (tab) => tab.id === tabActiveLocalStorage.id
+      );
+      if (restoredActiveIndex !== -1) {
+        setTabActive({
+          ...tabActiveLocalStorage,
+          index: restoredActiveIndex,
+        });
+        return;
+      }
     }
-  }, [tableTabs, tableActiveTab]);
+    setTabActive({ index: 0, id: 0 });
+  }, [getItem, normalizeTabs, tableActiveTab, tableTabs]);
 
   useEffect(() => {
     if (!activeKeyboardControl) return;
@@ -222,27 +309,80 @@ const useTabs = (props: UseTabsProps) => {
     return () => {
       window.removeEventListener('keydown', listenerChangeTab);
     };
-  }, [listenerChangeTab, activeKeyboardControl]);
+  }, [activeKeyboardControl, listenerChangeTab]);
 
-  const [tabs, setTabs] = useState<any[]>([
-    {
-      id: 0,
-      index: 0,
-      menuItemKey: 'home',
-      menuItem: i18n.t('home'),
-      pane: (
-        <Tab.Pane key="home" className="game-dev-software-body-tab-content">
-          <HomeComponent appendTab={appendTab} id={0} title="home" />
-        </Tab.Pane>
-      ),
-    },
-  ]);
+  const tabs = useMemo<RenderedTab[]>(() => {
+    return tabsState.map((tab) => {
+      if (tab.menuItemKey === 'home') {
+        return {
+          ...tab,
+          menuItem: i18n.t('home'),
+          pane: (
+            <Tab.Pane key="home" className="game-dev-software-body-tab-content">
+              <HomeComponent appendTab={appendTab} id={tab.id} title="home" />
+            </Tab.Pane>
+          ),
+        };
+      }
+
+      const Component = modulesComponent[tab.componentName];
+
+      return {
+        ...tab,
+        menuItem: (
+          <Menu.Item key={tab.menuItemKey}>
+            <TransComponent
+              id={tab.menuItemKey}
+              defaultValue={tab.menuItemKey}
+              onMouseDown={(e) => {
+                const { button } = e;
+                if (button === 1) {
+                  e.stopPropagation();
+                  removeTab(tab.id);
+                }
+              }}
+            />
+            <Icon
+              name="close"
+              onClick={(event: Event) => {
+                event.stopPropagation();
+                removeTab(tab.id);
+              }}
+            />
+          </Menu.Item>
+        ),
+        pane: (
+          <Tab.Pane key={tab.menuItemKey}>
+            {Component ? (
+              <Component
+                appendTab={appendTab}
+                id={tab.id}
+                title={tab.menuItemKey}
+              />
+            ) : null}
+          </Tab.Pane>
+        ),
+      };
+    });
+  }, [HomeComponent, appendTab, removeTab, tabsState]);
+
+  const tabsOrderItems = useMemo(
+    () =>
+      tabsState.map((tab) => ({
+        id: tab.id,
+        menuItemKey: tab.menuItemKey,
+        isActive: tab.id === tabActive.id,
+      })),
+    [tabActive.id, tabsState]
+  );
 
   return {
     tabs,
     tabActive,
     appendTab,
     onTabChange,
+    tabsOrderItems,
+    applyTabsOrder,
   };
 };
 

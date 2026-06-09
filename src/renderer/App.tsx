@@ -28,7 +28,7 @@ import {
 } from './pages/ScenePage/components';
 import GameDevSoftwareProvider from './contexts';
 import { ToastContainer } from 'react-toastify';
-import { TerminalComponent } from './components';
+import { TerminalComponent, TabsOrderModalComponent } from './components';
 
 export const modulesComponent: any = [];
 modulesComponent['HomePage'] = HomePage;
@@ -54,7 +54,16 @@ modulesComponent['ThemePage'] = ThemePage;
 modulesComponent['CachePage'] = CachePage;
 
 export default function App() {
-  const { path, tabs, tabActive, onTabChange } = useApp();
+  const {
+    path,
+    tabs,
+    tabActive,
+    onTabChange,
+    tabsOrderItems,
+    openTabsOrderModal,
+    closeTabsOrderModal,
+    saveTabsOrder,
+  } = useApp();
 
   if (path === undefined) {
     return <div>Loading....</div>;
@@ -83,6 +92,12 @@ export default function App() {
       </main>
       <ToastContainer />
       <TerminalComponent />
+      <TabsOrderModalComponent
+        open={openTabsOrderModal}
+        tabs={tabsOrderItems}
+        onClose={closeTabsOrderModal}
+        onAccepted={saveTabsOrder}
+      />
     </GameDevSoftwareProvider>
   );
 }

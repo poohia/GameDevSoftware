@@ -15,5 +15,11 @@
   "form_input_modal_default_value_label": "Valeur actuelle",
   "form_action_duplicate": "Dupliquer",
   "form_duplicate_modal_title": "Dupliquer",
-  "form_duplicate_modal_title_label": "Nouveau titre"
+  "form_duplicate_modal_title_label": "Nouveau titre",
+  "tabs_order_modal_title": "Reordonner les onglets ouverts",
+  "tabs_order_modal_table_tab": "Onglet",
+  "tabs_order_modal_table_status": "Statut",
+  "tabs_order_modal_table_actions": "Actions",
+  "tabs_order_modal_status_active": "Actif",
+  "tabs_order_modal_status_fixed": "Fixe"
 }

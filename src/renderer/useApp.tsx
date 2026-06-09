@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useEvents, useDatabase } from 'renderer/hooks';
 import i18n from 'translations/i18n';
 import useTabs, { UseTabsProps } from './hooks/useTabs';
@@ -19,7 +19,22 @@ const useApp = () => {
       activeKeyboardControl: true,
     };
   }, []);
-  const { tabs, tabActive, onTabChange } = useTabs(tabOptions);
+  const [openTabsOrderModal, setOpenTabsOrderModal] = useState(false);
+  const { tabs, tabActive, onTabChange, tabsOrderItems, applyTabsOrder } =
+    useTabs(tabOptions);
+
+  const closeTabsOrderModal = useCallback(
+    () => setOpenTabsOrderModal(false),
+    []
+  );
+
+  const saveTabsOrder = useCallback(
+    (orderedIds: number[]) => {
+      applyTabsOrder(orderedIds);
+      setOpenTabsOrderModal(false);
+    },
+    [applyTabsOrder]
+  );
 
   useEffect(() => {
     on('path-is-correct', (args: string) => {
@@ -72,6 +87,12 @@ const useApp = () => {
   }, []);
 
   useEffect(() => {
+    on('open-tabs-order-modal', () => {
+      setOpenTabsOrderModal(true);
+    });
+  }, []);
+
+  useEffect(() => {
     on(
       'send-notification',
       (args: {
@@ -110,6 +131,10 @@ const useApp = () => {
     tabs,
     tabActive,
     onTabChange,
+    tabsOrderItems,
+    openTabsOrderModal,
+    closeTabsOrderModal,
+    saveTabsOrder,
   };
 };
 

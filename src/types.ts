@@ -105,6 +105,7 @@ export type Channels =
   | 'send-notification'
   | 'open-terminal'
   | 'send-terminal'
+  | 'open-tabs-order-modal'
   | 'load-shortcutsfolder'
   | 'add-shortcutsfolder'
   | 'get-shortcutsfolder-typetarget'
@@ -187,6 +188,7 @@ export type TabActiveType = {
   props?: any;
 };
 export type TabDatabaseType = {
+  id?: number;
   menuItem: string;
   component: string;
 };

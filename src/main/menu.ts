@@ -125,6 +125,13 @@ export default class MenuBuilder {
                 },
               },
               {
+                label: 'Reorder Open Tabs',
+                accelerator: isMac ? 'Command+Q' : 'Shift+Q',
+                click: () => {
+                  this.mainWindow.webContents.send('open-tabs-order-modal');
+                },
+              },
+              {
                 label: 'Toggle &Developer Tools',
                 accelerator: isMac ? 'Command+G' : 'Ctrl+G',
                 click: () => {

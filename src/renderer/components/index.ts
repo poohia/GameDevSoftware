@@ -10,3 +10,4 @@ export { default as TerminalComponent } from './TerminalComponent';
 export { default as DropdownShortcutsFoldersComponent } from './DropdownShortcutsFoldersComponent';
 export { default as DialogShortcutsFoldersComponent } from './DialogShortcutsFoldersComponent';
 export { default as DialogTreeScenesComponent } from './DialogTreeScenesComponent';
+export { default as TabsOrderModalComponent } from './TabsOrderModalComponent';
