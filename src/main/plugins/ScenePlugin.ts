@@ -12,6 +12,7 @@ import {
   SceneTypeJSON,
 } from 'types';
 import FolderPlugin from './FolderPlugin';
+import ShortcutsFoldersPlugin from './ShortcutsFoldersPlugin';
 
 export default class ScenePlugin {
   constructor() {}
@@ -129,22 +130,30 @@ export default class ScenePlugin {
         data.filter((d) => d.file !== `${id}.json`)
       ).then(async () => {
         let originalObjectType = null;
+        const sceneData = await FileService.readJsonFile<SceneObject>(
+          `${path}${FolderPlugin.sceneDirectory}/${id}.json`
+        );
         if (sceneType === 'all') {
-          const dataFile = await FileService.readJsonFile(
-            `${path}/${FolderPlugin.gameObjectDirectory}/${id}.json`
-          );
-          originalObjectType = dataFile?._type ?? null;
+          originalObjectType = sceneData?._type ?? null;
         }
         fs.unlink(`${path}${FolderPlugin.sceneDirectory}/${id}.json`, (err) => {
           if (err) {
             console.error(err);
             throw new Error(err.message);
           }
-          this.loadScenes(event, sceneType);
-          this.loadScenes(event);
-          if (originalObjectType) {
-            this.loadScenes(event, originalObjectType);
-          }
+          ShortcutsFoldersPlugin.removeSceneShortcutFolder(
+            Number(id),
+            sceneData?._title ?? ''
+          ).then(() => {
+            ShortcutsFoldersPlugin.readFile().then((shortcutsFolders) => {
+              event.reply('load-shortcutsfolder', shortcutsFolders);
+            });
+            this.loadScenes(event, sceneType);
+            this.loadScenes(event);
+            if (originalObjectType) {
+              this.loadScenes(event, originalObjectType);
+            }
+          });
         });
       });
     });
@@ -218,10 +227,6 @@ export default class ScenePlugin {
 
   getFormulaireScene = (event: ElectronIpcMainEvent, sType: string) => {
     this.getFormulaireSceneTypes(sType).then((data) => {
-      console.log(
-        '🚀 ~ ScenePlugin ~ this.getFormulaireSceneTypes ~ data:',
-        data
-      );
       // @ts-ignore
       event.reply(`get-formulaire-scene-${sType}`, {
         ...data,
@@ -272,8 +277,15 @@ export default class ScenePlugin {
           },
         ],
         () => {
-          this.loadScenes(event, args._type);
-          this.loadScenes(event);
+          ShortcutsFoldersPlugin.syncSceneShortcutFolder(_id, args._title).then(
+            () => {
+              ShortcutsFoldersPlugin.readFile().then((shortcutsFolders) => {
+                event.reply('load-shortcutsfolder', shortcutsFolders);
+              });
+              this.loadScenes(event, args._type);
+              this.loadScenes(event);
+            }
+          );
         }
       );
     });
@@ -320,11 +332,19 @@ export default class ScenePlugin {
               ).then(() => callback(null)),
           ],
           () => {
-            this.loadScenes(event, sceneType);
-            if (sceneType !== originalSceneIndex.type) {
-              this.loadScenes(event, originalSceneIndex.type);
-            }
-            this.loadScenes(event);
+            ShortcutsFoldersPlugin.syncSceneShortcutFolder(
+              _id,
+              duplicatedScene._title
+            ).then(() => {
+              ShortcutsFoldersPlugin.readFile().then((shortcutsFolders) => {
+                event.reply('load-shortcutsfolder', shortcutsFolders);
+              });
+              this.loadScenes(event, sceneType);
+              if (sceneType !== originalSceneIndex.type) {
+                this.loadScenes(event, originalSceneIndex.type);
+              }
+              this.loadScenes(event);
+            });
           }
         );
       });

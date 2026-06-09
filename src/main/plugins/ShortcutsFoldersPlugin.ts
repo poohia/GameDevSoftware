@@ -9,7 +9,15 @@ import {
 import { ipcMain } from 'electron';
 
 export default class ShortcutsFoldersPlugin {
-  private writeFile(data: ShortcutsFolder[]) {
+  static readFile() {
+    const { path } = global;
+
+    return FileService.readJsonFile<ShortcutsFolder[]>(
+      pathModule.join(path, FolderPlugin.shortcutsFolderFile)
+    );
+  }
+
+  static writeFile(data: ShortcutsFolder[]) {
     const { path } = global;
 
     return FileService.writeJsonFile<ShortcutsFolder[]>(
@@ -18,12 +26,63 @@ export default class ShortcutsFoldersPlugin {
     );
   }
 
-  private openFile() {
-    const { path } = global;
+  static syncSceneShortcutFolder = async (
+    sceneId: number,
+    folderName: string
+  ): Promise<void> => {
+    const shortcutsFolders = await ShortcutsFoldersPlugin.readFile();
+    const normalizedFolderName = folderName.trim();
 
-    return FileService.readJsonFile<ShortcutsFolder[]>(
-      pathModule.join(path, FolderPlugin.shortcutsFolderFile)
+    if (
+      normalizedFolderName.length === 0 ||
+      shortcutsFolders.some(
+        (folder) => folder.folderName.trim() === normalizedFolderName
+      )
+    ) {
+      return;
+    }
+
+    const nextId =
+      shortcutsFolders.reduce(
+        (max, item) => (item.id > max.id ? item : max),
+        shortcutsFolders[0]
+      )?.id || 0;
+
+    await ShortcutsFoldersPlugin.writeFile(
+      shortcutsFolders.concat({
+        id: nextId + 1,
+        folderName: normalizedFolderName,
+        scenes: [sceneId],
+        editable: true,
+        deletable: true,
+      })
     );
+  };
+
+  static removeSceneShortcutFolder = async (
+    sceneId: number,
+    folderName: string
+  ): Promise<void> => {
+    const shortcutsFolders = await ShortcutsFoldersPlugin.readFile();
+    const normalizedFolderName = folderName.trim();
+
+    await ShortcutsFoldersPlugin.writeFile(
+      shortcutsFolders.filter(
+        (folder) =>
+          !(
+            folder.folderName.trim() === normalizedFolderName ||
+            folder.scenes?.includes(sceneId)
+          )
+      )
+    );
+  };
+
+  private writeFile(data: ShortcutsFolder[]) {
+    return ShortcutsFoldersPlugin.writeFile(data);
+  }
+
+  private openFile() {
+    return ShortcutsFoldersPlugin.readFile();
   }
 
   private setShortcutsFolders = (
