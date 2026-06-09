@@ -90,6 +90,7 @@
   "module_application_params_orientation_title": "App orientation",
   "module_application_params_background": "Background",
   "module_application_params_fontFamily": "Font family",
+  "module_application_params_gameNameTranslation": "Game name translation",
   "module_gameobject_home_title": "All Game Objects",
   "module_application_home_emulate_title": "Emulate",
   "form_button_add": "Add",

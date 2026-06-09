@@ -266,7 +266,7 @@ export default class GameObjectPlugin {
       ).then((gameObject) => {
         const ids = data.map((d) => Number(d.file.replace('.json', '')));
         const _id = ids.length > 0 ? Math.max(...ids) + 1 : 1;
-        const _title = title.trim() || `${gameObject._title} copy`;
+        const _title = title.trim() || `${gameObject._title}`;
         const duplicatedGameObject: GameObject = {
           ...gameObject,
           _id,

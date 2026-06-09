@@ -95,6 +95,26 @@ export default class ApplicationAdvancedPlugin {
     event.reply('load-fontFamily', openConfigFile().fontFamily);
   };
 
+  loadGameNameTranslation = (
+    event: ElectronIpcMainEvent,
+    openConfigFile: () => ApplicationConfigJson
+  ) => {
+    event.reply(
+      'load-gameNameTranslation',
+      openConfigFile().gameNameTranslation
+    );
+  };
+
+  setGameNameTranslation = (
+    event: ElectronIpcMainEvent,
+    gameNameTranslation: string,
+    openConfigFile: () => ApplicationConfigJson,
+    writeConfigFile: (config: Partial<ApplicationConfigJson>) => void
+  ) => {
+    writeConfigFile({ gameNameTranslation });
+    this.loadGameNameTranslation(event, openConfigFile);
+  };
+
   setFontFamily = (
     event: ElectronIpcMainEvent,
     fontFamily: string,

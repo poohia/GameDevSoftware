@@ -370,6 +370,12 @@ export default class ApplicationPlugin {
         this.openConfigFile
       );
     });
+    ipcMain.on('load-gameNameTranslation', (event: Electron.IpcMainEvent) => {
+      this._advancedPlugin.loadGameNameTranslation(
+        event as ElectronIpcMainEvent,
+        this.openConfigFile
+      );
+    });
     ipcMain.on('set-fontFamily', (event: Electron.IpcMainEvent, args) => {
       this._advancedPlugin.setFontFamily(
         event as ElectronIpcMainEvent,
@@ -378,6 +384,17 @@ export default class ApplicationPlugin {
         this.writeConfigFile
       );
     });
+    ipcMain.on(
+      'set-gameNameTranslation',
+      (event: Electron.IpcMainEvent, args) => {
+        this._advancedPlugin.setGameNameTranslation(
+          event as ElectronIpcMainEvent,
+          args,
+          this.openConfigFile,
+          this.writeConfigFile
+        );
+      }
+    );
 
     ipcMain.on('load-background', (event: Electron.IpcMainEvent) => {
       this._advancedPlugin.loadBackground(

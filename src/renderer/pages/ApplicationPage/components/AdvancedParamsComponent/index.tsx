@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DropDownFontsComponent, TransComponent } from 'renderer/components';
-import { AssetInput } from 'renderer/components/FormGenerator/components';
+import {
+  AssetInput,
+  TranslationInput,
+} from 'renderer/components/FormGenerator/components';
 import { useEvents } from 'renderer/hooks';
 import { Segment } from 'renderer/semantic-ui';
 import { Container, Dropdown, DropdownProps, Grid } from 'semantic-ui-react';
@@ -14,6 +17,9 @@ const AdvancedParamsComponent: React.FC = () => {
   const [fontFamilyValue, setFontFamilyValue] = useState<string | undefined>(
     undefined
   );
+  const [gameNameTranslationValue, setGameNameTranslationValue] = useState<
+    string | undefined
+  >(undefined);
   const [backgroundValue, setBackgroundValue] = useState<string | undefined>(
     undefined
   );
@@ -86,6 +92,15 @@ const AdvancedParamsComponent: React.FC = () => {
   });
 
   useEffect(() => {
+    requestMessage(
+      'load-gameNameTranslation',
+      (gameNameTranslation: string) => {
+        setGameNameTranslationValue(gameNameTranslation);
+      }
+    );
+  });
+
+  useEffect(() => {
     requestMessage('load-background', (fontFamily: string) => {
       setBackgroundValue(fontFamily);
     });
@@ -103,6 +118,18 @@ const AdvancedParamsComponent: React.FC = () => {
           <Grid.Row>
             <Grid.Column width={8}>
               <label>
+                <TransComponent id="module_application_params_gameNameTranslation" />
+              </label>
+              <TranslationInput
+                name="gameNameTranslation"
+                defaultValue={gameNameTranslationValue}
+                onChange={(value) => {
+                  sendMessage('set-gameNameTranslation', value.target.value);
+                }}
+              />
+            </Grid.Column>
+            <Grid.Column width={8}>
+              <label>
                 <TransComponent id="module_application_params_orientation_title" />
               </label>
               <Dropdown
@@ -116,6 +143,8 @@ const AdvancedParamsComponent: React.FC = () => {
                 required
               />
             </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
             <Grid.Column width={8}>
               <label>
                 <TransComponent id="module_application_params_background" />
@@ -129,8 +158,6 @@ const AdvancedParamsComponent: React.FC = () => {
                 }}
               />
             </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
             <Grid.Column width={8}>
               <label>
                 <TransComponent id="module_application_params_fontFamily" />

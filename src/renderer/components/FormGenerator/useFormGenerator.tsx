@@ -75,9 +75,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
   );
 
   const openDuplicateDialog = useCallback(() => {
-    setDuplicateTitle(
-      defaultValues?._title ? `${defaultValues._title} copy` : ''
-    );
+    setDuplicateTitle(defaultValues?._title ? `${defaultValues._title}` : '');
     setDuplicateDialogOpen(true);
   }, [defaultValues]);
 

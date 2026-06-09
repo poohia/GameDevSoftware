@@ -1,6 +1,7 @@
 {
   "home": "Acceuil",
   "module_translation_form_field_acton_open_file_in_folder": "Ouvrir le fichier dans le dossier",
+  "module_application_params_gameNameTranslation": "Traduction du nom du jeu",
   "module_theme": "Module Theme",
   "module_cache": "Module Cache",
   "module_cache_add_row": "Ajouter une ligne",

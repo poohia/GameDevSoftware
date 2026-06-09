@@ -295,7 +295,7 @@ export default class ScenePlugin {
       ).then((scene) => {
         const ids = data.map((d) => Number(d.file.replace('.json', '')));
         const _id = ids.length > 0 ? Math.max(...ids) + 1 : 1;
-        const _title = title.trim() || `${scene._title} copy`;
+        const _title = title.trim() || `${scene._title}`;
         const duplicatedScene: SceneObject = {
           ...scene,
           _id,

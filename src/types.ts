@@ -83,6 +83,8 @@ export type Channels =
   | 'remove-font'
   | 'load-current-orientation'
   | 'set-current-orientation'
+  | 'load-gameNameTranslation'
+  | 'set-gameNameTranslation'
   | 'load-fontFamily'
   | 'set-fontFamily'
   | 'load-background'
@@ -275,6 +277,7 @@ export type ApplicationConfigJson = {
   playStore: string;
   appStore: string;
   webStore: string;
+  gameNameTranslation?: string;
   background?: string;
   fontFamily?: string;
   holidaysOverlay: {
