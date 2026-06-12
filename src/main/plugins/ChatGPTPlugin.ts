@@ -8,6 +8,13 @@ import ChatGPTGenerateTypes from './subPlugins/ChatGPTGenerateTypes';
 import FolderPlugin from './FolderPlugin';
 
 export let openAI: OpenAI | null = null;
+export const getChatGPTTemperature = (
+  chatGPTInfos?: Partial<ChatGPTType>
+): number | undefined =>
+  typeof chatGPTInfos?.temperature === 'number' &&
+  Number.isFinite(chatGPTInfos.temperature)
+    ? chatGPTInfos.temperature
+    : undefined;
 
 export default class ChatGPTPlugin {
   translateSubPlugin: ChatGPTTranslationPlugin = new ChatGPTTranslationPlugin();
@@ -26,6 +33,10 @@ export default class ChatGPTPlugin {
             ? values?.extraPrompt
             : args.extraPrompt,
         model: args.model || values?.model,
+        temperature:
+          typeof args.temperature === 'undefined'
+            ? values?.temperature
+            : args.temperature,
         translation: {
           languageFileSplit:
             typeof args.translation?.languageFileSplit === 'undefined'

@@ -8,10 +8,12 @@ const GlobalInformationComponent: React.FC = () => {
   const {
     apiKeyState,
     extraPromptState,
+    temperatureState,
     models,
     model,
     setApiKeyState,
     setExtraPromptState,
+    setTemperatureState,
     updateChatGPTInfos,
   } = useChatGPTPage();
 
@@ -45,6 +47,28 @@ const GlobalInformationComponent: React.FC = () => {
               updateChatGPTInfos({ extraPrompt: event.target.value });
             }}
             onChange={(event) => setExtraPromptState(event.target.value)}
+          />
+        </Form.Field>
+        <Form.Field>
+          <Form.Input
+            label={`${i18n.t(
+              'module_chatgpt_form_field_temperature_label'
+            )} (0 - 2)`}
+            type={'number'}
+            min={0}
+            max={2}
+            step={0.1}
+            value={temperatureState}
+            onBlur={() => {
+              const parsedTemperature = Number(temperatureState);
+              const nextTemperature = Number.isFinite(parsedTemperature)
+                ? Math.min(2, Math.max(0, parsedTemperature))
+                : 1;
+
+              setTemperatureState(String(nextTemperature));
+              updateChatGPTInfos({ temperature: nextTemperature });
+            }}
+            onChange={(event) => setTemperatureState(event.target.value)}
           />
         </Form.Field>
         <Form.Field>

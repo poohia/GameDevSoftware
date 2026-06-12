@@ -21,5 +21,6 @@
   "tabs_order_modal_table_status": "Statut",
   "tabs_order_modal_table_actions": "Deplacer",
   "tabs_order_modal_status_active": "Actif",
-  "tabs_order_modal_status_fixed": "Fixe"
+  "tabs_order_modal_status_fixed": "Fixe",
+  "module_chatgpt_form_field_temperature_label": "Temperature"
 }

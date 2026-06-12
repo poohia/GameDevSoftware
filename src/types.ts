@@ -469,6 +469,7 @@ export type typeAssetToOpen = 'root' | 'image' | 'video' | 'sound' | 'json';
 export type ChatGPTType = {
   apiKey: string;
   model: string;
+  temperature?: number;
   extraPrompt?: string;
   translation?: {
     languageFileSplit?: number;

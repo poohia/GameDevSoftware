@@ -5,7 +5,7 @@ import { ChatGPTType, ElectronIpcMainEvent } from 'types';
 import FolderPlugin from '../FolderPlugin';
 import FileService from '../../services/FileService';
 import LogService from '../../services/LogService';
-import { openAI } from '../ChatGPTPlugin';
+import { getChatGPTTemperature, openAI } from '../ChatGPTPlugin';
 
 export default class ChatGPTTranslationPlugin {
   autoTranslate = (
@@ -31,6 +31,7 @@ export default class ChatGPTTranslationPlugin {
       return;
     }
     const languagesFilePath = pathModule.join(path, FolderPlugin.languageFile);
+    const temperature = getChatGPTTemperature(chatGPTInfos);
     FileService.readJsonFile(languagesFilePath).then(
       (languages: { code: string }[]) => {
         FileService.readJsonFile(fileTranslate).then((dataTranslation) => {
@@ -62,9 +63,9 @@ export default class ChatGPTTranslationPlugin {
           });
           openAI!.chat.completions
             .create({
-              temperature: 1,
               model: chatGPTInfos.model,
               messages: messages,
+              ...(typeof temperature === 'number' ? { temperature } : {}),
             })
             .then((completion) => {
               if (completion.choices[0].finish_reason !== 'stop') {
@@ -116,6 +117,7 @@ export default class ChatGPTTranslationPlugin {
       return;
     }
     let timesouts: any[] = [];
+    const temperature = getChatGPTTemperature(chatGPTInfos);
     FileService.readFile(pathGameLocale).then((data) => {
       LogService.Log(JSON.parse(data));
       Promise.all(
@@ -145,9 +147,11 @@ export default class ChatGPTTranslationPlugin {
               LogService.Log({ finalContent: finalContent });
               openAI!.chat.completions
                 .create({
-                  temperature: 1,
                   model: chatGPTInfos.model,
                   messages: messages,
+                  ...(typeof temperature === 'number'
+                    ? { temperature }
+                    : {}),
                 })
                 .then((completion) => {
                   if (completion.choices[0].finish_reason !== 'stop') {

@@ -10,6 +10,11 @@ const useChatGPTPage = () => {
   const [extraPromptState, setExtraPromptState] = useState<string>(
     chatGPTInfos?.extraPrompt || ''
   );
+  const [temperatureState, setTemperatureState] = useState<string>(
+    typeof chatGPTInfos?.temperature === 'number'
+      ? String(chatGPTInfos.temperature)
+      : '1'
+  );
 
   useEffect(() => {
     setApiKeyState(
@@ -22,6 +27,11 @@ const useChatGPTPage = () => {
         ? extraPromptState
         : chatGPTInfos.extraPrompt
     );
+    setTemperatureState(
+      typeof chatGPTInfos?.temperature === 'undefined'
+        ? temperatureState
+        : String(chatGPTInfos.temperature)
+    );
   }, [chatGPTInfos]);
 
   return {
@@ -29,8 +39,10 @@ const useChatGPTPage = () => {
     models,
     apiKeyState,
     extraPromptState,
+    temperatureState,
     setApiKeyState,
     setExtraPromptState,
+    setTemperatureState,
     updateChatGPTInfos,
   };
 };
