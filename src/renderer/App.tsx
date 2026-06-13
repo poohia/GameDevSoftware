@@ -17,6 +17,7 @@ import {
   PagesModulePage,
   ThemePage,
   CachePage,
+  RulesPage,
 } from 'renderer/pages';
 import {
   AllGameobjectContainerComponent,
@@ -52,6 +53,7 @@ modulesComponent['ShortcutsfoldersPage'] = ShortcutsFoldersPage;
 modulesComponent['PagesPage'] = PagesModulePage;
 modulesComponent['ThemePage'] = ThemePage;
 modulesComponent['CachePage'] = CachePage;
+modulesComponent['RulesPage'] = RulesPage;
 
 export default function App() {
   const {
