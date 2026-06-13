@@ -8,10 +8,8 @@ import LogService from '../../services/LogService';
 import { ChatCompletionMessageParam } from 'openai/resources';
 
 const buildPersistedTypesSystemPrompt = ({
-  rootExtraFields = [],
   rootTypeSuffix,
 }: {
-  rootExtraFields?: string[];
   rootTypeSuffix: 'Interface' | 'Props';
 }) =>
   [
@@ -25,9 +23,8 @@ const buildPersistedTypesSystemPrompt = ({
     'Nested objects should stay inline.',
     'For the mapping, only use the persisted-data meaning of `core`, `multiple`, `optional`, and the root object `"type"`.',
     'Mapping rules for the persisted saved data:',
-    '- Root interfaces must always start with `_id: number`, `_title: string`, and `_type: string`.',
-    '- Additional root-only fields may be requested separately, for example scenes also need `_module: string`.',
-    '- Nested objects and array items must never receive `_id`, `_title`, `_type`, or `_module` unless the configuration explicitly declares them.',
+    '- Root interfaces must always start with `_id: number` and `_title: string`.',
+    '- Nested objects and array items must never receive `_id` or `_title` unless the configuration explicitly declares them.',
     '- `"boolean"` -> `boolean`.',
     '- `"number"` and `"float"` -> `number`.',
     '- `"string"`, `"image"`, `"sound"`, `"video"`, `"json"`, `"translation"`, and `"scene"` -> `string` in persisted data.',
@@ -41,13 +38,6 @@ const buildPersistedTypesSystemPrompt = ({
     '- If a field has an object `core`, map it to a nested object shape using its children.',
     '- Prefer inline nested object types such as `{ scenario: string }[]` for nested arrays or one-off nested objects.',
     '- Keep the output focused on the final saved JSON shape, even if the UI uses dropdowns, modals, or lookups to produce the value.',
-    ...(rootExtraFields.length > 0
-      ? [
-          `Additional root-only fields for this generation: ${rootExtraFields.join(
-            ', '
-          )}.`,
-        ]
-      : []),
     'Example of the expected interpretation:',
     'If a form config describes a root type `"dialogue"` with fields like `character: "@go:..."`, `sound: "sound"`, `texts` as a multiple object field containing `content: "translation"` and optional nested arrays like `unlockScenario` with child field `scenario: "@go:..."`, then the generated root interface must describe the final saved JSON as strings for those tagged references.',
     'A valid example output would be:',
@@ -55,7 +45,6 @@ const buildPersistedTypesSystemPrompt = ({
     `export interface Dialogue${rootTypeSuffix} {`,
     '  _id: number;',
     '  _title: string;',
-    '  _type: string;',
     '  character: string;',
     '  animation: string;',
     '  texts: {',
@@ -80,14 +69,12 @@ export default class ChatGPTGenerateTypes {
   private buildPersistedTypesMessages = (
     json: any[],
     chatGPTInfos: ChatGPTType,
-    rootExtraFields: string[] = [],
     rootTypeSuffix: 'Interface' | 'Props' = 'Interface'
   ): ChatCompletionMessageParam[] => {
     const messages: ChatCompletionMessageParam[] = [
       {
         role: 'system',
         content: buildPersistedTypesSystemPrompt({
-          rootExtraFields,
           rootTypeSuffix,
         }),
       },
@@ -228,7 +215,6 @@ export default class ChatGPTGenerateTypes {
             const messages = this.buildPersistedTypesMessages(
               json,
               chatGPTInfos,
-              [],
               'Interface'
             );
             const temperature = getChatGPTTemperature(chatGPTInfos);
@@ -317,7 +303,6 @@ export default class ChatGPTGenerateTypes {
             const messages = this.buildPersistedTypesMessages(
               json,
               chatGPTInfos,
-              ['_module: string'],
               'Props'
             );
             const temperature = getChatGPTTemperature(chatGPTInfos);
