@@ -202,17 +202,19 @@ export default class ChatGPTGenerateTypes {
             );
             FileService.readdir(moduleDirectory, 'file').then((filesName) => {
               Promise.all(
-                filesName.map((file) =>
-                  FileService.readJsonFile(
-                    pathModule.join(
-                      path,
-                      FolderPlugin.modulesDirectory,
-                      name,
-                      FolderPlugin.gameObjectTypesDirectory,
-                      file
+                filesName
+                  .filter((fileName) => fileName !== '.gitkeep')
+                  .map((file) =>
+                    FileService.readJsonFile(
+                      pathModule.join(
+                        path,
+                        FolderPlugin.modulesDirectory,
+                        name,
+                        FolderPlugin.gameObjectTypesDirectory,
+                        file
+                      )
                     )
                   )
-                )
               ).then((results) => {
                 json = json.concat(results);
                 callback();
@@ -290,17 +292,19 @@ export default class ChatGPTGenerateTypes {
             );
             FileService.readdir(moduleDirectory, 'file').then((filesName) => {
               Promise.all(
-                filesName.map((file) =>
-                  FileService.readJsonFile(
-                    pathModule.join(
-                      path,
-                      FolderPlugin.modulesDirectory,
-                      name,
-                      FolderPlugin.sceneTypesDirectory,
-                      file
+                filesName
+                  .filter((fileName) => fileName !== '.gitkeep')
+                  .map((file) =>
+                    FileService.readJsonFile(
+                      pathModule.join(
+                        path,
+                        FolderPlugin.modulesDirectory,
+                        name,
+                        FolderPlugin.sceneTypesDirectory,
+                        file
+                      )
                     )
                   )
-                )
               ).then((results) => {
                 json = json.concat(results);
                 callback();
