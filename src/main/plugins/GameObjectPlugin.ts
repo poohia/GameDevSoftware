@@ -187,6 +187,10 @@ export default class GameObjectPlugin {
           FileService.readdir(moduleDirectory, 'file').then((filesName) => {
             async
               .each(filesName, (fileName: string, callbackFile: () => void) => {
+                if (fileName === '.gitkeep') {
+                  callbackFile();
+                  return;
+                }
                 if (fileName.includes(objectType)) {
                   gameObjectType = `${moduleDirectory}/${fileName}`;
                 }

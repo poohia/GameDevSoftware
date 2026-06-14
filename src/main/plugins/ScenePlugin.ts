@@ -183,6 +183,10 @@ export default class ScenePlugin {
           FileService.readdir(moduleDirectory, 'file').then((filesName) => {
             async
               .each(filesName, (fileName: string, callbackFile: () => void) => {
+                if (fileName === '.gitkeep') {
+                  callbackFile();
+                  return;
+                }
                 if (fileName.includes(sType)) {
                   sceneType.value = `${moduleDirectory}/${fileName}`;
                   sceneType.module = name;
