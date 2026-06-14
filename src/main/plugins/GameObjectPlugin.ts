@@ -206,7 +206,6 @@ export default class GameObjectPlugin {
         if (data._inheritance) {
           const d = await this.getFormulaireGameObjectType(data._inheritance);
           data.core = { ...d.core, ...data.core };
-          console.log('🚀 ~ GameObjectPlugin ~ d:', d);
         }
         return data;
       });
