@@ -197,7 +197,15 @@ export default class GameObjectPlugin {
         });
       })
       .then(() => FileService.readJsonFile(gameObjectType))
-      .then((data) => ({ ...data, core: { _title: 'string', ...data.core } }));
+      .then((data) => ({ ...data, core: { _title: 'string', ...data.core } }))
+      .then(async (data) => {
+        if (data._inheritance) {
+          const d = await this.getFormulaireGameObjectType(data._inheritance);
+          data.core = { ...d.core, ...data.core };
+          console.log('🚀 ~ GameObjectPlugin ~ d:', d);
+        }
+        return data;
+      });
   };
 
   getFormulaireGameObject = (
