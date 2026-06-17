@@ -48,9 +48,12 @@ const ShortcutsFoldersFormComponent: React.FC<
     }
     return true;
   });
-  const [deletable, setDeletable] = useState<boolean>(
-    defaultValue?.deletable || true
-  );
+  const [deletable, setDeletable] = useState<boolean>(() => {
+    if (defaultValue?.deletable !== undefined) {
+      return defaultValue.deletable;
+    }
+    return true;
+  });
   /** */
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -73,9 +76,13 @@ const ShortcutsFoldersFormComponent: React.FC<
   /** */
 
   const id = useMemo(() => defaultValue?.id, [defaultValue]);
-  const disableForm = useMemo(
-    () => (defaultValue ? editable === false : false),
-    [defaultValue, editable]
+  const cantDelete = useMemo(
+    () => defaultValue?.cantDeleted === true,
+    [defaultValue]
+  );
+  const disableName = useMemo(
+    () => (defaultValue ? editable === false || cantDelete : false),
+    [defaultValue, editable, cantDelete]
   );
 
   /** Context */
@@ -97,7 +104,8 @@ const ShortcutsFoldersFormComponent: React.FC<
       gameObjects,
       scenes,
       editable,
-      deletable,
+      deletable: cantDelete ? false : deletable,
+      cantDeleted: defaultValue?.cantDeleted,
     });
     setLoading(true);
   }, [
@@ -110,6 +118,8 @@ const ShortcutsFoldersFormComponent: React.FC<
     scenes,
     editable,
     deletable,
+    cantDelete,
+    defaultValue,
   ]);
 
   useEffect(() => {
@@ -191,7 +201,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                   }
                   required
                   focus
-                  disabled={disableForm}
+                  disabled={disableName}
                 />
               </Form.Field>
               <Form.Field>
@@ -289,9 +299,9 @@ const ShortcutsFoldersFormComponent: React.FC<
               <Form.Field>
                 <Form.Checkbox
                   label={i18n.t('form_label_deletable')}
-                  checked={deletable}
+                  checked={cantDelete ? false : deletable}
                   onChange={() => setDeletable(!deletable)}
-                  disabled={disableForm}
+                  disabled={disableName || cantDelete}
                 />
               </Form.Field>
 

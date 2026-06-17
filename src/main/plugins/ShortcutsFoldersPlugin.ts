@@ -123,7 +123,14 @@ export default class ShortcutsFoldersPlugin {
       if (!folder) {
         this.loadShortcutsFolders(event);
       } else {
-        Object.assign(folder, data, { id: folder.id });
+        const protectedFolder = folder.cantDeleted === true;
+
+        Object.assign(folder, data, {
+          id: folder.id,
+          folderName: protectedFolder ? folder.folderName : data.folderName,
+          deletable: protectedFolder ? false : data.deletable,
+          cantDeleted: folder.cantDeleted,
+        });
         this.setShortcutsFolders(event, results);
       }
     });
@@ -133,7 +140,9 @@ export default class ShortcutsFoldersPlugin {
     this.openFile().then((results) => {
       this.setShortcutsFolders(
         event,
-        results.filter((folder) => folder.id !== id)
+        results.filter(
+          (folder) => folder.id !== id || folder.cantDeleted === true
+        )
       );
     });
   };

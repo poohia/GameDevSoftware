@@ -34,6 +34,9 @@ const ShortcutsFoldersTableComponent: React.FC<
     setItem('shortcutsfolder-filter', filter);
   }, [filter]);
 
+  const isDeleteDisabled = (folder: ShortcutsFolder) =>
+    folder.deletable === false || folder.cantDeleted === true;
+
   return (
     <Grid className="game-dev-software-table-component">
       <Grid.Row className="game-dev-software-table-component-search">
@@ -75,9 +78,11 @@ const ShortcutsFoldersTableComponent: React.FC<
                       color="red"
                       onClick={(event) => {
                         event.stopPropagation();
-                        onDelete(folder.id);
+                        if (!isDeleteDisabled(folder)) {
+                          onDelete(folder.id);
+                        }
                       }}
-                      disabled={folder.deletable === false}
+                      disabled={isDeleteDisabled(folder)}
                     >
                       <Icon name="trash" />
                     </Button>
