@@ -23,5 +23,9 @@
   "tabs_order_modal_status_active": "Actif",
   "tabs_order_modal_status_fixed": "Fixe",
   "module_chatgpt_form_field_temperature_label": "Temperature",
+  "module_pages_home_by_scenes_config": "Configuration Home par scenes",
+  "module_pages_home_by_scenes_scenes": "Scenes",
+  "module_pages_home_by_scenes_music": "Musique",
+  "module_pages_home_by_scenes_background_images": "Images de fond",
   "module_rules": "Module Regles JSON"
 }

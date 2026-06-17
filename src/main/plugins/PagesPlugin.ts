@@ -7,6 +7,26 @@ import FileService from './../services/FileService';
 import { ipcMain } from 'electron';
 
 export default class PagesPlugin {
+  private normalizeHomeByScenes = (
+    data: PagesConfigType['homePath']['byScenes']
+  ): NonNullable<PagesConfigType['homePath']['byScenes']> => {
+    if (!Array.isArray(data)) {
+      return [];
+    }
+
+    return data.map((row) => ({
+      scenes: Array.isArray(row.scenes)
+        ? row.scenes.map((scene) =>
+            scene.startsWith('@s:') ? scene : `@s:${scene}`
+          )
+        : [],
+      music: row.music || '',
+      backgroundImages: Array.isArray(row.backgroundImages)
+        ? row.backgroundImages
+        : [],
+    }));
+  };
+
   openPagesConfig = () => {
     const { path } = global;
     return FileService.readJsonFile(`${path}${FolderPlugin.pagesConfig}`);
@@ -112,6 +132,29 @@ export default class PagesPlugin {
       });
   };
 
+  getHomeByScenes = (event: ElectronIpcMainEvent) => {
+    this.openPagesConfig().then((results: PagesConfigType) => {
+      event.reply(
+        'get-page-home-by-scenes',
+        this.normalizeHomeByScenes(results.homePath.byScenes)
+      );
+    });
+  };
+
+  setHomeByScenes = (
+    event: ElectronIpcMainEvent,
+    data: PagesConfigType['homePath']['byScenes']
+  ) => {
+    this.openPagesConfig()
+      .then((results: PagesConfigType) => {
+        results.homePath.byScenes = this.normalizeHomeByScenes(data);
+        return this.writePagesConfig(results);
+      })
+      .then(() => {
+        this.getHomeByScenes(event);
+      });
+  };
+
   getSceneBeforeDemoId = (event: ElectronIpcMainEvent) => {
     this.openPagesConfig().then((results: PagesConfigType) => {
       event.reply(
@@ -155,6 +198,14 @@ export default class PagesPlugin {
     );
     ipcMain.on('set-page-home-config', (event: Electron.IpcMainEvent, args) =>
       this.setPageConfig(event as ElectronIpcMainEvent, 'home', args)
+    );
+    ipcMain.on('get-page-home-by-scenes', (event: Electron.IpcMainEvent) =>
+      this.getHomeByScenes(event as ElectronIpcMainEvent)
+    );
+    ipcMain.on(
+      'set-page-home-by-scenes',
+      (event: Electron.IpcMainEvent, args) =>
+        this.setHomeByScenes(event as ElectronIpcMainEvent, args)
     );
     ipcMain.on('get-page-enddemo-config', (event: Electron.IpcMainEvent) =>
       this.getPageConfig(event as ElectronIpcMainEvent, 'endDemo')

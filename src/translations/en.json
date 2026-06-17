@@ -161,6 +161,10 @@
   "module_application_params_holiday_overlay_halloween_label": "Halloween",
   "module_application_params_holiday_overlay_christmas_label": "Christmas",
   "module_pages_home_config": "Home page config",
+  "module_pages_home_by_scenes_config": "Home by scenes config",
+  "module_pages_home_by_scenes_scenes": "Scenes",
+  "module_pages_home_by_scenes_music": "Music",
+  "module_pages_home_by_scenes_background_images": "Background images",
   "module_pages_enddemo_config": "Demo page config",
   "module_pages_credits_config": "Credits page config",
   "module_pages_config_scene_before_demo_id_label": "Select scene before show demo"

@@ -125,6 +125,8 @@ export type Channels =
   | 'get-holidays-overlay'
   | 'get-page-home-config'
   | 'set-page-home-config'
+  | 'get-page-home-by-scenes'
+  | 'set-page-home-by-scenes'
   | 'get-page-enddemo-config'
   | 'set-page-enddemo-config'
   | 'get-page-credits-config'
@@ -432,6 +434,11 @@ export type MenusViewsType = { module: string; path: string; used: boolean };
 export type PagesConfigType = {
   homePath: {
     path: string;
+    byScenes?: {
+      scenes: string[];
+      music: string;
+      backgroundImages: string[];
+    }[];
   };
   endDemoPath: {
     path: string;
