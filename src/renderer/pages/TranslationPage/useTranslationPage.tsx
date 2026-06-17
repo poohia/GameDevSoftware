@@ -115,9 +115,9 @@ const useTranslationPage = () => {
           );
           values.push({
             code,
-            value: translation?.text || '',
-            valueComputer: translation?.textComputer || '',
-            valueMobile: translation?.textMobile || '',
+            value: translation?.text.trim() || '',
+            valueComputer: translation?.textComputer?.trim() || '',
+            valueMobile: translation?.textMobile?.trim() || '',
             editable: translation?.editable,
             deletable: translation?.deletable,
           });
@@ -149,9 +149,9 @@ const useTranslationPage = () => {
           if (value) {
             const { text, textComputer, textMobile, editable, deletable } =
               createTranslations[code];
-            value.text = text;
-            (value.textComputer = textComputer),
-              (value.textMobile = textMobile),
+            value.text = text.trim();
+            (value.textComputer = textComputer?.trim()),
+              (value.textMobile = textMobile?.trim()),
               (value.editable = editable);
             value.deletable = deletable;
           } else {
