@@ -488,7 +488,7 @@ export interface ShortcutsFolder {
   scenes?: number[];
   editable?: boolean;
   deletable?: boolean;
-  cantDeleted?: boolean;
+  sceneShortcut?: boolean;
 }
 
 export interface ShortcutsFolder {

@@ -9,6 +9,32 @@ import {
 import { ipcMain } from 'electron';
 
 export default class ShortcutsFoldersPlugin {
+  private static isSceneShortcut(folder: ShortcutsFolder, sceneId: number) {
+    if (!folder.scenes?.includes(sceneId)) {
+      return false;
+    }
+
+    return (
+      folder.sceneShortcut === true || folder.scenes.length === 1
+    );
+  }
+
+  private static isRemovableSceneShortcut(
+    folder: ShortcutsFolder,
+    sceneId: number,
+    folderName: string
+  ) {
+    if (!folder.scenes?.includes(sceneId)) {
+      return false;
+    }
+
+    return (
+      folder.sceneShortcut === true ||
+      (folder.scenes.length === 1 &&
+        folder.folderName.trim() === folderName.trim())
+    );
+  }
+
   static readFile() {
     const { path } = global;
 
@@ -33,12 +59,21 @@ export default class ShortcutsFoldersPlugin {
     const shortcutsFolders = await ShortcutsFoldersPlugin.readFile();
     const normalizedFolderName = folderName.trim();
 
-    if (
-      normalizedFolderName.length === 0 ||
-      shortcutsFolders.some(
-        (folder) => folder.folderName.trim() === normalizedFolderName
-      )
-    ) {
+    if (normalizedFolderName.length === 0) {
+      return;
+    }
+
+    const existingSceneShortcut = shortcutsFolders.find((folder) =>
+      ShortcutsFoldersPlugin.isSceneShortcut(folder, sceneId)
+    );
+
+    if (existingSceneShortcut) {
+      existingSceneShortcut.folderName = normalizedFolderName;
+      existingSceneShortcut.scenes = [sceneId];
+      existingSceneShortcut.editable = false;
+      existingSceneShortcut.deletable = false;
+      existingSceneShortcut.sceneShortcut = true;
+      await ShortcutsFoldersPlugin.writeFile(shortcutsFolders);
       return;
     }
 
@@ -53,8 +88,9 @@ export default class ShortcutsFoldersPlugin {
         id: nextId + 1,
         folderName: normalizedFolderName,
         scenes: [sceneId],
-        editable: true,
-        deletable: true,
+        editable: false,
+        deletable: false,
+        sceneShortcut: true,
       })
     );
   };
@@ -64,16 +100,21 @@ export default class ShortcutsFoldersPlugin {
     folderName: string
   ): Promise<void> => {
     const shortcutsFolders = await ShortcutsFoldersPlugin.readFile();
-    const normalizedFolderName = folderName.trim();
 
     await ShortcutsFoldersPlugin.writeFile(
-      shortcutsFolders.filter(
-        (folder) =>
-          !(
-            folder.folderName.trim() === normalizedFolderName ||
-            folder.scenes?.includes(sceneId)
-          )
-      )
+      shortcutsFolders
+        .filter(
+          (folder) =>
+            !ShortcutsFoldersPlugin.isRemovableSceneShortcut(
+              folder,
+              sceneId,
+              folderName
+            )
+        )
+        .map((folder) => ({
+          ...folder,
+          scenes: folder.scenes?.filter((id) => id !== sceneId),
+        }))
     );
   };
 
@@ -123,13 +164,16 @@ export default class ShortcutsFoldersPlugin {
       if (!folder) {
         this.loadShortcutsFolders(event);
       } else {
-        const protectedFolder = folder.cantDeleted === true;
+        const protectedFolder = folder.sceneShortcut === true;
+        const protectedScenes =
+          folder.sceneShortcut === true ? folder.scenes : data.scenes;
 
         Object.assign(folder, data, {
           id: folder.id,
           folderName: protectedFolder ? folder.folderName : data.folderName,
+          scenes: protectedScenes,
           deletable: protectedFolder ? false : data.deletable,
-          cantDeleted: folder.cantDeleted,
+          sceneShortcut: folder.sceneShortcut,
         });
         this.setShortcutsFolders(event, results);
       }
@@ -141,7 +185,7 @@ export default class ShortcutsFoldersPlugin {
       this.setShortcutsFolders(
         event,
         results.filter(
-          (folder) => folder.id !== id || folder.cantDeleted === true
+          (folder) => folder.id !== id || folder.sceneShortcut === true
         )
       );
     });

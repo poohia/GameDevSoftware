@@ -35,7 +35,7 @@ const ShortcutsFoldersTableComponent: React.FC<
   }, [filter]);
 
   const isDeleteDisabled = (folder: ShortcutsFolder) =>
-    folder.deletable === false || folder.cantDeleted === true;
+    folder.deletable === false || folder.sceneShortcut === true;
 
   return (
     <Grid className="game-dev-software-table-component">
