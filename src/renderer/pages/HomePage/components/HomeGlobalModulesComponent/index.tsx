@@ -7,7 +7,7 @@ import { titleCase } from 'title-case';
 import { PageProps } from 'types';
 import TransComponent from 'renderer/components/TransComponent';
 import { modulesComponent } from 'renderer/App';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import DarkModeContext from 'renderer/contexts/DarkModeContext';
 
 type HomeGlobalModulesComponent = Required<Pick<PageProps, 'appendTab'>> & {
@@ -38,6 +38,14 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
     appendTab,
   } = props;
   const { darkModeActived, toggleDarkMode } = useContext(DarkModeContext);
+  const modulesDisplayed = useMemo(() => {
+    if (!onChangeLocale) {
+      return modules;
+    }
+
+    return Array.from(modules).sort((a, b) => a.localeCompare(b));
+  }, [modules, onChangeLocale]);
+
   return (
     <Container>
       <Segment className="game-dev-software-module-application-params-identity-segment game-dev-software-module-home-project-segment">
@@ -88,7 +96,7 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
           )}
 
           <Grid.Row columns={4} width="equals">
-            {modules.map((module) => (
+            {modulesDisplayed.map((module) => (
               <Grid.Column key={module}>
                 <Button
                   onClick={() => {
