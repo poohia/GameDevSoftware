@@ -10,7 +10,6 @@ import {
 } from 'types';
 import pathModule from 'path';
 import FileService from '../services/FileService';
-import EditorService from '../services/EditorService';
 import FolderPlugin from './FolderPlugin';
 import { OptimizeAssetsPlugin } from './subPlugins';
 
@@ -243,11 +242,7 @@ export default class AssetPlugin {
       default:
         finalPath = `${path}${FolderPlugin.assetsDirectory}`;
     }
-    const normalizedPath = pathModule.normalize(finalPath);
-    const openedInVSCode = await EditorService.openPathInVSCode(normalizedPath);
-    if (!openedInVSCode) {
-      shell.openPath(normalizedPath);
-    }
+    shell.openPath(pathModule.normalize(finalPath));
   };
 
   openAssetsInFolder = (
