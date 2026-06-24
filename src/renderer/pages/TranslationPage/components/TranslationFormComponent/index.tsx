@@ -301,6 +301,7 @@ const TranslationFormComponent = (
                           code: value.code,
                         });
                       }}
+                      rows={8}
                       disabled={keyValue === '' || !editable || loading}
                     />
                   </Form.Field>
@@ -318,6 +319,7 @@ const TranslationFormComponent = (
                               code: value.code,
                             });
                           }}
+                          rows={8}
                           type={'text'}
                           disabled={keyValue === '' || !editable || loading}
                         />
@@ -335,6 +337,7 @@ const TranslationFormComponent = (
                           }}
                           value={value.valueMobile}
                           type={'text'}
+                          rows={8}
                           disabled={keyValue === '' || !editable || loading}
                         />
                       </Form.Field>
