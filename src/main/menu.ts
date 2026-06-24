@@ -125,6 +125,10 @@ export default class MenuBuilder {
                 },
               },
               {
+                label: `Find in Page`,
+                accelerator: isMac ? 'Command+F' : 'Shift+F',
+              },
+              {
                 label: 'Reorder Open Tabs',
                 accelerator: isMac ? 'Command+Q' : 'Shift+Q',
                 click: () => {

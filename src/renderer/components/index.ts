@@ -11,3 +11,4 @@ export { default as DropdownShortcutsFoldersComponent } from './DropdownShortcut
 export { default as DialogShortcutsFoldersComponent } from './DialogShortcutsFoldersComponent';
 export { default as DialogTreeScenesComponent } from './DialogTreeScenesComponent';
 export { default as TabsOrderModalComponent } from './TabsOrderModalComponent';
+export { default as FindInPageComponent } from './FindInPageComponent';

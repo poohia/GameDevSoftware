@@ -29,7 +29,11 @@ import {
 } from './pages/ScenePage/components';
 import GameDevSoftwareProvider from './contexts';
 import { ToastContainer } from 'react-toastify';
-import { TerminalComponent, TabsOrderModalComponent } from './components';
+import {
+  FindInPageComponent,
+  TerminalComponent,
+  TabsOrderModalComponent,
+} from './components';
 
 export const modulesComponent: any = [];
 modulesComponent['HomePage'] = HomePage;
@@ -93,6 +97,7 @@ export default function App() {
         />
       </main>
       <ToastContainer />
+      <FindInPageComponent />
       <TerminalComponent />
       <TabsOrderModalComponent
         open={openTabsOrderModal}
