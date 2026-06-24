@@ -34,6 +34,13 @@ export type FormGeneratorProps = {
   onOpenFileInFolderClick?: () => void;
 };
 
+const incrementTrailingNumber = (value: string) => {
+  return value.replace(/(\d+)$/, (match) => {
+    const nextNumber = Number(match) + 1;
+    return nextNumber.toString().padStart(match.length, '0');
+  });
+};
+
 const useFormGenerator = (props: FormGeneratorProps) => {
   const {
     form = [],
@@ -75,7 +82,11 @@ const useFormGenerator = (props: FormGeneratorProps) => {
   );
 
   const openDuplicateDialog = useCallback(() => {
-    setDuplicateTitle(defaultValues?._title ? `${defaultValues._title}` : '');
+    setDuplicateTitle(
+      defaultValues?._title
+        ? incrementTrailingNumber(`${defaultValues._title}`)
+        : ''
+    );
     setDuplicateDialogOpen(true);
   }, [defaultValues]);
 
