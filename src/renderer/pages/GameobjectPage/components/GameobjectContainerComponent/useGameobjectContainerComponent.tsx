@@ -61,12 +61,13 @@ const useGameobjectContainerComponent = (props: PageProps) => {
   }, []);
 
   const duplicateGameobject = useCallback(
-    (title: string) => {
+    (title: string, createShortcutFolder: boolean) => {
       if (!stateForm.value?._id) return;
       sendMessage('duplicate-game-object', {
         id: stateForm.value._id,
         title,
         objectType: gameObjectType,
+        createShortcutFolder,
       });
     },
     [gameObjectType, stateForm.value]

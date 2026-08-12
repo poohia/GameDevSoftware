@@ -80,9 +80,16 @@ const ShortcutsFoldersFormComponent: React.FC<
     () => defaultValue?.sceneShortcut === true,
     [defaultValue]
   );
+  const gameObjectShortcut = useMemo(
+    () => defaultValue?.gameObjectShortcut === true,
+    [defaultValue]
+  );
   const disableName = useMemo(
-    () => (defaultValue ? editable === false || sceneShortcut : false),
-    [defaultValue, editable, sceneShortcut]
+    () =>
+      defaultValue
+        ? editable === false || sceneShortcut || gameObjectShortcut
+        : false,
+    [defaultValue, editable, sceneShortcut, gameObjectShortcut]
   );
 
   /** Context */
@@ -106,6 +113,7 @@ const ShortcutsFoldersFormComponent: React.FC<
       editable,
       deletable: sceneShortcut ? false : deletable,
       sceneShortcut: defaultValue?.sceneShortcut,
+      gameObjectShortcut: defaultValue?.gameObjectShortcut,
     });
     setLoading(true);
   }, [
@@ -119,6 +127,7 @@ const ShortcutsFoldersFormComponent: React.FC<
     editable,
     deletable,
     sceneShortcut,
+    gameObjectShortcut,
     defaultValue,
   ]);
 
@@ -299,9 +308,11 @@ const ShortcutsFoldersFormComponent: React.FC<
               <Form.Field>
                 <Form.Checkbox
                   label={i18n.t('form_label_deletable')}
-                  checked={sceneShortcut ? false : deletable}
+                  checked={
+                    sceneShortcut || gameObjectShortcut ? false : deletable
+                  }
                   onChange={() => setDeletable(!deletable)}
-                  disabled={disableName || sceneShortcut}
+                  disabled={disableName || sceneShortcut || gameObjectShortcut}
                 />
               </Form.Field>
 

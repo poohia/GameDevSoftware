@@ -13,6 +13,7 @@ import {
 } from 'types';
 import FolderPlugin from './FolderPlugin';
 import LogService from '../services/LogService';
+import ShortcutsFoldersPlugin from './ShortcutsFoldersPlugin';
 
 export default class GameObjectPlugin {
   constructor() {}
@@ -149,11 +150,11 @@ export default class GameObjectPlugin {
         data.filter((d) => d.file !== `${id}.json`)
       ).then(async () => {
         let originalObjectType = null;
+        const gameObjectData = await FileService.readJsonFile<GameObject>(
+          `${path}/${FolderPlugin.gameObjectDirectory}/${id}.json`
+        );
         if (objectType === 'all') {
-          const dataFile = await FileService.readJsonFile(
-            `${path}/${FolderPlugin.gameObjectDirectory}/${id}.json`
-          );
-          originalObjectType = dataFile?._type ?? null;
+          originalObjectType = gameObjectData?._type ?? null;
         }
         fs.unlink(
           `${path}/${FolderPlugin.gameObjectDirectory}/${id}.json`,
@@ -162,11 +163,19 @@ export default class GameObjectPlugin {
               console.error(err);
               throw new Error(err.message);
             }
-            this.loadGameObjects(event, objectType);
-            this.loadGameObjects(event);
-            if (originalObjectType) {
-              this.loadGameObjects(event, originalObjectType);
-            }
+            ShortcutsFoldersPlugin.removeGameObjectShortcutFolder(
+              Number(id),
+              gameObjectData?._title ?? ''
+            ).then(() => {
+              ShortcutsFoldersPlugin.readFile().then((shortcutsFolders) => {
+                event.reply('load-shortcutsfolder', shortcutsFolders);
+              });
+              this.loadGameObjects(event, objectType);
+              this.loadGameObjects(event);
+              if (originalObjectType) {
+                this.loadGameObjects(event, originalObjectType);
+              }
+            });
           }
         );
       });
@@ -231,22 +240,26 @@ export default class GameObjectPlugin {
     });
   };
 
-  createGameObject = (event: ElectronIpcMainEvent, args: GameObject) => {
+  createGameObject = (
+    event: ElectronIpcMainEvent,
+    args: GameObject & { createShortcutFolder?: boolean }
+  ) => {
     //@ts-ignore
     const { path } = global;
+    const { createShortcutFolder = false, ...gameObjectArgs } = args;
     GameObjectPlugin.readIndexFile().then((data) => {
       const ids = data.map((d) => Number(d.file.replace('.json', '')));
       let _id = 1;
-      if (args._id) {
-        _id = args._id;
+      if (gameObjectArgs._id) {
+        _id = gameObjectArgs._id;
       } else if (ids.length > 0) {
         _id = ids[ids.length - 1] + 1;
       }
-      data.push({ file: `${_id}.json`, type: args._type });
+      data.push({ file: `${_id}.json`, type: gameObjectArgs._type });
       async.parallel(
         [
           (callback) =>
-            args._id
+            gameObjectArgs._id
               ? callback(null)
               : GameObjectPlugin.writeIndexFile(data).then(() =>
                   callback(null)
@@ -254,12 +267,27 @@ export default class GameObjectPlugin {
           (callback) =>
             FileService.writeJsonFile(
               `${path}/${FolderPlugin.gameObjectDirectory}/${_id}.json`,
-              { ...args, _id }
+              { ...gameObjectArgs, _id }
             ).then(() => callback(null)),
         ],
         () => {
-          this.loadGameObjects(event, args._type);
-          this.loadGameObjects(event);
+          const syncShortcutFolder =
+            createShortcutFolder || gameObjectArgs._id
+              ? ShortcutsFoldersPlugin.syncGameObjectShortcutFolder(
+                  _id,
+                  gameObjectArgs._title,
+                  createShortcutFolder
+                )
+              : Promise.resolve();
+          syncShortcutFolder.then(() => {
+            if (createShortcutFolder || gameObjectArgs._id) {
+              ShortcutsFoldersPlugin.readFile().then((shortcutsFolders) => {
+                event.reply('load-shortcutsfolder', shortcutsFolders);
+              });
+            }
+            this.loadGameObjects(event, gameObjectArgs._type);
+            this.loadGameObjects(event);
+          });
         }
       );
     });
@@ -267,10 +295,15 @@ export default class GameObjectPlugin {
 
   duplicateGameObject = (
     event: ElectronIpcMainEvent,
-    args: { id: number; title: string; objectType: string }
+    args: {
+      id: number;
+      title: string;
+      objectType: string;
+      createShortcutFolder?: boolean;
+    }
   ) => {
     const { path } = global;
-    const { id, title, objectType } = args;
+    const { id, title, objectType, createShortcutFolder = false } = args;
 
     GameObjectPlugin.readIndexFile().then((data) => {
       const originalGameObjectIndex = data.find((d) => d.file === `${id}.json`);
@@ -304,11 +337,24 @@ export default class GameObjectPlugin {
               ).then(() => callback(null)),
           ],
           () => {
-            this.loadGameObjects(event, objectType);
-            if (objectType !== originalGameObjectIndex.type) {
-              this.loadGameObjects(event, originalGameObjectIndex.type);
-            }
-            this.loadGameObjects(event);
+            const syncShortcutFolder = createShortcutFolder
+              ? ShortcutsFoldersPlugin.syncGameObjectShortcutFolder(
+                  _id,
+                  duplicatedGameObject._title
+                )
+              : Promise.resolve();
+            syncShortcutFolder.then(() => {
+              if (createShortcutFolder) {
+                ShortcutsFoldersPlugin.readFile().then((shortcutsFolders) => {
+                  event.reply('load-shortcutsfolder', shortcutsFolders);
+                });
+              }
+              this.loadGameObjects(event, objectType);
+              if (objectType !== originalGameObjectIndex.type) {
+                this.loadGameObjects(event, originalGameObjectIndex.type);
+              }
+              this.loadGameObjects(event);
+            });
           }
         );
       });

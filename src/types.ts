@@ -496,6 +496,7 @@ export interface ShortcutsFolder {
   editable?: boolean;
   deletable?: boolean;
   sceneShortcut?: boolean;
+  gameObjectShortcut?: boolean;
 }
 
 export interface ShortcutsFolder {

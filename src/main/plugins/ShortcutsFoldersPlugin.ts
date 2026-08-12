@@ -14,8 +14,19 @@ export default class ShortcutsFoldersPlugin {
       return false;
     }
 
+    return folder.sceneShortcut === true || folder.scenes.length === 1;
+  }
+
+  private static isGameObjectShortcut(
+    folder: ShortcutsFolder,
+    gameObjectId: number
+  ) {
+    if (!folder.gameObjects?.includes(gameObjectId)) {
+      return false;
+    }
+
     return (
-      folder.sceneShortcut === true || folder.scenes.length === 1
+      folder.gameObjectShortcut === true || folder.gameObjects.length === 1
     );
   }
 
@@ -31,6 +42,22 @@ export default class ShortcutsFoldersPlugin {
     return (
       folder.sceneShortcut === true ||
       (folder.scenes.length === 1 &&
+        folder.folderName.trim() === folderName.trim())
+    );
+  }
+
+  private static isRemovableGameObjectShortcut(
+    folder: ShortcutsFolder,
+    gameObjectId: number,
+    folderName: string
+  ) {
+    if (!folder.gameObjects?.includes(gameObjectId)) {
+      return false;
+    }
+
+    return (
+      folder.gameObjectShortcut === true ||
+      (folder.gameObjects.length === 1 &&
         folder.folderName.trim() === folderName.trim())
     );
   }
@@ -95,6 +122,54 @@ export default class ShortcutsFoldersPlugin {
     );
   };
 
+  static syncGameObjectShortcutFolder = async (
+    gameObjectId: number,
+    folderName: string,
+    createIfMissing = true
+  ): Promise<void> => {
+    const shortcutsFolders = await ShortcutsFoldersPlugin.readFile();
+    const normalizedFolderName = folderName.trim();
+
+    if (normalizedFolderName.length === 0) {
+      return;
+    }
+
+    const existingGameObjectShortcut = shortcutsFolders.find((folder) =>
+      ShortcutsFoldersPlugin.isGameObjectShortcut(folder, gameObjectId)
+    );
+
+    if (existingGameObjectShortcut) {
+      existingGameObjectShortcut.folderName = normalizedFolderName;
+      existingGameObjectShortcut.gameObjects = [gameObjectId];
+      existingGameObjectShortcut.editable = false;
+      existingGameObjectShortcut.deletable = false;
+      existingGameObjectShortcut.gameObjectShortcut = true;
+      await ShortcutsFoldersPlugin.writeFile(shortcutsFolders);
+      return;
+    }
+
+    if (!createIfMissing) {
+      return;
+    }
+
+    const nextId =
+      shortcutsFolders.reduce(
+        (max, item) => (item.id > max.id ? item : max),
+        shortcutsFolders[0]
+      )?.id || 0;
+
+    await ShortcutsFoldersPlugin.writeFile(
+      shortcutsFolders.concat({
+        id: nextId + 1,
+        folderName: normalizedFolderName,
+        gameObjects: [gameObjectId],
+        editable: false,
+        deletable: false,
+        gameObjectShortcut: true,
+      })
+    );
+  };
+
   static removeSceneShortcutFolder = async (
     sceneId: number,
     folderName: string
@@ -114,6 +189,29 @@ export default class ShortcutsFoldersPlugin {
         .map((folder) => ({
           ...folder,
           scenes: folder.scenes?.filter((id) => id !== sceneId),
+        }))
+    );
+  };
+
+  static removeGameObjectShortcutFolder = async (
+    gameObjectId: number,
+    folderName: string
+  ): Promise<void> => {
+    const shortcutsFolders = await ShortcutsFoldersPlugin.readFile();
+
+    await ShortcutsFoldersPlugin.writeFile(
+      shortcutsFolders
+        .filter(
+          (folder) =>
+            !ShortcutsFoldersPlugin.isRemovableGameObjectShortcut(
+              folder,
+              gameObjectId,
+              folderName
+            )
+        )
+        .map((folder) => ({
+          ...folder,
+          gameObjects: folder.gameObjects?.filter((id) => id !== gameObjectId),
         }))
     );
   };
@@ -164,16 +262,23 @@ export default class ShortcutsFoldersPlugin {
       if (!folder) {
         this.loadShortcutsFolders(event);
       } else {
-        const protectedFolder = folder.sceneShortcut === true;
+        const protectedFolder =
+          folder.sceneShortcut === true || folder.gameObjectShortcut === true;
         const protectedScenes =
           folder.sceneShortcut === true ? folder.scenes : data.scenes;
+        const protectedGameObjects =
+          folder.gameObjectShortcut === true
+            ? folder.gameObjects
+            : data.gameObjects;
 
         Object.assign(folder, data, {
           id: folder.id,
           folderName: protectedFolder ? folder.folderName : data.folderName,
           scenes: protectedScenes,
+          gameObjects: protectedGameObjects,
           deletable: protectedFolder ? false : data.deletable,
           sceneShortcut: folder.sceneShortcut,
+          gameObjectShortcut: folder.gameObjectShortcut,
         });
         this.setShortcutsFolders(event, results);
       }
@@ -185,7 +290,10 @@ export default class ShortcutsFoldersPlugin {
       this.setShortcutsFolders(
         event,
         results.filter(
-          (folder) => folder.id !== id || folder.sceneShortcut === true
+          (folder) =>
+            folder.id !== id ||
+            folder.sceneShortcut === true ||
+            folder.gameObjectShortcut === true
         )
       );
     });

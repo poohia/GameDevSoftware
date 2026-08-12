@@ -30,6 +30,7 @@ export type FormGeneratorProps = {
   onSubmit: (data: any) => void;
   onDuplicate?: (title: string, createShortcutFolder: boolean) => void;
   enableShortcutFolder?: boolean;
+  shortcutFolderDefaultChecked?: boolean;
   onClose?: () => void;
   onChange?: (data: any) => void;
   onOpenFileClick?: () => void;
@@ -52,6 +53,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
     onSubmit,
     onDuplicate,
     enableShortcutFolder = false,
+    shortcutFolderDefaultChecked = true,
     onClose,
     onChange,
     onOpenFileClick,
@@ -59,7 +61,9 @@ const useFormGenerator = (props: FormGeneratorProps) => {
   } = props;
   const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
   const [duplicateTitle, setDuplicateTitle] = useState('');
-  const [createShortcutFolder, setCreateShortcutFolder] = useState(true);
+  const [createShortcutFolder, setCreateShortcutFolder] = useState(
+    shortcutFolderDefaultChecked
+  );
 
   const formik = useFormik<any>({
     initialValues: defaultValues ? defaultValues : {},
@@ -67,7 +71,9 @@ const useFormGenerator = (props: FormGeneratorProps) => {
       onSubmit({
         ...values,
         _type,
-        ...(enableShortcutFolder ? { createShortcutFolder } : {}),
+        ...(enableShortcutFolder && defaultValues === undefined
+          ? { createShortcutFolder }
+          : {}),
       });
     },
     validate: (values) => {
@@ -95,9 +101,9 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         ? incrementTrailingNumber(`${defaultValues._title}`)
         : ''
     );
-    setCreateShortcutFolder(true);
+    setCreateShortcutFolder(shortcutFolderDefaultChecked);
     setDuplicateDialogOpen(true);
-  }, [defaultValues]);
+  }, [defaultValues, shortcutFolderDefaultChecked]);
 
   const submitDuplicateDialog = useCallback(() => {
     const title = duplicateTitle.trim();
@@ -498,6 +504,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
   }, [
     defaultValues,
     enableShortcutFolder,
+    shortcutFolderDefaultChecked,
     createShortcutFolder,
     duplicateDialogOpen,
     duplicateTitle,

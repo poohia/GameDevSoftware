@@ -54,6 +54,8 @@ const AllGameobjectContainerComponent: React.FC<PageProps> = (props) => {
               form={gameObjectForm.core}
               defaultValues={stateForm.value}
               loading={loadingForm}
+              enableShortcutFolder
+              shortcutFolderDefaultChecked={false}
               onSubmit={sendCreateGameobject}
               onDuplicate={duplicateGameobject}
               onClose={closeForm}
