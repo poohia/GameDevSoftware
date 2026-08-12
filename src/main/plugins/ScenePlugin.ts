@@ -251,49 +251,57 @@ export default class ScenePlugin {
     });
   };
 
-  createScene = (event: ElectronIpcMainEvent, args: SceneObject) => {
+  createScene = (
+    event: ElectronIpcMainEvent,
+    args: SceneObject & { createShortcutFolder?: boolean }
+  ) => {
     //@ts-ignore
     const { path } = global;
+    const { createShortcutFolder = true, ...sceneArgs } = args;
     ScenePlugin.readIndexFile().then((data) => {
       const ids = data.map((d) => Number(d.file.replace('.json', '')));
       let _id = 1;
-      if (args._id) {
-        _id = args._id;
+      if (sceneArgs._id) {
+        _id = sceneArgs._id;
       } else if (ids.length > 0) {
         _id = ids[ids.length - 1] + 1;
       }
       data.push({
         file: `${_id}.json`,
-        type: args._type,
-        module: args._module,
+        type: sceneArgs._type,
+        module: sceneArgs._module,
       });
 
       async.parallel(
         [
           (callback) =>
-            args._id
+            sceneArgs._id
               ? callback(null)
               : ScenePlugin.writeIndexFile(data).then(() => callback(null)),
           (callback) => {
-            if (args._actions === undefined) {
-              args._actions = [];
+            if (sceneArgs._actions === undefined) {
+              sceneArgs._actions = [];
             }
             FileService.writeJsonFile(
               `${path}/${FolderPlugin.sceneDirectory}/${_id}.json`,
-              { ...args, _id }
+              { ...sceneArgs, _id }
             ).then(() => callback(null));
           },
         ],
         () => {
-          ShortcutsFoldersPlugin.syncSceneShortcutFolder(_id, args._title).then(
-            () => {
-              ShortcutsFoldersPlugin.readFile().then((shortcutsFolders) => {
-                event.reply('load-shortcutsfolder', shortcutsFolders);
-              });
-              this.loadScenes(event, args._type);
-              this.loadScenes(event);
-            }
-          );
+          const syncShortcutFolder = createShortcutFolder
+            ? ShortcutsFoldersPlugin.syncSceneShortcutFolder(
+                _id,
+                sceneArgs._title
+              )
+            : Promise.resolve();
+          syncShortcutFolder.then(() => {
+            ShortcutsFoldersPlugin.readFile().then((shortcutsFolders) => {
+              event.reply('load-shortcutsfolder', shortcutsFolders);
+            });
+            this.loadScenes(event, sceneArgs._type);
+            this.loadScenes(event);
+          });
         }
       );
     });
@@ -301,10 +309,15 @@ export default class ScenePlugin {
 
   duplicateScene = (
     event: ElectronIpcMainEvent,
-    args: { id: number; title: string; sceneType: string }
+    args: {
+      id: number;
+      title: string;
+      sceneType: string;
+      createShortcutFolder?: boolean;
+    }
   ) => {
     const { path } = global;
-    const { id, title, sceneType } = args;
+    const { id, title, sceneType, createShortcutFolder = true } = args;
 
     ScenePlugin.readIndexFile().then((data) => {
       const originalSceneIndex = data.find((d) => d.file === `${id}.json`);
@@ -340,10 +353,13 @@ export default class ScenePlugin {
               ).then(() => callback(null)),
           ],
           () => {
-            ShortcutsFoldersPlugin.syncSceneShortcutFolder(
-              _id,
-              duplicatedScene._title
-            ).then(() => {
+            const syncShortcutFolder = createShortcutFolder
+              ? ShortcutsFoldersPlugin.syncSceneShortcutFolder(
+                  _id,
+                  duplicatedScene._title
+                )
+              : Promise.resolve();
+            syncShortcutFolder.then(() => {
               ShortcutsFoldersPlugin.readFile().then((shortcutsFolders) => {
                 event.reply('load-shortcutsfolder', shortcutsFolders);
               });

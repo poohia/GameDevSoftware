@@ -73,12 +73,13 @@ const useSceneContainerComponent = (props: PageProps) => {
   );
 
   const duplicateScene = useCallback(
-    (title: string) => {
+    (title: string, createShortcutFolder: boolean) => {
       if (!stateForm.value?._id) return;
       sendMessage('duplicate-scene', {
         id: stateForm.value._id,
         title,
         sceneType,
+        createShortcutFolder,
       });
     },
     [sceneType, stateForm.value]

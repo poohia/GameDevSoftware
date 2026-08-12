@@ -54,6 +54,7 @@ const AllSceneContainerComponent: React.FC<PageProps> = (props) => {
               form={gameObjectForm.core}
               defaultValues={stateForm.value}
               loading={loadingForm}
+              enableShortcutFolder
               onSubmit={sendCreateGameobject}
               onDuplicate={duplicateScene}
               onClose={closeForm}

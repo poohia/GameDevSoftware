@@ -20,6 +20,7 @@ import {
 } from './components';
 import { FieldComponentProps } from './components/FieldComponent';
 import DropDownFontsComponent from '../DropDownFontsComponent';
+import i18n from 'translations/i18n';
 
 export type FormGeneratorProps = {
   form: any;
@@ -27,7 +28,8 @@ export type FormGeneratorProps = {
   defaultValues?: any;
   loading?: boolean;
   onSubmit: (data: any) => void;
-  onDuplicate?: (title: string) => void;
+  onDuplicate?: (title: string, createShortcutFolder: boolean) => void;
+  enableShortcutFolder?: boolean;
   onClose?: () => void;
   onChange?: (data: any) => void;
   onOpenFileClick?: () => void;
@@ -49,6 +51,7 @@ const useFormGenerator = (props: FormGeneratorProps) => {
     loading,
     onSubmit,
     onDuplicate,
+    enableShortcutFolder = false,
     onClose,
     onChange,
     onOpenFileClick,
@@ -56,11 +59,16 @@ const useFormGenerator = (props: FormGeneratorProps) => {
   } = props;
   const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
   const [duplicateTitle, setDuplicateTitle] = useState('');
+  const [createShortcutFolder, setCreateShortcutFolder] = useState(true);
 
   const formik = useFormik<any>({
     initialValues: defaultValues ? defaultValues : {},
     onSubmit: (values) => {
-      onSubmit({ ...values, _type });
+      onSubmit({
+        ...values,
+        _type,
+        ...(enableShortcutFolder ? { createShortcutFolder } : {}),
+      });
     },
     validate: (values) => {
       if (onChange) {
@@ -87,15 +95,16 @@ const useFormGenerator = (props: FormGeneratorProps) => {
         ? incrementTrailingNumber(`${defaultValues._title}`)
         : ''
     );
+    setCreateShortcutFolder(true);
     setDuplicateDialogOpen(true);
   }, [defaultValues]);
 
   const submitDuplicateDialog = useCallback(() => {
     const title = duplicateTitle.trim();
     if (!title || !onDuplicate) return;
-    onDuplicate(title);
+    onDuplicate(title, createShortcutFolder);
     setDuplicateDialogOpen(false);
-  }, [duplicateTitle, onDuplicate]);
+  }, [duplicateTitle, onDuplicate, createShortcutFolder]);
 
   const generateField = useCallback(
     (field: FormField): any => {
@@ -322,6 +331,10 @@ const useFormGenerator = (props: FormGeneratorProps) => {
   );
 
   const FormGeneratedComponent = useMemo(() => {
+    console.log(
+      '🚀 ~ useFormGenerator ~ enableShortcutFolder:',
+      enableShortcutFolder
+    );
     return (
       <Grid>
         {_type && (
@@ -397,6 +410,20 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                     {generateField({ key, core: form[key] })}
                   </React.Fragment>
                 ))}
+                {enableShortcutFolder && defaultValues === undefined && (
+                  <Form.Field>
+                    <Form.Checkbox
+                      checked={createShortcutFolder}
+                      label={{
+                        children: i18n.t('scene_create_shortcut_folder'),
+                      }}
+                      style={{ color: 'black' }}
+                      onChange={(_, data) =>
+                        setCreateShortcutFolder(data.checked === true)
+                      }
+                    />
+                  </Form.Field>
+                )}
                 <Button type="submit" loading={loading}>
                   <TransComponent id="form_action_submit" />
                 </Button>
@@ -448,6 +475,20 @@ const useFormGenerator = (props: FormGeneratorProps) => {
                   value={duplicateTitle}
                   onChange={(_, data) => setDuplicateTitle(String(data.value))}
                 />
+                {enableShortcutFolder && (
+                  <Form.Field>
+                    <Form.Checkbox
+                      checked={createShortcutFolder}
+                      label={{
+                        children: i18n.t('scene_create_shortcut_folder'),
+                        style: { color: 'black' },
+                      }}
+                      onChange={(_, data) =>
+                        setCreateShortcutFolder(data.checked === true)
+                      }
+                    />
+                  </Form.Field>
+                )}
               </ModalComponent>
             )}
           </Grid.Column>
@@ -456,6 +497,8 @@ const useFormGenerator = (props: FormGeneratorProps) => {
     );
   }, [
     defaultValues,
+    enableShortcutFolder,
+    createShortcutFolder,
     duplicateDialogOpen,
     duplicateTitle,
     formik.initialValues,
