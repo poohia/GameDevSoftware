@@ -3,21 +3,22 @@ import {
   DropdownAssetTypesComponent,
   DropzoneAssetFileComponent,
 } from 'renderer/components';
-import { Container, Form, Grid, Header } from 'semantic-ui-react';
+import { Container, Dropdown, Form, Grid, Header } from 'semantic-ui-react';
 import { Button } from 'renderer/semantic-ui';
 import i18n from 'translations/i18n';
 import { AssertFileValueType, AssetType } from 'types';
 import AssetPreviewComponent from '../AssetPreviewComponent';
-import { useEvents } from 'renderer/hooks';
+import { useEvents, useShortcutsFolders } from 'renderer/hooks';
 import { TranslationInput } from 'renderer/components/FormGenerator/components';
 
 type AssetFormComponentProps = {
   defaultValue?: AssetType;
-  onSubmit: (value: AssertFileValueType) => void;
+  onSubmit: (value: AssertFileValueType, shortcutFolderId?: number) => void;
 };
 const AssetFormComponent = (props: AssetFormComponentProps) => {
   const { defaultValue, onSubmit } = props;
   const { sendMessage } = useEvents();
+  const { shortcutsFolders } = useShortcutsFolders();
 
   const [file, setFile] = useState<AssertFileValueType>({
     content: '',
@@ -27,6 +28,7 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
     deletable: defaultValue ? defaultValue.deletable : true,
     module: defaultValue?.module,
   });
+  const [shortcutFolderId, setShortcutFolderId] = useState<number | null>(null);
 
   const disableForm = useMemo(
     () => (defaultValue ? !defaultValue.editable : false),
@@ -80,6 +82,32 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
                   disabled={disableForm}
                 />
               </Form.Field>
+              {defaultValue === undefined && (
+                <Form.Field>
+                  <label>
+                    {i18n.t('module_translation_form_shortcut_folder')}
+                  </label>
+                  <Dropdown
+                    clearable
+                    fluid
+                    search
+                    selection
+                    options={Array.from(shortcutsFolders)
+                      .reverse()
+                      .map((folder) => ({
+                        text: folder.folderName,
+                        value: folder.id,
+                      }))}
+                    placeholder={i18n.t('module_shortcutsfolders_form_name')}
+                    value={shortcutFolderId ?? undefined}
+                    onChange={(_, data) =>
+                      setShortcutFolderId(
+                        typeof data.value === 'number' ? data.value : null
+                      )
+                    }
+                  />
+                </Form.Field>
+              )}
               {file.fileType === 'image' && (
                 <Form.Field disabled={disableForm}>
                   <label>Alt</label>
@@ -116,7 +144,7 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
               </Form.Field>
               <Button
                 type="submit"
-                onClick={() => onSubmit(file)}
+                onClick={() => onSubmit(file, shortcutFolderId ?? undefined)}
                 disabled={file.fileName === ''}
               >
                 {i18n.t('module_translation_form_field_submit')}
@@ -145,7 +173,9 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
                     }}
                     color={'brown'}
                   >
-                    {i18n.t('module_translation_form_field_acton_open_file_in_folder')}
+                    {i18n.t(
+                      'module_translation_form_field_acton_open_file_in_folder'
+                    )}
                   </Button>
                 </>
               )}

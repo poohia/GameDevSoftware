@@ -14,11 +14,18 @@ const useAssetPage = () => {
     FormReducer,
     defaultStateFormReducer
   );
-  const saveFile = (file: AssertFileValueType) => {
+  const saveFile = (file: AssertFileValueType, shortcutFolderId?: number) => {
     dispatch({
       type: 'hide-form',
     });
     sendMessage('upload-file', file);
+    if (shortcutFolderId !== undefined) {
+      sendMessage('add-typetarget-shortcutsfolder', {
+        id: file.fileName,
+        typeTarget: 'assets',
+        values: [shortcutFolderId],
+      });
+    }
   };
   const deleteFile = (fileName: any) => {
     dispatch({
