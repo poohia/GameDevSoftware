@@ -140,7 +140,10 @@ const useTranslationPage = () => {
   );
 
   const appendTranslation = useCallback(
-    (createTranslations: { [key: string]: Translation }) => {
+    (
+      createTranslations: { [key: string]: Translation },
+      shortcutFolderId?: number
+    ) => {
       setTranslations((_translations) => {
         Object.keys(createTranslations).forEach((code) => {
           const tt = _translations[code];
@@ -161,10 +164,17 @@ const useTranslationPage = () => {
 
         dispatch({ type: 'hide-form' });
         sendMessage('save-translations', _translations);
+        if (shortcutFolderId !== undefined) {
+          sendMessage('add-typetarget-shortcutsfolder', {
+            id: Object.values(createTranslations)[0]?.key,
+            typeTarget: 'translations',
+            values: [shortcutFolderId],
+          });
+        }
         return JSON.parse(JSON.stringify(_translations));
       });
     },
-    []
+    [sendMessage]
   );
   useEffect(() => {
     sendMessage('languages-authorized');

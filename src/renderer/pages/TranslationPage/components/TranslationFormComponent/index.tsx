@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import {
   Container,
+  Dropdown,
   Flag,
   Form,
   Grid,
@@ -14,6 +15,7 @@ import { Translation, TranslationObject } from 'types';
 import { countryOptions } from 'renderer/components/DropdownLanguagesComponent';
 import ChatGPTContext from 'renderer/contexts/ChatGPTContext';
 import { useEvents } from 'renderer/hooks';
+import { useShortcutsFolders } from 'renderer/hooks';
 
 export type TranslationFormComponentValue = {
   code: string;
@@ -26,7 +28,10 @@ export type TranslationFormComponentValue = {
 export type TranslationFormComponentProps = {
   keyTranslation?: string;
   values: TranslationFormComponentValue[];
-  onSubmit: (translations: { [key: string]: Translation }) => void;
+  onSubmit: (
+    translations: { [key: string]: Translation },
+    shortcutFolderId?: number
+  ) => void;
 };
 
 const TranslationFormButtonsComponent: React.FC<{
@@ -87,6 +92,7 @@ const TranslationFormComponent = (
   const { keyTranslation, values, gameLocale, onSubmit } = props;
   const { chatGPTInfos } = useContext(ChatGPTContext);
   const { sendMessage, once } = useEvents();
+  const { shortcutsFolders } = useShortcutsFolders();
 
   const [keyValue, setKeyValue] = useState<string>(
     keyTranslation || `message_${new Date().getTime()}`
@@ -100,6 +106,7 @@ const TranslationFormComponent = (
   const [loading, setLoading] = useState<boolean>(false);
   const [disableAutoTranslate, setDisableAutoTranslate] =
     useState<boolean>(true);
+  const [shortcutFolderId, setShortcutFolderId] = useState<number | null>(null);
 
   const handleKeyChange = useCallback((value: string) => {
     setKeyValue(value.toLocaleLowerCase().replace(' ', '_'));
@@ -187,7 +194,10 @@ const TranslationFormComponent = (
         deletable,
       };
     });
-    onSubmit(values);
+    onSubmit(
+      values,
+      keyTranslation === undefined ? shortcutFolderId ?? undefined : undefined
+    );
     // Object.keys(translationsValue).forEach((code) => {
     //   const key: any = Object.keys(translationsValue[code])[0];
     //   const value = translationsValue[code][key];
@@ -199,7 +209,15 @@ const TranslationFormComponent = (
     //   };
     // });
     // onSubmit(values);
-  }, [translationsValue, showAdvanced, editable, deletable]);
+  }, [
+    translationsValue,
+    showAdvanced,
+    editable,
+    deletable,
+    keyTranslation,
+    shortcutFolderId,
+    onSubmit,
+  ]);
 
   useEffect(() => {
     setKeyValue(keyTranslation || `message_${new Date().getTime()}`);
@@ -281,6 +299,32 @@ const TranslationFormComponent = (
                   required
                 />
               </Form.Field>
+              {keyTranslation === undefined && (
+                <Form.Field>
+                  <label>
+                    {i18n.t('module_translation_form_shortcut_folder')}
+                  </label>
+                  <Dropdown
+                    clearable
+                    fluid
+                    search
+                    selection
+                    options={Array.from(shortcutsFolders)
+                      .reverse()
+                      .map((folder) => ({
+                        text: folder.folderName,
+                        value: folder.id,
+                      }))}
+                    placeholder={i18n.t('module_shortcutsfolders_form_name')}
+                    value={shortcutFolderId ?? undefined}
+                    onChange={(_, data) =>
+                      setShortcutFolderId(
+                        typeof data.value === 'number' ? data.value : null
+                      )
+                    }
+                  />
+                </Form.Field>
+              )}
               {translationsValue.map((value) => (
                 <>
                   <Form.Field key={value.code}>

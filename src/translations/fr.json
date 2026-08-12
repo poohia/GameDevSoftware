@@ -1,6 +1,7 @@
 {
   "home": "Acceuil",
   "module_translation_form_field_acton_open_file_in_folder": "Ouvrir le fichier dans le dossier",
+  "module_translation_form_shortcut_folder": "Dossier de raccourci",
   "scene_create_shortcut_folder": "Créer un dossier de raccourci",
   "module_application_params_gameNameTranslation": "Traduction du nom du jeu",
   "module_theme": "Module Theme",
