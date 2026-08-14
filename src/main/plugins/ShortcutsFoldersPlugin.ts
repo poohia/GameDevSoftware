@@ -14,7 +14,7 @@ export default class ShortcutsFoldersPlugin {
       return false;
     }
 
-    return folder.sceneShortcut === true || folder.scenes.length === 1;
+    return folder.sceneShortcut === true;
   }
 
   private static isGameObjectShortcut(
@@ -25,41 +25,29 @@ export default class ShortcutsFoldersPlugin {
       return false;
     }
 
-    return (
-      folder.gameObjectShortcut === true || folder.gameObjects.length === 1
-    );
+    return folder.gameObjectShortcut === true;
   }
 
   private static isRemovableSceneShortcut(
     folder: ShortcutsFolder,
-    sceneId: number,
-    folderName: string
+    sceneId: number
   ) {
     if (!folder.scenes?.includes(sceneId)) {
       return false;
     }
 
-    return (
-      folder.sceneShortcut === true ||
-      (folder.scenes.length === 1 &&
-        folder.folderName.trim() === folderName.trim())
-    );
+    return folder.sceneShortcut === true;
   }
 
   private static isRemovableGameObjectShortcut(
     folder: ShortcutsFolder,
-    gameObjectId: number,
-    folderName: string
+    gameObjectId: number
   ) {
     if (!folder.gameObjects?.includes(gameObjectId)) {
       return false;
     }
 
-    return (
-      folder.gameObjectShortcut === true ||
-      (folder.gameObjects.length === 1 &&
-        folder.folderName.trim() === folderName.trim())
-    );
+    return folder.gameObjectShortcut === true;
   }
 
   static readFile() {
@@ -172,7 +160,7 @@ export default class ShortcutsFoldersPlugin {
 
   static removeSceneShortcutFolder = async (
     sceneId: number,
-    folderName: string
+    _folderName: string
   ): Promise<void> => {
     const shortcutsFolders = await ShortcutsFoldersPlugin.readFile();
 
@@ -180,11 +168,7 @@ export default class ShortcutsFoldersPlugin {
       shortcutsFolders
         .filter(
           (folder) =>
-            !ShortcutsFoldersPlugin.isRemovableSceneShortcut(
-              folder,
-              sceneId,
-              folderName
-            )
+            !ShortcutsFoldersPlugin.isRemovableSceneShortcut(folder, sceneId)
         )
         .map((folder) => ({
           ...folder,
@@ -195,7 +179,7 @@ export default class ShortcutsFoldersPlugin {
 
   static removeGameObjectShortcutFolder = async (
     gameObjectId: number,
-    folderName: string
+    _folderName: string
   ): Promise<void> => {
     const shortcutsFolders = await ShortcutsFoldersPlugin.readFile();
 
@@ -205,8 +189,7 @@ export default class ShortcutsFoldersPlugin {
           (folder) =>
             !ShortcutsFoldersPlugin.isRemovableGameObjectShortcut(
               folder,
-              gameObjectId,
-              folderName
+              gameObjectId
             )
         )
         .map((folder) => ({
@@ -264,18 +247,11 @@ export default class ShortcutsFoldersPlugin {
       } else {
         const protectedFolder =
           folder.sceneShortcut === true || folder.gameObjectShortcut === true;
-        const protectedScenes =
-          folder.sceneShortcut === true ? folder.scenes : data.scenes;
-        const protectedGameObjects =
-          folder.gameObjectShortcut === true
-            ? folder.gameObjects
-            : data.gameObjects;
-
         Object.assign(folder, data, {
           id: folder.id,
           folderName: protectedFolder ? folder.folderName : data.folderName,
-          scenes: protectedScenes,
-          gameObjects: protectedGameObjects,
+          scenes: data.scenes,
+          gameObjects: data.gameObjects,
           deletable: protectedFolder ? false : data.deletable,
           sceneShortcut: folder.sceneShortcut,
           gameObjectShortcut: folder.gameObjectShortcut,

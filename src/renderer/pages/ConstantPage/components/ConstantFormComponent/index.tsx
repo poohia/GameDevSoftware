@@ -39,10 +39,10 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
     defaultValue?.description || ''
   );
   const [editable, setEditable] = useState<boolean>(
-    defaultValue?.editable || true
+    defaultValue?.editable ?? true
   );
   const [deletable, setDeletable] = useState<boolean>(
-    defaultValue?.deletable || true
+    defaultValue?.deletable ?? false
   );
   const [showAdvanced, setShowAdvanced] = useState<boolean>(
     !!defaultValue?.valueMobile
@@ -95,7 +95,7 @@ const ConstantFormComponent = (props: ConstantFormComponentProps) => {
       setDescription('');
       setType('string');
       setEditable(true);
-      setDeletable(true);
+      setDeletable(false);
       return;
     }
     const { value: vv, valueMobile: vm } = defaultValue;

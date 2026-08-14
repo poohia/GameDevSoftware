@@ -337,10 +337,6 @@ const useFormGenerator = (props: FormGeneratorProps) => {
   );
 
   const FormGeneratedComponent = useMemo(() => {
-    console.log(
-      '🚀 ~ useFormGenerator ~ enableShortcutFolder:',
-      enableShortcutFolder
-    );
     return (
       <Grid>
         {_type && (

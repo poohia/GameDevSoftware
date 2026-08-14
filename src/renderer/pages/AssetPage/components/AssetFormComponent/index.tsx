@@ -25,7 +25,7 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
     fileName: '',
     fileType: 'image',
     editable: defaultValue ? defaultValue.editable : true,
-    deletable: defaultValue ? defaultValue.deletable : true,
+    deletable: defaultValue ? defaultValue.deletable : false,
     module: defaultValue?.module,
   });
   const [shortcutFolderId, setShortcutFolderId] = useState<number | null>(null);
@@ -42,7 +42,7 @@ const AssetFormComponent = (props: AssetFormComponentProps) => {
       fileType: defaultValue ? defaultValue.type : 'image',
       fileAlt: defaultValue ? defaultValue.alt : '',
       editable: defaultValue ? defaultValue.editable : true,
-      deletable: defaultValue ? defaultValue.deletable : true,
+      deletable: defaultValue ? defaultValue.deletable : false,
       module: defaultValue?.module,
     });
   }, [defaultValue]);

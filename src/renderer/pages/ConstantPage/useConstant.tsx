@@ -89,7 +89,7 @@ const useConstant = () => {
               : undefined,
             description: constant?.description || '',
             editable: constant ? constant.editable : true,
-            deletable: constant ? constant.deletable : true,
+            deletable: constant ? constant.deletable : false,
             module,
           },
         },

@@ -52,7 +52,7 @@ const ShortcutsFoldersFormComponent: React.FC<
     if (defaultValue?.deletable !== undefined) {
       return defaultValue.deletable;
     }
-    return true;
+    return false;
   });
   /** */
   const [loading, setLoading] = useState<boolean>(false);

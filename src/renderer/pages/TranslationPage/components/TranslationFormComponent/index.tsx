@@ -99,7 +99,7 @@ const TranslationFormComponent = (
   );
   const [translationsValue, setTranslationsValue] = useState(values);
   const [editable, setEditable] = useState<boolean>(true);
-  const [deletable, setDeletable] = useState<boolean>(true);
+  const [deletable, setDeletable] = useState<boolean>(false);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(
     !!values.find((v) => v.valueComputer || v.valueMobile)
   );
@@ -233,7 +233,7 @@ const TranslationFormComponent = (
         typeof values[0].editable !== 'undefined' ? values[0].editable : true
       );
       setDeletable(
-        typeof values[0].deletable !== 'undefined' ? values[0].deletable : true
+        typeof values[0].deletable !== 'undefined' ? values[0].deletable : false
       );
       // setTranslationsValue(translations);
     } else {
