@@ -10,44 +10,34 @@ import { ipcMain } from 'electron';
 
 export default class ShortcutsFoldersPlugin {
   private static isSceneShortcut(folder: ShortcutsFolder, sceneId: number) {
-    if (!folder.scenes?.includes(sceneId)) {
-      return false;
-    }
-
-    return folder.sceneShortcut === true;
+    return folder.sceneShortcutId === sceneId;
   }
 
   private static isGameObjectShortcut(
     folder: ShortcutsFolder,
     gameObjectId: number
   ) {
-    if (!folder.gameObjects?.includes(gameObjectId)) {
-      return false;
-    }
-
-    return folder.gameObjectShortcut === true;
+    return folder.gameObjectShortcutId === gameObjectId;
   }
 
   private static isRemovableSceneShortcut(
     folder: ShortcutsFolder,
     sceneId: number
   ) {
-    if (!folder.scenes?.includes(sceneId)) {
-      return false;
-    }
-
-    return folder.sceneShortcut === true;
+    return (
+      ShortcutsFoldersPlugin.isSceneShortcut(folder, sceneId) &&
+      (folder.scenes?.length ?? 0) <= 1
+    );
   }
 
   private static isRemovableGameObjectShortcut(
     folder: ShortcutsFolder,
     gameObjectId: number
   ) {
-    if (!folder.gameObjects?.includes(gameObjectId)) {
-      return false;
-    }
-
-    return folder.gameObjectShortcut === true;
+    return (
+      ShortcutsFoldersPlugin.isGameObjectShortcut(folder, gameObjectId) &&
+      (folder.gameObjects?.length ?? 0) <= 1
+    );
   }
 
   static readFile() {
@@ -69,7 +59,8 @@ export default class ShortcutsFoldersPlugin {
 
   static syncSceneShortcutFolder = async (
     sceneId: number,
-    folderName: string
+    folderName: string,
+    createIfMissing = true
   ): Promise<void> => {
     const shortcutsFolders = await ShortcutsFoldersPlugin.readFile();
     const normalizedFolderName = folderName.trim();
@@ -84,13 +75,15 @@ export default class ShortcutsFoldersPlugin {
 
     if (existingSceneShortcut) {
       existingSceneShortcut.folderName = normalizedFolderName;
-      existingSceneShortcut.scenes = [sceneId];
       existingSceneShortcut.editable = false;
       existingSceneShortcut.deletable = false;
       existingSceneShortcut.sceneShortcut = true;
+      existingSceneShortcut.sceneShortcutId = sceneId;
       await ShortcutsFoldersPlugin.writeFile(shortcutsFolders);
       return;
     }
+
+    if (!createIfMissing) return;
 
     const nextId =
       shortcutsFolders.reduce(
@@ -106,6 +99,7 @@ export default class ShortcutsFoldersPlugin {
         editable: false,
         deletable: false,
         sceneShortcut: true,
+        sceneShortcutId: sceneId,
       })
     );
   };
@@ -128,10 +122,10 @@ export default class ShortcutsFoldersPlugin {
 
     if (existingGameObjectShortcut) {
       existingGameObjectShortcut.folderName = normalizedFolderName;
-      existingGameObjectShortcut.gameObjects = [gameObjectId];
       existingGameObjectShortcut.editable = false;
       existingGameObjectShortcut.deletable = false;
       existingGameObjectShortcut.gameObjectShortcut = true;
+      existingGameObjectShortcut.gameObjectShortcutId = gameObjectId;
       await ShortcutsFoldersPlugin.writeFile(shortcutsFolders);
       return;
     }
@@ -154,6 +148,7 @@ export default class ShortcutsFoldersPlugin {
         editable: false,
         deletable: false,
         gameObjectShortcut: true,
+        gameObjectShortcutId: gameObjectId,
       })
     );
   };
@@ -173,6 +168,9 @@ export default class ShortcutsFoldersPlugin {
         .map((folder) => ({
           ...folder,
           scenes: folder.scenes?.filter((id) => id !== sceneId),
+          ...(folder.sceneShortcutId === sceneId
+            ? { sceneShortcut: false, sceneShortcutId: undefined }
+            : {}),
         }))
     );
   };
@@ -195,6 +193,9 @@ export default class ShortcutsFoldersPlugin {
         .map((folder) => ({
           ...folder,
           gameObjects: folder.gameObjects?.filter((id) => id !== gameObjectId),
+          ...(folder.gameObjectShortcutId === gameObjectId
+            ? { gameObjectShortcut: false, gameObjectShortcutId: undefined }
+            : {}),
         }))
     );
   };

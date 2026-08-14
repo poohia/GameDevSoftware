@@ -257,7 +257,8 @@ export default class ScenePlugin {
   ) => {
     //@ts-ignore
     const { path } = global;
-    const { createShortcutFolder = true, ...sceneArgs } = args;
+    const { createShortcutFolder, ...sceneArgs } = args;
+    const shouldCreateShortcutFolder = createShortcutFolder ?? !sceneArgs._id;
     ScenePlugin.readIndexFile().then((data) => {
       const ids = data.map((d) => Number(d.file.replace('.json', '')));
       let _id = 1;
@@ -289,12 +290,14 @@ export default class ScenePlugin {
           },
         ],
         () => {
-          const syncShortcutFolder = createShortcutFolder
-            ? ShortcutsFoldersPlugin.syncSceneShortcutFolder(
-                _id,
-                sceneArgs._title
-              )
-            : Promise.resolve();
+          const syncShortcutFolder =
+            shouldCreateShortcutFolder || sceneArgs._id
+              ? ShortcutsFoldersPlugin.syncSceneShortcutFolder(
+                  _id,
+                  sceneArgs._title,
+                  shouldCreateShortcutFolder
+                )
+              : Promise.resolve();
           syncShortcutFolder.then(() => {
             ShortcutsFoldersPlugin.readFile().then((shortcutsFolders) => {
               event.reply('load-shortcutsfolder', shortcutsFolders);

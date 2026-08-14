@@ -76,20 +76,31 @@ const ShortcutsFoldersFormComponent: React.FC<
   /** */
 
   const id = useMemo(() => defaultValue?.id, [defaultValue]);
-  const sceneShortcut = useMemo(
-    () => defaultValue?.sceneShortcut === true,
+  const hasSceneShortcutSource = useMemo(
+    () => defaultValue?.sceneShortcutId !== undefined,
     [defaultValue]
   );
-  const gameObjectShortcut = useMemo(
-    () => defaultValue?.gameObjectShortcut === true,
+  const hasGameObjectShortcutSource = useMemo(
+    () => defaultValue?.gameObjectShortcutId !== undefined,
     [defaultValue]
   );
   const disableName = useMemo(
     () =>
       defaultValue
-        ? editable === false || sceneShortcut || gameObjectShortcut
+        ? editable === false ||
+          hasSceneShortcutSource ||
+          hasGameObjectShortcutSource
         : false,
-    [defaultValue, editable, sceneShortcut, gameObjectShortcut]
+    [
+      defaultValue,
+      editable,
+      hasSceneShortcutSource,
+      hasGameObjectShortcutSource,
+    ]
+  );
+  const disableFields = useMemo(
+    () => defaultValue !== undefined && editable === false,
+    [defaultValue, editable]
   );
 
   /** Context */
@@ -111,7 +122,7 @@ const ShortcutsFoldersFormComponent: React.FC<
       gameObjects,
       scenes,
       editable,
-      deletable: sceneShortcut ? false : deletable,
+      deletable: hasSceneShortcutSource ? false : deletable,
       sceneShortcut: defaultValue?.sceneShortcut,
       gameObjectShortcut: defaultValue?.gameObjectShortcut,
     });
@@ -126,8 +137,8 @@ const ShortcutsFoldersFormComponent: React.FC<
     scenes,
     editable,
     deletable,
-    sceneShortcut,
-    gameObjectShortcut,
+    hasSceneShortcutSource,
+    hasGameObjectShortcutSource,
     defaultValue,
   ]);
 
@@ -228,6 +239,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                     setTranslations(data.value as string[]);
                   }}
                   clearable
+                  disabled={disableFields}
                 />
               </Form.Field>
               <Form.Field>
@@ -245,6 +257,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                     setAssets(data.value as string[]);
                   }}
                   clearable
+                  disabled={disableFields}
                 />
               </Form.Field>
               <Form.Field>
@@ -262,6 +275,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                     setConstants(data.value as string[]);
                   }}
                   clearable
+                  disabled={disableFields}
                 />
               </Form.Field>
               <Form.Field>
@@ -279,6 +293,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                     setGameObjects(data.value as number[]);
                   }}
                   clearable
+                  disabled={disableFields}
                 />
               </Form.Field>
               <Form.Field>
@@ -296,6 +311,7 @@ const ShortcutsFoldersFormComponent: React.FC<
                     setScenes(data.value as number[]);
                   }}
                   clearable
+                  disabled={disableFields}
                 />
               </Form.Field>
               <Form.Field>
@@ -309,10 +325,16 @@ const ShortcutsFoldersFormComponent: React.FC<
                 <Form.Checkbox
                   label={i18n.t('form_label_deletable')}
                   checked={
-                    sceneShortcut || gameObjectShortcut ? false : deletable
+                    hasSceneShortcutSource || hasGameObjectShortcutSource
+                      ? false
+                      : deletable
                   }
                   onChange={() => setDeletable(!deletable)}
-                  disabled={disableName || sceneShortcut || gameObjectShortcut}
+                  disabled={
+                    disableFields ||
+                    hasSceneShortcutSource ||
+                    hasGameObjectShortcutSource
+                  }
                 />
               </Form.Field>
 

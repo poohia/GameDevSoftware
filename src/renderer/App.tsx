@@ -1,4 +1,5 @@
 import { Tab } from 'semantic-ui-react';
+import { useEffect } from 'react';
 import useApp from 'renderer/useApp';
 import {
   ApplicationPage,
@@ -70,6 +71,51 @@ export default function App() {
     closeTabsOrderModal,
     saveTabsOrder,
   } = useApp();
+
+  useEffect(() => {
+    const isVisible = (element: HTMLElement) => {
+      const style = window.getComputedStyle(element);
+      return (
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        element.getClientRects().length > 0
+      );
+    };
+
+    const saveVisibleForm = () => {
+      const focusedForm = document.activeElement?.closest('form');
+      const forms = Array.from(document.querySelectorAll('form'));
+      const form =
+        focusedForm instanceof HTMLFormElement && isVisible(focusedForm)
+          ? focusedForm
+          : forms.find(isVisible);
+
+      if (!form) return false;
+
+      const submitButton = form.querySelector<HTMLElement>(
+        'button[type="submit"]:not(:disabled), input[type="submit"]:not(:disabled)'
+      );
+
+      if (submitButton) {
+        submitButton.click();
+      } else {
+        form.requestSubmit();
+      }
+
+      return true;
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') {
+        if (saveVisibleForm()) {
+          event.preventDefault();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   if (path === undefined) {
     return <div>Loading....</div>;
