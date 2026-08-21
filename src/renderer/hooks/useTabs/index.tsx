@@ -49,6 +49,7 @@ const useTabs = (props: UseTabsProps) => {
     id: 0,
   });
   const [tabsState, setTabsState] = useState<TabState[]>([HOME_TAB]);
+  const [isHomeMusicPlaying, setIsHomeMusicPlaying] = useState(false);
 
   const saveDatabaseTabActive = useCallback(
     (nextTabActive: { index: number; id: number }) => {
@@ -311,12 +312,36 @@ const useTabs = (props: UseTabsProps) => {
     };
   }, [activeKeyboardControl, listenerChangeTab]);
 
+  useEffect(() => {
+    const onMusicPlayingChange = (event: Event) => {
+      setIsHomeMusicPlaying(
+        (event as CustomEvent<boolean>).detail
+      );
+    };
+
+    window.addEventListener(
+      'home-music-player-playing-change',
+      onMusicPlayingChange
+    );
+    return () => {
+      window.removeEventListener(
+        'home-music-player-playing-change',
+        onMusicPlayingChange
+      );
+    };
+  }, []);
+
   const tabs = useMemo<RenderedTab[]>(() => {
     return tabsState.map((tab) => {
       if (tab.menuItemKey === 'home') {
         return {
           ...tab,
-          menuItem: i18n.t('home'),
+          menuItem: (
+            <Menu.Item key="home">
+              {i18n.t('home')}
+              {isHomeMusicPlaying && <Icon name="volume up" />}
+            </Menu.Item>
+          ),
           pane: (
             <Tab.Pane key="home" className="game-dev-software-body-tab-content">
               <HomeComponent appendTab={appendTab} id={tab.id} title="home" />
@@ -364,7 +389,7 @@ const useTabs = (props: UseTabsProps) => {
         ),
       };
     });
-  }, [HomeComponent, appendTab, removeTab, tabsState]);
+  }, [HomeComponent, appendTab, isHomeMusicPlaying, removeTab, tabsState]);
 
   const tabsOrderItems = useMemo(
     () =>
