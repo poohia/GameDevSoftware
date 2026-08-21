@@ -91,6 +91,14 @@ const HomeMusicPlayerComponent: React.FC = () => {
     setIsPlaying(false);
   };
 
+  useEffect(() => {
+    const pauseMusic = () => pause();
+    window.addEventListener('home-music-player-pause', pauseMusic);
+    return () => {
+      window.removeEventListener('home-music-player-pause', pauseMusic);
+    };
+  }, []);
+
   const notifyPlayingState = (isPlaying: boolean) => {
     window.dispatchEvent(
       new CustomEvent<boolean>('home-music-player-playing-change', {

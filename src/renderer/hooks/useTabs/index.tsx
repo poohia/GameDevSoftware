@@ -339,7 +339,16 @@ const useTabs = (props: UseTabsProps) => {
           menuItem: (
             <Menu.Item key="home">
               {i18n.t('home')}
-              {isHomeMusicPlaying && <Icon name="volume up" />}
+              {isHomeMusicPlaying && (
+                <Icon
+                  link
+                  name="volume up"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    window.dispatchEvent(new Event('home-music-player-pause'));
+                  }}
+                />
+              )}
             </Menu.Item>
           ),
           pane: (
