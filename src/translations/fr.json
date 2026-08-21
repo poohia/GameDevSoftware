@@ -28,6 +28,11 @@
   "module_pages_home_by_scenes_config": "Configuration Home par scenes",
   "module_pages_home_by_scenes_scenes": "Scenes",
   "module_pages_home_by_scenes_music": "Musique",
+  "home_music_player_title": "Lecteur de musique",
+  "home_music_player_placeholder": "Sélectionner une musique",
+  "home_music_player_play": "Lire",
+  "home_music_player_pause": "Mettre en pause",
+  "home_music_player_loop": "Activer ou désactiver la boucle",
   "module_pages_home_by_scenes_background_images": "Images de fond",
   "module_rules": "Module Regles JSON"
 }

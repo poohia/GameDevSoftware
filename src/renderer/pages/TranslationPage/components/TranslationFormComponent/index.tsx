@@ -14,8 +14,8 @@ import i18n from 'translations/i18n';
 import { Translation, TranslationObject } from 'types';
 import { countryOptions } from 'renderer/components/DropdownLanguagesComponent';
 import ChatGPTContext from 'renderer/contexts/ChatGPTContext';
+import ShortcutsFoldersContext from 'renderer/contexts/ShortcutsFoldersContext';
 import { useEvents } from 'renderer/hooks';
-import { useShortcutsFolders } from 'renderer/hooks';
 
 export type TranslationFormComponentValue = {
   code: string;
@@ -92,7 +92,9 @@ const TranslationFormComponent = (
   const { keyTranslation, values, gameLocale, onSubmit } = props;
   const { chatGPTInfos } = useContext(ChatGPTContext);
   const { sendMessage, once } = useEvents();
-  const { shortcutsFolders } = useShortcutsFolders();
+  const { shortcutsFolders, currentShortcutsFolderID } = useContext(
+    ShortcutsFoldersContext
+  );
 
   const [keyValue, setKeyValue] = useState<string>(
     keyTranslation || `message_${new Date().getTime()}`
@@ -106,7 +108,11 @@ const TranslationFormComponent = (
   const [loading, setLoading] = useState<boolean>(false);
   const [disableAutoTranslate, setDisableAutoTranslate] =
     useState<boolean>(true);
-  const [shortcutFolderId, setShortcutFolderId] = useState<number | null>(null);
+  const [shortcutFolderId, setShortcutFolderId] = useState<number | null>(() =>
+    keyTranslation === undefined && currentShortcutsFolderID?.length === 1
+      ? currentShortcutsFolderID[0]
+      : null
+  );
 
   const handleKeyChange = useCallback((value: string) => {
     setKeyValue(value.toLocaleLowerCase().replace(' ', '_'));

@@ -3,3 +3,4 @@ export { default as HomeSoftwaresInfoComponent } from './HomeSoftwaresInfoCompon
 export { default as HomeGlobalModulesComponent } from './HomeGlobalModulesComponent';
 export { default as HomeGameModulesComponent } from './HomeGameModulesComponent';
 export { default as HomeCypressComponent } from './HomeCypressComponent';
+export { default as HomeMusicPlayerComponent } from './HomeMusicPlayerComponent';

@@ -9,6 +9,7 @@ import TransComponent from 'renderer/components/TransComponent';
 import { modulesComponent } from 'renderer/App';
 import { useContext, useMemo } from 'react';
 import DarkModeContext from 'renderer/contexts/DarkModeContext';
+import HomeMusicPlayerComponent from '../HomeMusicPlayerComponent';
 
 type HomeGlobalModulesComponent = Required<Pick<PageProps, 'appendTab'>> & {
   onChangeLocale?: (locale: string) => void;
@@ -91,6 +92,9 @@ const HomeGlobalModulesComponent = (props: HomeGlobalModulesComponent) => {
                     </Grid.Row>
                   </Grid>
                 </Segment>
+              </Grid.Column>
+              <Grid.Column width={6}>
+                <HomeMusicPlayerComponent />
               </Grid.Column>
             </Grid.Row>
           )}
