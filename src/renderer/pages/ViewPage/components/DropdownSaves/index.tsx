@@ -29,10 +29,12 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
   /** */
   const options: DropdownItemProps[] = useMemo(
     () =>
-      saves.map((save) => ({
-        text: save.title,
-        value: save.id,
-      })),
+      [...saves]
+        .map((save) => ({
+          text: save.title,
+          value: save.id,
+        }))
+        .reverse(),
     [saves]
   );
 
