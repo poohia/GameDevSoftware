@@ -3,6 +3,10 @@ import { BrowserWindow } from 'electron';
 export default class LocalStorageIframePlugin {
   private static readonly VIEW_ORIGIN = 'http://localhost:3333';
   private static readonly GAME_STORAGE_KEY = 'game';
+  private static readonly VIEW_STORAGE_GAME_ENDED = 'game-ended';
+  private static readonly VIEW_STORAGE_GAME_ENDED_ONCE =
+    'game-already-ended-once';
+
   private readonly debuggerVersion = '1.3';
 
   constructor(private mainWindow: BrowserWindow) {}
@@ -25,6 +29,26 @@ export default class LocalStorageIframePlugin {
             isLocalStorage: true,
           },
           key: LocalStorageIframePlugin.GAME_STORAGE_KEY,
+        }
+      );
+      await webContents.debugger.sendCommand(
+        'DOMStorage.removeDOMStorageItem',
+        {
+          storageId: {
+            securityOrigin: LocalStorageIframePlugin.VIEW_ORIGIN,
+            isLocalStorage: true,
+          },
+          key: LocalStorageIframePlugin.VIEW_STORAGE_GAME_ENDED,
+        }
+      );
+      await webContents.debugger.sendCommand(
+        'DOMStorage.removeDOMStorageItem',
+        {
+          storageId: {
+            securityOrigin: LocalStorageIframePlugin.VIEW_ORIGIN,
+            isLocalStorage: true,
+          },
+          key: LocalStorageIframePlugin.VIEW_STORAGE_GAME_ENDED_ONCE,
         }
       );
     } catch (error: any) {
