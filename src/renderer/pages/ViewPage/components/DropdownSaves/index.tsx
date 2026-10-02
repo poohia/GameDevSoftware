@@ -4,6 +4,7 @@ import { Button } from 'renderer/semantic-ui';
 import { Dropdown, DropdownItemProps, Form, Icon } from 'semantic-ui-react';
 import i18n from 'translations/i18n';
 import useMessages, { useMessagesProps } from '../../useMessages';
+import SavesOrderModalComponent from '../SavesOrderModalComponent';
 import SavesContext from 'renderer/contexts/SavesContext';
 import { GameDatabaseSave } from 'types';
 
@@ -15,11 +16,13 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
   refIframe,
   onLoadSave,
 }) => {
-  const { saves, addSave, eraseSave, removeSave } = useContext(SavesContext);
+  const { saves, addSave, eraseSave, removeSave, reorderSaves } =
+    useContext(SavesContext);
   const { sendMessage } = useMessages(refIframe);
 
   /** */
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openOrderModal, setOpenOrderModal] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [saveSelected, setSaveSelected] = useState<GameDatabaseSave | null>(
     null
@@ -27,15 +30,15 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
 
   const [loading, setLoading] = useState<boolean>(false);
   /** */
+  // the dropdown lists the saves from the last to the first of saves.json
+  const savesDisplayed = useMemo(() => [...saves].reverse(), [saves]);
   const options: DropdownItemProps[] = useMemo(
     () =>
-      [...saves]
-        .map((save) => ({
-          text: save.title,
-          value: save.id,
-        }))
-        .reverse(),
-    [saves]
+      savesDisplayed.map((save) => ({
+        text: save.title,
+        value: save.id,
+      })),
+    [savesDisplayed]
   );
 
   const handleSubmit = useCallback(() => {
@@ -102,15 +105,27 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
           }}
         />
         {saveSelected === null && (
-          <Button
-            icon
-            color="green"
-            onClick={() => {
-              setOpenModal(true);
-            }}
-          >
-            <Icon name="add" />
-          </Button>
+          <>
+            <Button
+              icon
+              color="green"
+              onClick={() => {
+                setOpenModal(true);
+              }}
+            >
+              <Icon name="add" />
+            </Button>
+            <Button
+              icon
+              color="blue"
+              disabled={saves.length < 2}
+              onClick={() => {
+                setOpenOrderModal(true);
+              }}
+            >
+              <Icon name="sort" />
+            </Button>
+          </>
         )}
         {saveSelected !== null && (
           <>
@@ -163,6 +178,15 @@ const DropdownSaves: React.FC<DropdownSavesProps> = ({
           </Form.Field>
         </Form>
       </ModalComponent>
+      <SavesOrderModalComponent
+        open={openOrderModal}
+        saves={savesDisplayed}
+        onClose={() => setOpenOrderModal(false)}
+        onAccepted={(orderedIds) => {
+          reorderSaves([...orderedIds].reverse());
+          setOpenOrderModal(false);
+        }}
+      />
     </>
   );
 };

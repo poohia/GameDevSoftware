@@ -46,6 +46,21 @@ const useSaves = () => {
     [saves]
   );
 
+  const reorderSaves = useCallback(
+    (orderedIds: number[]) => {
+      const orderedSaves = orderedIds
+        .map((id) => saves.find((save) => save.id === id))
+        .filter((save): save is GameDatabaseSave => !!save);
+      sendMessage(
+        'set-saves',
+        orderedSaves.concat(
+          saves.filter((save) => !orderedIds.includes(save.id))
+        )
+      );
+    },
+    [saves]
+  );
+
   useEffect(() => {
     on('load-saves', (_saves) => {
       setSaves(_saves);
@@ -58,6 +73,7 @@ const useSaves = () => {
     addSave,
     eraseSave,
     removeSave,
+    reorderSaves,
   };
 };
 

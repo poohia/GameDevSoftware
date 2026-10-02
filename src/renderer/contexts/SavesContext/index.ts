@@ -6,6 +6,7 @@ type SavesContextType = {
   addSave: (game: GameDatabase, title?: string) => void;
   eraseSave: (save: GameDatabaseSave) => void;
   removeSave: (id: number) => void;
+  reorderSaves: (orderedIds: number[]) => void;
 };
 
 const SavesContext = createContext<SavesContextType>({
@@ -13,6 +14,7 @@ const SavesContext = createContext<SavesContextType>({
   addSave: () => {},
   eraseSave: () => {},
   removeSave: () => {},
+  reorderSaves: () => {},
 });
 
 export default SavesContext;
