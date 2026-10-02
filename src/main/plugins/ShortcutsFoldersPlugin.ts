@@ -75,7 +75,7 @@ export default class ShortcutsFoldersPlugin {
 
     if (existingSceneShortcut) {
       existingSceneShortcut.folderName = normalizedFolderName;
-      existingSceneShortcut.editable = false;
+      existingSceneShortcut.editable = true;
       existingSceneShortcut.deletable = false;
       existingSceneShortcut.sceneShortcut = true;
       existingSceneShortcut.sceneShortcutId = sceneId;
@@ -96,7 +96,7 @@ export default class ShortcutsFoldersPlugin {
         id: nextId + 1,
         folderName: normalizedFolderName,
         scenes: [sceneId],
-        editable: false,
+        editable: true,
         deletable: false,
         sceneShortcut: true,
         sceneShortcutId: sceneId,
@@ -122,7 +122,7 @@ export default class ShortcutsFoldersPlugin {
 
     if (existingGameObjectShortcut) {
       existingGameObjectShortcut.folderName = normalizedFolderName;
-      existingGameObjectShortcut.editable = false;
+      existingGameObjectShortcut.editable = true;
       existingGameObjectShortcut.deletable = false;
       existingGameObjectShortcut.gameObjectShortcut = true;
       existingGameObjectShortcut.gameObjectShortcutId = gameObjectId;
@@ -145,7 +145,7 @@ export default class ShortcutsFoldersPlugin {
         id: nextId + 1,
         folderName: normalizedFolderName,
         gameObjects: [gameObjectId],
-        editable: false,
+        editable: true,
         deletable: false,
         gameObjectShortcut: true,
         gameObjectShortcutId: gameObjectId,

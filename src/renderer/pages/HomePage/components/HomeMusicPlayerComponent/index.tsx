@@ -15,9 +15,7 @@ const HomeMusicPlayerComponent: React.FC = () => {
   const [selectedAsset, setSelectedAsset] = useState<AssetType>();
   const [source, setSource] = useState<string>();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [loop, setLoop] = useState(false);
   const [hasRestoredSelection, setHasRestoredSelection] = useState(false);
-  const [hasRestoredLoop, setHasRestoredLoop] = useState(false);
   const [shouldResumePlayback, setShouldResumePlayback] = useState(false);
   const [hasRestoredPlayback, setHasRestoredPlayback] = useState(false);
 
@@ -46,13 +44,6 @@ const HomeMusicPlayerComponent: React.FC = () => {
     }
     setHasRestoredSelection(true);
   }, [assets, getItem, hasRestoredSelection]);
-
-  useEffect(() => {
-    if (hasRestoredLoop) return;
-
-    setLoop(getItem<boolean>('home-music-player-loop') || false);
-    setHasRestoredLoop(true);
-  }, [getItem, hasRestoredLoop]);
 
   useEffect(() => {
     if (hasRestoredPlayback) return;
@@ -138,12 +129,7 @@ const HomeMusicPlayerComponent: React.FC = () => {
       <audio
         ref={audioRef}
         src={source}
-        loop={loop}
-        onEnded={() => {
-          setIsPlaying(false);
-          setItem('home-music-player-is-playing', false);
-          notifyPlayingState(false);
-        }}
+        loop
         onPause={() => {
           setIsPlaying(false);
           setItem('home-music-player-is-playing', false);
@@ -171,19 +157,6 @@ const HomeMusicPlayerComponent: React.FC = () => {
           onClick={pause}
         >
           <Icon name="pause" />
-        </Button>
-        <Button
-          icon
-          aria-label={i18n.t('home_music_player_loop')}
-          active={loop}
-          color={loop ? 'violet' : undefined}
-          onClick={() => {
-            const nextLoop = !loop;
-            setLoop(nextLoop);
-            setItem('home-music-player-loop', nextLoop);
-          }}
-        >
-          <Icon name="repeat" />
         </Button>
       </div>
     </Segment>
